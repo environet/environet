@@ -3,10 +3,11 @@
 
 use Environet\Sys\Commands\BaseCommand;
 use Environet\Sys\Commands\Console;
+use Environet\Sys\Commands\DataNode\Install as DataNodeInstall;
 use Environet\Sys\Commands\DataNode\PluginCreate;
 use Environet\Sys\Commands\DataNode\PluginRun;
 use Environet\Sys\Commands\DistNode\InitDb;
-use Environet\Sys\Commands\DistNode\Install;
+use Environet\Sys\Commands\DistNode\Install as DistNodeInstall;
 use Environet\Sys\Commands\Exceptions\CommandException;
 use Environet\Sys\Config;
 
@@ -32,6 +33,8 @@ $commandRouter = function(array $arguments): ?string {
 	switch ($arguments[0] ?? null) {
 		case 'data':
 			switch ($arguments[1] ?? null) {
+				case 'install':
+					return DataNodeInstall::class;
 				case 'plugin':
 					switch ($arguments[2] ?? null) {
 						case 'create':
@@ -43,7 +46,7 @@ $commandRouter = function(array $arguments): ?string {
 		case 'dist':
 			switch ($arguments[1] ?? null) {
 				case 'install':
-					return Install::class;
+					return DistNodeInstall::class;
 				case 'init':
 					switch ($arguments[2] ?? null) {
 						case 'database':

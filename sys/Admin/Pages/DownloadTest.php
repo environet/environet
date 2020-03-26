@@ -162,7 +162,7 @@ class DownloadTest extends BasePage {
 			$params .= '&start=' . urlencode((new \DateTime($end))->format('c'));
 		}
 
-		$apiHost = Config::getInstance()->getDatanodeApiHost();
+		$apiHost = Config::getInstance()->getDatanodeDistHost();
 
 		// Create a request
 		$request = new Request(

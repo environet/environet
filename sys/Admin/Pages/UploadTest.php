@@ -133,7 +133,7 @@ class UploadTest extends BasePage {
 		$xml = $creator->generateXml(new InputXmlData($mpointId, [$property]))->asXML();
 
 		//Create a request
-		$apiHost = Config::getInstance()->getDatanodeApiHost();
+		$apiHost = Config::getInstance()->getDatanodeDistHost();
 		$request = new Request(rtrim($apiHost, '/').'/upload');
 		$request->setMethod('POST')->setBody($xml);
 

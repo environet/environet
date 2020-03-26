@@ -1,17 +1,16 @@
 <?php
 
 
-namespace Environet\Sys\Commands\DistNode;
+namespace Environet\Sys\Commands\DataNode;
 
 use Environet\Sys\Commands\BaseCommand;
 use Environet\Sys\Commands\Console;
-use PDO;
-use PDOException;
+use Environet\Sys\Config;
 
 /**
  * Class Install
  *
- * Install distribution node, create local config file
+ * Install data node, create local config file
  *
  * @package Environet\Sys\Commands\DataNode
  * @author  Ádám Bálint <adam.balint@srg.hu>
@@ -37,14 +36,12 @@ class Install extends BaseCommand {
 			}
 		}
 
-		startInstall:
-
-		//Collect configurations in an array. OP_MODE is fixed, because it's the dist install
+		//Collect configurations in an array. OP_MODE is fixed, because it's the data node install
 		$configArray = [
 			'environet' => [
-				'op_mode' => EN_OP_MODE_DIST,
+				'op_mode' => EN_OP_MODE_DATA,
 			],
-			'database'  => []
+			'datanode'  => []
 		];
 
 		//Ask for timezone, and check the validity of it
@@ -57,32 +54,16 @@ class Install extends BaseCommand {
 			break;
 		}
 
-		dbConfig:
+		$defautDistHost = Config::getInstance()->getDatanodeDistHost();
 		//Ask database config options
-		$dbHost = $this->console->askWithDefault("Enter the database host:", "localhost");
-		$dbPort = $this->console->askWithDefault("Enter the database port:", 5432);
-		$dbDatabase = $this->console->ask("Enter the database name:");
-		$dbUser = $this->console->ask("Enter the database username:");
-		$dbPass = $this->console->askHidden("Enter the database password:");
-
-		//Check DB connection
-		try {
-			$dsn = "pgsql:host=$dbHost;port=$dbPort;dbname=$dbDatabase;user=$dbUser;password=$dbPass";
-			new PDO($dsn);
-		} catch (PDOException $e) {
-			//Error while trying to connect, jump back to dbconfig
-			$this->console->writeLine("Wrong database configuration: ".$e->getMessage());
-			goto dbConfig;
+		if ($defautDistHost) {
+			$distHost = $this->console->askWithDefault("Enter the domain of distribution node:", $defautDistHost);
+		} else {
+			$distHost = $this->console->ask("Enter the domain of distribution node:");
 		}
 
-		//Add database configuration to configArray
-		$configArray['database'] = [
-			'host' => $dbHost,
-			'port' => $dbPort,
-			'database' => $dbDatabase,
-			'user' => $dbUser,
-			'pass' => $dbPass
-		];
+		//Add dist-host configuration to configArray
+		$configArray['datanode']['dist_host'] = $distHost;
 
 		//Build and save local ini file
 		$iniContent = buildIni($configArray);
