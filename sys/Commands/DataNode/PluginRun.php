@@ -22,23 +22,23 @@ class PluginRun extends BaseCommand {
 	 * @return int
 	 */
 	public function run($arguments): int {
+        $configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
 		$configFile = $arguments[3] ?? null;
 		if (!$configFile) {
 			$this->console->writeLine("Configuration file name is required", Console::COLOR_RED);
 			return 1;
 		}
 
-		if (!file_exists($configFile)) {
+		if (!file_exists($configurationsPath . $configFile)) {
 			$this->console->writeLine("Configuration file does not exist", Console::COLOR_RED);
 			return 1;
 		}
-
-		$configuration = parse_ini_file($configurationsPath . $arguments, true);
+		$configuration = parse_ini_file($configurationsPath  . $configFile, true);
 
 		$pluginBuilder = new PluginBuilder();
 		$plugin = $pluginBuilder->loadFromConfiguration($configuration);
 
-		echo $plugin->run();
+		echo $plugin->run($this->console);
 
 		return 0;
 	}

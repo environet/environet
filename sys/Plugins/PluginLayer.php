@@ -19,7 +19,7 @@ class PluginLayer {
 	private $name;
 
 	/**
-	 * @var array Layert alternatives
+	 * @var BuilderLayerInterface[] Layer alternatives
 	 */
 	private $alternatives = [];
 
@@ -67,15 +67,19 @@ class PluginLayer {
 	private function chooseAlternative(Console $console) {
 		if (count($this->alternatives) > 1) {
 			$console->writeLine("Choose a $this->name implementation:");
+            $console->writeLine('');
 			foreach ($this->alternatives as $i => $alternative) {
-				$console->writeLine($i + 1 . ": $alternative");
+                $description = $alternative::getDescription();
+				$console->writeLine($i + 1 . ": " . $alternative::getName());
+                $console->writeLine($description);
+                $console->writeLine('');
 			}
 			$choice = $console->askOption();
 
 			return ($this->alternatives[(int) $choice - 1]);
-		} else {
-			return $this->alternatives[0];
 		}
+
+		return $this->alternatives[0];
 	}
 
 

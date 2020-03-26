@@ -20,6 +20,22 @@ interface BuilderLayerInterface {
 	public function serializeConfiguration(): string;
 
 
+    /**
+     * Get a human friendly name to identify the layer implementation
+     *
+     * @return string
+     */
+    public static function getName(): string;
+
+
+    /**
+     * Get a description of the plugin layer implementation
+     *
+     * @return string
+     */
+    public static function getDescription(): string;
+
+
 	/**
 	 * Create an instance during plugin creation
 	 *

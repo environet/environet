@@ -7,30 +7,28 @@ use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\TransportInterface;
 
 /**
- * Class HttpTransport
- *
- * Transport layer through http connection
+ * Class LocalDirectoryTransport
  *
  * @package Environet\Sys\Plugins\Transports
  * @author  Ádám Bálint <adam.balint@srg.hu>
  */
-class HttpTransport implements TransportInterface, BuilderLayerInterface {
+class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterface {
 
 	/**
-	 * @var string URL of data source
+	 * @var string
 	 */
-	private $url;
+	private $path;
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public static function create(Console $console): HttpTransport {
+	public static function create(Console $console): TransportInterface {
         $console->writeLine('');
-		$console->writeLine("Configuring http transport");
-		$url = $console->ask("Enter url of data to be imported:", 200);
+		$console->writeLine("Configuring local directory transport");
+		$path = $console->ask("Enter path to the directory where the data is:", 200);
 		$config = [
-			'url' => $url,
+			'path' => $path,
 		];
 
 		return new self($config);
@@ -41,17 +39,17 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 	 * @inheritDoc
 	 */
 	public function serializeConfiguration(): string {
-		return 'url = ' . $this->url . "\n";
+		return 'path = ' . $this->path . "\n";
 	}
 
 
 	/**
-	 * HttpTransport constructor.
+	 * LocalFileTransport constructor.
 	 *
 	 * @param array $config
 	 */
 	public function __construct(array $config) {
-		$this->url = $config['url'];
+		$this->path = $config['path'];
 	}
 
 
@@ -59,20 +57,21 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 	 * @inheritDoc
 	 */
 	public function get(): array {
-		//@TODO make it with own HTTP Client
-		$cURLConnection = curl_init();
-		curl_setopt($cURLConnection, CURLOPT_URL, $this->url);
-		curl_setopt($cURLConnection, CURLOPT_RETURNTRANSFER, true);
+        // Open a directory, and read its contents
+        foreach(glob('/meteringdata/' . $this->path .'/*') as $path) {
+            return [file_get_contents($path)];
+        }
 
-		return [curl_exec($cURLConnection)];
+		return [''];
 	}
+
 
     /**
      * @inheritDoc
      */
     public static function getName(): string
     {
-        return 'http transport';
+        return 'local directory transport';
     }
 
     /**
@@ -80,6 +79,6 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
      */
     public static function getDescription(): string
     {
-        return 'Http transport description';
+        return 'Local directory transport description';
     }
 }

@@ -3,6 +3,7 @@
 namespace Environet\Sys\Plugins\Transports;
 
 use Environet\Sys\Commands\Console;
+use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\TransportInterface;
 
 /**
@@ -11,7 +12,7 @@ use Environet\Sys\Plugins\TransportInterface;
  * @package Environet\Sys\Plugins\Transports
  * @author  Ádám Bálint <adam.balint@srg.hu>
  */
-class LocalFileTransport implements TransportInterface {
+class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 
 	/**
 	 * @var string
@@ -23,7 +24,8 @@ class LocalFileTransport implements TransportInterface {
 	 * @inheritDoc
 	 */
 	public static function create(Console $console): TransportInterface {
-		$console->writeLine("Configuring local file transport");
+        $console->writeLine('');
+		$console->writeLine("Configuring local file transport", '32');
 		$path = $console->ask("Enter path to the file to be imported:", 200);
 		$config = [
 			'path' => $path,
@@ -52,11 +54,27 @@ class LocalFileTransport implements TransportInterface {
 
 
 	/**
-	 * @return string
+	 * @inheritDoc
 	 */
-	public function get(): string {
-		return file_get_contents('/meteringdata/' . $this->path);
+	public function get(): array {
+		return [file_get_contents('/meteringdata/' . $this->path)];
 	}
 
 
+    /**
+     * @inheritDoc
+     */
+    public static function getName(): string
+    {
+        return 'local file transport';
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Local file transport description';
+    }
 }

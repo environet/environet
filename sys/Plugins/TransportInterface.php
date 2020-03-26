@@ -11,10 +11,10 @@ interface TransportInterface {
 
 
 	/**
-	 * Get string from a resource
-	 * @return string
+	 * Get a list of resources
+	 * @return string[]
 	 */
-	public function get(): string;
+	public function get(): array;
 
 
 }
