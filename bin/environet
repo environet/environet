@@ -9,9 +9,10 @@ use Environet\Sys\Commands\DataNode\PluginRun;
 use Environet\Sys\Commands\DistNode\InitDb;
 use Environet\Sys\Commands\DistNode\Install as DistNodeInstall;
 use Environet\Sys\Commands\Exceptions\CommandException;
+use Environet\Sys\Commands\Tools\GenerateKeys;
 use Environet\Sys\Config;
 
-define('SRC_PATH', __DIR__ . '/..');
+define('SRC_PATH', realpath(__DIR__ . '/..'));
 
 $arguments = $argv;
 array_shift($arguments);
@@ -52,6 +53,11 @@ $commandRouter = function(array $arguments): ?string {
 						case 'database':
 							return InitDb::class;
 					}
+			}
+		case 'tool':
+			switch ($arguments[1] ?? null) {
+				case 'keygen':
+					return GenerateKeys::class;
 			}
 	}
 	return null;
