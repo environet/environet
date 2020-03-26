@@ -67,7 +67,7 @@ function en_debug($string = "") {
  */
 function exception_logger(Throwable $exception) {
 	file_put_contents(
-		Config::getInstance()->getErrorExceptioonPath(),
+		Config::getInstance()->getErrorExceptionPath(),
 		sprintf("[%s]: %s\n%s\n\n", date('c'), $exception->getMessage(), $exception->getTraceAsString()),
 		FILE_APPEND
 	);
