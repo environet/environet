@@ -1,0 +1,222 @@
+<?php
+
+namespace Environet\Sys\Admin\Pages\User;
+
+use Environet\Sys\Admin\Pages\CrudPage;
+use Environet\Sys\General\Db\GroupQueries;
+use Environet\Sys\General\Db\PermissionQueries;
+use Environet\Sys\General\Db\Query\Query;
+use Environet\Sys\General\Db\Query\Select;
+use Environet\Sys\General\Db\UserQueries;
+use Environet\Sys\General\Exceptions\HttpNotFoundException;
+use Environet\Sys\General\Exceptions\QueryException;
+use Environet\Sys\General\Exceptions\RenderException;
+use Environet\Sys\General\Response;
+
+/**
+ * Class UserCrud
+ *
+ * @package Environet\Sys\Admin\Pages\User
+ * @author  Mate Kovacs <mate.kovacs@srg.hu>
+ */
+class UserCrud extends CrudPage {
+
+	/**
+	 * @inheritdoc
+	 */
+	protected $queriesClass = UserQueries::class;
+
+	/**
+	 * @inheritdoc
+	 */
+	protected $indexTemplate = '/user/index.phtml';
+
+	/**
+	 * @inheritdoc
+	 */
+	protected $formTemplate = '/user/form.phtml';
+
+	/**
+	 * @inheritdoc
+	 */
+	protected $showTemplate = '/user/show.phtml';
+
+	/**
+	 * @inheritdoc
+	 */
+	protected $listPagePath = '/admin/users';
+
+	/**
+	 * @inheritdoc
+	 */
+	protected $successAddMessage = 'User successfully saved';
+
+
+	/**
+	 * List page action.
+	 *
+	 * @return Response
+	 * @throws RenderException
+	 */
+	public function list(): Response {
+
+		$searchString = $this->request->getQueryParam('search');
+
+		try {
+			//Base query with joins and conditions
+			$query = (new Select())
+				->select(['users.*'])
+				->select('STRING_AGG(DISTINCT groups.name, \', \') as group_names')
+				->from('users')
+				->join('users_groups', 'users_groups.usersid = users.id', Query::JOIN_LEFT)
+				->join('groups', 'users_groups.groupsid = groups.id', Query::JOIN_LEFT)
+				->where('users.deleted_at IS NULL')
+				->groupBy('users.id');
+
+			if (!is_null($searchString)) {
+				$query->search(
+					explode(' ', urldecode($searchString)),
+					UserQueries::$searchableFields
+				);
+			}
+
+			//Add pagination options to query, and get the page info (count, pages)
+			$currentPage = $this->request->getQueryParam('page', 1);
+			$query->paginate(
+				self::PAGE_SIZE,
+				$currentPage,
+				$totalCount,
+				$maxPage
+			);
+
+			//Add order by query condition
+			$query->sort(
+				$this->request->getQueryParam('order_by'),
+				$this->request->getQueryParam('order_dir', 'ASC')
+			);
+
+			//Run query
+			$records = $query->run();
+		} catch (QueryException $exception) {
+			$records = [];
+		}
+
+		return $this->render('/user/index.phtml', compact('records', 'totalCount', 'currentPage', 'maxPage', 'searchString'));
+	}
+
+
+	/**
+	 * Show page action.
+	 *
+	 * @return Response
+	 * @throws HttpNotFoundException
+	 * @throws RenderException
+	 */
+	public function show(): Response {
+		return $this->renderShowPage();
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function formContext(): array {
+		return [
+			'permissions'   => PermissionQueries::getOptionList(),
+			'groups'        => GroupQueries::getOptionList(),
+		];
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function validateData(array $data): bool {
+		$userId = $this->request->getQueryParam('id');
+		$valid  = true;
+
+		if (!validate($data, 'name', null, true)) {
+			$this->addMessage('The user\'s name is required', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+
+		if ($userId) {
+			// update validation
+			if ($data['password'] !== "") {
+				// if user want to change his pw
+				if ($data['password_confirm'] === "") {
+					// but they left the confirm field empty
+					$this->addMessage('If you want to change your password, you have to set the password confirmation also.', self::MESSAGE_ERROR);
+					$valid = false;
+				}
+				if ($data['password'] != $data['password_confirm']) {
+					// if the password confirmation failed
+					$this->addMessage('The passwords, aren\'t match.', self::MESSAGE_ERROR);
+					$valid = false;
+				}
+			}
+
+
+			if (!validate($data, 'email', REGEX_EMAIL, true)) {
+				$this->addMessage('The user\'s e-mail address is required and should be valid e-mail address', self::MESSAGE_ERROR);
+				$valid = false;
+			} else {
+				$userEmailInDb = (new Select())->select('COUNT(*)')->from('users')
+									->where('email = :email')
+									->addParameter(':email', $data['email'])
+									->run(Query::FETCH_COUNT);
+
+				$user = (new Select())->select(['id', 'email'])->from('users')
+							->where('id = :id')
+							->addParameter(':id', $userId)
+							->run(Query::FETCH_FIRST);
+
+				if ($userEmailInDb > 0 && $user['email'] != $data['email']) {
+					$this->addMessage(__('This e-mail has already taken'), self::MESSAGE_ERROR);
+					$valid = false;
+				}
+			}
+		} else {
+
+			if (!isset($data['form_permissions']) || !isset($data['form_permissions'][0]) || empty($data['form_permissions'][0])) {
+				if (!isset($data['form_groups']) || !isset($data['form_groups'][0]) || empty($data['form_groups'][0])) {
+					$this->addMessage('The user permission or group field is required', self::MESSAGE_ERROR);
+					$valid = false;
+				}
+			}
+
+			if (!validate($data, 'email', REGEX_EMAIL, true)) {
+				$this->addMessage('The user\'s e-mail address is required and should be valid e-mail address', self::MESSAGE_ERROR);
+				$valid = false;
+			} else {
+				$userWithEmail = (new Select())->select('COUNT(*)')->from('users')
+									->where('email = :email')
+									->addParameter(':email', $data['email'])
+									->run(Query::FETCH_COUNT);
+				if ($userWithEmail > 0) {
+					$this->addMessage(__('User with this e-mail already exists'), self::MESSAGE_ERROR);
+					$valid = false;
+				}
+			}
+
+			// insert validation
+			if (!validate($data, 'username', REGEX_USERNAME, true)) {
+				$this->addMessage('The user\'s username is required', self::MESSAGE_ERROR);
+				$valid = false;
+			} else {
+				$userWithUsername = (new Select())->select('COUNT(*)')->from('users')
+										->where('username = :username')
+										->addParameter(':username', $data['username'])
+										->run(Query::FETCH_COUNT);
+				if ($userWithUsername > 0) {
+					$this->addMessage(__('User with this username already exists'), self::MESSAGE_ERROR);
+					$valid = false;
+				}
+			}
+		}
+
+		return $valid;
+	}
+
+
+}

@@ -1,0 +1,66 @@
+<?php include __DIR__ . '../../layouts/before_app.phtml'; ?>
+
+<div class="card">
+	<h1><?= __(($record && $record['id']) ? 'Edit user (id: ' . $record['id'] . ')': 'Add user'); ?></h1>
+	<form method="post">
+		<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
+
+		<div class="form-group">
+			<label for="userName"><?=__('Name');?></label>
+			<input type="text" name="name" id="userName" class="form-control" value="<?=formFieldValue('name', $record);?>" />
+		</div>
+		<div class="form-group">
+			<label for="userEmail"><?=__('E-mail');?></label>
+			<input type="text" name="email" id="userEmail" class="form-control" value="<?=formFieldValue('email', $record);?>" />
+		</div>
+		<?php if (!isset($record)): ?>
+		<div class="form-group">
+			<label for="dataProviderUsername"><?=__('Username')?></label>
+			<input type="text" name="username" id="dataProviderUsername" class="form-control" value="<?=formFieldValue('username', $record);?>" />
+		</div>
+		<?php endif; ?>
+		<div class="form-group">
+			<label for="userPassword">Password</label>
+			<input type="password" name="password" id="userPassword" class="form-control"  />
+		</div>
+		<?php if (isset($record)): ?>
+		<div class="form-group">
+			<label for="userPasswordConfirm">Password</label>
+			<input type="password" name="password_confirm" id="userPasswordConfirm" class="form-control"  />
+		</div>
+		<?php endif; ?>
+		<div class="form-group">
+			<label for="publicKey">Public keys</label>
+			<textarea name="public_key" id="publicKey" class="form-control"></textarea>
+		</div>
+
+		<fieldset class="form-group">
+			<legend><?=__('Permissions');?></legend>
+			<?php $selectedPermissions = array_filter(formFieldValue('form_permissions', $record) ?: []); ?>
+			<?php for($i = 0; $i <= count($selectedPermissions); $i++) { ?>
+				<div class="field">
+					<select name="form_permissions[]">
+						<?=selectOptions($permissions, $selectedPermissions[$i] ?? null, ' - '.__('No permission').' - ');?>
+					</select>
+				</div>
+			<?php } ?>
+		</fieldset>
+
+		<fieldset class="form-group">
+			<legend><?=__('Groups');?></legend>
+			<?php $selectedGroups = array_filter(formFieldValue('form_groups', $record) ?: []); ?>
+			<?php for($i = 0; $i <= count($selectedGroups); $i++) { ?>
+				<div class="field">
+					<select name="form_groups[]">
+						<?=selectOptions($groups, $selectedGroups[$i] ?? null, ' - '.__('No groups').' - ');?>
+					</select>
+				</div>
+			<?php } ?>
+		</fieldset>
+
+		<div class="field">
+			<input type="submit" class="btn btn-primary" value="<?=__('Save');?>"/>
+		</div>
+	</form>
+</div>
+<?php include __DIR__ . '../../layouts/after_app.phtml'; ?>

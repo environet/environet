@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environet:UploadData xmlns:environet="environet">
+	<environet:MonitoringPointId>RS_42010_HYDRO</environet:MonitoringPointId>
+	<environet:Property>
+		<environet:PropertyId>water_level</environet:PropertyId>
+		<environet:TimeSeries>
+			<environet:Point>
+				<environet:PointTime>2020-02-25T00:00:00+01:00</environet:PointTime>
+				<environet:PointValue>22</environet:PointValue>
+			</environet:Point>
+			<environet:Point>
+				<environet:PointTime>2020-02-26T00:01:00+01:00</environet:PointTime>
+				<environet:PointValue>23</environet:PointValue>
+			</environet:Point>
+			<environet:Point>
+				<environet:PointTime>2020-02-27T00:02:00+01:00</environet:PointTime>
+				<environet:PointValue>24</environet:PointValue>
+			</environet:Point>
+		</environet:TimeSeries>
+	</environet:Property>
+</environet:UploadData>

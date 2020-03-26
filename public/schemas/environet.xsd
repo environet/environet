@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+		xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		xmlns:environet="environet"
+		targetNamespace="environet"
+		elementFormDefault="qualified"
+		attributeFormDefault="qualified"
+		version="1.0.0">
+	<xs:annotation>
+		<xs:documentation>Defines upload data input structure of Environet system</xs:documentation>
+	</xs:annotation>
+
+	<xs:element name="UploadData">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="environet:MonitoringPointId"/>
+				<xs:element ref="environet:Property" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+
+	<xs:element name="ErrorResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="environet:Error" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+
+	<xs:element name="MonitoringPointId" type="xs:string"/>
+	<xs:element name="Property">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="environet:PropertyId" maxOccurs="1" minOccurs="1"/>
+				<xs:element ref="environet:TimeSeries" maxOccurs="1" minOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PropertyId" type="xs:NCName"/>
+	<xs:element name="TimeSeries">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="environet:Point" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Point">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="PointTime" minOccurs="1" maxOccurs="1" type="xs:dateTime"/>
+				<xs:element name="PointValue" minOccurs="1" maxOccurs="1" type="xs:decimal"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Error">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="ErrorCode" minOccurs="1" maxOccurs="1" type="xs:int"/>
+				<xs:element name="ErrorMessage" minOccurs="1" maxOccurs="1" type="xs:string"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

@@ -1,0 +1,79 @@
+@use 'colors';
+@use 'variables';
+
+$sidebar-breakpoint: 45em;
+
+aside#sidebar {
+  background-color: colors.$sidebar-bg-color;
+  padding: 0;
+  color: #ddd;
+  font-weight: 600;
+  height: 100%;
+  box-shadow: #1d2124 0px 0px 10px;
+
+  .sidebar-menu {
+    padding: 0;
+    & > li {
+      border-bottom: 1px solid white;
+      a {
+        padding: .8em variables.$content-padding-horizontal;
+      }
+    }
+    li {
+      a {
+        padding: .5em variables.$content-padding-horizontal;
+        padding-right: 1.5em;
+
+        transition: background-color .2s;
+        &.selected, &:hover, &:active, &:focus {
+          background-color: rgba(0,0,0,0.3);
+          color: white;
+          i {
+            color: $accent-color;
+          }
+        }
+      }
+
+      &.sub-menu {
+        cursor: pointer;
+        ul {
+          padding-left: 0;
+          display: none;
+          a {
+            padding-left: 2em;
+          }
+          &.show {
+            display: block;
+          }
+        }
+      }
+    }
+    a {
+      color: inherit;
+      display: block;
+
+      i {
+        width: 1.3em;
+        text-align: center;
+        margin-right: .8em;
+      }
+    }
+  }
+}
+
+aside#sidebar {
+  display: none;
+
+  &.active {
+    display: block;
+  }
+}
+
+@media(min-width: $sidebar-breakpoint) {
+  #sidebarToggle {
+    display: none;
+  }
+  aside#sidebar {
+    display: block;
+  }
+}

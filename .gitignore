@@ -1,0 +1,6 @@
+/dev/*.phar
+/dev/schemas
+/logs
+/data/logs
+/database/dareffort_content.sql
+.idea

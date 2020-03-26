@@ -1,0 +1,169 @@
+//@import '~bootstrap/scss/functions.scss';
+//@import '~bootstrap/scss/mixins.scss';
+//@import '~bootstrap/scss/variables.scss';
+
+@import 'variables';
+@import 'colors';
+
+//@import "~bootstrap/scss/utilities/text";
+//@import '~bootstrap/scss/root';
+//@import "~bootstrap/scss/reboot";
+//@import '~bootstrap/scss/card';
+//@import '~bootstrap/scss/tables';
+//@import '~bootstrap/scss/grid';
+//@import '~bootstrap/scss/forms';
+//@import '~bootstrap/scss/pagination';
+//@import '~bootstrap/scss/buttons';
+//@import '~bootstrap/scss/dropdown';
+//@import '~bootstrap/scss/utilities/flex';
+//@import '~bootstrap/scss/mixins/grid';
+//@import '~bootstrap/scss/mixins/grid-framework';
+
+@import '~bootstrap';
+
+$fa-font-path: '~@fortawesome/fontawesome-free/webfonts';
+@import '~@fortawesome/fontawesome-free/scss/fontawesome';
+@import '~@fortawesome/fontawesome-free/scss/solid';
+
+@import 'sidebar';
+@import 'identity-dropdown';
+
+html {
+  height: 100%;
+}
+body {
+  color: #454545;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #eeeeee;
+  overflow: hidden;
+}
+
+a {
+  color: $primary-color;
+}
+
+a, a:hover, a:focus {
+
+  text-decoration: none;
+
+  outline: none;
+
+  outline: 0;
+
+}
+
+ul li {
+  list-style: none;
+}
+
+table {
+  th {
+    span.sort-icon {
+      margin-left: .3em;
+      &.fa-sort {
+        color: $text-muted
+      }
+    }
+  }
+
+  td.actions a {
+    margin: 0 .1em;
+  }
+}
+
+
+.container.error-page {
+  padding-top: 1em;
+}
+
+
+.card {
+  align-items: flex-start;
+}
+
+dl.row {
+  width: 100%;
+}
+
+.add-record-button {
+  margin: 1em 0;
+}
+
+#loginForm {
+  padding: 2em $content-padding-horizontal;
+  margin: 0 auto;
+  max-width: 400px;
+}
+
+.dropdown {
+  cursor: pointer;
+}
+
+header#siteHeader {
+  background: $header-background-color;
+  padding: .5em $content-padding-horizontal;
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: 1.3em;
+  a {
+    color: inherit;
+    &:hover, &:focus, &:active {
+      color: $accent-color;
+    }
+  }
+}
+
+#identity {
+  margin-left: auto;
+}
+
+section#container {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  overflow: auto;
+}
+
+section#main-content {
+  flex: 1;
+  overflow: auto;
+  padding: 1em $content-padding-horizontal;
+
+  .messages {
+    ul {
+      margin: 0;
+      padding: 0;
+    }
+
+    &.message-error {
+      color: map_get($theme-colors, 'danger');
+    }
+    &.message-success {
+      color: map_get($theme-colors, 'success');
+    }
+  }
+
+  .card {
+    padding: 1em;
+    overflow-x: auto;
+  }
+}
+
+.paginator {
+  text-align: center;
+  .pagination {
+    display: inline-flex;
+  }
+}
+
+#debug {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background-color: white;
+  padding: 1em;
+}

@@ -1,0 +1,23 @@
+<?php include __DIR__ . '../../../layouts/before_app.phtml'; ?>
+<div class="card">
+    <h1>Waterbody<?= $record && $record['european_river_code'] ? ' (european river code: ' . $record['european_river_code'] . ')': ''?></h1>
+    <form action="" method="POST">
+		<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
+		<?php if ( is_null($record) ): ?>
+        <div class="form-group">
+            <label for="european_river_code">European river code</label>
+            <input type="text" name="european_river_code" id="european_river_code" class="form-control"  value="<?=formFieldValue('european_river_code', $record);?>" />
+        </div>
+		<?php endif; ?>
+        <div class="form-group">
+            <label for="cname">Cname</label>
+            <input type="text" name="cname" id="cname" class="form-control"  value="<?=formFieldValue('cname', $record);?>" />
+        </div>
+
+        <div class="field">
+            <input type="submit" class="btn btn-primary" value="Save"/>
+        </div>
+    </form>
+</div>
+
+<?php include __DIR__ . '../../../layouts/after_app.phtml'; ?>

@@ -1,0 +1,11 @@
+$error-color: #d33;
+$primary-color: darken(#0085ff, 15%);
+$accent-color: orange;
+$header-background-color: darken($primary-color, 20%);
+$sidebar-bg-color: darken($primary-color, 15%);
+
+$theme-colors: (
+  "blue": $accent-color,
+  "primary": $primary-color,
+  "danger": $error-color
+);

@@ -1,0 +1,129 @@
+<?php include __DIR__ . '../../../layouts/before_app.phtml'; ?>
+<div class="card">
+    <h1>Hydro monitoring point<?= $record && $record['id'] ? '(id: ' . $record['id'] . ')': ''?></h1>
+    <form action="" method="POST">
+        <input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" class="form-control" value="<?=formFieldValue('name', $record);?>" />
+        </div>
+
+        <div class="form-group">
+            <label for="eucd_wgst">Eucd wgst</label>
+            <input type="text" name="eucd_wgst" id="eucd_wgst" class="form-control" value="<?=formFieldValue('eucd_wgst', $record);?>" />
+        </div>
+
+        <div class="form-group">
+            <label for="ncd_wgst">Ncd wgst</label>
+            <input type="text" name="ncd_wgst" id="ncd_wgst" class="form-control" value="<?=formFieldValue('ncd_wgst', $record);?>" />
+        </div>
+
+        <div class="form-group">
+            <label for="vertical_reference">Vertical reference</label>
+            <input type="text" name="vertical_reference" id="vertical_reference" class="form-control" value="<?=formFieldValue('vertical_reference', $record);?>" />
+        </div>
+
+        <div class="form-group">
+            <label for="country">Country</label>
+            <input type="text" name="country" id="country" class="form-control" value="<?=formFieldValue('country', $record);?>" />
+        </div>
+
+        <div class="form-group">
+            <label for="lat">Lat</label>
+            <input type="text" name="lat" id="lat" class="form-control" value="<?=formFieldValue('lat', $record);?>" />
+        </div>
+
+        <div class="form-group">
+            <label for="long">Long</label>
+            <input type="text" name="long" id="long" class="form-control" value="<?=formFieldValue('long', $record);?>" />
+        </div>
+
+        <div class="form-group">
+            <label for="z">Z</label>
+            <input type="text" name="z" id="z" class="form-control" value="<?=formFieldValue('z', $record);?>" />
+        </div>
+
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" name="location" id="location" class="form-control" value="<?=formFieldValue('location', $record);?>" />
+        </div>
+
+        <div class="form-group">
+            <label for="river_kilometer">River kilometer</label>
+            <input type="text" name="river_kilometer" id="river_kilometer" class="form-control" value="<?=formFieldValue('river_kilometer', $record);?>" />
+        </div>
+
+        <div class="form-group">
+            <label for="catchment_area">Catchment area</label>
+            <input type="text" name="catchment_area" id="catchment_area" class="form-control" value="<?=formFieldValue('catchment_area', $record);?>" />
+        </div>
+
+        <div class="form-group">
+            <label for="gauge_zero">Gauge zero</label>
+            <input type="text" name="gauge_zero" id="gauge_zero" class="form-control" value="<?=formFieldValue('gauge_zero', $record);?>" />
+        </div>
+
+        <div class="form-group">
+            <label for="river_basin">River basin</label>
+            <input type="text" name="river_basin" id="river_basin" class="form-control" value="<?=formFieldValue('river_basin', $record);?>" />
+        </div>
+
+        <fieldset class="form-group">
+            <legend><?=__('Classification');?></legend>
+            <?php $selectedClassification = formFieldValue('classification', $record); ?>
+            <div class="field">
+                <select name="classification">
+                    <?=selectOptions($classifications, $selectedClassification ?? null, ' - '.__('No classification').' - ');?>
+                </select>
+            </div>
+        </fieldset>
+
+        <fieldset class="form-group">
+            <legend><?=__('Operator');?></legend>
+			<?php $selectedOperator = formFieldValue('operator', $record); ?>
+            <div class="field">
+                <select name="operator">
+					<?=selectOptions($operators, $selectedOperator ?? null, ' - '.__('No operator').' - ');?>
+                </select>
+            </div>
+        </fieldset>
+
+        <fieldset class="form-group">
+            <legend><?=__('Riverbank');?></legend>
+			<?php $selectedRiverbank = formFieldValue('riverbank', $record); ?>
+            <div class="field">
+                <select name="riverbank">
+					<?=selectOptions($riverbanks, $selectedRiverbank ?? null, ' - '.__('No riverbank').' - ');?>
+                </select>
+            </div>
+        </fieldset>
+
+        <fieldset class="form-group">
+            <legend><?=__('Waterbody');?></legend>
+			<?php $selectedWaterbody = formFieldValue('waterbodyeuropean_river_code', $record); ?>
+            <div class="field">
+                <select name="waterbodyeuropean_river_code">
+					<?=selectOptions($waterbodyeuropean_river_code, $selectedWaterbody ?? null, ' - '.__('No waterbody').' - ');?>
+                </select>
+            </div>
+        </fieldset>
+
+		<fieldset class="form-group">
+			<legend><?=__('Observed property(/ies)');?></legend>
+		    <?php $selectedProperties = array_filter(formFieldValue('observedProperties', $record) ?: []); ?>
+		    <?php for($i = 0; $i <= count($selectedProperties); $i++) { ?>
+				<div class="field">
+					<select name="observedProperties[<?=isset($selectedProperties[$i]) ? $selectedProperties[$i] : ''?>]">
+					    <?=selectOptions($observedProperties, $selectedProperties[$i] ?? null, ' - '.__('No property').' - ');?>
+					</select>
+				</div>
+		    <?php } ?>
+		</fieldset>
+
+        <div class="field">
+            <input type="submit" class="btn btn-primary" value="Save"/>
+        </div>
+    </form>
+</div>
+
+<?php include __DIR__ . '../../../layouts/after_app.phtml'; ?>

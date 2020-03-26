@@ -1,0 +1,6 @@
+<?php
+?>
+<a <?= $route ? 'href="' . $route . '"' : '' ?> class="<?= isRoute($route, $matchExtra) ? 'selected' : ''; ?>">
+	<i class="fas fa-<?= $icon; ?>"></i>
+	<span><?= $title; ?></span>
+</a>

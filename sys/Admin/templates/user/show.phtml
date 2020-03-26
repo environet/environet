@@ -1,0 +1,53 @@
+<?php include __DIR__ . '../../layouts/before_app.phtml'; ?>
+<div class="card">
+    <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">#<?=$record['id'] ?? '';?></dd>
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9"><?=$record['name'] ?? '';?></dd>
+        <dt class="col-sm-3">Username</dt>
+        <dd class="col-sm-9"><?=$record['username'] ?? '';?></dd>
+        <dt class="col-sm-3">E-mail address</dt>
+        <dd class="col-sm-9"><?=$record['email'] ?? '';?></dd>
+        <dt class="col-sm-3">Password</dt>
+        <dd class="col-sm-9"><?=!empty($record['password']) ? '******' : '';?></dd>
+        <dt class="col-sm-3">Last login at</dt>
+        <dd class="col-sm-9"><?=dateFormat($record['loggedin_at'] ?? null)?></dd>
+        <dt class="col-sm-3">Groups</dt>
+        <dd class="col-sm-9">
+            <ul>
+                <?php foreach ($record['show_groups'] ?: [] as $group) { ?>
+                    <li>
+                        <a href="/admin/groups/show?id=<?=$group['id'];?>">#<?=$group['id'] ?? null;?></a>
+                        -
+                        <span><?=$group['name'] ?? null;?></span>
+                    </li>
+                <?php } ?>
+            </ul>
+        </dd>
+        <dt class="col-sm-3">Operators</dt>
+        <dd class="col-sm-9">
+            <ul>
+                <?php foreach ($record['show_operators'] ?: [] as $operator) { ?>
+                    <li>
+                        <a href="/admin/operators/show?id=<?=$operator['id'];?>">#<?=$operator['id'] ?? null;?></a>
+                        -
+                        <span><?=$operator['name'] ?? null;?> (<?=userGroupConnectionType($operator['connection_type']);?>)</span>
+                    </li>
+                <?php } ?>
+            </ul>
+        </dd>
+        <dt class="col-sm-3">Public keys</dt>
+        <dd class="col-sm-9">
+            <ul>
+                <?php foreach ($record['show_publicKeys'] ?: [] as $publicKey) { ?>
+                    <li>
+                        <a href="/admin/public-keys/show?id=<?=$publicKey['id'];?>">#<?=$publicKey['id'] ?? null;?></a>
+                    </li>
+                <?php } ?>
+            </ul>
+        </dd>
+    </dl>
+</div>
+
+<?php include __DIR__ . '../../layouts/after_app.phtml'; ?>

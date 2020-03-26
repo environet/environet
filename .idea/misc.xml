@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptSettings">
+    <option name="languageLevel" value="ES6" />
+  </component>
+  <component name="ProjectResources">
+    <resource url="environet" location="$PROJECT_DIR$/src/public/schemas/environet.xsd" />
+    <resource url="http://schemas.opengis.net/gml/3.2.1/gml.xsd" location="$PROJECT_DIR$/dev/schemas/gml32/gml.xsd" />
+    <resource url="http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd" location="$PROJECT_DIR$/dev/schemas/iso19139/gco/gco.xsd" />
+    <resource url="http://schemas.opengis.net/iso/19139/20070417/gmd/gmd.xsd" location="$PROJECT_DIR$/dev/schemas/iso19139/gmd/gmd.xsd" />
+    <resource url="http://schemas.opengis.net/iso/19139/20070417/gsr/gsr.xsd" location="$PROJECT_DIR$/dev/schemas/iso19139/gsr/gsr.xsd" />
+    <resource url="http://schemas.opengis.net/iso/19139/20070417/gss/gss.xsd" location="$PROJECT_DIR$/dev/schemas/iso19139/gss/gss.xsd" />
+    <resource url="http://schemas.opengis.net/iso/19139/20070417/gts/gts.xsd" location="$PROJECT_DIR$/dev/schemas/iso19139/gts/gts.xsd" />
+    <resource url="http://schemas.opengis.net/om/2.0/observation.xsd" location="$PROJECT_DIR$/dev/schemas/om2/observation.xsd" />
+    <resource url="http://schemas.opengis.net/sampling/2.0/samplingFeature.xsd" location="$PROJECT_DIR$/dev/schemas/sampling2/samplingFeature.xsd" />
+    <resource url="http://schemas.opengis.net/samplingSpatial/2.0/spatialSamplingFeature.xsd" location="$PROJECT_DIR$/dev/schemas/samplingSpatial2/spatialSamplingFeature.xsd" />
+    <resource url="http://schemas.opengis.net/sweCommon/2.0/swe.xsd" location="$PROJECT_DIR$/dev/schemas/sweCommon2/swe.xsd" />
+    <resource url="http://www.isotc211.org/2005/gco" location="$PROJECT_DIR$/dev/schemas/iso19139/gco/gco.xsd" />
+    <resource url="http://www.opengis.net/waterml/2.0" location="$PROJECT_DIR$/dev/schemas/wml2/waterml2.xsd" />
+  </component>
+</project>

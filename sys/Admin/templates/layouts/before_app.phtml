@@ -1,0 +1,82 @@
+<?php include __DIR__.'/before_content.phtml';?>
+<header id="siteHeader">
+    <a href="#" id="sidebarToggle"><i class="fas fa-bars"></i></a>
+    <div id="identity" class="dropdown">
+        <!--<div class="summary">
+            <div><?php echo $identity['name'] ?></div>
+            <a href="#" class="dropdown-toggle"></a>
+        </div>-->
+
+        <!--<div class="dropdown-menu dropdown-menu-right">-->
+            <a class="logout-link" href="#">
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
+            <form id="logout-form" action="/admin/logout" method="POST" style="display: none;">
+                <input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
+            </form>
+        <!-- </div> -->
+    </div>
+</header>
+<section id="container">
+    <!--sidebar start-->
+    <aside id="sidebar">
+        <!-- sidebar menu start-->
+        <ul class="sidebar-menu">
+            <li class="">
+                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Dashboard', 'route' => '/admin', 'icon' => 'home', 'matchExtra' => 0]) ?>
+            </li>
+            <li>
+				<?= includeTemplatePart('menuitem.phtml', ['title' => 'Users', 'route' => '/admin/users', 'icon' => 'user', 'matchExtra' => 1]) ?>
+            </li>
+            <li>
+				<?= includeTemplatePart('menuitem.phtml', ['title' => 'Groups', 'route' => '/admin/groups', 'icon' => 'user-friends', 'matchExtra' => 1]) ?>
+            </li>
+            <li>
+				<?= includeTemplatePart('menuitem.phtml', ['title' => 'Data providers', 'route' => '/admin/data-providers', 'icon' => 'address-book', 'matchExtra' => 1]) ?>
+            </li>
+            <li class="sub-menu" data-id="hydroSubmenu" >
+				<?= includeTemplatePart('menuitem.phtml', ['title' => 'Hydro', 'route' => null, 'icon' => 'tint', 'matchExtra' => 0]) ?>
+                <ul class="sub">
+                    <li>
+						<?= includeTemplatePart('menuitem.phtml', ['title' => 'Monitoring points', 'route' => '/admin/hydro/monitoring-points', 'icon' => 'tachometer-alt', 'matchExtra' => 1]) ?>
+                    </li>
+                    <li>
+						<?= includeTemplatePart('menuitem.phtml', ['title' => 'Observed properties', 'route' => '/admin/hydro/observed-properties', 'icon' => 'eye', 'matchExtra' => 1]) ?>
+                    </li>
+                    <li>
+						<?= includeTemplatePart('menuitem.phtml', ['title' => 'Waterbodies', 'route' => '/admin/hydro/waterbodies', 'icon' => 'water', 'matchExtra' => 1]) ?>
+                    </li>
+                    <li>
+						<?= includeTemplatePart('menuitem.phtml', ['title' => 'Station classifications', 'route' => '/admin/hydro/station-classifications', 'icon' => 'certificate', 'matchExtra' => 1]) ?>
+                    </li>
+                    <li>
+						<?= includeTemplatePart('menuitem.phtml', ['title' => 'Results', 'route' => '/admin/hydro/results', 'icon' => 'chart-pie', 'matchExtra' => 1]) ?>
+                    </li>
+                </ul>
+            </li>
+            <li class="sub-menu" data-id="meteoSubmenu" >
+				<?= includeTemplatePart('menuitem.phtml', ['title' => 'Meteo', 'route' => null, 'icon' => 'cloud', 'matchExtra' => 1]) ?>
+                <ul class="sub">
+                    <li>
+						<?= includeTemplatePart('menuitem.phtml', ['title' => 'Monitoring points', 'route' => '/admin/meteo/monitoring-points', 'icon' => 'tachometer-alt', 'matchExtra' => 1]) ?>
+                    </li>
+                    <li>
+						<?= includeTemplatePart('menuitem.phtml', ['title' => 'Observed properties', 'route' => '/admin/meteo/observed-properties', 'icon' => 'eye', 'matchExtra' => 1]) ?>
+                    </li>
+                    <li>
+						<?= includeTemplatePart('menuitem.phtml', ['title' => 'Station classifications', 'route' => '/admin/meteo/station-classifications', 'icon' => 'certificate', 'matchExtra' => 1]) ?>
+                    </li>
+					<li>
+		                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Results', 'route' => '/admin/meteo/results', 'icon' => 'chart-pie', 'matchExtra' => 1]) ?>
+					</li>
+                </ul>
+            </li>
+        </ul>
+        <!-- sidebar menu end-->
+    </aside>
+    <!--sidebar end-->
+
+    <!--main content start-->
+    <section id="main-content">
+        <div class="main-content-wrapper">
+        <?php include __DIR__.'/../parts/messages.phtml'; //Render flash messages?>

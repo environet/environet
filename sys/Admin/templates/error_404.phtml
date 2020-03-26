@@ -1,0 +1,11 @@
+<?php include 'layouts/before_content.phtml'; ?>
+    <div class="container error-page">
+        <h1>404</h1>
+        <h3><?=__('The page you requested was not found');?></h3>
+        <?php if(EN_DEV_MODE):?>
+            <p><?= $exception->getMessage() ?></p>
+	    <?php endif;?>
+        <a href="/admin">Return to dashboard</a>
+    </div>
+
+<?php include 'layouts/after_content.phtml'; ?>

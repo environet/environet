@@ -1,0 +1,76 @@
+<?php include __DIR__ . '../../../layouts/before_app.phtml'; ?>
+<div class="card">
+    <h1>Meteo monitoring point</h1>
+    <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">#<?=$record['id'] ?? '';?></dd>
+
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9"><?=$record['name'] ?? '';?></dd>
+
+        <dt class="col-sm-3">eucd_pst</dt>
+        <dd class="col-sm-9"><?=$record['eucd_pst'] ?? '';?></dd>
+
+        <dt class="col-sm-3">ncd_pst</dt>
+        <dd class="col-sm-9"><?=$record['ncd_pst'] ?? '';?></dd>
+
+        <dt class="col-sm-3">lat</dt>
+        <dd class="col-sm-9"><?=$record['lat'] ?? '';?></dd>
+
+        <dt class="col-sm-3">long</dt>
+        <dd class="col-sm-9"><?=$record['long'] ?? '';?></dd>
+
+        <dt class="col-sm-3">z</dt>
+        <dd class="col-sm-9"><?=$record['z'] ?? '';?></dd>
+
+        <dt class="col-sm-3">altitude</dt>
+        <dd class="col-sm-9"><?=$record['altitude'] ?? '';?></dd>
+
+        <dt class="col-sm-3">maplat</dt>
+        <dd class="col-sm-9"><?=$record['maplat'] ?? '';?></dd>
+
+        <dt class="col-sm-3">maplong</dt>
+        <dd class="col-sm-9"><?=$record['maplong'] ?? '';?></dd>
+
+        <dt class="col-sm-3">river_basin</dt>
+        <dd class="col-sm-9"><?=$record['river_basin'] ?? '';?></dd>
+
+        <dt class="col-sm-3">start_time</dt>
+        <dd class="col-sm-9"><?=$record['start_time'] ?? '';?></dd>
+
+        <dt class="col-sm-3">end_time</dt>
+        <dd class="col-sm-9"><?=$record['end_time'] ?? '';?></dd>
+
+        <dt class="col-sm-3">utc_offset</dt>
+        <dd class="col-sm-9"><?=$record['utc_offset'] ?? '';?></dd>
+
+        <dt class="col-sm-3">vertical_reference</dt>
+        <dd class="col-sm-9"><?=$record['vertical_reference'] ?? '';?></dd>
+
+        <dt class="col-sm-3">country</dt>
+        <dd class="col-sm-9"><?=$record['country'] ?? '';?></dd>
+
+        <dt class="col-sm-3">location</dt>
+        <dd class="col-sm-9"><?=$record['location'] ?? '';?></dd>
+
+        <dt class="col-sm-3">Station classification</dt>
+        <dd class="col-sm-9">
+            <a href="/admin/meteo/station-classifications?id=<?= $record['classification']['id'] ;?>">#<?= $record['classification']['id'] ?></a>
+            <span><?=$record['classification']['value'] ?? null;?></span>
+        </dd>
+
+        <dt class="col-sm-3">Operator</dt>
+        <dd class="col-sm-9">
+            <a href="/admin/data-providers?id=<?= $record['operator']['id'] ;?>">#<?= $record['operator']['id'] ?></a>
+            <span><?=$record['operator']['name'] ?? null;?></span>
+        </dd>
+
+		<dt class="col-sm-3">Observerd properties</dt>
+		<dd class="col-sm-9">
+			<?php foreach ($record['showObservedProperty'] ?: [] as $property) { ?>
+				<a href="/admin/meteo/observed-properties/edit?id=<?=$property['id'];?>">#<?=$property['symbol'] ?? null;?></a><br>
+			<?php } ?>
+		</dd>
+    </dl>
+</div>
+<?php include __DIR__ . '../../../layouts/after_app.phtml'; ?>

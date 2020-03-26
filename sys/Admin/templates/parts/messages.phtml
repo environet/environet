@@ -1,0 +1,16 @@
+<?php
+
+if (isset($messages)) {
+	//Iterate over message types, and render all messages under ul-li lists
+	foreach ($messages as $type => $typeMessages) {
+?>
+		<div class="messages message-<?=$type;?> ">
+			<ul>
+				<?php foreach ($typeMessages as $typeMessage) {?>
+					<li><?=$typeMessage;?></li>
+				<?php } ?>
+			</ul>
+		</div>
+<?php
+	}
+}

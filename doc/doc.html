@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Environet</title>
+	<style type="text/css">
+		.markdown-body .octicon {
+			display: inline-block;
+			fill: currentColor;
+			vertical-align: text-bottom;
+		}
+
+		.markdown-body .anchor {
+			float: left;
+			line-height: 1;
+			margin-left: -20px;
+			padding-right: 4px;
+		}
+
+		.markdown-body .anchor:focus {
+			outline: none;
+		}
+
+		.markdown-body h1 .octicon-link,
+		.markdown-body h2 .octicon-link,
+		.markdown-body h3 .octicon-link,
+		.markdown-body h4 .octicon-link,
+		.markdown-body h5 .octicon-link,
+		.markdown-body h6 .octicon-link {
+			color: #1b1f23;
+			vertical-align: middle;
+			visibility: hidden;
+		}
+
+		.markdown-body h1:hover .anchor,
+		.markdown-body h2:hover .anchor,
+		.markdown-body h3:hover .anchor,
+		.markdown-body h4:hover .anchor,
+		.markdown-body h5:hover .anchor,
+		.markdown-body h6:hover .anchor {
+			text-decoration: none;
+		}
+
+		.markdown-body h1:hover .anchor .octicon-link,
+		.markdown-body h2:hover .anchor .octicon-link,
+		.markdown-body h3:hover .anchor .octicon-link,
+		.markdown-body h4:hover .anchor .octicon-link,
+		.markdown-body h5:hover .anchor .octicon-link,
+		.markdown-body h6:hover .anchor .octicon-link {
+			visibility: visible;
+		}
+
+		.markdown-body h1:hover .anchor .octicon-link:before,
+		.markdown-body h2:hover .anchor .octicon-link:before,
+		.markdown-body h3:hover .anchor .octicon-link:before,
+		.markdown-body h4:hover .anchor .octicon-link:before,
+		.markdown-body h5:hover .anchor .octicon-link:before,
+		.markdown-body h6:hover .anchor .octicon-link:before {
+			width: 16px;
+			height: 16px;
+			content: ' ';
+			display: inline-block;
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' version='1.1' width='16' height='16' aria-hidden='true'%3E%3Cpath fill-rule='evenodd' d='M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z'%3E%3C/path%3E%3C/svg%3E");
+		}.markdown-body {
+			 -ms-text-size-adjust: 100%;
+			 -webkit-text-size-adjust: 100%;
+			 line-height: 1.5;
+			 color: #24292e;
+			 font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
+			 font-size: 16px;
+			 line-height: 1.5;
+			 word-wrap: break-word;
+		 }
+
+		.markdown-body details {
+			display: block;
+		}
+
+		.markdown-body summary {
+			display: list-item;
+		}
+
+		.markdown-body a {
+			background-color: initial;
+		}
+
+		.markdown-body a:active,
+		.markdown-body a:hover {
+			outline-width: 0;
+		}
+
+		.markdown-body strong {
+			font-weight: inherit;
+			font-weight: bolder;
+		}
+
+		.markdown-body h1 {
+			font-size: 2em;
+			margin: .67em 0;
+		}
+
+		.markdown-body img {
+			border-style: none;
+		}
+
+		.markdown-body code,
+		.markdown-body kbd,
+		.markdown-body pre {
+			font-family: monospace,monospace;
+			font-size: 1em;
+		}
+
+		.markdown-body hr {
+			box-sizing: initial;
+			height: 0;
+			overflow: visible;
+		}
+
+		.markdown-body input {
+			font: inherit;
+			margin: 0;
+		}
+
+		.markdown-body input {
+			overflow: visible;
+		}
+
+		.markdown-body [type=checkbox] {
+			box-sizing: border-box;
+			padding: 0;
+		}
+
+		.markdown-body * {
+			box-sizing: border-box;
+		}
+
+		.markdown-body input {
+			font-family: inherit;
+			font-size: inherit;
+			line-height: inherit;
+		}
+
+		.markdown-body a {
+			color: #0366d6;
+			text-decoration: none;
+		}
+
+		.markdown-body a:hover {
+			text-decoration: underline;
+		}
+
+		.markdown-body strong {
+			font-weight: 600;
+		}
+
+		.markdown-body hr {
+			height: 0;
+			margin: 15px 0;
+			overflow: hidden;
+			background: transparent;
+			border: 0;
+			border-bottom: 1px solid #dfe2e5;
+		}
+
+		.markdown-body hr:after,
+		.markdown-body hr:before {
+			display: table;
+			content: "";
+		}
+
+		.markdown-body hr:after {
+			clear: both;
+		}
+
+		.markdown-body table {
+			border-spacing: 0;
+			border-collapse: collapse;
+		}
+
+		.markdown-body td,
+		.markdown-body th {
+			padding: 0;
+		}
+
+		.markdown-body details summary {
+			cursor: pointer;
+		}
+
+		.markdown-body kbd {
+			display: inline-block;
+			padding: 3px 5px;
+			font: 11px SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+			line-height: 10px;
+			color: #444d56;
+			vertical-align: middle;
+			background-color: #fafbfc;
+			border: 1px solid #d1d5da;
+			border-radius: 3px;
+			box-shadow: inset 0 -1px 0 #d1d5da;
+		}
+
+		.markdown-body h1,
+		.markdown-body h2,
+		.markdown-body h3,
+		.markdown-body h4,
+		.markdown-body h5,
+		.markdown-body h6 {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+
+		.markdown-body h1 {
+			font-size: 32px;
+		}
+
+		.markdown-body h1,
+		.markdown-body h2 {
+			font-weight: 600;
+		}
+
+		.markdown-body h2 {
+			font-size: 24px;
+		}
+
+		.markdown-body h3 {
+			font-size: 20px;
+		}
+
+		.markdown-body h3,
+		.markdown-body h4 {
+			font-weight: 600;
+		}
+
+		.markdown-body h4 {
+			font-size: 16px;
+		}
+
+		.markdown-body h5 {
+			font-size: 14px;
+		}
+
+		.markdown-body h5,
+		.markdown-body h6 {
+			font-weight: 600;
+		}
+
+		.markdown-body h6 {
+			font-size: 12px;
+		}
+
+		.markdown-body p {
+			margin-top: 0;
+			margin-bottom: 10px;
+		}
+
+		.markdown-body blockquote {
+			margin: 0;
+		}
+
+		.markdown-body ol,
+		.markdown-body ul {
+			padding-left: 0;
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+
+		.markdown-body ol ol,
+		.markdown-body ul ol {
+			list-style-type: lower-roman;
+		}
+
+		.markdown-body ol ol ol,
+		.markdown-body ol ul ol,
+		.markdown-body ul ol ol,
+		.markdown-body ul ul ol {
+			list-style-type: lower-alpha;
+		}
+
+		.markdown-body dd {
+			margin-left: 0;
+		}
+
+		.markdown-body code,
+		.markdown-body pre {
+			font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+			font-size: 12px;
+		}
+
+		.markdown-body pre {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+
+		.markdown-body input::-webkit-inner-spin-button,
+		.markdown-body input::-webkit-outer-spin-button {
+			margin: 0;
+			-webkit-appearance: none;
+			appearance: none;
+		}
+
+		.markdown-body :checked+.radio-label {
+			position: relative;
+			z-index: 1;
+			border-color: #0366d6;
+		}
+
+		.markdown-body .border {
+			border: 1px solid #e1e4e8!important;
+		}
+
+		.markdown-body .border-0 {
+			border: 0!important;
+		}
+
+		.markdown-body .border-bottom {
+			border-bottom: 1px solid #e1e4e8!important;
+		}
+
+		.markdown-body .rounded-1 {
+			border-radius: 3px!important;
+		}
+
+		.markdown-body .bg-white {
+			background-color: #fff!important;
+		}
+
+		.markdown-body .bg-gray-light {
+			background-color: #fafbfc!important;
+		}
+
+		.markdown-body .text-gray-light {
+			color: #6a737d!important;
+		}
+
+		.markdown-body .mb-0 {
+			margin-bottom: 0!important;
+		}
+
+		.markdown-body .my-2 {
+			margin-top: 8px!important;
+			margin-bottom: 8px!important;
+		}
+
+		.markdown-body .pl-0 {
+			padding-left: 0!important;
+		}
+
+		.markdown-body .py-0 {
+			padding-top: 0!important;
+			padding-bottom: 0!important;
+		}
+
+		.markdown-body .pl-1 {
+			padding-left: 4px!important;
+		}
+
+		.markdown-body .pl-2 {
+			padding-left: 8px!important;
+		}
+
+		.markdown-body .py-2 {
+			padding-top: 8px!important;
+			padding-bottom: 8px!important;
+		}
+
+		.markdown-body .pl-3,
+		.markdown-body .px-3 {
+			padding-left: 16px!important;
+		}
+
+		.markdown-body .px-3 {
+			padding-right: 16px!important;
+		}
+
+		.markdown-body .pl-4 {
+			padding-left: 24px!important;
+		}
+
+		.markdown-body .pl-5 {
+			padding-left: 32px!important;
+		}
+
+		.markdown-body .pl-6 {
+			padding-left: 40px!important;
+		}
+
+		.markdown-body .f6 {
+			font-size: 12px!important;
+		}
+
+		.markdown-body .lh-condensed {
+			line-height: 1.25!important;
+		}
+
+		.markdown-body .text-bold {
+			font-weight: 600!important;
+		}
+
+		.markdown-body .pl-c {
+			color: #6a737d;
+		}
+
+		.markdown-body .pl-c1,
+		.markdown-body .pl-s .pl-v {
+			color: #005cc5;
+		}
+
+		.markdown-body .pl-e,
+		.markdown-body .pl-en {
+			color: #6f42c1;
+		}
+
+		.markdown-body .pl-s .pl-s1,
+		.markdown-body .pl-smi {
+			color: #24292e;
+		}
+
+		.markdown-body .pl-ent {
+			color: #22863a;
+		}
+
+		.markdown-body .pl-k {
+			color: #d73a49;
+		}
+
+		.markdown-body .pl-pds,
+		.markdown-body .pl-s,
+		.markdown-body .pl-s .pl-pse .pl-s1,
+		.markdown-body .pl-sr,
+		.markdown-body .pl-sr .pl-cce,
+		.markdown-body .pl-sr .pl-sra,
+		.markdown-body .pl-sr .pl-sre {
+			color: #032f62;
+		}
+
+		.markdown-body .pl-smw,
+		.markdown-body .pl-v {
+			color: #e36209;
+		}
+
+		.markdown-body .pl-bu {
+			color: #b31d28;
+		}
+
+		.markdown-body .pl-ii {
+			color: #fafbfc;
+			background-color: #b31d28;
+		}
+
+		.markdown-body .pl-c2 {
+			color: #fafbfc;
+			background-color: #d73a49;
+		}
+
+		.markdown-body .pl-c2:before {
+			content: "^M";
+		}
+
+		.markdown-body .pl-sr .pl-cce {
+			font-weight: 700;
+			color: #22863a;
+		}
+
+		.markdown-body .pl-ml {
+			color: #735c0f;
+		}
+
+		.markdown-body .pl-mh,
+		.markdown-body .pl-mh .pl-en,
+		.markdown-body .pl-ms {
+			font-weight: 700;
+			color: #005cc5;
+		}
+
+		.markdown-body .pl-mi {
+			font-style: italic;
+			color: #24292e;
+		}
+
+		.markdown-body .pl-mb {
+			font-weight: 700;
+			color: #24292e;
+		}
+
+		.markdown-body .pl-md {
+			color: #b31d28;
+			background-color: #ffeef0;
+		}
+
+		.markdown-body .pl-mi1 {
+			color: #22863a;
+			background-color: #f0fff4;
+		}
+
+		.markdown-body .pl-mc {
+			color: #e36209;
+			background-color: #ffebda;
+		}
+
+		.markdown-body .pl-mi2 {
+			color: #f6f8fa;
+			background-color: #005cc5;
+		}
+
+		.markdown-body .pl-mdr {
+			font-weight: 700;
+			color: #6f42c1;
+		}
+
+		.markdown-body .pl-ba {
+			color: #586069;
+		}
+
+		.markdown-body .pl-sg {
+			color: #959da5;
+		}
+
+		.markdown-body .pl-corl {
+			text-decoration: underline;
+			color: #032f62;
+		}
+
+		.markdown-body .mb-0 {
+			margin-bottom: 0!important;
+		}
+
+		.markdown-body .my-2 {
+			margin-bottom: 8px!important;
+		}
+
+		.markdown-body .my-2 {
+			margin-top: 8px!important;
+		}
+
+		.markdown-body .pl-0 {
+			padding-left: 0!important;
+		}
+
+		.markdown-body .py-0 {
+			padding-top: 0!important;
+			padding-bottom: 0!important;
+		}
+
+		.markdown-body .pl-1 {
+			padding-left: 4px!important;
+		}
+
+		.markdown-body .pl-2 {
+			padding-left: 8px!important;
+		}
+
+		.markdown-body .py-2 {
+			padding-top: 8px!important;
+			padding-bottom: 8px!important;
+		}
+
+		.markdown-body .pl-3 {
+			padding-left: 16px!important;
+		}
+
+		.markdown-body .pl-4 {
+			padding-left: 24px!important;
+		}
+
+		.markdown-body .pl-5 {
+			padding-left: 32px!important;
+		}
+
+		.markdown-body .pl-6 {
+			padding-left: 40px!important;
+		}
+
+		.markdown-body .pl-7 {
+			padding-left: 48px!important;
+		}
+
+		.markdown-body .pl-8 {
+			padding-left: 64px!important;
+		}
+
+		.markdown-body .pl-9 {
+			padding-left: 80px!important;
+		}
+
+		.markdown-body .pl-10 {
+			padding-left: 96px!important;
+		}
+
+		.markdown-body .pl-11 {
+			padding-left: 112px!important;
+		}
+
+		.markdown-body .pl-12 {
+			padding-left: 128px!important;
+		}
+
+		.markdown-body hr {
+			border-bottom-color: #eee;
+		}
+
+		.markdown-body kbd {
+			display: inline-block;
+			padding: 3px 5px;
+			font: 11px SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+			line-height: 10px;
+			color: #444d56;
+			vertical-align: middle;
+			background-color: #fafbfc;
+			border: 1px solid #d1d5da;
+			border-radius: 3px;
+			box-shadow: inset 0 -1px 0 #d1d5da;
+		}
+
+		.markdown-body:after,
+		.markdown-body:before {
+			display: table;
+			content: "";
+		}
+
+		.markdown-body:after {
+			clear: both;
+		}
+
+		.markdown-body>:first-child {
+			margin-top: 0!important;
+		}
+
+		.markdown-body>:last-child {
+			margin-bottom: 0!important;
+		}
+
+		.markdown-body a:not([href]) {
+			color: inherit;
+			text-decoration: none;
+		}
+
+		.markdown-body blockquote,
+		.markdown-body details,
+		.markdown-body dl,
+		.markdown-body ol,
+		.markdown-body p,
+		.markdown-body pre,
+		.markdown-body table,
+		.markdown-body ul {
+			margin-top: 0;
+			margin-bottom: 16px;
+		}
+
+		.markdown-body hr {
+			height: .25em;
+			padding: 0;
+			margin: 24px 0;
+			background-color: #e1e4e8;
+			border: 0;
+		}
+
+		.markdown-body blockquote {
+			padding: 0 1em;
+			color: #6a737d;
+			border-left: .25em solid #dfe2e5;
+		}
+
+		.markdown-body blockquote>:first-child {
+			margin-top: 0;
+		}
+
+		.markdown-body blockquote>:last-child {
+			margin-bottom: 0;
+		}
+
+		.markdown-body h1,
+		.markdown-body h2,
+		.markdown-body h3,
+		.markdown-body h4,
+		.markdown-body h5,
+		.markdown-body h6 {
+			margin-top: 24px;
+			margin-bottom: 16px;
+			font-weight: 600;
+			line-height: 1.25;
+		}
+
+		.markdown-body h1 {
+			font-size: 2em;
+		}
+
+		.markdown-body h1,
+		.markdown-body h2 {
+			padding-bottom: .3em;
+			border-bottom: 1px solid #eaecef;
+		}
+
+		.markdown-body h2 {
+			font-size: 1.5em;
+		}
+
+		.markdown-body h3 {
+			font-size: 1.25em;
+		}
+
+		.markdown-body h4 {
+			font-size: 1em;
+		}
+
+		.markdown-body h5 {
+			font-size: .875em;
+		}
+
+		.markdown-body h6 {
+			font-size: .85em;
+			color: #6a737d;
+		}
+
+		.markdown-body ol,
+		.markdown-body ul {
+			padding-left: 2em;
+		}
+
+		.markdown-body ol ol,
+		.markdown-body ol ul,
+		.markdown-body ul ol,
+		.markdown-body ul ul {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+
+		.markdown-body li {
+			word-wrap: break-all;
+		}
+
+		.markdown-body li>p {
+			margin-top: 16px;
+		}
+
+		.markdown-body li+li {
+			margin-top: .25em;
+		}
+
+		.markdown-body dl {
+			padding: 0;
+		}
+
+		.markdown-body dl dt {
+			padding: 0;
+			margin-top: 16px;
+			font-size: 1em;
+			font-style: italic;
+			font-weight: 600;
+		}
+
+		.markdown-body dl dd {
+			padding: 0 16px;
+			margin-bottom: 16px;
+		}
+
+		.markdown-body table {
+			display: block;
+			width: 100%;
+			overflow: auto;
+		}
+
+		.markdown-body table th {
+			font-weight: 600;
+		}
+
+		.markdown-body table td,
+		.markdown-body table th {
+			padding: 6px 13px;
+			border: 1px solid #dfe2e5;
+		}
+
+		.markdown-body table tr {
+			background-color: #fff;
+			border-top: 1px solid #c6cbd1;
+		}
+
+		.markdown-body table tr:nth-child(2n) {
+			background-color: #f6f8fa;
+		}
+
+		.markdown-body img {
+			max-width: 100%;
+			box-sizing: initial;
+			background-color: #fff;
+		}
+
+		.markdown-body img[align=right] {
+			padding-left: 20px;
+		}
+
+		.markdown-body img[align=left] {
+			padding-right: 20px;
+		}
+
+		.markdown-body code {
+			padding: .2em .4em;
+			margin: 0;
+			font-size: 85%;
+			background-color: rgba(27,31,35,.05);
+			border-radius: 3px;
+		}
+
+		.markdown-body pre {
+			word-wrap: normal;
+		}
+
+		.markdown-body pre>code {
+			padding: 0;
+			margin: 0;
+			font-size: 100%;
+			word-break: normal;
+			white-space: pre;
+			background: transparent;
+			border: 0;
+		}
+
+		.markdown-body .highlight {
+			margin-bottom: 16px;
+		}
+
+		.markdown-body .highlight pre {
+			margin-bottom: 0;
+			word-break: normal;
+		}
+
+		.markdown-body .highlight pre,
+		.markdown-body pre {
+			padding: 16px;
+			overflow: auto;
+			font-size: 85%;
+			line-height: 1.45;
+			background-color: #f6f8fa;
+			border-radius: 3px;
+		}
+
+		.markdown-body pre code {
+			display: inline;
+			max-width: auto;
+			padding: 0;
+			margin: 0;
+			overflow: visible;
+			line-height: inherit;
+			word-wrap: normal;
+			background-color: initial;
+			border: 0;
+		}
+
+		.markdown-body .commit-tease-sha {
+			display: inline-block;
+			font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+			font-size: 90%;
+			color: #444d56;
+		}
+
+		.markdown-body .full-commit .btn-outline:not(:disabled):hover {
+			color: #005cc5;
+			border-color: #005cc5;
+		}
+
+		.markdown-body .blob-wrapper {
+			overflow-x: auto;
+			overflow-y: hidden;
+		}
+
+		.markdown-body .blob-wrapper-embedded {
+			max-height: 240px;
+			overflow-y: auto;
+		}
+
+		.markdown-body .blob-num {
+			width: 1%;
+			min-width: 50px;
+			padding-right: 10px;
+			padding-left: 10px;
+			font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+			font-size: 12px;
+			line-height: 20px;
+			color: rgba(27,31,35,.3);
+			text-align: right;
+			white-space: nowrap;
+			vertical-align: top;
+			cursor: pointer;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+
+		.markdown-body .blob-num:hover {
+			color: rgba(27,31,35,.6);
+		}
+
+		.markdown-body .blob-num:before {
+			content: attr(data-line-number);
+		}
+
+		.markdown-body .blob-code {
+			position: relative;
+			padding-right: 10px;
+			padding-left: 10px;
+			line-height: 20px;
+			vertical-align: top;
+		}
+
+		.markdown-body .blob-code-inner {
+			overflow: visible;
+			font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+			font-size: 12px;
+			color: #24292e;
+			word-wrap: normal;
+			white-space: pre;
+		}
+
+		.markdown-body .pl-token.active,
+		.markdown-body .pl-token:hover {
+			cursor: pointer;
+			background: #ffea7f;
+		}
+
+		.markdown-body .tab-size[data-tab-size="1"] {
+			-moz-tab-size: 1;
+			tab-size: 1;
+		}
+
+		.markdown-body .tab-size[data-tab-size="2"] {
+			-moz-tab-size: 2;
+			tab-size: 2;
+		}
+
+		.markdown-body .tab-size[data-tab-size="3"] {
+			-moz-tab-size: 3;
+			tab-size: 3;
+		}
+
+		.markdown-body .tab-size[data-tab-size="4"] {
+			-moz-tab-size: 4;
+			tab-size: 4;
+		}
+
+		.markdown-body .tab-size[data-tab-size="5"] {
+			-moz-tab-size: 5;
+			tab-size: 5;
+		}
+
+		.markdown-body .tab-size[data-tab-size="6"] {
+			-moz-tab-size: 6;
+			tab-size: 6;
+		}
+
+		.markdown-body .tab-size[data-tab-size="7"] {
+			-moz-tab-size: 7;
+			tab-size: 7;
+		}
+
+		.markdown-body .tab-size[data-tab-size="8"] {
+			-moz-tab-size: 8;
+			tab-size: 8;
+		}
+
+		.markdown-body .tab-size[data-tab-size="9"] {
+			-moz-tab-size: 9;
+			tab-size: 9;
+		}
+
+		.markdown-body .tab-size[data-tab-size="10"] {
+			-moz-tab-size: 10;
+			tab-size: 10;
+		}
+
+		.markdown-body .tab-size[data-tab-size="11"] {
+			-moz-tab-size: 11;
+			tab-size: 11;
+		}
+
+		.markdown-body .tab-size[data-tab-size="12"] {
+			-moz-tab-size: 12;
+			tab-size: 12;
+		}
+
+		.markdown-body .task-list-item {
+			list-style-type: none;
+		}
+
+		.markdown-body .task-list-item+.task-list-item {
+			margin-top: 3px;
+		}
+
+		.markdown-body .task-list-item input {
+			margin: 0 .2em .25em -1.6em;
+			vertical-align: middle;
+		}
+
+	</style>
+</head>
+<body class="markdown-body">
+
+<p><a name="01_doc"></a></p>
+<h1 id="environet-documentation">Environet Documentation</h1>
+<p>This document is the documentation of the Environet system.</p>
+<ul>
+<li><a href="#10_system_requirements">System requirements</a></li>
+<li><a href="#20_distribution_node_functionality">Distribution node functionality</a>
+<ul>
+<li><a href="#21_database_structure">Database structure</a></li>
+<li><a href="#22_api_upload">Upload API</a></li>
+<li><a href="#23_api_download">Download API</a></li>
+<li><a href="#24_admin_user_manual">Administration area</a></li>
+</ul></li>
+<li><a href="#30_data_node_functionality">Data node functionality</a></li>
+<li><a href="#41_key_gen">Keypair generation help</a></li>
+</ul>
+<p><a name="10_system_requirements"></a></p>
+<h1 id="system-requirements">System requirements</h1>
+<ul>
+<li><strong>OS</strong>: Linux operation system, Ubuntu 18+ or Debian 9+</li>
+<li><strong>Docker Engine</strong>: 19+</li>
+<li><strong>Docker Compose</strong>: 1.25+</li>
+<li><strong>RAM</strong>: at least 2GB</li>
+<li><strong>HDD</strong>: at least 1GB</li>
+</ul>
+<p><a name="20_distribution_node_functionality"></a></p>
+<h1 id="distribution-node-functionality">Distribution node functionality</h1>
+<p>A Distribution node, in it’s minimal form, is a service aspect that’s able to maintain the central database and service API requests. In the first phase the domain of the distribution node is: <a href="https://environet.environ.hu">https://environet.environ.hu</a></p>
+<h2 id="central-database">Central database</h2>
+<p>The distribution node has a database backend. It contains: * Data and configuration of hydro and meteo points * Measurement data tables of these monitoring points * User and access (ACL) tables (users, groups, permissions) * System runtime data</p>
+<p>Schema of the database can be found here: <a href="#21_database_structure">Database structure</a></p>
+<h2 id="administration-area">Administration area</h2>
+<p>On the administration are the administrators can maintain: * The data and configuration of monitoring points and observed properties * Operators * Users, groups, and it’s permissions (ACL) * Public keys of operator-users</p>
+<p>The url of the administration are: https://distribution-node.com/admin</p>
+<h2 id="api-endpoints">API endpoints</h2>
+<h3 id="upload">Upload</h3>
+<p>With this endpoint data nodes can upload data of some monitoring points.<br />
+The detailed documentation of this endpoint can found here: <a href="#22_api_upload">Upload API documentation</a></p>
+<h3 id="download">Download</h3>
+<p>With this endpoint clients can query data from the distribution node. This endpoint is available only after authentication, and authorization, so only permitted users can run queries. The response can be filtered by date, monitoring point type, and some other properties.<br />
+The detailed documentation of this endpoint can found here: <a href="#23_api_download">Download API documentation</a></p>
+<p><a name="21_database_structure"></a></p>
+<h1 id="database-structure">Database structure</h1>
+<h2 id="database-engine">Database engine</h2>
+<ul>
+<li>Required database engine is <a href="https://www.postgresql.org/">PostgreSQL</a></li>
+<li>Version compatibility: 12+</li>
+</ul>
+<h2 id="schema-diagram">Schema diagram</h2>
+<figure>
+<img src="resources/model.jpg" alt="" /><figcaption>Schema diagram images</figcaption>
+</figure>
+<h2 id="schema-sql-structure">Schema sql structure</h2>
+<p><a href="resources/schema.sql">Link to sql file</a></p>
+<p><a name="22_api_upload"></a></p>
+<h1 id="upload-api-documentation">Upload API documentation</h1>
+<h2 id="url-method">URL &amp; METHOD</h2>
+<ul>
+<li><strong>Method</strong>: <code>POST</code></li>
+<li><strong>URL</strong>: <code>https://domain.com/upload</code></li>
+</ul>
+<hr />
+<h2 id="headers">Headers</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Header name</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Authorization</td>
+<td>Signature (See below)</td>
+</tr>
+<tr class="even">
+<td>Content-Type</td>
+<td>application/xml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="signature-header">Signature header:</h3>
+<p>The pattern of the header: <code>Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"</code></p>
+<p>The <code>keyId</code> is the username of the uploader user. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the from the body of the response, which is the XML data.</p>
+<hr />
+<h2 id="body">Body</h2>
+<p>The body of the response is the XML data.<br />
+The xml must be valid agains the environet’s upload api schema: <a href="resources/environet.xsd">environet.xsd</a><br />
+The public url of this schema is: <code>https://distribution-node.com/schemas/environet.xsd</code></p>
+<p>Sample input XML:</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;environet:UploadData xmlns:environet=&quot;environet&quot;&gt;
+    &lt;environet:MonitoringPointId&gt;EUCD&lt;/environet:MonitoringPointId&gt;
+    &lt;environet:Property&gt;
+        &lt;environet:PropertyId&gt;water_level&lt;/environet:PropertyId&gt;
+        &lt;environet:TimeSeries&gt;
+            &lt;environet:Point&gt;
+                &lt;environet:PointTime&gt;2020-02-25T00:00:00+01:00&lt;/environet:PointTime&gt;
+                &lt;environet:PointValue&gt;22&lt;/environet:PointValue&gt;
+            &lt;/environet:Point&gt;
+            &lt;environet:Point&gt;
+                &lt;environet:PointTime&gt;2020-02-26T00:01:00+01:00&lt;/environet:PointTime&gt;
+                &lt;environet:PointValue&gt;23&lt;/environet:PointValue&gt;
+            &lt;/environet:Point&gt;
+            &lt;environet:Point&gt;
+                &lt;environet:PointTime&gt;2020-02-27T00:02:00+01:00&lt;/environet:PointTime&gt;
+                &lt;environet:PointValue&gt;24&lt;/environet:PointValue&gt;
+            &lt;/environet:Point&gt;
+        &lt;/environet:TimeSeries&gt;
+    &lt;/environet:Property&gt;
+&lt;/environet:UploadData&gt;</code></pre>
+<hr />
+<h2 id="repsonses">Repsonses</h2>
+<h3 id="success">Success</h3>
+<ul>
+<li><strong>Status code</strong>: 200</li>
+<li><strong>Content-type</strong>: application/xml</li>
+<li><strong>Body</strong>: <code>empty</code></li>
+<li><strong>Description</strong>: Upload was successful, the data has been successfully processed.</li>
+</ul>
+<h3 id="invalid-request">Invalid request</h3>
+<ul>
+<li><p><strong>Status code</strong>: 400</p></li>
+<li><p><strong>Content-type</strong>: application/xml</p></li>
+<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
+<li><p><strong>Description</strong>: Input or processing error during the upload process. The reponse in an error xml which is valid agains environet’ upload api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
+<li><p><strong>Body example</strong>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
+<li><p><strong>Error codes</strong></p>
+<ul>
+<li><code>101</code>: Unknown error</li>
+<li><code>102</code>: Server error</li>
+<li><code>201</code>: Authorization header is missing</li>
+<li><code>202</code>: Username is empty</li>
+<li><code>203</code>: User not found with username</li>
+<li><code>204</code>: Invalid Authorization header</li>
+<li><code>205</code>: Action not permitted</li>
+<li><code>206</code>: Public key for user not found</li>
+<li><code>301</code>: Signature is invalid</li>
+<li><code>302</code>: Xml syntax is invalid</li>
+<li><code>303</code>: Xml is invalid against schema</li>
+<li><code>401</code>: Error during processing data</li>
+<li><code>402</code>: Monitoring point not found with the given identifier</li>
+<li><code>403</code>: Property for the selected monitoring point not found, or not allowed</li>
+<li><code>404</code>: Could not initialize time series for monitoring point and property</li>
+</ul></li>
+</ul>
+<h3 id="server-error">Server error</h3>
+<ul>
+<li><p><strong>Status code</strong>: 500</p></li>
+<li><p><strong>Content-type</strong>: application/xml</p></li>
+<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
+<li><p><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet’s upload api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
+<li><p><strong>Body example</strong>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
+</ul>
+<p><a name="23_api_download"></a></p>
+<h1 id="download-api-documentation">Download API documentation</h1>
+<h2 id="url-method-1">URL &amp; METHOD</h2>
+<ul>
+<li><strong>Method</strong>: <code>GET</code></li>
+<li><strong>URL</strong>: <code>https://domain.com/download</code></li>
+</ul>
+<hr />
+<h2 id="query-parameters">Query parameters</h2>
+<ul>
+<li><strong>token</strong>: <code>required</code> A random string from which the signature is generated. This is required for authentication, the server verifies the signature in the <code>Authorization</code> header based on this token.</li>
+<li><strong>type</strong>: The type of the monitoring points. The value must be one of the following: <code>hydro</code> | <code>meteo</code></li>
+<li><strong>start</strong>: Minimum date of time series. Date format: <a href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a></li>
+<li><strong>end</strong>: Maximum date of time series. Date format: <a href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a></li>
+<li><strong>country[]</strong>: Query time series only for monitoring points from the given countries. Country code format: <a href="https://www.iso.org/iso-3166-country-codes.html">ISO 3166-1 - alpha-2</a></li>
+<li><strong>symbol[]</strong>: Query time series only of the given observed properties.</li>
+</ul>
+<h2 id="headers-1">Headers</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Header name</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Authorization</td>
+<td>Signature (See below)</td>
+</tr>
+<tr class="even">
+<td>Content-Type</td>
+<td>application/xml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="signature-header-1">Signature header:</h3>
+<p>The pattern of the header: <code>Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"</code></p>
+<p>The <code>keyId</code> is the username of the user who wants to query data. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the token in the query parameters.</p>
+<h2 id="repsonses-1">Repsonses</h2>
+<h3 id="success-1">Success</h3>
+<ul>
+<li><strong>Status code</strong>: 200</li>
+<li><strong>Content-type</strong>: application/xml</li>
+<li><strong>Body</strong>: <code>empty</code></li>
+<li><strong>Description</strong>: Upload was successful, the data has been successfully processed.</li>
+</ul>
+<h3 id="invalid-request-1">Invalid request</h3>
+<ul>
+<li><p><strong>Status code</strong>: 400</p></li>
+<li><p><strong>Content-type</strong>: application/xml</p></li>
+<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
+<li><p><strong>Description</strong>: The query request is invalid. The response is an xml which is valid agains environet’ upload api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
+<li><p><strong>Body example</strong>:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
+<li><p><strong>Error codes</strong></p>
+<ul>
+<li><code>101</code>: Unknown error</li>
+<li><code>102</code>: Server error</li>
+<li><code>201</code>: Authorization header is missing</li>
+<li><code>202</code>: Username is empty</li>
+<li><code>203</code>: User not found with username</li>
+<li><code>204</code>: Invalid Authorization header</li>
+<li><code>205</code>: Action not permitted</li>
+<li><code>206</code>: Public key for user not found</li>
+<li><code>207</code>: Request token not found</li>
+<li><code>301</code>: Signature is invalid</li>
+<li><code>302</code>: Observation point type is missing</li>
+<li><code>303</code>: Observation point type is invalid</li>
+<li><code>304</code>: Start time filter value is invalid</li>
+<li><code>305</code>: End time filter value is invalid</li>
+</ul></li>
+</ul>
+<h3 id="server-error-1">Server error</h3>
+<ul>
+<li><p><strong>Status code</strong>: 500</p></li>
+<li><p><strong>Content-type</strong>: application/xml</p></li>
+<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
+<li><p><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet’ upload api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
+<li><p><strong>Body example</strong>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
+</ul>
+<p><a name="24_admin_user_manual"></a></p>
+<p>﻿# Admin user manual</p>
+<p>This document’s goals to represents the different parts of the administration area to help to understand how it works. Help you to see through how works the specified relationships and how you can handle them.</p>
+<h3 id="general-information">General information</h3>
+<p>Good to know, that on each list page, there are on the top right a search field. In the following each sections you can see a “searchable” part, where you can find in what kind of fields can the system search on the specified page.</p>
+<h3 id="login-page">Login page</h3>
+<p>You can reach this interface if you navigate your browser to the following path: - /admin/login</p>
+<p>Here you have to type your credentials data to login into the administration area. If you have no login credentials yet, you have to gain access from your webmaster.</p>
+<h3 id="logout">Logout</h3>
+<p>You can logout if you click the exit icon on the top right of the page.</p>
+<p>Path: /admin/logout</p>
+<h3 id="dashboard">Dashboard</h3>
+<p>Path: /admin</p>
+<h3 id="users">Users</h3>
+<p>Here you can handle the users who has already added to the system.</p>
+<p>Path: /admin/users</p>
+<p>Searchable: name, username, email</p>
+<p><strong>There are three types of user:</strong> - Distribution node - Client node - Users who can manage the system in the admin area</p>
+<p>All of them are listed in the users grid.</p>
+<p>Each user, except the user type users have to have public key attached to themselves, because of they are communicate on API channel and it necessary to their authentication.</p>
+<p><strong>New user</strong></p>
+<p>You can add new user if you click the “Add user” button on the top left of the users list page.</p>
+<p>Path: /admin/users/add</p>
+<p>On the user’s creating page, you have to fill the following mandatory fields: - name - email - it must be unique - username - it must be unique - permission or group</p>
+<p>The public key field is necessary only if we want to create a client or distrubition node user. In other case if you would like to create a “system manager” user, you have to fill to password field instead of public key.</p>
+<p>If you wouldn’t like to assign a specified permission to the user, you must assign the user to a group, they will inherits the group’s permissions.</p>
+<p><strong>Updating user</strong></p>
+<p>You can select a user to update if you click the “Pencil” icon at the end of the specific row.</p>
+<p>Path: /admin/users/edit?id=[user identifier]</p>
+<p>You can update all user datas that you gave on the creating page except the username field.</p>
+<p><strong>User deleting</strong></p>
+<p>You can delete a user if you click the “Trash” icon at the end of the specific row. If you clicked, it shows a confirm window, where you have to approve the deleting. In fact the deleted user will never physically deleted, we have to keep its datas by security reasons.</p>
+<p>Path: /admin/users/delete?id=[user identifier]</p>
+<h3 id="groups">Groups</h3>
+<p>Here you can handle the groups what has already added to the system.</p>
+<p>Path: /admin/groups</p>
+<p>Searchable: name</p>
+<p><strong>New group</strong></p>
+<p>You can add new group if you click the “Add group” button on the top left of the group list page.</p>
+<p>Path: /admin/groups/add</p>
+<p>On the group’s creating page you have to fill the name of the group and you have to assign permission to the specified group. On the creating page, you can assign only one permission, but later you have possibility to add more of it.</p>
+<p><strong>Updating group</strong></p>
+<p>You can select a group to update if you click the “Pencil” icon at the end of the specific row.</p>
+<p>Path: /admin/groups/edit?id=[group identifier]</p>
+<p>Here you can change the name of the group and you can assign more permission to it.</p>
+<p><strong>Group deleting</strong></p>
+<p>You can delete a group if you click the “Trash” icon at the end of the specific row. If you clicked, it shows a confirm window, where you have to approve the deleting. <strong>If any user or operator have already assigned to the specified group, the delete operation cannot be performed.</strong> First time you have to detach these relations and after that you can delete the group.</p>
+<p>Path: /admin/groups/delete?id=[group identifier]</p>
+<h3 id="data-providers">Data providers</h3>
+<p>Here you can handle the data providers what has already added to the system.</p>
+<p>Path: /admin/data-providers</p>
+<p>Searchable: name, address, email</p>
+<p><strong>New data provider</strong></p>
+<p>You can add new data provider if you click the “Add data provider” button on the top left of the data provider’s list page.</p>
+<p>Path: /admin/data-providers/add</p>
+<p>On the data providers creating page, you have to fill the following mandatory fields:</p>
+<p>Operator data - name - phone - e-mail - url</p>
+<p>User data - name - username - email</p>
+<p>The user data is necessary because of each operator has to be assigned to at least one user.</p>
+<p><strong>Updating data provider</strong></p>
+<p>You can select a data provider to update if you click the “Pencil” icon at the end of the specific row.</p>
+<p>Path: /admin/data-providers/edit?id=[data-provider identifier]</p>
+<p>Here you can change all of operator’s data and you can assign more users or groups to the specific dataprovider.</p>
+<p><strong>Data provider show page</strong></p>
+<p>You can select a data provider to show if you click the “Eye” icon at the end of the specific row.</p>
+<p>Path: /admin/data-providers/show?id=[data-provider identifier]</p>
+<p>Here you can see the stored data of the data providers and its relations to direction of users and groups.</p>
+<p><strong>Data provider deleting</strong></p>
+<p>You cannot delete any data provider.</p>
+<h2 id="hydro">Hydro</h2>
+<h3 id="hydro-monitoring-point">Hydro monitoring point</h3>
+<p>Here you can handle the monitoring points what has already added to the system.</p>
+<p>Path: /admin/hydro/monitoring-points</p>
+<p>Searchable: european river code, country, name, location</p>
+<p><strong>New monitoring point</strong></p>
+<p>You can add new monitoring point if you click the “Add monitoring point” button on the top left of the hydro monitoring point list page.</p>
+<p>Path: /admin/hydro/monitoring-points/add</p>
+<p>On the monitoring point creating page, you have to fill the following mandatory fields: - name - classification - operator - riverbank - waterbody - observed properties</p>
+<p><strong>Updating monitoring point</strong></p>
+<p>You can select a monitoring point to update if you click the “Pencil” icon at the end of the specific row.</p>
+<p>Path: /admin/hydro/monitoring-points/edit?id=[monitoring point identifier]</p>
+<p>Here you can change all of monitoring point’s data and you can assign more observed property to the specific monitoring point.</p>
+<p><strong>Monitoring point show page</strong></p>
+<p>You can select a monitoring point to show if you click the “Eye” icon at the end of the specific row.</p>
+<p>Path: /admin/hydro/monitoring-points/show?id=[monitoring point identifier]</p>
+<p>Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator, waterbody and observed property.</p>
+<p><strong>Monitoring point deleting</strong></p>
+<p>You cannot delete any monitoring point.</p>
+<h3 id="hydro-observed-properties">Hydro observed properties</h3>
+<p>Here you can handle the observed properties what has already added to the system.</p>
+<p>An observed property describes, what kind of property can be measured by a monitoring point.</p>
+<p>Path: /admin/hydro/observed-properties</p>
+<p>Searchable: symbol, description</p>
+<p><strong>New observed property</strong></p>
+<p>You can add new observed property if you click the “Add observed property” button on the top left of the hydro observed property list page.</p>
+<p>Path: /admin/hydro/observed-properties/add</p>
+<p>On the observed property creating page, you have to fill to following mandatory fields: - symbol - description</p>
+<p><strong>Updating observed property</strong></p>
+<p>You can select an observed property to update if you click the “Pencil” icon at the end of the specific row.</p>
+<p>Path: /admin/hydro/observed-properties/edit?id=[observed property identifier]</p>
+<p>Here you can change all of observed property’s data.</p>
+<p><strong>Observed property show page</strong></p>
+<p>You can select an observed property to show if you click the “Eye” icon at the end of the specific row.</p>
+<p>Path: /admin/hydro/observed-properties/show?id=[observed property identifier]</p>
+<p>Here you can see the stored data of an observed property.</p>
+<p><strong>Observed property deleting</strong></p>
+<p>You cannot delete any observed property.</p>
+<h3 id="waterbody">Waterbody</h3>
+<p>Here you can handle the waterbodies what has already added to the system.</p>
+<p>Path: /admin/hydro/waterbodies</p>
+<p>Searchable: european river code</p>
+<p><strong>New waterbody</strong></p>
+<p>You can add new waterbody if you click the “Add waterbody” button on the top left of the waterbody list page.</p>
+<p>Path: /admin/hydro/waterbodies/add</p>
+<p>On the waterbody’s creating page, you have to fill to following mandatory fields: - cname - european river code</p>
+<p><strong>Updating waterbody</strong></p>
+<p>You can select a waterbody to update if you click the “Pencil” icon at the end of the specific row.</p>
+<p>Path: /admin/hydro/waterbodies/edit?id=[waterbody identifier]</p>
+<p>Here you can change the cname of the selected waterbody.</p>
+<p><strong>Waterbody show page</strong></p>
+<p>You can select a waterbody to show if you click the “Eye” icon at the end of the specific row.</p>
+<p>Path: /admin/hydro/waterbodies/show?id=[waterbody identifier]</p>
+<p>Here you can see the stored data of a waterbody.</p>
+<p><strong>Waterbody deleting</strong></p>
+<p>You cannot delete any waterbody.</p>
+<h3 id="station-classifications">Station classifications</h3>
+<p>Here you can handle the classifications of a specified station what has already added to the system.</p>
+<p>Path: /admin/hydro/station-classifications</p>
+<p>Searchable: value</p>
+<p><strong>New classification</strong></p>
+<p>You can add new station classification if you click the “Add station classification” button on the top left of the classification’s list page.</p>
+<p>Path: /admin/hydro/station-classifications/add</p>
+<p>On the classification’s creating page, you have to fill to following mandatory fields: - value</p>
+<p><strong>Updating classification</strong></p>
+<p>You can select a station classification to update if you click the “Pencil” icon at the end of the specific row.</p>
+<p>Path: /admin/hydro/station-classifications/edit?id=[classification identifier]</p>
+<p>Here you can change the value of the selected station classification.</p>
+<p><strong>Classification show page</strong></p>
+<p>You can select a station classification to show if you click the “Eye” icon at the end of the specific row.</p>
+<p>Path: /admin/hydro/station-classifications/show?id=[classification identifier]</p>
+<p>Here you can see the stored data of a station classification.</p>
+<p><strong>Classification deleting</strong></p>
+<p>You cannot delete any classification.</p>
+<h3 id="hydro-results">Hydro results</h3>
+<p>Here you can see the results of the different monitoring point, what has arrived via API.</p>
+<p>Path: /admin/hydro/results</p>
+<p>Searchable: name, symbol</p>
+<h2 id="meteo">Meteo</h2>
+<h3 id="meteo-monitoring-point">Meteo monitoring point</h3>
+<p>Here you can handle the monitoring points what has already added to the system.</p>
+<p>Path: /admin/meteo/monitoring-points</p>
+<p>Searchable: country, name, location</p>
+<p><strong>New monitoring point</strong></p>
+<p>You can add new monitoring point if you click the “Add monitoring point” button on the top left of the meteo monitoring point list page.</p>
+<p>Path: /admin/meteo/monitoring-points/add</p>
+<p>On the monitoring point creating page, you have to fill the following mandatory fields:</p>
+<ul>
+<li>name</li>
+<li>classification</li>
+<li>operator</li>
+<li>observed properties</li>
+</ul>
+<p><strong>Updating monitoring point</strong></p>
+<p>You can select a monitoring point to update if you click the “Pencil” icon at the end of the specific row.</p>
+<p>Path: /admin/meteo/monitoring-points/edit?id=[monitoring point identifier]</p>
+<p>Here you can change all of monitoring point’s data and you can assign more observed property to the specific monitoring point.</p>
+<p><strong>Monitoring point show page</strong></p>
+<p>You can select a monitoring point to show if you click the “Eye” icon at the end of the specific row.</p>
+<p>Path: /admin/meteo/monitoring-points/show?id=[monitoring point identifier]</p>
+<p>Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator and observed property.</p>
+<p><strong>Monitoring point deleting</strong></p>
+<p>You cannot delete any monitoring point.</p>
+<h3 id="observed-properties">Observed properties</h3>
+<p>Here you can handle the observed properties what has already added to the system.</p>
+<p>An observed property describes, what kind of property can be measured by a monitoring point.</p>
+<p>Path: /admin/meteo/observed-properties</p>
+<p>Searchable: symbol, description</p>
+<p><strong>New observed property</strong></p>
+<p>You can add new observed property if you click the “Add observed property” button on the top left of the meteo observed property list page.</p>
+<p>Path: /admin/meteo/observed-properties/add</p>
+<p>On the observed property creating page, you have to fill to following mandatory fields:</p>
+<ul>
+<li>symbol</li>
+<li>description</li>
+</ul>
+<p><strong>Updating observed property</strong></p>
+<p>You can select an observed property to update if you click the “Pencil” icon at the end of the specific row.</p>
+<p>Path: /admin/meteo/observed-properties/edit?id=[observed property identifier]</p>
+<p>Here you can change all of observed property’s data.</p>
+<p><strong>Observed property show page</strong></p>
+<p>You can select an observed property to show if you click the “Eye” icon at the end of the specific row.</p>
+<p>Path: /admin/meteo/observed-properties/show?id=[observed property identifier]</p>
+<p>Here you can see the stored data of an observed property.</p>
+<p><strong>Observed property deleting</strong></p>
+<p>You cannot delete any observed property.</p>
+<h3 id="station-classifications-1">Station classifications</h3>
+<p>Here you can handle the classifications of a specified station what has already added to the system.</p>
+<p>Path: /admin/meteo/station-classifications</p>
+<p>Searchable: value</p>
+<p><strong>New classification</strong></p>
+<p>You can add new station classification if you click the “Add station classification” button on the top left of the classification’s list page.</p>
+<p>Path: /admin/meteo/station-classifications/add</p>
+<p>On the classification’s creating page, you have to fill to following mandatory fields: - value</p>
+<p><strong>Updating classification</strong></p>
+<p>You can select a station classification to update if you click the “Pencil” icon at the end of the specific row.</p>
+<p>Path: /admin/meteo/station-classifications/edit?id=[classification identifier]</p>
+<p>Here you can change the value of the selected station classification.</p>
+<p><strong>Classification show page</strong></p>
+<p>You can select a station classification to show if you click the “Eye” icon at the end of the specific row.</p>
+<p>Path: /admin/meteo/station-classifications/show?id=[classification identifier]</p>
+<p>Here you can see the stored data of a station classification.</p>
+<p><strong>Classification deleting</strong></p>
+<p>You cannot delete any classification.</p>
+<h3 id="meteo-results">Meteo results</h3>
+<p>Here you can see the results of the different monitoring point, what has arrived via API.</p>
+<p>Path: /admin/meteo/results</p>
+<p>Searchable: name, symbol</p>
+<p><a name="30_data_node_functionality"></a></p>
+<h1 id="data-node-functionality">Data node functionality</h1>
+<p>A data node is a special configuration of Environet, which runs at a data source with the purpose of gathering metering point measurements from any third party format, such as a plain text file, spreadsheet or web resource, transform these data to a format compatible with the Environet distribution node API, and upload the results to a distribution node on behalf of an API user. The gathering and uploading of data is accomplished by way of uploader plugins, which are defined by configuration files which can then be run by calling a script, typically by a cron job.</p>
+<h2 id="required-software">Required software</h2>
+<p>Docker engine - https://docs.docker.com/install/ Docker compose - https://docs.docker.com/compose/</p>
+<h2 id="setup">Setup</h2>
+<ol type="1">
+<li>Clone the two git repositories needed to run the app:</li>
+</ol>
+<ul>
+<li>The Environet docker environment: https://github.com/environet/environet-docker</li>
+<li>The Environet source code https://github.com/environet/environet</li>
+</ul>
+<ol start="2" type="1">
+<li>Configure docker</li>
+</ol>
+<p>In the Environet docker project folder, create a new .env file by copying the .env.example.</p>
+<ul>
+<li>Change the SRC_ROOT variable to the path of the Environet source code folder (this would be “../environet” if the two repositories are in the same folder, or it can be set to an absolute path)</li>
+<li>If your data node will be reading data from the filesystem, configure the LOCAL_DATA_DIR variable with the path to the directory where the data file(s) will be found.</li>
+</ul>
+<ol start="3" type="1">
+<li>Start the data node container</li>
+</ol>
+<ul>
+<li><code>docker-compose up -d</code></li>
+</ul>
+<ol start="4" type="1">
+<li>Create your uploader plugin configuration</li>
+</ol>
+<p>For an uploader configuration, any metering points and observable properties for which the plugin will upload measurements, have to be configured beforehand on the Environet distribution node that the plugin will be uploading to. A user name and ssl private key will also need to be supplied, to authenticate the upload requests. Private keys should be placed in the <code>conf/plugins/credentials</code> folder of the Environet docker project</p>
+<p>Run <code>dareffort plugin create</code> to start an interactive script, that will guide you through creating an uploader plugin. Generated configurations will be saved to the <code>/conf/plugins/configurations</code> folder, with the filename provided.</p>
+<ol start="5" type="1">
+<li>Running a plugin</li>
+</ol>
+<p>Run <code>dareffort plugin run [configuration name]</code> to run the uploader plugin. If the upload needs to run regularly, set up a cron job to execute the command at regular intervals.</p>
+<p><a name="41_key_gen"></a></p>
+<p>﻿# Private and Public key generation</p>
+<p>First of all you have to download the openssl library.</p>
+<h2 id="in-case-of-windows">In case of windows</h2>
+<p>It is recommended to use the following:</p>
+<p>https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip</p>
+<p>Download and extract it to an optional place. In the package, you can find the executable file at the: <em>bin/openssl.exe</em></p>
+<p>If you open the exe, it will prompt a command window, wherein you have to type the following lines:</p>
+<p><strong>1.</strong> Private key generation: &gt; <em>genrsa -out private.pem 2048</em></p>
+<p><strong>2.</strong> Public key generation from private key: &gt; <em>rsa -in private.pem -out public.pem -outform PEM -pubout</em></p>
+<p>After that you feel free to send your public key to anywhere.</p>
+<h2 id="in-case-of-linux">In case of linux</h2>
+<p>You have to download one from the following link:</p>
+<p>https://www.openssl.org/source/</p>
+<p>After that you have to extract and install it.</p>
+<p>Here you can find a detailed description about the installation:</p>
+<p>https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/</p>
+<p>After the installation you have to run these commands:</p>
+<p><strong>1.</strong> Private key generation: &gt; <em>openssl genrsa -out private.pem 2048</em></p>
+<p><strong>2.</strong> Public key generation from private key: &gt; <em>openssl rsa -in private.pem -out public.pem -outform PEM -pubout</em></p>
+<p>After that you feel free to send your public key to anywhere.</p>
+
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<ruleset name="Environet Standards">
+
+	<description>Environet coding standards</description>
+
+	<arg name="tab-width" value="4"/>
+
+	<rule ref="PSR2">
+		<exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
+		<exclude name="PSR2.Classes.ClassDeclaration.OpenBraceNewLine"/>
+		<exclude name="PSR2.Classes.ClassDeclaration.CloseBraceAfterBody"/>
+		<exclude name="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine"/>
+		<exclude name="PSR1.Files.SideEffects"/>
+	</rule>
+
+	<!--<rule ref="Generic.Formatting.MultipleStatementAlignment" />-->
+	<!--<rule ref="Generic.Formatting.SpaceAfterNot" />-->
+	<!--<rule ref="PSR2.Methods.MethodDeclaration"/>-->
+
+	<!-- PSR1 rules -->
+	<rule ref="PSR1.Classes.ClassDeclaration"/>
+
+
+
+	<!-- PSR2 rules -->
+	<rule ref="PSR2.Namespaces.NamespaceDeclaration"/>
+	<rule ref="PSR2.Namespaces.UseDeclaration"/>
+
+	<rule ref="PSR2.Classes.PropertyDeclaration"/>
+
+	<rule ref="PSR2.Methods.FunctionCallSignature"/>
+
+	<rule ref="PSR2.ControlStructures.ControlStructureSpacing"/>
+	<rule ref="PSR2.ControlStructures.SwitchDeclaration"/>
+	<rule ref="PSR2.ControlStructures.ElseIfDeclaration"/>
+
+
+	<!-- Generic rules -->
+	<rule ref="Generic.Formatting.SpaceAfterCast"/>
+
+	<rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
+	<rule ref="Generic.WhiteSpace.ScopeIndent">
+		<properties>
+			<property name="indent" value="4"/>
+			<property name="tabIndent" value="true"/>
+		</properties>
+	</rule>
+
+	<rule ref="Generic.NamingConventions.ConstructorName"/>
+	<!--<rule ref="Generic.NamingConventions.CamelCapsFunctionName">
+		<properties>
+			<property name="strict" value="false"/>
+		</properties>
+	</rule>-->
+
+	<rule ref="Generic.Commenting.Todo"/>
+	<rule ref="Generic.Commenting.Fixme"/>
+
+	<rule ref="Generic.Classes.DuplicateClassName"/>
+	<rule ref="Generic.Classes.OpeningBraceSameLine"/>
+
+	<rule ref="Generic.Functions.CallTimePassByReference"/>
+	<rule ref="Generic.Functions.OpeningFunctionBraceKernighanRitchie">
+		<properties>
+			<property name="checkFunctions" value="true"/>
+			<property name="checkClosures" value="false"/>
+		</properties>
+	</rule>
+
+	<rule ref="Generic.Strings.UnnecessaryStringConcat">
+		<properties>
+			<property name="allowMultiline" value="true"/>
+		</properties>
+	</rule>
+
+	<rule ref="Generic.PHP.DeprecatedFunctions"/>
+	<rule ref="Generic.PHP.CharacterBeforePHPOpeningTag"/>
+	<rule ref="Generic.PHP.DisallowAlternativePHPTags"/>
+	<rule ref="Generic.PHP.ForbiddenFunctions"/>
+	<rule ref="Generic.PHP.NoSilencedErrors"/>
+
+	<rule ref="Generic.Files.OneClassPerFile"/>
+	<rule ref="Generic.Files.LineLength">
+		<properties>
+			<property name="lineLimit" value="150"/>
+			<property name="absoluteLineLimit" value="0" />
+			<property name="ignoreComments" value="true" />
+		</properties>
+	</rule>
+
+	<rule ref="Generic.CodeAnalysis.EmptyStatement"/>
+	<rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall"/>
+	<rule ref="Generic.CodeAnalysis.JumbledIncrementer"/>
+	<rule ref="Generic.CodeAnalysis.UnconditionalIfStatement"/>
+	<rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier"/>
+	<rule ref="Generic.CodeAnalysis.UselessOverridingMethod"/>
+
+
+	<rule ref="Generic.Metrics.CyclomaticComplexity">
+		<properties>
+			<property name="complexity" value="50"/>
+			<property name="absoluteComplexity" value="100"/>
+		</properties>
+	</rule>
+	<rule ref="Generic.Metrics.NestingLevel">
+		<properties>
+			<property name="nestingLevel" value="5"/>
+			<property name="absoluteNestingLevel" value="10"/>
+		</properties>
+	</rule>
+
+
+	<!-- Squiz rules -->
+	<rule ref="Squiz.WhiteSpace.FunctionSpacing"/>
+	<rule ref="Squiz.WhiteSpace.MemberVarSpacing"/>
+	<rule ref="Squiz.WhiteSpace.ObjectOperatorSpacing">
+		<properties>
+			<property name="ignoreNewlines" value="true"></property>
+		</properties>
+	</rule>
+	<rule ref="Squiz.WhiteSpace.OperatorSpacing"/>
+	<rule ref="Squiz.WhiteSpace.LogicalOperatorSpacing"/>
+	<rule ref="Squiz.WhiteSpace.SemicolonSpacing"/>
+
+	<rule ref="Squiz.Classes.LowercaseClassKeywords"/>
+
+	<rule ref="Squiz.Arrays.ArrayDeclaration">
+		<exclude name="Squiz.Arrays.ArrayDeclaration.KeyNotAligned"/>
+		<exclude name="Squiz.Arrays.ArrayDeclaration.CloseBraceNotAligned"/>
+		<exclude name="Squiz.Arrays.ArrayDeclaration.ValueNotAligned"/>
+		<exclude name="Squiz.Arrays.ArrayDeclaration.NoComma"/>
+		<exclude name="Squiz.Arrays.ArrayDeclaration.NoCommaAfterLast"/>
+		<exclude name="Squiz.Arrays.ArrayDeclaration.DoubleArrowNotAligned"/>
+		<exclude name="Squiz.Arrays.ArrayDeclaration.MultiLineNotAllowed"/>
+		<exclude name="Squiz.Arrays.ArrayDeclaration.SingleLineNotAllowed"/>
+	</rule>
+	<rule ref="Squiz.Arrays.ArrayBracketSpacing"/>
+
+	<rule ref="Squiz.PHP.NonExecutableCode"/>
+
+	<rule ref="Squiz.Operators.ValidLogicalOperators"/>
+
+
+	<!-- Zend rules -->
+	<rule ref="Zend.Files.ClosingTag"/>
+
+
+
+	<arg name="colors"/>
+	<ini name="memory_limit" value="128M"/>
+
+	<file>config</file>
+	<file>src</file>
+	<file>test</file>
+
+</ruleset>

@@ -1,0 +1,81 @@
+#!/usr/local/bin/php -q
+<?php
+
+use Environet\Sys\Commands\BaseCommand;
+use Environet\Sys\Commands\Console;
+use Environet\Sys\Commands\DataNode\PluginCreate;
+use Environet\Sys\Commands\DataNode\PluginRun;
+use Environet\Sys\Commands\DistNode\InitDb;
+use Environet\Sys\Commands\DistNode\Install;
+use Environet\Sys\Commands\Exceptions\CommandException;
+use Environet\Sys\Config;
+
+define('SRC_PATH', __DIR__ . '/..');
+
+$arguments = $argv;
+array_shift($arguments);
+
+require_once SRC_PATH.'/sys/init_autoloader.inc.php';
+
+require_once SRC_PATH.'/sys/constants.inc.php';
+
+$config = new Config();
+
+if ($config->getTimezone()) {
+	date_default_timezone_set($config->getTimezone());
+}
+
+//! Load error handling library
+require_once SRC_PATH.'/sys/error.inc.php';
+
+$commandRouter = function(array $arguments): ?string {
+	switch ($arguments[0] ?? null) {
+		case 'data':
+			switch ($arguments[1] ?? null) {
+				case 'plugin':
+					switch ($arguments[2] ?? null) {
+						case 'create':
+							return PluginCreate::class;
+						case 'run':
+							return PluginRun::class;
+					}
+			}
+		case 'dist':
+			switch ($arguments[1] ?? null) {
+				case 'install':
+					return Install::class;
+				case 'init':
+					switch ($arguments[2] ?? null) {
+						case 'database':
+							return InitDb::class;
+					}
+			}
+	}
+	return null;
+};
+
+
+
+echo "\n";
+$console = new Console();
+try {
+
+	$commandClass = $commandRouter($arguments);
+	if (!$commandClass) {
+		throw new CommandException('Command not found');
+	}
+	/** @var BaseCommand $command */
+	$command = new $commandClass($console);
+
+	$exitCode = $command->run($arguments);
+} catch (CommandException $exception) {
+	$console->writeLine($exception->getMessage(), Console::COLOR_RED);
+	$exitCode = 1;
+}
+
+echo "\n";
+exit($exitCode);
+
+
+
+

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<environet:ErrorResponse xmlns:environet="environet">
+	<environet:Error>
+		<environet:ErrorCode>101</environet:ErrorCode>
+		<environet:ErrorMessage>Error</environet:ErrorMessage>
+	</environet:Error>
+</environet:ErrorResponse>

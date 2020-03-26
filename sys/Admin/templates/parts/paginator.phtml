@@ -1,0 +1,38 @@
+<?php
+//Return with empty if not all required parameters have been set
+if (!(isset($currentPage) && isset($maxPage))) {
+	return;
+}
+?>
+
+
+<?php
+//Build an array of numbers (and '...') based on the current and max pages
+$paginatorParts = getPaginatorParts($currentPage ?? null, $maxPage ?? null);
+?>
+
+<ul class="pagination">
+	<?php if($currentPage <= 1) {?>
+		<li class="page-item disabled"><a class="page-link" href="javascript:void(0)"><</a></li>
+	<?php } else { ?>
+		<li class="page-item"><a class="page-link" href="<?=hrefWithParams(['page' => max(1, $currentPage - 1)]);?>"><</a></li>
+	<?php } ?>
+
+	<?php foreach ($paginatorParts as $part) { ?>
+		<?php if(is_int($part)) {?>
+			<?php if($currentPage === $part) {?>
+				<li class="page-item disabled"><a class="page-link" href="javascript:void(0)"><?=$part;?></a></li>
+			<?php } else { ?>
+				<li class="page-item"><a class="page-link" href="<?=hrefWithParams(['page' => $part]);?>"><?=$part;?></a></li>
+			<?php } ?>
+		<?php } else {?>
+			<li class="page-item"><a class="page-link" href="javascript:void(0)"><?=$part;?></a></li>
+		<?php } ?>
+	<?php } ?>
+
+	<?php if($currentPage >= $maxPage) {?>
+		<li class="page-item disabled"><a class="page-link" href="javascript:void(0)">></a></li>
+	<?php } else { ?>
+		<li class="page-item"><a class="page-link" href="<?=hrefWithParams(['page' => min($maxPage, $currentPage + 1)]);?>">></a></li>
+	<?php } ?>
+</ul>

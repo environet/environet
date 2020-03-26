@@ -1,0 +1,45 @@
+<?php include 'layouts/before_app.phtml'; ?>
+
+	<?php if($response) {?>
+	<div>
+		Status: <?=$response->getStatusCode();?><br />
+		Body: <pre><?=$response->getBody();?></pre>
+	</div>
+	<?php } ?>
+
+	<?php if($error) {?>
+	<div>Error: <?=$error;?></div>
+	<?php } ?>
+
+	<hr>
+
+	<form id="uploadTestForm" action="" method="POST">
+		<?php include __DIR__.'/parts/messages.phtml'; //Render flash messages?>
+		<h1><?=__('Test upload with data');?></h1>
+		<div class="form-group">
+			<label for="mpoint"><?=__('Hydro monitoring point');?></label>
+			<select name="mpoint" id="mpoint">
+				<?=selectOptions($mpoints, formFieldValue('mpoint'));?>
+			</select>
+		</div>
+		<div class="form-group">
+			<label for="property"><?=__('Hydro observed property');?></label>
+			<select name="property" id="property">
+				<?=selectOptions($properties, formFieldValue('property'));?>
+			</select>
+		</div>
+		<div class="form-group">
+			<label for="username"><?=__('User');?></label>
+			<select name="username" id="username">
+				<?=selectOptions($users, formFieldValue('username'));?>
+			</select>
+		</div>
+		<div class="form-group">
+			<label for="mpoint"><?=__('Time,value');?></label><br />
+			<textarea name="values" id="values" cols="30" rows="10"><?=formFieldValue('values') ?: date('c').',1';?></textarea>
+		</div>
+		<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
+		<input type="submit" class="btn btn-primary" value="Send">
+	</form>
+
+<?php include 'layouts/after_app.phtml'; ?>
