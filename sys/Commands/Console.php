@@ -170,7 +170,7 @@ class Console {
 	 * @return bool
 	 */
 	public function askYesNo(string $string, bool $default = true): bool {
-		$answer = $this->ask($string . ' ' . ($default ? '(Y/n)' : '(y/N)'), 1);
+		$answer = $this->ask($string . ' ' . ($default ? '(Y/n)' : '(y/N)'), 2); //2 bytes because of the new line character
 		if ($answer === '') {
 			return $default;
 		}
