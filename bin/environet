@@ -10,6 +10,7 @@ use Environet\Sys\Commands\DistNode\InitDb;
 use Environet\Sys\Commands\DistNode\Install as DistNodeInstall;
 use Environet\Sys\Commands\Exceptions\CommandException;
 use Environet\Sys\Commands\Tools\GenerateKeys;
+use Environet\Sys\Commands\Tools\GenerateSignature;
 use Environet\Sys\Config;
 
 define('SRC_PATH', realpath(__DIR__ . '/..'));
@@ -58,6 +59,8 @@ $commandRouter = function(array $arguments): ?string {
 			switch ($arguments[1] ?? null) {
 				case 'keygen':
 					return GenerateKeys::class;
+				case 'sign':
+					return GenerateSignature::class;
 			}
 	}
 	return null;

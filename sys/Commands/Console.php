@@ -162,6 +162,35 @@ class Console {
 
 
 	/**
+	 * Ask for a numeric opion with options array and get answer
+	 *
+	 * @param string $question
+	 * @param array  $options
+	 *
+	 * @return int
+	 */
+	public function askOptions(string $question, array $options): int {
+		$this->writeLine($question);
+		foreach ($options as $key => $option) {
+			$this->writeLine("$key: $option");
+		}
+		while (true) {
+			$option = $this->ask("Your choice:");
+			if (!ctype_digit($option)) {
+				$this->writeLine("Enter a number!");
+				continue;
+			}
+			if (!isset($options[$option])) {
+				$this->writeLine("Invalid option!");
+				continue;
+			}
+			break;
+		}
+		return $option;
+	}
+
+
+	/**
 	 * Ask a yes-no question with default answer
 	 *
 	 * @param string $string
