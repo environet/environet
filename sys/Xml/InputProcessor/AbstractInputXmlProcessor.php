@@ -64,9 +64,9 @@ abstract class AbstractInputXmlProcessor {
 	 * Get the time series for the property. If not exist, create a new one.
 	 * After it it should set the result_time for the old/new time series
 	 *
-	 * @param int      $mPointId Monitoring point id
+	 * @param int      $mPointId   Monitoring point id
 	 * @param int      $propertyId Observed property id
-	 * @param DateTime $now This parameter will be the result_time
+	 * @param DateTime $now        This parameter will be the result_time
 	 *
 	 * @return int|null
 	 * @throws UploadException
@@ -99,7 +99,7 @@ abstract class AbstractInputXmlProcessor {
 
 			//Find monitoring point in database
 			if (!($mPoint = $this->findMonitoringPoint($monitoringPointId))) {
-				new UploadException(402);
+				throw new UploadException(402);
 			}
 
 			//Find properties in xml, and update time series for all property
@@ -110,12 +110,12 @@ abstract class AbstractInputXmlProcessor {
 
 				//Get the id of the property which will be returned only if the point can measure the property
 				if (!($propertyId = $this->getPropertyIdIfAllowed($mPoint['id'], $propertySymbol))) {
-					new UploadException(403);
+					throw new UploadException(403);
 				}
 
 				//Get the time series id, or create a new one, and update the result_time of time series
 				if (!($timeSeriesId = $this->getOrCreateTimeSeries($mPoint['id'], $propertyId, $now))) {
-					new UploadException(404);
+					throw new UploadException(404);
 				}
 
 				//Insert results
@@ -163,7 +163,7 @@ abstract class AbstractInputXmlProcessor {
 
 			$insert->run();
 		} catch (QueryException $e) {
-			UploadException::serverError();
+			throw UploadException::serverError();
 		}
 	}
 

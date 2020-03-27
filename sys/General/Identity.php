@@ -98,9 +98,9 @@ class Identity {
 
 	/**
 	 * Get the identity's attached public key
-	 * @return string
+	 * @return string|null
 	 */
-	public function getPublicKey(): string {
+	public function getPublicKey(): ?string {
 		return $this->publicKey;
 	}
 

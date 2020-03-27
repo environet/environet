@@ -14,6 +14,7 @@
 namespace Environet\Sys\General\Db;
 
 use Environet\Sys\Config;
+use Environet\Sys\General\Exceptions\InvalidConfigurationException;
 use Environet\Sys\General\Exceptions\QueryException;
 use PDO;
 use PDOException;
@@ -52,6 +53,7 @@ class Connection {
 
 	/**
 	 * Establishes PgSQL connection to the database, or report an error
+	 * @throws InvalidConfigurationException
 	 */
 	public function connect() {
 		$dsn = Config::getInstance()->getSqlDsn();
@@ -59,12 +61,14 @@ class Connection {
 			//! create a PostgreSQL database connection
 			$this->pdo = new PDO($dsn);
 
-			if ($this->pdo) {
-				en_debug("Connected to the database successfully!");
+			if (!$this->pdo) {
+				throw new InvalidConfigurationException('Could not connect to database');
 			}
+			en_debug("Connected to the database successfully!");
 		} catch (PDOException $e) {
 			//! report error message
 			en_debug("SQL operation failed - ".$e->getMessage(), $e);
+			throw new InvalidConfigurationException('Could not connect to database');
 		}
 	}
 
