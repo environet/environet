@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.1 (Debian 12.1-1.pgdg100+1)
--- Dumped by pg_dump version 12.1 (Debian 12.1-1.pgdg100+1)
+-- Dumped from database version 12.1
+-- Dumped by pg_dump version 12.1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -211,10 +211,17 @@ CREATE TABLE public.event_logs (
     id integer NOT NULL,
     event_type character varying(50) NOT NULL,
     data text,
-    user_id integer,
-    operator_id integer,
-    created_at timestamp without time zone
+    created_at timestamp without time zone,
+    user_id integer NOT NULL,
+    operator_id integer NOT NULL
 );
+
+
+--
+-- Name: COLUMN event_logs.event_type; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN public.event_logs.event_type IS 'Identifier of event type';
 
 
 --
@@ -367,7 +374,9 @@ CREATE TABLE public.hydro_result (
     id bigint NOT NULL,
     time_seriesid bigint NOT NULL,
     "time" timestamp(6) without time zone NOT NULL,
-    value numeric(20,10) NOT NULL
+    value numeric(20,10) NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    is_forecast boolean DEFAULT false NOT NULL
 );
 
 
@@ -812,7 +821,9 @@ CREATE TABLE public.meteo_result (
     id bigint NOT NULL,
     meteo_time_seriesid bigint NOT NULL,
     "time" timestamp(6) without time zone NOT NULL,
-    value double precision NOT NULL
+    value double precision NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    is_forecast boolean DEFAULT false
 );
 
 
@@ -1921,11 +1932,11 @@ ALTER TABLE ONLY public.discharge_measurement
 
 
 --
--- Name: event_logs event_logs_pk; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: event_logs event_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.event_logs
-    ADD CONSTRAINT event_logs_pk PRIMARY KEY (id);
+    ADD CONSTRAINT event_logs_pkey PRIMARY KEY (id);
 
 
 --
@@ -2292,6 +2303,22 @@ ALTER TABLE ONLY public.discharge_measurement
 
 ALTER TABLE ONLY public.discharge_measurement
     ADD CONSTRAINT fkdischarge_808880 FOREIGN KEY (discharge_measurement_equipmentid) REFERENCES public.discharge_measurement_equipment(id);
+
+
+--
+-- Name: event_logs fkevent_logs578586; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.event_logs
+    ADD CONSTRAINT fkevent_logs578586 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: event_logs fkevent_logs900211; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.event_logs
+    ADD CONSTRAINT fkevent_logs900211 FOREIGN KEY (operator_id) REFERENCES public.operator(id);
 
 
 --

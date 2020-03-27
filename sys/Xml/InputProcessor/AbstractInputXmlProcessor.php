@@ -139,25 +139,33 @@ abstract class AbstractInputXmlProcessor {
 	 * Insert results for time series. It will insert one result for each value under time series
 	 *
 	 * @param array|SimpleXMLElement[] $timeSeriesPoints array of environet:Point xml elements
-	 * @param int                      $timeSeriesId Id of time series record
+	 * @param int                      $timeSeriesId     Id of time series record
+	 *
+	 * @throws Exception
 	 */
 	protected function insertResults(array $timeSeriesPoints, int $timeSeriesId) {
 		try {
 			//Create empty insert query
 			$insert = $this->createResultInsert();
 
+			$now = new \DateTime('now', new DateTimeZone('UTC'));
+
 			foreach ($timeSeriesPoints as $key => $point) {
 				//Convert time to UTC
 				$time = DateTime::createFromFormat(DateTime::ISO8601, (string) $point->xpath('environet:PointTime')[0] ?? null);
 				$time->setTimezone(new DateTimeZone('UTC'));
 
+				$isForecast = $now < $time;
+
 				//Add 'values' row to inser query
 				$value = (string) $point->xpath('environet:PointValue')[0] ?? null;
-				$insert->addValueRow([":tsid$key", ":time$key", ":value$key"]);
+				$insert->addValueRow([":tsid$key", ":time$key", ":value$key", ":isForecast$key", ":createdAt$key"]);
 				$insert->addParameters([
-					"tsid$key"  => $timeSeriesId,
-					"time$key"  => $time->format('c'),
-					"value$key" => $value,
+					"tsid$key"       => $timeSeriesId,
+					"time$key"       => $time->format('c'),
+					"value$key"      => $value,
+					"isForecast$key" => $isForecast,
+					"createdAt$key"  => $now->format('c'),
 				]);
 			}
 

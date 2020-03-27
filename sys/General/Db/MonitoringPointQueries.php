@@ -200,6 +200,17 @@ class MonitoringPointQueries {
 			throw new QueryException('Missing measurement point type!');
 		}
 
+		//Sub-select for getting latest value by created at.
+		//There can be multiple values per 'time', for outputs we use the latest.
+		$subSelect = (new Select())
+			->from("{$this->type}_result as result_sub")
+			->select("result_sub.value")
+			->where("result_sub.time = {$this->type}_result.time")
+			->where("result_sub.is_forecast = 'FALSE'")
+			->orderBy('result_sub.created_at', 'DESC')
+			->limit(1);
+		$subSelectString = $subSelect->buildQuery();
+
 		$selectFields = [
 			"{$this->type}point.id as mpoint_id",
 			"{$this->type}_observed_property.id as property_id",
@@ -214,8 +225,26 @@ class MonitoringPointQueries {
 			"{$this->type}_observed_property.description as property_description",
 			"{$this->type}_observed_property.unit as property_unit",
 			"{$this->type}_result.time as result_time",
-			"{$this->type}_result.value as result_value",
+			"($subSelectString) as result_value",
 			"{$this->type}_time_series.result_time as time_series_result_time"
+		];
+
+		//Group-by fields for nearly all columns
+		$groupBys = [
+			"{$this->type}point.id",
+			"{$this->type}_observed_property.id",
+			"{$this->type}_time_series.phenomenon_time_begin",
+			"{$this->type}_time_series.phenomenon_time_end",
+			"{$this->type}point.lat",
+			"{$this->type}point.long",
+			"{$this->type}point.name",
+			"{$this->type}point.location",
+			"{$this->type}point.utc_offset",
+			"{$this->type}_observed_property.symbol",
+			"{$this->type}_observed_property.description",
+			"{$this->type}_observed_property.unit",
+			"{$this->type}_result.time",
+			"{$this->type}_time_series.result_time"
 		];
 
 		if ($this->type === self::TYPE_HYDRO) {
@@ -235,9 +264,15 @@ class MonitoringPointQueries {
 			->join("{$this->type}_time_series", "{$this->type}_time_series.id = {$this->type}_result.time_seriesid")
 			->join("{$this->type}point", "{$this->type}point.id = {$this->type}_time_series.mpointid")
 			->join("{$this->type}_observed_property", "{$this->type}_observed_property.id = {$this->type}_time_series.observed_propertyid")
+			->where("{$this->type}_result.is_forecast = 'FALSE'")
 			->select($selectFields)
 			->orderBy('mpoint_id')
 			->orderBy('property_id');
+
+		//Add group-bys
+		foreach ($groupBys as $groupBy) {
+			$this->select->groupBy($groupBy);
+		}
 
 		$this->applyFilters();
 
