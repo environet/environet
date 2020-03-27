@@ -119,6 +119,8 @@ class UploadHandler extends ApiHandler {
 				throw new UploadException(301);
 			}
 
+			$this->storeInputData($content);
+
 			try {
 				//Parse the XML with simpleXML
 				$parsedXml = new SimpleXMLElement($content);
@@ -176,6 +178,20 @@ class UploadHandler extends ApiHandler {
 			case MPOINT_TYPE_METEO:
 				return new HydroInputXmlProcessor($xml);
 		}
+	}
+
+
+	/**
+	 * Store all raw input xmls
+	 *
+	 * @param string $content
+	 */
+	protected function storeInputData(string $content): void {
+		$dir = SRC_PATH . '/data/input_xmls';
+		if (!is_dir($dir)) {
+			mkdir($dir, 0755, true);
+		}
+		file_put_contents($dir . '/' . time() . '.xml', $content);
 	}
 
 
