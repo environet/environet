@@ -25,8 +25,7 @@ class PKI {
 	 * @throws PKIException
 	 */
 	public function generateSignature(string $content, string $privateKey): string {
-		$hash = md5($content);
-		if (openssl_sign($hash, $signature, $privateKey, OPENSSL_ALGO_SHA256)) {
+		if (openssl_sign($content, $signature, $privateKey, OPENSSL_ALGO_SHA256)) {
 			//Signature created successfully
 			return base64_encode($signature);
 		} else {

@@ -61,6 +61,11 @@ class GenerateSignature extends BaseCommand {
 				}
 		}
 
+		//Get content from file or from input
+		if ($this->console->askYesNo("Do you want to generate signature from md5 hash?", false)) {
+			$content = md5($content);
+		}
+
 		//Generate and write signature
 		$pki = new PKI();
 		$signature = $pki->generateSignature($content, file_get_contents($keyLocation));
