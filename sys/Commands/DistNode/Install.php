@@ -59,7 +59,7 @@ class Install extends BaseCommand {
 
 		dbConfig:
 		//Ask database config options
-		$dbHost = $this->console->askWithDefault("Enter the database host:", "localhost");
+		$dbHost = $this->console->askWithDefault("Enter the database host:", "dist_database");
 		$dbPort = $this->console->askWithDefault("Enter the database port:", 5432);
 		$dbDatabase = $this->console->ask("Enter the database name:");
 		$dbUser = $this->console->ask("Enter the database username:");
