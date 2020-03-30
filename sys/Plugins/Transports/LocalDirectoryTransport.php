@@ -7,12 +7,12 @@ use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\TransportInterface;
 
 /**
- * Class LocalFileTransport
+ * Class LocalDirectoryTransport
  *
  * @package Environet\Sys\Plugins\Transports
  * @author  Ádám Bálint <adam.balint@srg.hu>
  */
-class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
+class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterface {
 
 	/**
 	 * @var string
@@ -25,8 +25,8 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 	 */
 	public static function create(Console $console): TransportInterface {
 		$console->writeLine('');
-		$console->writeLine("Configuring local file transport", '32');
-		$path = $console->ask("Enter path to the file to be imported:", 200);
+		$console->writeLine("Configuring local directory transport");
+		$path = $console->ask("Enter path to the directory where the data is:", 200);
 		$config = [
 			'path' => $path,
 		];
@@ -57,10 +57,15 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 	 * @inheritDoc
 	 */
 	public function get(): array {
-		$resource = new Resource();
-		$resource->name = $this->path;
-		$resource->contents = file_get_contents('/meteringdata/' . $this->path);
-		return [$resource];
+		$resources = [];
+		foreach (glob('/meteringdata/' . $this->path .'/*') as $path) {
+			$resource = new Resource();
+			$resource->name = end(explode('/', $path));
+			$resource->contents = file_get_contents($path);
+			$resources[] = $resource;
+		}
+
+		return $resources;
 	}
 
 
@@ -68,7 +73,7 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 	 * @inheritDoc
 	 */
 	public static function getName(): string {
-		return 'local file transport';
+		return 'local directory transport';
 	}
 
 

@@ -148,17 +148,13 @@ class UploadHandler extends ApiHandler {
 				throw new UploadException(401);
 			}
 		} catch (UploadException $e) {
-			//Create ErrorResponse xml
-			http_response_code(400);
-
 			return (new Response((new CreateErrorXml())->generateXml($e->getErrorXmlData())->asXML()))
+                ->setStatusCode(400)
 				->setHeaders(['Content-type: application/xml']);
 		} catch (Throwable $e) {
-			//Create ErrorResponse xml
-			http_response_code(500);
-
 			return (new Response((new CreateErrorXml())->generateXml([new ErrorXmlData(500, $e->getMessage())])->asXML()))
-				->setHeaders(['Content-type: application/xml']);
+				->setStatusCode(500)
+                ->setHeaders(['Content-type: application/xml']);
 		}
 	}
 

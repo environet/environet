@@ -3,8 +3,10 @@
 namespace Environet\Sys\Plugins;
 
 use Environet\Sys\Commands\Console;
+use Environet\Sys\Plugins\Parsers\CsvParser;
 use Environet\Sys\Plugins\Parsers\JsonParser;
 use Environet\Sys\Plugins\Transports\HttpTransport;
+use Environet\Sys\Plugins\Transports\LocalDirectoryTransport;
 use Environet\Sys\Plugins\Transports\LocalFileTransport;
 use Environet\Sys\Plugins\XmlGenerators\MPointPropertyXmlInputGenerator;
 
@@ -28,9 +30,8 @@ class PluginBuilder {
 	 */
 	public function __construct() {
 		$this->layers = [
-			new PluginLayer('transport', [ HttpTransport::class, LocalFileTransport::class]),
-			new PluginLayer('parser', [JsonParser::class]),
-			new PluginLayer('xmlGenerator', [MPointPropertyXmlInputGenerator::class]),
+			new PluginLayer('transport', [ HttpTransport::class, LocalFileTransport::class, LocalDirectoryTransport::class]),
+			new PluginLayer('parser', [JsonParser::class, CsvParser::class]),
 			new PluginLayer('apiClient', [ApiClient::class])
 		];
 	}
@@ -59,6 +60,7 @@ class PluginBuilder {
 	 */
 	public function loadFromConfiguration($config): Plugin {
 		$this->plugin = new Plugin();
+
 		foreach ($this->layers as $layer) {
 			$this->plugin->{$layer->getName()} = new $config[$layer->getName()]['className']($config[$layer->getName()]);
 		}
