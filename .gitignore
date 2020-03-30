@@ -4,3 +4,4 @@
 /data/logs
 /database/dareffort_content.sql
 .idea
+/conf/conf.local.ini

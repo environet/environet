@@ -26,7 +26,7 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 	 * @inheritDoc
 	 */
 	public static function create(Console $console): HttpTransport {
-        $console->writeLine('');
+		$console->writeLine('');
 		$console->writeLine("Configuring http transport");
 		$url = $console->ask("Enter url of data to be imported:", 200);
 		$config = [
@@ -67,19 +67,13 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 		return [curl_exec($cURLConnection)];
 	}
 
-    /**
-     * @inheritDoc
-     */
-    public static function getName(): string
-    {
-        return 'http transport';
-    }
 
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Http transport description';
-    }
+	/**
+	 * @inheritDoc
+	 */
+	public static function getName(): string {
+		return 'http transport';
+	}
+
+
 }

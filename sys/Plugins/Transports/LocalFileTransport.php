@@ -24,7 +24,7 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 	 * @inheritDoc
 	 */
 	public static function create(Console $console): TransportInterface {
-        $console->writeLine('');
+		$console->writeLine('');
 		$console->writeLine("Configuring local file transport", '32');
 		$path = $console->ask("Enter path to the file to be imported:", 200);
 		$config = [
@@ -57,24 +57,19 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 	 * @inheritDoc
 	 */
 	public function get(): array {
-		return [file_get_contents('/meteringdata/' . $this->path)];
+		$resource = new Resource();
+		$resource->name = $this->path;
+		$resource->contents = file_get_contents('/meteringdata/' . $this->path);
+		return [$resource];
 	}
 
 
-    /**
-     * @inheritDoc
-     */
-    public static function getName(): string
-    {
-        return 'local file transport';
-    }
+	/**
+	 * @inheritDoc
+	 */
+	public static function getName(): string {
+		return 'local file transport';
+	}
 
 
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Local file transport description';
-    }
 }

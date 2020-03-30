@@ -12,7 +12,7 @@ interface TransportInterface {
 
 	/**
 	 * Get a list of resources
-	 * @return string[]
+	 * @return Resource[]
 	 */
 	public function get(): array;
 

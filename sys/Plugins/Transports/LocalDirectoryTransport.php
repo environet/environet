@@ -24,7 +24,7 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 	 * @inheritDoc
 	 */
 	public static function create(Console $console): TransportInterface {
-        $console->writeLine('');
+		$console->writeLine('');
 		$console->writeLine("Configuring local directory transport");
 		$path = $console->ask("Enter path to the directory where the data is:", 200);
 		$config = [
@@ -57,28 +57,24 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 	 * @inheritDoc
 	 */
 	public function get(): array {
-        // Open a directory, and read its contents
-        foreach(glob('/meteringdata/' . $this->path .'/*') as $path) {
-            return [file_get_contents($path)];
-        }
+		$resources = [];
+		foreach (glob('/meteringdata/' . $this->path .'/*') as $path) {
+			$resource = new Resource();
+			$resource->name = end(explode('/', $path));
+			$resource->contents = file_get_contents($path);
+			$resources[] = $resource;
+		}
 
-		return [''];
+		return $resources;
 	}
 
 
-    /**
-     * @inheritDoc
-     */
-    public static function getName(): string
-    {
-        return 'local directory transport';
-    }
+	/**
+	 * @inheritDoc
+	 */
+	public static function getName(): string {
+		return 'local directory transport';
+	}
 
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'Local directory transport description';
-    }
+
 }

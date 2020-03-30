@@ -67,12 +67,12 @@ class PluginLayer {
 	private function chooseAlternative(Console $console) {
 		if (count($this->alternatives) > 1) {
 			$console->writeLine("Choose a $this->name implementation:");
-            $console->writeLine('');
+			$console->writeLine('');
 			foreach ($this->alternatives as $i => $alternative) {
-                $description = $alternative::getDescription();
+				$description = $alternative::getDescription();
 				$console->writeLine($i + 1 . ": " . $alternative::getName());
-                $console->writeLine($description);
-                $console->writeLine('');
+				$console->writeLine($description);
+				$console->writeLine('');
 			}
 			$choice = $console->askOption();
 

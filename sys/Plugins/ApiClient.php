@@ -81,20 +81,20 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	}
 
 
-    /**
-     * @param SimpleXMLElement $payload
-     *
-     * @return Response
-     * @throws HttpClientException
-     * @throws Exception
-     */
+	/**
+	 * @param SimpleXMLElement $payload
+	 *
+	 * @return Response
+	 * @throws HttpClientException
+	 * @throws Exception
+	 */
 	public function upload(SimpleXMLElement $payload): Response {
 		$request = $this->requestFromPayload($payload);
 		$client = new HttpClient();
-        $response = $client->sendRequest($request);
-        if($response->getStatusCode() !== 200) {
-            throw new Exception('Upload error');
-        }
+		$response = $client->sendRequest($request);
+		if ($response->getStatusCode() !== 200) {
+			throw new Exception($response->getBody());
+		}
 		return $response;
 	}
 
@@ -134,19 +134,13 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 		return $pkiLib->authHeaderWithSignature($signature, $username);
 	}
 
-    /**
-     * @inheritDoc
-     */
-    public static function getName(): string
-    {
-        return 'MPointPropertyXmlInput generator';
-    }
 
-    /**
-     * @inheritDoc
-     */
-    public static function getDescription(): string
-    {
-        return 'MPointPropertyXmlInput generator description';
-    }
+	/**
+	 * @inheritDoc
+	 */
+	public static function getName(): string {
+		return 'MPointPropertyXmlInput generator';
+	}
+
+
 }
