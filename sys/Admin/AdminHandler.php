@@ -25,6 +25,7 @@ use Environet\Sys\Admin\Pages\Logout;
 use Environet\Sys\Admin\Pages\UploadTest;
 use Environet\Sys\Admin\Pages\User\UserCrud;
 
+use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\HttpClient\BaseHandler;
 use Environet\Sys\General\Identity;
 use Environet\Sys\General\View\Renderer;
@@ -33,6 +34,7 @@ use Environet\Sys\General\Exceptions\PermissionException;
 use Environet\Sys\General\Exceptions\HttpNotFoundException;
 use Environet\Sys\General\Exceptions\HttpBadRequestException;
 use Environet\Sys\General\Exceptions\RenderException;
+use Exception;
 
 /**
  * Class AdminHandler
@@ -41,14 +43,14 @@ use Environet\Sys\General\Exceptions\RenderException;
  * It is also a router, which forward the request to a page handler based on the url path
  *
  * @package Environet\Sys\Admin
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class AdminHandler extends BaseHandler {
 
 	/** @inheritDoc */
 	const HANDLER_PERMISSION = 'admin.all';
 
-	//Session key of admin auth
+	/** Session key of admin auth */
 	const AUTH_SESSION_KEY = 'adminauth';
 
 	/**
@@ -77,7 +79,7 @@ class AdminHandler extends BaseHandler {
 	 *
 	 * @return mixed|void
 	 * @throws PermissionException
-	 * @throws \Environet\Sys\General\Exceptions\QueryException
+	 * @throws QueryException
 	 */
 	protected function authorizeRequest() {
 		if (!in_array(self::HANDLER_PERMISSION, $this->getIdentity()->getPermissions())) {
@@ -87,19 +89,22 @@ class AdminHandler extends BaseHandler {
 
 
 	/**
-	 * Handle the admin request. It finds the page handler based on the admin path, and forward the request to the handler
+	 * Handle the admin request.
+	 *
+	 * It finds the page handler based on the admin path, and forward the request to the handler
+	 *
 	 * @throws RenderException
 	 */
 	public function handleRequest() {
 
 		try {
-			//Add base admin-template path to renderer
+			// Add base admin-template path to renderer
 			Renderer::addRootPath(self::$templatePath);
 
-			//Get admin path (full path without /admin)
+			// Get admin path (full path without /admin)
 			$adminPath = $this->getAdminPath();
 
-			//Iterate over pages and test the subpath with regex. If it has match, store it.
+			// Iterate over pages and test the subpath with regex. If it has match, store it.
 			$foundRoute = null;
 			foreach (self::$pages as $pathPattern => $route) {
 				if (preg_match('/' . $pathPattern . '/', $adminPath, $match)) {
@@ -118,7 +123,7 @@ class AdminHandler extends BaseHandler {
 			$handlerMethodName = $foundRoute[1];
 
 
-			//Allow only login page without identity
+			// Allow only login page without identity
 			if ($routeHandlerClass !== Login::class) {
 				if (!$this->getIdentity()) {
 					return httpRedirect('/admin/login');
@@ -126,7 +131,7 @@ class AdminHandler extends BaseHandler {
 				$this->authorizeRequest();
 			}
 
-			//Page found, create the handler, and call the handle function, and return it's response
+			// Page found, create the handler, and call the handle function, and return it's response
 			return call_user_func([new $routeHandlerClass($this->request), $handlerMethodName]);
 		} catch (PermissionException $e) {
 			return (new Renderer('/error_403.phtml', ['exception' => $e]))();
@@ -134,7 +139,7 @@ class AdminHandler extends BaseHandler {
 			return (new Renderer('/error_404.phtml', ['exception' => $e]))();
 		} catch (HttpBadRequestException $e) {
 			return (new Renderer('/error_400.phtml', ['exception' => $e]))();
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			return (new Renderer('/error_500.phtml', ['exception' => $e]))();
 		}
 	}
@@ -146,13 +151,13 @@ class AdminHandler extends BaseHandler {
 	 * @return string
 	 */
 	protected function getAdminPath() {
-		//Get the path parts
+		// Get the path parts
 		$parts = $this->request->getPathParts();
 
-		//Remove "admin"
+		// Remove "admin"
 		array_shift($parts);
 
-		//Return route after '/admin'
+		// Return route after '/admin'
 		return implode('/', $parts);
 	}
 
@@ -220,7 +225,7 @@ class AdminHandler extends BaseHandler {
 		'^hydro\/results$' => [HydroResultsCrud::class, 'list'],
 		'^meteo\/results$' => [MeteoResultsCrud::class, 'list'],
 
-		'^upload-test$' => [UploadTest::class, 'handle'],
+		'^upload-test$'   => [UploadTest::class, 'handle'],
 		'^download-test$' => [DownloadTest::class, 'handle'],
 	];
 }

@@ -17,8 +17,10 @@ use Environet\Sys\General\Response;
 /**
  * Class GroupCrud
  *
+ * Handles CRUD operations for groups.
+ *
  * @package Environet\Sys\Admin\Pages\Group
- * @author  Mate Kovacs <mate.kovacs@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class GroupCrud extends CrudPage {
 
@@ -49,7 +51,7 @@ class GroupCrud extends CrudPage {
 
 
 	/**
-	 * List page action.
+	 * List page action for groups.
 	 *
 	 * @return Response
 	 * @throws RenderException
@@ -84,8 +86,8 @@ class GroupCrud extends CrudPage {
 
 
 	/**
-	 * Group deleting. Before we remove the group, we have to check its usage in upper level.
-	 * If the requested group is used by any other relation, we throw error, otherwise delete the group.
+	 * Deletes one group (by id). Before removing the group, it's upper level usage has to be checked.
+	 * If the requested group is used by any other relation, an error is thrown, otherwise the group is deleted.
 	 *
 	 * @return Response|void
 	 * @throws QueryException

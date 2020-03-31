@@ -11,8 +11,10 @@ use Environet\Sys\General\Response;
 /**
  * Class ObservedPropertyCrud
  *
+ * Handles CRUD operations for meteopoint observed properties.
+ *
  * @package Environet\Sys\Admin\Pages\Meteo
- * @author  Mate Kovacs <mate.kovacs@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class ObservedPropertyCrud extends CrudPage {
 
@@ -48,7 +50,7 @@ class ObservedPropertyCrud extends CrudPage {
 
 
 	/**
-	 * List page action.
+	 * List page action for meteopoint observed properties.
 	 *
 	 * @return Response
 	 * @throws RenderException
@@ -59,7 +61,7 @@ class ObservedPropertyCrud extends CrudPage {
 
 
 	/**
-	 * Show page action.
+	 * Show page action for meteopoint observed properties.
 	 *
 	 * @return Response
 	 * @throws RenderException

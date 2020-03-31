@@ -13,7 +13,7 @@ use Environet\Sys\General\View\Renderer;
  * Abstract class for admin area page handlers
  *
  * @package Environet\Sys\Admin\Pages
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class BasePage {
 
@@ -31,6 +31,7 @@ class BasePage {
 	protected $request;
 
 	/**
+	 * Page message containers
 	 * @var array
 	 */
 	protected $messages = [
@@ -42,9 +43,9 @@ class BasePage {
 
 
 	/**
-	 * Request is a required parameter for page handlers
-	 *
 	 * AbstractPage constructor.
+	 *
+	 * Request is a required parameter for page handlers
 	 *
 	 * @param Request $request
 	 */
@@ -59,15 +60,17 @@ class BasePage {
 	 *
 	 * Render template with global variables extended by extra supplied ones
 	 *
-	 * @param string $template
-	 * @param array|null  $vars
-	 * @throws RenderException
+	 * @param string     $template
+	 * @param array|null $vars
+	 *
 	 * @return Response
+	 * @throws RenderException
 	 */
 	public function render(string $template, array $vars = []): Response {
 		$vars['messages'] = $this->messages;
 		$vars['identity'] = !$this->request->getIdentity() ?: $this->request->getIdentity()->getData();
 		$vars['csrf'] = $this->generateCsrf();
+
 		return (new Renderer($template, $vars))();
 	}
 
@@ -81,6 +84,7 @@ class BasePage {
 	 */
 	protected function redirect(string $uri): Response {
 		$this->messagesToSession();
+
 		return httpRedirect($uri);
 	}
 
@@ -97,6 +101,7 @@ class BasePage {
 		if (is_null($redirectUrl)) {
 			$redirectUrl = $defaultUri;
 		}
+
 		return $this->redirect($redirectUrl);
 	}
 
@@ -152,7 +157,9 @@ class BasePage {
 
 
 	/**
-	 * Add flash messages to session. With this we can display messages after a redirect.
+	 * Add flash messages to session.
+	 *
+	 * With this we can display messages after a redirect.
 	 * After redirect an other page handler will read, and clear it.
 	 */
 	protected function messagesToSession() {

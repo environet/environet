@@ -13,7 +13,11 @@ use Environet\Sys\General\Response;
 
 /**
  * Class MonitoringPointCrud
- * @package Environet\Sys\Admin\Pages\Hydro
+ *
+ * Handles CRUD operations for meteopoint monitoring points.
+ *
+ * @package Environet\Sys\Admin\Pages\Meteo
+ * @author  SRG Group <dev@srg.hu>
  */
 class MonitoringPointCrud extends CrudPage {
 
@@ -49,7 +53,7 @@ class MonitoringPointCrud extends CrudPage {
 
 
 	/**
-	 * List page action.
+	 * List page action for meteopoint monitoring points.
 	 *
 	 * @return Response
 	 * @throws RenderException
@@ -60,7 +64,7 @@ class MonitoringPointCrud extends CrudPage {
 
 
 	/**
-	 * Show page action.
+	 * Show page action for meteopoint monitoring points.
 	 *
 	 * @return Response
 	 * @throws RenderException
@@ -78,8 +82,8 @@ class MonitoringPointCrud extends CrudPage {
 	 */
 	protected function formContext(): array {
 		return [
-			'classifications' => MeteoStationClassificationQueries::getOptionList('value'),
-			'operators' => OperatorQueries::getOptionList('name'),
+			'classifications'    => MeteoStationClassificationQueries::getOptionList('value'),
+			'operators'          => OperatorQueries::getOptionList('name'),
 			'observedProperties' => MeteoObservedPropertyQueries::getOptionList('symbol')
 		];
 	}

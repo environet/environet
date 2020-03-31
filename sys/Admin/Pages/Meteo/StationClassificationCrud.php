@@ -11,8 +11,10 @@ use Environet\Sys\General\Response;
 /**
  * Class StationClassificationCrud
  *
+ * Handles CRUD operations for meteopoint station classifications.
+ *
  * @package Environet\Sys\Admin\Pages\Meteo
- * @author  Mate Kovacs <mate.kovacs@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class StationClassificationCrud extends CrudPage {
 
@@ -48,7 +50,7 @@ class StationClassificationCrud extends CrudPage {
 
 
 	/**
-	 * List page action.
+	 * List page action for meteopoint station classifications.
 	 *
 	 * @return Response
 	 * @throws RenderException
@@ -59,7 +61,7 @@ class StationClassificationCrud extends CrudPage {
 
 
 	/**
-	 * Show page action.
+	 * Show page action for meteopoint station classifications.
 	 *
 	 * @return Response
 	 * @throws RenderException

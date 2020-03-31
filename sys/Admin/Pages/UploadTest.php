@@ -28,7 +28,7 @@ use InvalidArgumentException;
  * Admin page for upload testing
  *
  * @package Environet\Sys\Admin\Pages
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class UploadTest extends BasePage {
 
@@ -52,7 +52,7 @@ class UploadTest extends BasePage {
 	 * Handle the upload test request.
 	 *
 	 * If GET, it displays the form with some pre-selected date.
-	 * If POST, it creates an XML based on the form's data, and post it to the upload API
+	 * If POST, it creates an XML based on the form's data, and post it to the upload API via {@see UploadTest::sendData()}.
 	 *
 	 * @return mixed|void
 	 * @throws HttpBadRequestException
@@ -62,41 +62,41 @@ class UploadTest extends BasePage {
 	 */
 	public function handle(): ?Response {
 
-		//Create monitoring point options
+		// Create monitoring point options
 		$this->mpoints = (new Select())->from('hydropoint')->run();
 		$this->mpoints = array_combine(array_column($this->mpoints, 'eucd_wgst'), array_column($this->mpoints, 'eucd_wgst'));
 
-		//Create observed property options
+		// Create observed property options
 		$this->properties = (new Select())->from('hydro_observed_property')->run();
 		$this->properties = array_combine(array_column($this->properties, 'symbol'), array_column($this->properties, 'description'));
 
-		//Create observed property options
+		// Create observed property options
 		$this->users = (new Select())->from('users')->run();
 		$this->users = array_combine(array_column($this->users, 'username'), array_column($this->users, 'username'));
 
 		$response = $error = null;
 		if ($this->request->isPost()) {
-			//Posted form, check data, and send it to the API
+			// Posted form, check data, and send it to the API
 			if (!$this->checkCsrf()) {
-				//CSRF error
+				// CSRF error
 				throw new HttpBadRequestException();
 			}
 			try {
-				//Send the data with a http client, and store the response body in a varialbe
+				// Send the data with a http client, and store the response body in a variable
 				$response = $this->sendData();
 			} catch (HttpClientException | CreateInputXmlException $e) {
-				//Store error response of the request in $error var
+				// Store error response of the request in $error var
 				$error = $e->getMessage();
 			}
 		}
 
 		// Render the form
 		return $this->render('/upload_test.phtml', [
-			'mpoints' => $this->mpoints,
+			'mpoints'    => $this->mpoints,
 			'properties' => $this->properties,
-			'users' => $this->users,
-			'response' => $response,
-			'error' => $error
+			'users'      => $this->users,
+			'response'   => $response,
+			'error'      => $error
 		]);
 	}
 
@@ -108,40 +108,43 @@ class UploadTest extends BasePage {
 	 * @throws CreateInputXmlException
 	 * @throws HttpClientException
 	 * @throws PKIException
+	 * @see HttpClient::sendRequest()
 	 */
 	protected function sendData(): HttpClientResponse {
 		$mpointId = $_POST['mpoint'] ?? null;
 		$propertySymbol = $_POST['property'] ?? null;
 		$username = $_POST['username'] ?? null;
 
-		//Process values "text"
+		// Process values "text"
 		$values = array_values(array_filter(array_map(function ($row) {
 			$rowExploded = explode(',', $row);
 			if (empty($rowExploded)) {
 				//Skip invalid rows
 				return null;
 			}
+
 			return [
-				'time' => trim($rowExploded[0]),
+				'time'  => trim($rowExploded[0]),
 				'value' => (float) trim($rowExploded[1]),
 			];
 		}, explode("\n", $_POST['values'] ?? null))));
 
-		//Create XML
+		// Create XML
 		$creator = new CreateInputXml();
 		$property = new InputXmlPropertyData($propertySymbol, $values);
 		$xml = $creator->generateXml(new InputXmlData($mpointId, [$property]))->asXML();
 
-		//Create a request
+		// Create a request
 		$apiHost = Config::getInstance()->getDatanodeDistHost();
-		$request = new Request(rtrim($apiHost, '/').'/upload');
+		$request = new Request(rtrim($apiHost, '/') . '/upload');
 		$request->setMethod('POST')->setBody($xml);
 
-		//Add generated auth header with signature
+		// Add generated auth header with signature
 		$request->addHeader('Authorization', $this->generateSignatureHeader($xml, $username));
 
-		//Send request
+		// Send request
 		$client = new HttpClient();
+
 		return $client->sendRequest($request);
 	}
 
@@ -156,9 +159,11 @@ class UploadTest extends BasePage {
 	 * @throws InvalidArgumentException
 	 * @throws PKIException
 	 * @throws Exception
+	 * @see PKI::generateSignature()
+	 * @see PKI::authHeaderWithSignature()
 	 */
 	protected function generateSignatureHeader($xml, $username): string {
-		$privateKeyFile = SRC_PATH.'/data/test_private_keys/'.$username.'.key';
+		$privateKeyFile = SRC_PATH . '/data/test_private_keys/' . $username . '.key';
 		if (!file_exists($privateKeyFile)) {
 			throw new Exception('Test private key under "data/test_private_keys" folder doesn\'t exist for this user');
 		}

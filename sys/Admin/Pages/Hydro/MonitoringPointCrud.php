@@ -15,7 +15,11 @@ use Environet\Sys\General\Response;
 
 /**
  * Class MonitoringPointCrud
+ *
+ * Handles CRUD operations for hydropoint monitoring points.
+ *
  * @package Environet\Sys\Admin\Pages\Hydro
+ * @author  SRG Group <dev@srg.hu>
  */
 class MonitoringPointCrud extends CrudPage {
 
@@ -51,7 +55,7 @@ class MonitoringPointCrud extends CrudPage {
 
 
 	/**
-	 * List page action.
+	 * List page action for hydropoint monitoring points.
 	 *
 	 * @return Response
 	 * @throws RenderException
@@ -62,7 +66,7 @@ class MonitoringPointCrud extends CrudPage {
 
 
 	/**
-	 * Show page action.
+	 * Show page action hydropoint monitoring points.
 	 *
 	 * @return Response
 	 * @throws RenderException
@@ -80,11 +84,11 @@ class MonitoringPointCrud extends CrudPage {
 	 */
 	protected function formContext(): array {
 		return [
-			'classifications' => HydroStationClassificationQueries::getOptionList('value'),
-			'operators' => OperatorQueries::getOptionList('name'),
-			'riverbanks' => RiverbankQueries::getOptionList('value'),
+			'classifications'              => HydroStationClassificationQueries::getOptionList('value'),
+			'operators'                    => OperatorQueries::getOptionList('name'),
+			'riverbanks'                   => RiverbankQueries::getOptionList('value'),
 			'waterbodyeuropean_river_code' => WaterbodyQueries::getOptionList('cname', 'european_river_code'),
-			'observedProperties' => HydroObservedPropertyQueries::getOptionList('symbol'),
+			'observedProperties'           => HydroObservedPropertyQueries::getOptionList('symbol'),
 		];
 	}
 
