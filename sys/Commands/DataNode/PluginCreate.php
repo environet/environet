@@ -9,16 +9,24 @@ use Environet\Sys\Plugins\PluginBuilder;
 /**
  * Class PluginCreate
  *
+ * Creates a new plugin configuration
+ *
  * @package Environet\Sys\Commands\DataNode
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class PluginCreate extends BaseCommand {
 
 
 	/**
+	 * Run create plugin command.
+	 *
+	 * Creates and saves a configuration file under '/src/conf/plugins/configurations/'.
+	 *
 	 * @param $arguments
 	 *
 	 * @return int
+	 * @see PluginBuilder::createConfiguration()
+	 * @see PluginBuilder::serializeConfiguration()
 	 */
 	public function run($arguments): int {
 		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
