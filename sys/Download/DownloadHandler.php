@@ -21,9 +21,10 @@ use Throwable;
 /**
  * Class DownloadHandler
  *
- * @package   Environet\Sys\Download
- * @author    SRG Group <dev@srg.hu>
- * @copyright 2020 SRG Group Kft.
+ * Handles download API requests
+ *
+ * @package Environet\Sys\Download
+ * @author  SRG Group <dev@srg.hu>
  */
 class DownloadHandler extends ApiHandler {
 
@@ -80,12 +81,12 @@ class DownloadHandler extends ApiHandler {
 			$username = $this->getAuthHeaderParts()['keyId'] ?? null;
 
 			if (!$username) {
-				//Username is empty
+				// Username is empty
 				throw new DownloadException(202);
 			}
 
 			try {
-				//Find user in database
+				// Find user in database
 				$user = (new Select())
 					->from('users')
 					->where('username = :username')
@@ -147,6 +148,8 @@ class DownloadHandler extends ApiHandler {
 
 
 	/**
+	 * Fetch and sanitize a request query array parameter.
+	 *
 	 * @param string $key
 	 *
 	 * @return array
@@ -170,7 +173,18 @@ class DownloadHandler extends ApiHandler {
 
 
 	/**
-	 * @inheritDoc
+	 * Handle the incoming download request.
+	 *
+	 * Does the following steps:
+	 * 1. Gets the user identity via {@see DownloadHandler::getIdentity()} and the public key stored with it.
+	 * 2. Validates the signature parsed from the authorization header ({@see DownloadHandler::getAuthHeaderParts()}) and validates it with the provided token from the request and the public key.
+	 * 3. Fetches and validates the required parameter "type" of the monitoring points requested (hydro or meteo).
+	 * 4. Parses and applies optional filter parameters start, end, country and symbol.
+	 * 5. Queries the results and generates the output XML containing them.
+	 *
+	 * @return Response|mixed
+	 * @see MonitoringPointQueries
+	 * @see CreateOutputXml
 	 */
 	public function handleRequest() {
 		try {
@@ -239,12 +253,12 @@ class DownloadHandler extends ApiHandler {
 
 			return (new Response((new CreateOutputXml())->generateXml($queryBuilder->getResults())->asXML()))->setHeaders(['Content-type: application/xml']);
 		} catch (DownloadException $e) {
-			//Create ErrorResponse xml
+			// Create ErrorResponse xml
 			http_response_code(400);
 
 			return (new Response((new CreateErrorXml())->generateXml($e->getErrorXmlData())->asXML()))->setHeaders(['Content-type: application/xml']);
 		} catch (Throwable $e) {
-			//Create ErrorResponse xml
+			// Create ErrorResponse xml
 			http_response_code(500);
 
 			return (new Response((new CreateErrorXml())->generateXml([new ErrorXmlData(500, $e->getMessage())])->asXML()))
