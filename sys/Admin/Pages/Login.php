@@ -36,6 +36,9 @@ class Login extends BasePage {
 	 * @throws QueryException
 	 */
 	public function handle(): ?Response {
+		if($this->request->getIdentity()) {
+			return $this->redirect('/admin');
+		}
 
 		if ($this->request->isPost()) {
 			//Posted form, check if login credentials are valid

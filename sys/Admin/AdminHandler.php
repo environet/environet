@@ -48,9 +48,6 @@ class AdminHandler extends BaseHandler {
 	/** @inheritDoc */
 	const HANDLER_PERMISSION = 'admin.all';
 
-	//Session key of admin auth
-	const AUTH_SESSION_KEY = 'adminauth';
-
 	/**
 	 * @var string Base path for templates
 	 */
@@ -61,13 +58,6 @@ class AdminHandler extends BaseHandler {
 	 * @inheritDoc
 	 */
 	protected function getIdentity(): ?Identity {
-		if (!$this->request->getIdentity()) {
-			//Set identity for request if has the session value, and if user found based on this id
-			if (!empty($_SESSION[self::AUTH_SESSION_KEY])) {
-				$this->request->setIdentity(Identity::createFromUser($_SESSION[self::AUTH_SESSION_KEY]));
-			}
-		}
-
 		return $this->request->getIdentity();
 	}
 
