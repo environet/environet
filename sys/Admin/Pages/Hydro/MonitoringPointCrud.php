@@ -50,26 +50,17 @@ class MonitoringPointCrud extends CrudPage {
 	protected $successAddMessage = 'Monitoring point successfully saved';
 
 
-	/**
-	 * List page action.
-	 *
-	 * @return Response
-	 * @throws RenderException
-	 */
-	public function list(): Response {
+	public function csvUpload(): string {
+		if ($this->request->isPost()) {
+			$this->queriesClass::save([
+				'name' => 'zdzd',
+				'eucd_wgst' => 'sghsghd',
+				'ncd_wgst' => 'sdfshsdfsxdfghgs',
+				'country' => 'HU',
+			]);
+		}
+
 		return $this->renderListPage();
-	}
-
-
-	/**
-	 * Show page action.
-	 *
-	 * @return Response
-	 * @throws RenderException
-	 * @throws HttpNotFoundException
-	 */
-	public function show(): Response {
-		return $this->renderShowPage();
 	}
 
 
@@ -83,7 +74,7 @@ class MonitoringPointCrud extends CrudPage {
 			'classifications' => HydroStationClassificationQueries::getOptionList('value'),
 			'operators' => OperatorQueries::getOptionList('name'),
 			'riverbanks' => RiverbankQueries::getOptionList('value'),
-			'waterbodyeuropean_river_code' => WaterbodyQueries::getOptionList('cname', 'european_river_code'),
+			'waterbodies' => WaterbodyQueries::getOptionList('cname', 'european_river_code'),
 			'observedProperties' => HydroObservedPropertyQueries::getOptionList('symbol'),
 		];
 	}
@@ -100,30 +91,30 @@ class MonitoringPointCrud extends CrudPage {
 			$valid = false;
 		}
 
-		if (!$data['classification']) {
+		/*if (!$data['classification']) {
 			$this->addMessage(__('Classification is required'), self::MESSAGE_ERROR);
 			$valid = false;
-		}
+		}*/
 
-		if (!$data['operator']) {
+		/*if (!$data['operator']) {
 			$this->addMessage(__('Operator is required'), self::MESSAGE_ERROR);
 			$valid = false;
-		}
+		}*/
 
-		if (!$data['riverbank']) {
+		/*if (!$data['riverbank']) {
 			$this->addMessage(__('Riverbank is required'), self::MESSAGE_ERROR);
 			$valid = false;
-		}
+		}*/
 
-		if (!$data['waterbodyeuropean_river_code']) {
+		/*if (!$data['waterbodyeuropean_river_code']) {
 			$this->addMessage(__('Waterbody is required'), self::MESSAGE_ERROR);
 			$valid = false;
-		}
+		}*/
 
-		if (!$data['observedProperties']) {
+		/*if (!$data['observedProperties']) {
 			$this->addMessage(__('Observed property is required'), self::MESSAGE_ERROR);
 			$valid = false;
-		}
+		}*/
 
 		return $valid;
 	}

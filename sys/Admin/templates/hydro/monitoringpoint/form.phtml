@@ -1,26 +1,35 @@
 <?php include __DIR__ . '../../../layouts/before_app.phtml'; ?>
 <div class="card">
     <h1>Hydro monitoring point<?= $record && $record['id'] ? '(id: ' . $record['id'] . ')': ''?></h1>
-    <form action="" method="POST">
+    <form action="" novalidate class="needs-validation" method="POST">
         <input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
         <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" name="name" id="name" class="form-control" value="<?=formFieldValue('name', $record);?>" />
+            <input type="text" name="name" id="name" class="form-control" required value="<?=formFieldValue('name', $record);?>" />
+            <div class="invalid-feedback">
+                Please provide a valid name!
+            </div>
         </div>
 
         <div class="form-group">
             <label for="eucd_wgst">Eucd wgst</label>
-            <input type="text" name="eucd_wgst" id="eucd_wgst" class="form-control" value="<?=formFieldValue('eucd_wgst', $record);?>" />
+            <input type="text" name="eucd_wgst" id="eucd_wgst" class="form-control" required value="<?=formFieldValue('eucd_wgst', $record);?>" />
+            <div class="invalid-feedback">
+                Please provide a valid Eucd wgst value!
+            </div>
         </div>
 
         <div class="form-group">
             <label for="ncd_wgst">Ncd wgst</label>
-            <input type="text" name="ncd_wgst" id="ncd_wgst" class="form-control" value="<?=formFieldValue('ncd_wgst', $record);?>" />
+            <input type="text" name="ncd_wgst" id="ncd_wgst" class="form-control" required value="<?=formFieldValue('ncd_wgst', $record);?>" />
+            <div class="invalid-feedback">
+                Please provide a valid Ncd wgst value!
+            </div>
         </div>
 
         <div class="form-group">
             <label for="vertical_reference">Vertical reference</label>
-            <input type="text" name="vertical_reference" id="vertical_reference" class="form-control" value="<?=formFieldValue('vertical_reference', $record);?>" />
+            <input type="number" name="vertical_reference" id="vertical_reference" class="form-control" value="<?=formFieldValue('vertical_reference', $record);?>" />
         </div>
 
         <div class="form-group">
@@ -30,17 +39,17 @@
 
         <div class="form-group">
             <label for="lat">Lat</label>
-            <input type="text" name="lat" id="lat" class="form-control" value="<?=formFieldValue('lat', $record);?>" />
+            <input type="number" name="lat" id="lat" class="form-control" value="<?=formFieldValue('lat', $record);?>" />
         </div>
 
         <div class="form-group">
             <label for="long">Long</label>
-            <input type="text" name="long" id="long" class="form-control" value="<?=formFieldValue('long', $record);?>" />
+            <input type="number" name="long" id="long" class="form-control" value="<?=formFieldValue('long', $record);?>" />
         </div>
 
         <div class="form-group">
             <label for="z">Z</label>
-            <input type="text" name="z" id="z" class="form-control" value="<?=formFieldValue('z', $record);?>" />
+            <input type="number" name="z" id="z" class="form-control" value="<?=formFieldValue('z', $record);?>" />
         </div>
 
         <div class="form-group">
@@ -50,17 +59,17 @@
 
         <div class="form-group">
             <label for="river_kilometer">River kilometer</label>
-            <input type="text" name="river_kilometer" id="river_kilometer" class="form-control" value="<?=formFieldValue('river_kilometer', $record);?>" />
+            <input type="number" name="river_kilometer" id="river_kilometer" class="form-control" value="<?=formFieldValue('river_kilometer', $record);?>" />
         </div>
 
         <div class="form-group">
             <label for="catchment_area">Catchment area</label>
-            <input type="text" name="catchment_area" id="catchment_area" class="form-control" value="<?=formFieldValue('catchment_area', $record);?>" />
+            <input type="number" name="catchment_area" id="catchment_area" class="form-control" value="<?=formFieldValue('catchment_area', $record);?>" />
         </div>
 
         <div class="form-group">
             <label for="gauge_zero">Gauge zero</label>
-            <input type="text" name="gauge_zero" id="gauge_zero" class="form-control" value="<?=formFieldValue('gauge_zero', $record);?>" />
+            <input type="number" name="gauge_zero" id="gauge_zero" class="form-control" value="<?=formFieldValue('gauge_zero', $record);?>" />
         </div>
 
         <div class="form-group">
@@ -100,10 +109,10 @@
 
         <fieldset class="form-group">
             <legend><?=__('Waterbody');?></legend>
-			<?php $selectedWaterbody = formFieldValue('waterbodyeuropean_river_code', $record); ?>
+			<?php $selectedWaterbody = formFieldValue('waterbody', $record); ?>
             <div class="field">
-                <select name="waterbodyeuropean_river_code">
-					<?=selectOptions($waterbodyeuropean_river_code, $selectedWaterbody ?? null, ' - '.__('No waterbody').' - ');?>
+                <select name="waterbody">
+					<?=selectOptions($waterbodies, $selectedWaterbody ?? null, ' - '.__('No waterbody').' - ');?>
                 </select>
             </div>
         </fieldset>

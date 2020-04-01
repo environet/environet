@@ -36,18 +36,21 @@ class HydroMonitoringPointQueries extends BaseQueries {
 	 * @throws QueryException
 	 */
 	public static function getById($id, string $primaryKey = 'id'): ?array {
-		$hydroPoint = parent::getById($id);
+		$monitoringPoint = parent::getById($id);
 
-		if ($hydroPoint) {
-			$hydroPoint['classification'] = HydroStationClassificationQueries::getById($hydroPoint['station_classificationid']);
-			$hydroPoint['operator'] = OperatorQueries::getById($hydroPoint['operatorid']);
-			$hydroPoint['riverbank'] = RiverbankQueries::getById($hydroPoint['bankid']);
-			$hydroPoint['waterbodyeuropean_river_code'] = WaterbodyQueries::getById($hydroPoint['waterbodyeuropean_river_code'], 'european_river_code');
-			$hydroPoint['observedProperties'] = (new Select())->select('observed_propertyid')->from('hydropoint_observed_property')
+		if ($monitoringPoint) {
+			$monitoringPoint['classification'] = $monitoringPoint['station_classificationid'] ? HydroStationClassificationQueries::getById($monitoringPoint['station_classificationid']) : null;
+			$monitoringPoint['operator'] = $monitoringPoint['operatorid'] ? OperatorQueries::getById($monitoringPoint['operatorid']) : null;
+			$monitoringPoint['riverbank'] = RiverbankQueries::getById($monitoringPoint['bankid']);
+			$monitoringPoint['waterbody'] = WaterbodyQueries::getById(
+				$monitoringPoint['waterbodyeuropean_river_code'],
+				'european_river_code'
+			);
+			$monitoringPoint['observedProperties'] = (new Select())->select('observed_propertyid')->from('hydropoint_observed_property')
 													->where('mpointid = :mpointId')
 													->addParameter(':mpointId', $id)
 													->run(Query::FETCH_COLUMN);
-			$hydroPoint['showObservedProperty'] = (new Select())->from('hydro_observed_property hop')
+			$monitoringPoint['showObservedProperty'] = (new Select())->from('hydro_observed_property hop')
 													->select(['hop.id', 'hop.symbol'])
 													->join('hydropoint_observed_property hpop', 'hpop.observed_propertyid = hop.id', Query::JOIN_LEFT)
 													->where('hpop.mpointid = :hpopId')
@@ -56,7 +59,7 @@ class HydroMonitoringPointQueries extends BaseQueries {
 		}
 
 
-		return $hydroPoint;
+		return $monitoringPoint;
 	}
 
 
@@ -65,28 +68,36 @@ class HydroMonitoringPointQueries extends BaseQueries {
 	 */
 	public static function prepareData(array $data): array {
 		return [
-			'name' => $data['name'] ?? null,
-			'eucd_wgst' => $data['eucd_wgst'] ?? null,
-			'ncd_wgst' => $data['ncd_wgst'] ?? null,
-			'lat' => $data['lat'] ?? null,
-			'long' => $data['long'] ?? null,
-			'z' => $data['z'] ?? null,
-			'maplat' => $data['lat'] ?? null,
-			'maplong' => $data['long'] ?? null,
-			'river_kilometer' => $data['river_kilometer'] ?? null,
-			'catchment_area' => $data['catchment_area'] ?? null,
+			// strings
+			'name' => $data['name'],
+			'eucd_wgst' => $data['eucd_wgst'],
+			'ncd_wgst' => $data['ncd_wgst'],
+			'country' => $data['country'],
+
+			'location' => $data['location'] ?? null,
 			'river_basin' => $data['river_basin'] ?? null,
-			'gauge_zero' => $data['gauge_zero'] ?? null,
+
+			// numbers
+			'river_kilometer' => isset($data['river_kilometer']) ? (int) $data['river_kilometer'] : null,
+			'catchment_area' => isset($data['catchment_area']) ? (int) $data['catchment_area'] : null,
+			'gauge_zero' => isset($data['gauge_zero']) ? (int) $data['gauge_zero'] : null,
+			'long' => isset($data['long']) ? (int) $data['long'] : null,
+			'lat' => isset($data['lat']) ? (int) $data['lat'] : null,
+			'z' => isset($data['z']) ? (int) $data['z'] : null,
+			'maplat' => isset($data['lat']) ? (int) $data['lat'] : null,
+			'maplong' => isset($data['long']) ?(int) $data['long'] : null,
+			'vertical_reference' => isset($data['vertical_reference']) ? (int) $data['vertical_reference'] : null,
+
+			// foreign keys
+			'station_classificationid' => isset($data['classification']) ? $data['classification'] : null,
+			'operatorid' => isset($data['operator']) ? $data['operator'] : null,
+			'bankid' => isset($data['riverbank']) ? $data['riverbank'] : null,
+			'waterbodyeuropean_river_code' => isset($data['waterbody']) ? $data['waterbody'] : null,
+
+			// hidden
 			'start_time' => '1999-09-09',
 			'end_time' => '2060-09-09',
 			'utc_offset' => 0,
-			'station_classificationid' => (int) $data['classification'] ?? null,
-			'operatorid' => (int) $data['operator'] ?? null,
-			'bankid' => (int) $data['riverbank'] ?? null,
-			'waterbodyeuropean_river_code' => $data['waterbodyeuropean_river_code'] ?? null,
-			'vertical_reference' => $data['vertical_reference'] ?? null,
-			'country' => $data['country'] ?? null,
-			'location' => $data['location'] ?? null,
 		];
 	}
 
@@ -118,7 +129,7 @@ class HydroMonitoringPointQueries extends BaseQueries {
 			]));
 		}
 
-		self::saveHydropointObservedProperty($data['observedProperties'], $id);
+		self::saveHydropointObservedProperties($data['observedProperties'], $id);
 	}
 
 
@@ -130,7 +141,7 @@ class HydroMonitoringPointQueries extends BaseQueries {
 	 *
 	 * @throws QueryException
 	 */
-	public static function saveHydropointObservedProperty($values, $idRight) {
+	public static function saveHydropointObservedProperties($values, $idRight) {
 		//Get user ids'f from posted data, filter it, and filter out duplicates
 		if (!empty($values)) {
 			// get all assigned observed property to the current monitoring point

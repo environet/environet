@@ -6,6 +6,7 @@ use Environet\Sys\General\Db\BaseQueries;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\HttpBadRequestException;
 use Environet\Sys\General\Exceptions\HttpNotFoundException;
+use Environet\Sys\General\Exceptions\MissingEventTypeException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\Exceptions\RenderException;
 use Environet\Sys\General\Response;
@@ -104,6 +105,17 @@ abstract class CrudPage extends BasePage {
 
 
 	/**
+	 * List page action.
+	 *
+	 * @return Response
+	 * @throws RenderException
+	 */
+	public function list(): Response {
+		return $this->renderListPage();
+	}
+
+
+	/**
 	 * Common function to render the list page.
 	 *
 	 * @return Response
@@ -128,6 +140,7 @@ abstract class CrudPage extends BasePage {
 	 * @throws HttpBadRequestException
 	 * @throws QueryException
 	 * @throws RenderException
+	 * @throws MissingEventTypeException
 	 */
 	protected function handleFormPost($id = null, $record = null): Response {
 		$postData = $this->request->getCleanData();
@@ -156,6 +169,7 @@ abstract class CrudPage extends BasePage {
 	 * @throws HttpBadRequestException
 	 * @throws QueryException
 	 * @throws RenderException
+	 * @throws MissingEventTypeException
 	 */
 	public function add(): Response {
 		if ($this->request->isPost()) {
@@ -174,6 +188,7 @@ abstract class CrudPage extends BasePage {
 	 * @throws HttpNotFoundException
 	 * @throws QueryException
 	 * @throws RenderException
+	 * @throws MissingEventTypeException
 	 */
 	public function edit(): Response {
 		$id = $this->getIdParam();
@@ -184,6 +199,18 @@ abstract class CrudPage extends BasePage {
 		}
 
 		return $this->renderForm($record);
+	}
+
+
+	/**
+	 * Common function to handle show method.
+	 *
+	 * @return Response
+	 * @throws HttpNotFoundException
+	 * @throws RenderException
+	 */
+	public function show(): Response {
+		return $this->renderShowPage();
 	}
 
 
@@ -210,7 +237,7 @@ abstract class CrudPage extends BasePage {
 	private function getRecordById($id) {
 		$record = $this->queriesClass::getById($id);
 		if (is_null($record)) {
-			throw new HttpNotFoundException('Record with id: \'id\' could not be found');
+			throw new HttpNotFoundException('Record with id: ' . $id . ' could not be found');
 		}
 		return $record;
 	}

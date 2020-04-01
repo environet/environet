@@ -26,8 +26,7 @@ class Plugin {
 		foreach ($resources as $resource) {
 			$console->writeLine("Uploading $resource->name", Console::COLOR_YELLOW);
 			$xmls = $this->parser->parse($resource->contents);
-
-
+			$console->writeLine('');
 			foreach ($xmls as $xmlPayload) {
 				$console->write('Uploading monitoring point data', Console::COLOR_YELLOW);
 				try {
@@ -40,6 +39,8 @@ class Plugin {
 					$console->write("\r");
 					$console->writeLine('Upload failed, response:                ', Console::COLOR_RED);
 					$console->writeLine($e->getMessage(), Console::COLOR_RED);
+					$console->writeLine('Request xml:');
+					$console->writeLine($xmlPayload->asXML());
 					$failed++;
 				}
 			}

@@ -96,7 +96,7 @@ class MonitoringPointCrud extends CrudPage {
 			$valid = false;
 		}
 
-		if (!$data['classification']) {
+		/*if (!$data['classification']) {
 			$this->addMessage(__('Classification is required'), self::MESSAGE_ERROR);
 			$valid = false;
 		}
@@ -109,7 +109,7 @@ class MonitoringPointCrud extends CrudPage {
 		if (!$data['observedProperties']) {
 			$this->addMessage(__('Observed property is required'), self::MESSAGE_ERROR);
 			$valid = false;
-		}
+		}*/
 
 		return $valid;
 	}

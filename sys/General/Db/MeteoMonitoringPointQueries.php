@@ -30,6 +30,7 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 		'meteopoint.location',
 	];
 
+
 	/**
 	 * @inheritDoc
 	 */
@@ -37,8 +38,8 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 		$monitoringPoint = parent::getById($id);
 
 		if ($monitoringPoint) {
-			$monitoringPoint['classification'] = MeteoStationClassificationQueries::getById($monitoringPoint['meteostation_classificationid']);
-			$monitoringPoint['operator'] = OperatorQueries::getById($monitoringPoint['operatorid']);
+			$monitoringPoint['classification'] = $monitoringPoint['meteostation_classificationid'] ? MeteoStationClassificationQueries::getById($monitoringPoint['meteostation_classificationid']) : null;
+			$monitoringPoint['operator'] = $monitoringPoint['operatorid'] ? OperatorQueries::getById($monitoringPoint['operatorid']) : null;
 			$monitoringPoint['observedProperties'] = (new Select())->select('meteo_observed_propertyid')->from('meteopoint_observed_property')
 														->where('meteopointid = :meteopointId')
 														->addParameter(':meteopointId', $id)
@@ -46,7 +47,11 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 
 			$monitoringPoint['showObservedProperty'] = (new Select())->from('meteo_observed_property mop')
 														->select(['mop.id', 'mop.symbol'])
-														->join('meteopoint_observed_property mpop', 'mpop.meteo_observed_propertyid = mop.id', Query::JOIN_LEFT)
+														->join(
+															'meteopoint_observed_property mpop',
+															'mpop.meteo_observed_propertyid = mop.id',
+															Query::JOIN_LEFT
+														)
 														->where('mpop.meteopointid = :mpopId')
 														->addParameter(':mpopId', $id)
 														->run();
@@ -82,7 +87,7 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 			]));
 		}
 
-		self::saveMeteopointObservedProperty($data['observedProperties'], $id);
+		self::saveMeteoPointObservedProperty($data['observedProperties'], $id);
 	}
 
 
@@ -91,24 +96,35 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 	 */
 	public static function prepareData(array $data): array {
 		return [
-			'name' => $data['name'] ?? null,
-			'eucd_pst' => $data['eucd_pst'] ?? null,
-			'ncd_pst' => $data['ncd_pst'] ?? null,
-			'lat' => $data['lat'] ?? null,
-			'long' => $data['long'] ?? null,
-			'z' => $data['z'] ?? null,
-			'maplat' => $data['lat'] ?? null,
-			'maplong' => $data['long'] ?? null,
-			'altitude' => $data['altitude'] ?? null,
-			'river_basin' => $data['river_basin'] ?? null,
+			//strings
+			'name' => $data['name'],
+			'eucd_pst' => $data['eucd_pst'],
+			'ncd_pst' => $data['ncd_pst'],
+			'country' => $data['country'],
+
+			'location' => $data['location'],
+			'river_basin' => $data['river_basin'],
+
+			// numbers
+			'long' => (int) $data['long'],
+			'lat' => (int) $data['lat'],
+			'z' => (int) $data['z'],
+			'maplat' => (int) $data['lat'],
+			'maplong' => (int) $data['long'],
+			'altitude' => (int) $data['altitude'],
+			'vertical_reference' => (int) $data['vertical_reference'],
+
+
+			// foreign keys
+			'meteostation_classificationid' => $data['classification'] ?: null,
+			'operatorid' => $data['operator'] ?: null,
+
+
+			// hidden
 			'start_time' => '1999-09-09',
 			'end_time' => '2060-09-09',
 			'utc_offset' => 0,
-			'meteostation_classificationid' => (int) $data['classification'] ?? null,
-			'operatorid' => (int) $data['operator'] ?? null,
-			'vertical_reference' => $data['vertical_reference'] ?? null,
-			'country' => $data['country'] ?? null,
-			'location' => $data['location'] ?? null,
+
 		];
 	}
 
@@ -121,7 +137,7 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 	 *
 	 * @throws QueryException
 	 */
-	public static function saveMeteopointObservedProperty($values, $idRight) {
+	public static function saveMeteoPointObservedProperty($values, $idRight) {
 		//Get user ids'f from posted data, filter it, and filter out duplicates
 		if (!empty($values)) {
 			// get all assigned observed property to the current monitoring point

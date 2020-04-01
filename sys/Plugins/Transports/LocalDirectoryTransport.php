@@ -60,7 +60,8 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 		$resources = [];
 		foreach (glob('/meteringdata/' . $this->path .'/*') as $path) {
 			$resource = new Resource();
-			$resource->name = end(explode('/', $path));
+			$pathParts = explode('/', $path);
+			$resource->name = end($pathParts);
 			$resource->contents = file_get_contents($path);
 			$resources[] = $resource;
 		}

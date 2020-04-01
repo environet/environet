@@ -69,11 +69,9 @@ class PluginLayer {
 			$console->writeLine("Choose a $this->name implementation:");
 			$console->writeLine('');
 			foreach ($this->alternatives as $i => $alternative) {
-				$description = $alternative::getDescription();
 				$console->writeLine($i + 1 . ": " . $alternative::getName());
-				$console->writeLine($description);
-				$console->writeLine('');
 			}
+            $console->writeLine('');
 			$choice = $console->askOption();
 
 			return ($this->alternatives[(int) $choice - 1]);
