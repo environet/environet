@@ -218,6 +218,7 @@ class AdminHandler extends BaseHandler {
 		'^meteo\/monitoring-points\/show$' => [MeteoMonitoringPointCrud::class, 'show'],
 		'^meteo\/monitoring-points\/add$'  => [MeteoMonitoringPointCrud::class, 'add'],
 		'^meteo\/monitoring-points\/edit$' => [MeteoMonitoringPointCrud::class, 'edit'],
+		'^meteo\/monitoring-points\/csv-upload'  => [MeteoMonitoringPointCrud::class, 'csvUpload'],
 
 		'^hydro\/results$' => [HydroResultsCrud::class, 'list'],
 		'^meteo\/results$' => [MeteoResultsCrud::class, 'list'],

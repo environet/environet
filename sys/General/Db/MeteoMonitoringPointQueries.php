@@ -87,7 +87,15 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 			]));
 		}
 
-		self::saveMeteoPointObservedProperty($data['observedProperties'], $id);
+		// Save observed properties
+		static::saveConnections(
+			$data['observedProperties'] ?? [],
+			'meteopoint_observed_property',
+			'meteo_observed_propertyid',
+			'meteopointid',
+			$id,
+			true
+		);
 	}
 
 
@@ -102,22 +110,22 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 			'ncd_pst' => $data['ncd_pst'],
 			'country' => $data['country'],
 
-			'location' => $data['location'],
-			'river_basin' => $data['river_basin'],
+			'location' => $data['location'] ?? null,
+			'river_basin' => $data['river_basin'] ?? null,
 
 			// numbers
-			'long' => (int) $data['long'],
-			'lat' => (int) $data['lat'],
-			'z' => (int) $data['z'],
-			'maplat' => (int) $data['lat'],
-			'maplong' => (int) $data['long'],
-			'altitude' => (int) $data['altitude'],
-			'vertical_reference' => (int) $data['vertical_reference'],
+			'long' => isset($data['long']) ? (int) $data['long'] : null,
+			'lat' => isset($data['lat']) ? (int) $data['lat'] : null,
+			'z' => isset($data['z']) ? (int) $data['z'] : null,
+			'maplat' => isset($data['maplat']) ? (int) $data['maplat'] : null,
+			'maplong' => isset($data['maplong']) ? (int) $data['maplong'] : null,
+			'altitude' => isset($data['altitude']) ? (int) $data['altitude'] : null,
+			'vertical_reference' => isset($data['vertical_reference']) ? (int) $data['vertical_reference'] : null,
 
 
 			// foreign keys
-			'meteostation_classificationid' => $data['classification'] ?: null,
-			'operatorid' => $data['operator'] ?: null,
+			'meteostation_classificationid' => isset($data['classification']) ? $data['classification'] ?: null : null,
+			'operatorid' => isset($data['operator']) ? $data['operator'] ?: null : null,
 
 
 			// hidden
@@ -127,61 +135,4 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 
 		];
 	}
-
-
-	/**
-	 * Save meteopoint relation.
-	 *
-	 * @param $values
-	 * @param $idRight
-	 *
-	 * @throws QueryException
-	 */
-	public static function saveMeteoPointObservedProperty($values, $idRight) {
-		//Get user ids'f from posted data, filter it, and filter out duplicates
-		if (!empty($values)) {
-			// get all assigned observed property to the current monitoring point
-			$assignedProperties = (new Select())->select('meteo_observed_propertyid')->from('meteopoint_observed_property')
-									->where('meteopointid = :meteopointId')
-									->addParameter(':meteopointId', $idRight)
-									->run(Query::FETCH_COLUMN);
-
-			//Create insert query for new connections
-			$insert = (new Insert())->table('meteopoint_observed_property')->columns(['meteo_observed_propertyid', 'meteopointid']);
-			// add default values
-			$insert->addParameter(':rightId', $idRight);
-
-			//Add values for all ids
-			$skippedRows = 0;
-			foreach ($values as $key => $id) {
-				// if id is empty = no option selected in the dropdown
-				// and the dropdown "key" / identifier has already assigned to the current monitoring point
-				// we have to delete
-				if (empty($id) && in_array((int) $key, $assignedProperties)) {
-					(new Delete())->table('meteopoint_observed_property')
-						->where('meteopointid = :meteopointId')
-						->where('meteo_observed_propertyid = :observedPropertyId')
-						->addParameter(':meteopointId', $idRight)
-						->addParameter(':observedPropertyId', $key)
-						->run();
-				}
-				// if the current "id" is empty, so we want to delete or the current "key" / identifier of the select field
-				// has already assigned to the current monitoring point we want to do nothing with the current "option"
-				if (empty($id) || in_array((int) $id, $assignedProperties)) {
-					$skippedRows++;
-					continue;
-				}
-
-				$insert->addValueRow([":leftId$key", ":rightId"]);
-				$insert->addParameters([":leftId$key" => (int) $id]);
-			}
-
-			//Run, but without returning last insert id
-			if (count($values) > $skippedRows) {
-				$insert->run(Query::RETURN_BOOL);
-			}
-		}
-	}
-
-
 }

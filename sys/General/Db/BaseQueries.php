@@ -34,41 +34,41 @@ class BaseQueries {
 
 
 	/**
-	 * Save values in a connection table. It needs an array of ids, and some configuration attributes.
-	 * It deletes old connection values, and re-create every connection
+	 * Save values in a connection table.
 	 *
 	 * @param array $values Array of ids
 	 * @param string $connectionTable The connection table to fill with values
 	 * @param string $colLeft Name of the column to where the ids from $values will be saved
 	 * @param string $colRight Name of the column to where the $idRight saved
 	 * @param int $idRight A single id for the right side of the connection
-	 * @param bool $truncate If we have to truncate the previous data, then it has to be true
+	 * @param bool $truncate If true, will delete existing connections first
 	 * @throws QueryException
 	 */
 	public static function saveConnections($values, string $connectionTable, string $colLeft, string $colRight, int $idRight, bool $truncate = false) {
 		//Get user ids'f from posted data, filter it, and filter out duplicates
 		$ids = array_unique(array_filter($values ?? []));
-		if (!empty($ids)) {
-			if ($truncate) {
-				//Delete all connection first, all current connection will be re-created
-				(new Delete())->table($connectionTable)->where($colRight . ' = :' . $colRight)->addParameter(':' . $colRight, $idRight)->run();
-			}
-
-			//Create insert query for new connections
-			$insert = (new Insert())->table($connectionTable)->columns([$colLeft, $colRight]);
-
-			$insert->addParameter(':rightId', $idRight);
-			//Add values for all ids
-			foreach ($ids as $key => $id) {
-				$insert->addValueRow([":leftId$key", ":rightId"]);
-				$insert->addParameters([
-					":leftId$key" => (int) $id,
-				]);
-			}
-
-			//Run, but without returning last insert id
-			$insert->run(Query::RETURN_BOOL);
+		if ($truncate) {
+			//Delete all connection first, all current connection will be re-created
+			(new Delete())->table($connectionTable)->where($colRight . ' = :' . $colRight)->addParameter(':' . $colRight, $idRight)->run();
 		}
+
+		if(empty($ids))
+			return;
+
+		//Create insert query for new connections
+		$insert = (new Insert())->table($connectionTable)->columns([$colLeft, $colRight]);
+
+		$insert->addParameter(':rightId', $idRight);
+		//Add values for all ids
+		foreach ($ids as $key => $id) {
+			$insert->addValueRow([":leftId$key", ":rightId"]);
+			$insert->addParameters([
+				":leftId$key" => (int) $id,
+			]);
+		}
+
+		//Run, but without returning last insert id
+		$insert->run(Query::RETURN_BOOL);
 	}
 
 
@@ -87,6 +87,28 @@ class BaseQueries {
 				->from(static::$tableName)
 				->where(static::$tableName . '.'.$primaryKey.' = :id')
 				->addParameter(':id', $id)
+				->run(Query::FETCH_FIRST);
+		} catch (QueryException $exception) {
+			return null;
+		}
+	}
+
+
+	/**
+	 * Get record by column value
+	 *
+	 * @param string  $column Column name.
+	 * @param mixed $value    Column value.
+	 *
+	 * @return array|null
+	 */
+	public static function getByColumn(string $column, $value): ?array {
+		try {
+			return (new Select())
+				->select(static::$tableName . '.*')
+				->from(static::$tableName)
+				->where(static::$tableName . '.'.$column.' = :value')
+				->addParameter(':value', $value)
 				->run(Query::FETCH_FIRST);
 		} catch (QueryException $exception) {
 			return null;

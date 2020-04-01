@@ -89,10 +89,10 @@ class HydroMonitoringPointQueries extends BaseQueries {
 			'vertical_reference' => isset($data['vertical_reference']) ? (int) $data['vertical_reference'] : null,
 
 			// foreign keys
-			'station_classificationid' => isset($data['classification']) ? $data['classification'] : null,
-			'operatorid' => isset($data['operator']) ? $data['operator'] : null,
-			'bankid' => isset($data['riverbank']) ? $data['riverbank'] : null,
-			'waterbodyeuropean_river_code' => isset($data['waterbody']) ? $data['waterbody'] : null,
+			'station_classificationid' => isset($data['classification']) ? $data['classification'] ?: null : null,
+			'operatorid' => isset($data['operator']) ? $data['classification'] ?: null : null,
+			'bankid' => isset($data['riverbank']) ? $data['classification'] ?: null : null,
+			'waterbodyeuropean_river_code' => isset($data['waterbody']) ? $data['classification'] ?: null : null,
 
 			// hidden
 			'start_time' => '1999-09-09',
@@ -129,62 +129,15 @@ class HydroMonitoringPointQueries extends BaseQueries {
 			]));
 		}
 
-		self::saveHydropointObservedProperties($data['observedProperties'], $id);
-	}
-
-
-	/**
-	 * Save hydropoint relation.
-	 *
-	 * @param $values
-	 * @param $idRight
-	 *
-	 * @throws QueryException
-	 */
-	public static function saveHydropointObservedProperties($values, $idRight) {
-		//Get user ids'f from posted data, filter it, and filter out duplicates
-		if (!empty($values)) {
-			// get all assigned observed property to the current monitoring point
-			$assignedProperties = (new Select())->select('observed_propertyid')->from('hydropoint_observed_property')
-									->where('mpointid = :mpointId')
-									->addParameter(':mpointId', $idRight)
-									->run(Query::FETCH_COLUMN);
-
-			//Create insert query for new connections
-			$insert = (new Insert())->table('hydropoint_observed_property')->columns(['observed_propertyid', 'mpointid']);
-			// add default values
-			$insert->addParameter(':rightId', $idRight);
-
-			//Add values for all ids
-			$skippedRows = 0;
-			foreach ($values as $key => $id) {
-				// if id is empty = no option selected in the dropdown
-				// and the dropdown "key" / identifier has already assigned to the current monitoring point
-				// we have to delete
-				if (empty($id) && in_array((int) $key, $assignedProperties)) {
-					(new Delete())->table('hydropoint_observed_property')
-						->where('mpointid = :mpointId')
-						->where('observed_propertyid = :observedPropertyId')
-						->addParameter(':mpointId', $idRight)
-						->addParameter(':observedPropertyId', $key)
-						->run();
-				}
-				// if the current "id" is empty, so we want to delete or the current "key" / identifier of the select field
-				// has already assigned to the current monitoring point we want to do nothing with the current "option"
-				if (empty($id) || in_array((int) $id, $assignedProperties)) {
-					$skippedRows++;
-					continue;
-				}
-
-				$insert->addValueRow([":leftId$key", ":rightId"]);
-				$insert->addParameters([":leftId$key" => (int) $id]);
-			}
-
-			//Run, but without returning last insert id
-			if (count($values) > $skippedRows) {
-				$insert->run(Query::RETURN_BOOL);
-			}
-		}
+		// Save observed properties
+		static::saveConnections(
+			$data['observedProperties'] ?? [],
+			'hydropoint_observed_property',
+			'observed_propertyid',
+			'mpointid',
+			$id,
+			true
+		);
 	}
 
 

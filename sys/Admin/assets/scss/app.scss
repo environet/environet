@@ -144,6 +144,9 @@ section#main-content {
     &.message-success {
       color: map_get($theme-colors, 'success');
     }
+    &.message-warning {
+      color: map_get($theme-colors, 'warning');
+    }
   }
 
   .card {
