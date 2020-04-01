@@ -3,20 +3,20 @@
 namespace Environet\Sys\DataNode\Interfaces;
 
 /**
- * Class UploaderInterface
+ * Interface UploaderInterface
  *
  * Interface for required functions of uploader plugins
  *
- * @author Ádám Bálint <adam.balint@srg.hu>
- * @package Environet\Sys
+ * @package   Environet\Sys\DataNode\Interfaces
+ * @author    SRG Group <dev@srg.hu>
  */
 interface UploaderInterface {
 
 
 	/**
-	 * DoUpload is a mantatory custom function that's responsible for triggering actual upload
-	 * procedures. This has to be written by the user.
+	 * Do upload action.
 	 *
+	 * DoUpload is a mandatory custom function that's responsible for triggering actual upload procedures. This has to be written by the user.
 	 * This is called automatically every time an upload task is scheduled.
 	 *
 	 * @return bool true on success, false otherwise.
@@ -25,6 +25,8 @@ interface UploaderInterface {
 
 
 	/**
+	 * Validate observation data.
+	 *
 	 * ValidateDiscreteObservation is a function that has to contain a clear logic to decide
 	 * whether the data to be uploaded by this uploader is indeed valid, before sending it.
 	 *
