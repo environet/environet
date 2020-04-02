@@ -11,6 +11,7 @@ use Environet\Sys\General\EventLogger;
 use Environet\Sys\General\Exceptions\HttpBadRequestException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\Exceptions\RenderException;
+use Environet\Sys\General\Request;
 use Environet\Sys\General\Response;
 use Exception;
 
@@ -58,7 +59,7 @@ class Login extends BasePage {
 						->run();
 
 					//Store user id in session
-					$_SESSION[AdminHandler::AUTH_SESSION_KEY] = $userId;
+					$_SESSION[Request::AUTH_SESSION_KEY] = $userId;
 
 					// log event if login was success
 					$this->logLoginDetails(EventLogger::EVENT_TYPE_LOGIN);
