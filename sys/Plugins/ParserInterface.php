@@ -3,6 +3,8 @@
 
 namespace Environet\Sys\Plugins;
 
+use SimpleXMLElement;
+
 /**
  * Interface ParserInterface
  * @package Environet\Sys\Plugins
@@ -15,7 +17,7 @@ interface ParserInterface {
 	 *
 	 * Parse string date (string is from for example a file)
 	 *
-	 * @return array
+	 * @return SimpleXMLElement[]
 	 */
 	public function parse(string $data): array;
 

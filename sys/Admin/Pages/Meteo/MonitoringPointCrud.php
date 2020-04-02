@@ -2,20 +2,17 @@
 
 namespace Environet\Sys\Admin\Pages\Meteo;
 
-use Environet\Sys\Admin\Pages\CrudPage;
 use Environet\Sys\General\Db\MeteoMonitoringPointQueries;
 use Environet\Sys\General\Db\MeteoObservedPropertyQueries;
 use Environet\Sys\General\Db\MeteoStationClassificationQueries;
 use Environet\Sys\General\Db\OperatorQueries;
-use Environet\Sys\General\Exceptions\HttpNotFoundException;
-use Environet\Sys\General\Exceptions\RenderException;
-use Environet\Sys\General\Response;
+use Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud as MonitoringPointCrudBase;
 
 /**
  * Class MonitoringPointCrud
  * @package Environet\Sys\Admin\Pages\Hydro
  */
-class MonitoringPointCrud extends CrudPage {
+class MonitoringPointCrud extends MonitoringPointCrudBase {
 
 	/**
 	 * @inheritdoc
@@ -42,33 +39,16 @@ class MonitoringPointCrud extends CrudPage {
 	 */
 	protected $listPagePath = '/admin/meteo/monitoring-points';
 
-	/**
-	 * @inheritdoc
-	 */
-	protected $successAddMessage = 'Monitoring point successfully saved';
+	protected $observedPropertyQueriesClass = MeteoObservedPropertyQueries::class;
+	protected $observedPropertiesCsvColumn = 4;
+	protected $globalIdName = 'ncd_pst';
 
-
-	/**
-	 * List page action.
-	 *
-	 * @return Response
-	 * @throws RenderException
-	 */
-	public function list(): Response {
-		return $this->renderListPage();
-	}
-
-
-	/**
-	 * Show page action.
-	 *
-	 * @return Response
-	 * @throws RenderException
-	 * @throws HttpNotFoundException
-	 */
-	public function show(): Response {
-		return $this->renderShowPage();
-	}
+	protected $csvColumnMappings = [
+		'name' => 0,
+		'eucd_pst' => 1,
+		'ncd_pst' => 2,
+		'country' => 3,
+	];
 
 
 	/**
@@ -96,7 +76,7 @@ class MonitoringPointCrud extends CrudPage {
 			$valid = false;
 		}
 
-		if (!$data['classification']) {
+		/*if (!$data['classification']) {
 			$this->addMessage(__('Classification is required'), self::MESSAGE_ERROR);
 			$valid = false;
 		}
@@ -109,7 +89,7 @@ class MonitoringPointCrud extends CrudPage {
 		if (!$data['observedProperties']) {
 			$this->addMessage(__('Observed property is required'), self::MESSAGE_ERROR);
 			$valid = false;
-		}
+		}*/
 
 		return $valid;
 	}

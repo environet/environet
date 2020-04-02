@@ -27,6 +27,15 @@ class Install extends BaseCommand {
 	 * @return int
 	 */
 	public function run($arguments): int {
+		$configFilePath = SRC_PATH.'/conf/conf.local.ini';
+
+		if (file_exists($configFilePath)) {
+			$continue = $this->console->askYesNo("Local configuration file already exists: $configFilePath. Do you want to overwrite it?", false);
+			if (!$continue) {
+				$this->console->writeLine("Abort install, keep existing config file", Console::COLOR_YELLOW);
+				return 0;
+			}
+		}
 
 		startInstall:
 
@@ -50,7 +59,7 @@ class Install extends BaseCommand {
 
 		dbConfig:
 		//Ask database config options
-		$dbHost = $this->console->askWithDefault("Enter the database host:", "localhost");
+		$dbHost = $this->console->askWithDefault("Enter the database host:", "dist_database");
 		$dbPort = $this->console->askWithDefault("Enter the database port:", 5432);
 		$dbDatabase = $this->console->ask("Enter the database name:");
 		$dbUser = $this->console->ask("Enter the database username:");
@@ -77,14 +86,13 @@ class Install extends BaseCommand {
 
 		//Build and save local ini file
 		$iniContent = buildIni($configArray);
-		$filePath = SRC_PATH.'/conf/conf.local.ini';
-		if (!is_dir(dirname($filePath))) {
-			mkdir(dirname($filePath), 0755, true);
+		if (!is_dir(dirname($configFilePath))) {
+			mkdir(dirname($configFilePath), 0755, true);
 		}
-		file_put_contents($filePath, $iniContent);
+		file_put_contents($configFilePath, $iniContent);
 
 		$this->console->writeLineBreak();
-		$this->console->writeLine("The configuration has been saved to " . realpath($filePath), Console::COLOR_GREEN);
+		$this->console->writeLine("The configuration has been saved to " . $configFilePath, Console::COLOR_GREEN);
 
 		return 0;
 	}

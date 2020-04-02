@@ -18,6 +18,9 @@ namespace Environet\Sys\General;
  */
 class Request {
 
+	//Session key of admin auth
+	const AUTH_SESSION_KEY = 'adminauth';
+
 	const PREFIX_ADMIN = 'admin';
 	const PREFIX_UPLOAD = 'upload';
 	const PREFIX_DOWNLOAD = 'download';
@@ -168,6 +171,12 @@ class Request {
 	 * @return Identity|null
 	 */
 	public function getIdentity(): ?Identity {
+		if (!$this->identity) {
+			//Set identity for request if has the session value, and if user found based on this id
+			if (!empty($_SESSION[self::AUTH_SESSION_KEY])) {
+				$this->setIdentity(Identity::createFromUser($_SESSION[self::AUTH_SESSION_KEY]));
+			}
+		}
 		return $this->identity;
 	}
 

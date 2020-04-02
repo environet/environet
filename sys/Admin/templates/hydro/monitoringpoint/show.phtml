@@ -61,25 +61,32 @@
 
         <dt class="col-sm-3">Station classification</dt>
         <dd class="col-sm-9">
-            <a href="/admin/hydro/station-classifications/show?id=<?= $record['classification']['id'] ;?>">#<?= $record['classification']['id'] ?></a>
-            <span><?=$record['classification']['value'] ?? null;?></span>
+            <?php if(!empty($record['classification'])): ?>
+                <a href="/admin/hydro/station-classifications/show?id=<?= $record['classification']['id'] ;?>">#<?= $record['classification']['id'] ?></a>
+                <span><?=$record['classification']['value'] ?? null;?></span>
+            <?php endif; ?>
         </dd>
-
         <dt class="col-sm-3">Operator</dt>
         <dd class="col-sm-9">
-            <a href="/admin/data-providers/show?id=<?= $record['operator']['id'] ;?>">#<?= $record['operator']['id'] ?></a>
-            <span><?=$record['operator']['name'] ?? null;?></span>
+			<?php if(!empty($record['operator'])): ?>
+                <a href="/admin/data-providers/show?id=<?= $record['operator']['id'] ;?>">#<?= $record['operator']['id'] ?></a>
+                <span><?=$record['operator']['name'] ?? null;?></span>
+			<?php endif; ?>
         </dd>
 
         <dt class="col-sm-3">Riverbank</dt>
         <dd class="col-sm-9">
-            <span><?=$record['riverbank']['value'] ?? null;?></span>
+			<?php if(!empty($record['riverbank'])): ?>
+                <span><?=$record['riverbank']['value'] ?? null;?></span>
+			<?php endif; ?>
         </dd>
 
         <dt class="col-sm-3">Waterbody</dt>
         <dd class="col-sm-9">
-            <a href="/admin/hydro/waterbodies/show?id=<?= $record['waterbodyeuropean_river_code']['european_river_code'] ;?>">#<?= $record['waterbodyeuropean_river_code']['european_river_code'] ?></a>
-            <span><?=$record['waterbodyeuropean_river_code']['cname'] ?? null;?></span>
+			<?php if(!empty($record['waterbody'])): ?>
+                <a href="/admin/hydro/waterbodies/show?id=<?= $record['waterbody']['european_river_code'] ;?>">#<?= $record['waterbody']['european_river_code'] ?></a>
+                <span><?=$record['waterbody']['cname'] ?? null;?></span>
+			<?php endif; ?>
         </dd>
 
 		<dt class="col-sm-3">Observerd properties</dt>

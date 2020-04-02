@@ -48,29 +48,6 @@ class StationClassificationCrud extends CrudPage {
 
 
 	/**
-	 * List page action.
-	 *
-	 * @return Response
-	 * @throws RenderException
-	 */
-	public function list(): Response {
-		return $this->renderListPage();
-	}
-
-
-	/**
-	 * Show page action.
-	 *
-	 * @return Response
-	 * @throws RenderException
-	 * @throws HttpNotFoundException
-	 */
-	public function show(): Response {
-		return $this->renderShowPage();
-	}
-
-
-	/**
 	 * @inheritDoc
 	 */
 	protected function validateData(array $data): bool {

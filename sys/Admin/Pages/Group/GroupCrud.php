@@ -49,17 +49,6 @@ class GroupCrud extends CrudPage {
 
 
 	/**
-	 * List page action.
-	 *
-	 * @return Response
-	 * @throws RenderException
-	 */
-	public function list(): Response {
-		return $this->renderListPage();
-	}
-
-
-	/**
 	 * @inheritDoc
 	 */
 	protected function formContext(): array {

@@ -23,14 +23,21 @@ class OutputXmlObservationMember implements XmlRenderable {
 	 */
 	private $propertyData;
 
+	/**
+	 * @var array
+	 */
+	private $valueRows;
+
 
 	/**
 	 * OutputXmlObservationMember constructor.
 	 *
 	 * @param array $propertyData
+	 * @param array $valueRows
 	 */
-	public function __construct(array $propertyData) {
+	public function __construct(array $propertyData, array $valueRows) {
 		$this->propertyData = $propertyData;
+		$this->valueRows = $valueRows;
 	}
 
 
@@ -96,10 +103,24 @@ class OutputXmlObservationMember implements XmlRenderable {
 		$interpolationType->addAttribute('xlink:href', 'http://www.opengis.net/def/waterml/2.0/interpolationType/Continuous');
 		$interpolationType->addAttribute('xlink:title', 'Instantaneous');
 
+		$this->renderValues($timeSeries);
+	}
+
+
+	/**
+	 * Render Value points
+	 *
+	 * @param SimpleXMLElement $timeSeries
+	 *
+	 * @throws Exception
+	 */
+	protected function renderValues(SimpleXMLElement &$timeSeries) {
 		// TVP Point
-		$tvp = $timeSeries->addChild('wml2:point')->addChild('wml2:MeasurementTVP');
-		$tvp->addChild('wml2:time', OutputXmlData::dateToISO($this->propertyData['result_time']));
-		$tvp->addChild('wml2:value', $this->propertyData['result_value'] ?? '');
+		foreach ($this->valueRows as $valueRow) {
+			$tvp = $timeSeries->addChild('wml2:point')->addChild('wml2:MeasurementTVP');
+			$tvp->addChild('wml2:time', OutputXmlData::dateToISO($valueRow['result_time']));
+			$tvp->addChild('wml2:value', $valueRow['result_value'] ?? '');
+		}
 	}
 
 

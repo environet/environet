@@ -133,7 +133,7 @@ class UploadTest extends BasePage {
 		$xml = $creator->generateXml(new InputXmlData($mpointId, [$property]))->asXML();
 
 		//Create a request
-		$apiHost = Config::getInstance()->getDatanodeApiHost();
+		$apiHost = Config::getInstance()->getDatanodeDistHost();
 		$request = new Request(rtrim($apiHost, '/').'/upload');
 		$request->setMethod('POST')->setBody($xml);
 
@@ -164,7 +164,7 @@ class UploadTest extends BasePage {
 		}
 
 		$pkiLib = new PKI();
-		$signature = $pkiLib->generateSignature($xml, file_get_contents($privateKeyFile));
+		$signature = $pkiLib->generateSignature(md5($xml), file_get_contents($privateKeyFile));
 
 		return $pkiLib->authHeaderWithSignature($signature, $username);
 	}

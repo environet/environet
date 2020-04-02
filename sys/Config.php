@@ -14,11 +14,11 @@ use Environet\Sys\General\Exceptions\InvalidConfigurationException;
  * @author  Ádám Bálint <adam.balint@srg.hu>
  *
  * @method string getErrorDebugPath
- * @method string getErrorExceptioonPath
+ * @method string getErrorExceptionPath
  * @method bool getErrorDebugEnable
  * @method bool getErrorFileDebugEnable
  * @method bool getDevMode
- * @method string getDatanodeApiHost
+ * @method string getDatanodeDistHost
  * @method int getOpMode
  * @method string getTimezone
  * @method string getDatabaseHost

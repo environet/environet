@@ -48,9 +48,6 @@ class AdminHandler extends BaseHandler {
 	/** @inheritDoc */
 	const HANDLER_PERMISSION = 'admin.all';
 
-	//Session key of admin auth
-	const AUTH_SESSION_KEY = 'adminauth';
-
 	/**
 	 * @var string Base path for templates
 	 */
@@ -61,13 +58,6 @@ class AdminHandler extends BaseHandler {
 	 * @inheritDoc
 	 */
 	protected function getIdentity(): ?Identity {
-		if (!$this->request->getIdentity()) {
-			//Set identity for request if has the session value, and if user found based on this id
-			if (!empty($_SESSION[self::AUTH_SESSION_KEY])) {
-				$this->request->setIdentity(Identity::createFromUser($_SESSION[self::AUTH_SESSION_KEY]));
-			}
-		}
-
 		return $this->request->getIdentity();
 	}
 
@@ -201,6 +191,8 @@ class AdminHandler extends BaseHandler {
 		'^hydro\/monitoring-points\/show$' => [HydroMonitoringPointCrud::class, 'show'],
 		'^hydro\/monitoring-points\/add$'  => [HydroMonitoringPointCrud::class, 'add'],
 		'^hydro\/monitoring-points\/edit$' => [HydroMonitoringPointCrud::class, 'edit'],
+		'^hydro\/monitoring-points\/csv-upload'  => [HydroMonitoringPointCrud::class, 'csvUpload'],
+
 
 		'^meteo\/station-classifications$'       => [MeteoStationClassificationCrud::class, 'list'],
 		'^meteo\/station-classifications\/show$' => [MeteoStationClassificationCrud::class, 'show'],
@@ -216,6 +208,7 @@ class AdminHandler extends BaseHandler {
 		'^meteo\/monitoring-points\/show$' => [MeteoMonitoringPointCrud::class, 'show'],
 		'^meteo\/monitoring-points\/add$'  => [MeteoMonitoringPointCrud::class, 'add'],
 		'^meteo\/monitoring-points\/edit$' => [MeteoMonitoringPointCrud::class, 'edit'],
+		'^meteo\/monitoring-points\/csv-upload'  => [MeteoMonitoringPointCrud::class, 'csvUpload'],
 
 		'^hydro\/results$' => [HydroResultsCrud::class, 'list'],
 		'^meteo\/results$' => [MeteoResultsCrud::class, 'list'],

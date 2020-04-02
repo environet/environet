@@ -50,21 +50,21 @@ class UserQueries extends BaseQueries {
 			if ($data['public_key'] !== "") {
 				// revoke the previous keys
 				(new Update())->table('public_keys')
-				              ->where('usersid = :userId')
-				              ->updateData([
-					              'revoked'    => true,
-					              'revoked_at' => date('Y-m-d H:i:s')
-				              ])
-				              ->addParameter(':userId', $id)
-				              ->run();
+							  ->where('usersid = :userId')
+							  ->updateData([
+								  'revoked'    => true,
+								  'revoked_at' => date('Y-m-d H:i:s')
+							  ])
+							  ->addParameter(':userId', $id)
+							  ->run();
 
 				// add new
 				(new Insert())->table('public_keys')
-				              ->addSingleData([
-					              'usersId'    => $id,
-					              'public_key' => $data['public_key'],
-				              ])
-				              ->run();
+							  ->addSingleData([
+								  'usersId'    => $id,
+								  'public_key' => $data['public_key'],
+							  ])
+							  ->run();
 			}
 			// user data to update
 			$userUpdateData = [
@@ -86,30 +86,30 @@ class UserQueries extends BaseQueries {
 
 			// if data is valid, update user
 			(new Update())->table('users')
-			              ->where('id = :userId')
-			              ->updateData($userUpdateData)
-			              ->addParameter(':userId', $id)
-			              ->run();
+						  ->where('id = :userId')
+						  ->updateData($userUpdateData)
+						  ->addParameter(':userId', $id)
+						  ->run();
 
 			self::savePermissions($data['form_permissions'], $id);
 			self::saveGroups($data['form_groups'], $id);
 		} else {
 			// add new user
 			$insertId = (new Insert())->table('users')
-			                          ->addSingleData([
-				                          'name'     => $data['name'],
-				                          'username' => $data['username'],
-				                          'email'    => $data['email'],
-				                          'password' => password_hash($data['password'], PASSWORD_DEFAULT),
-			                          ])
-			                          ->run();
+									  ->addSingleData([
+										  'name'     => $data['name'],
+										  'username' => $data['username'],
+										  'email'    => $data['email'],
+										  'password' => password_hash($data['password'], PASSWORD_DEFAULT),
+									  ])
+									  ->run();
 			// add new public_key
 			(new Insert())->table('public_keys')
-			              ->addSingleData([
-				              'usersId'    => $insertId,
-				              'public_key' => $data['public_key'],
-			              ])
-			              ->run();
+						  ->addSingleData([
+							  'usersId'    => $insertId,
+							  'public_key' => $data['public_key'],
+						  ])
+						  ->run();
 
 			// log user add event data
 			EventLogger::log(EventLogger::EVENT_TYPE_USER_ADD, [
@@ -284,16 +284,16 @@ class UserQueries extends BaseQueries {
 			->run();
 
 		$record['form_permissions'] = (new Select())->select('permissionsid')
-		                                            ->from('user_permissions')
-		                                            ->where('usersid = :userId')
-		                                            ->addParameter(':userId', $record['id'])
-		                                            ->run(Query::FETCH_COLUMN);
+													->from('user_permissions')
+													->where('usersid = :userId')
+													->addParameter(':userId', $record['id'])
+													->run(Query::FETCH_COLUMN);
 
 		$record['form_groups'] = (new Select())->select('groupsid')
-		                                       ->from('users_groups')
-		                                       ->where('usersid = :userId')
-		                                       ->addParameter(':userId', $record['id'])
-		                                       ->run(Query::FETCH_COLUMN);
+											   ->from('users_groups')
+											   ->where('usersid = :userId')
+											   ->addParameter(':userId', $record['id'])
+											   ->run(Query::FETCH_COLUMN);
 
 		return $record;
 	}

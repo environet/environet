@@ -60,7 +60,7 @@ class EventLogger {
 	 */
 	public static function log(string $evenType, $data, int $operatorId = null) {
 		$data   = is_array($data) ? json_encode($data) : $data;
-		$userId = isset($_SESSION[AdminHandler::AUTH_SESSION_KEY]) ? $_SESSION[AdminHandler::AUTH_SESSION_KEY] : null;
+		$userId = isset($_SESSION[Request::AUTH_SESSION_KEY]) ? $_SESSION[Request::AUTH_SESSION_KEY] : null;
 
 		(new Insert())->table('event_logs')
 			->addSingleData([

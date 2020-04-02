@@ -39,8 +39,19 @@ class CreateOutputXml {
 	 */
 	public function generateXml($data): SimpleXMLElement {
 		$result = new OutputXmlData();
-		foreach ($data as $point) {
-			$result->addObservationMember(new OutputXmlObservationMember($point));
+		$members = [];
+
+		//Group value rows by mpoint and property - these will be rendered as observation memebers
+		foreach ($data as $valueRow) {
+			if (!isset($members[$valueRow['mpoint_id'].'_'.$valueRow['property_id']])) {
+				$members[$valueRow['mpoint_id'].'_'.$valueRow['property_id']] = [];
+			}
+			$members[$valueRow['mpoint_id'].'_'.$valueRow['property_id']][] = $valueRow;
+		}
+
+		foreach ($members as $valueRows) {
+			//Create observation member, use the first valueRow for member data. All other rows will differ only in values and dates.
+			$result->addObservationMember(new OutputXmlObservationMember(reset($valueRows), $valueRows));
 		}
 
 		$result->render($this->outputXml);

@@ -119,6 +119,8 @@ class UploadHandler extends ApiHandler {
 				throw new UploadException(301);
 			}
 
+			$this->storeInputData($content);
+
 			try {
 				//Parse the XML with simpleXML
 				$parsedXml = new SimpleXMLElement($content);
@@ -128,7 +130,7 @@ class UploadHandler extends ApiHandler {
 			}
 
 			try {
-				//Validate the XML against XSD schama
+				//Validate the XML against XSD schema
 				(new SchemaValidator($parsedXml, SRC_PATH . '/public/schemas/environet.xsd'))->validate();
 			} catch (SchemaInvalidException $e) {
 				//XML is invalid
@@ -146,17 +148,13 @@ class UploadHandler extends ApiHandler {
 				throw new UploadException(401);
 			}
 		} catch (UploadException $e) {
-			//Create ErrorResponse xml
-			http_response_code(400);
-
 			return (new Response((new CreateErrorXml())->generateXml($e->getErrorXmlData())->asXML()))
+                ->setStatusCode(400)
 				->setHeaders(['Content-type: application/xml']);
 		} catch (Throwable $e) {
-			//Create ErrorResponse xml
-			http_response_code(500);
-
 			return (new Response((new CreateErrorXml())->generateXml([new ErrorXmlData(500, $e->getMessage())])->asXML()))
-				->setHeaders(['Content-type: application/xml']);
+				->setStatusCode(500)
+                ->setHeaders(['Content-type: application/xml']);
 		}
 	}
 
@@ -176,6 +174,20 @@ class UploadHandler extends ApiHandler {
 			case MPOINT_TYPE_METEO:
 				return new HydroInputXmlProcessor($xml);
 		}
+	}
+
+
+	/**
+	 * Store all raw input xmls
+	 *
+	 * @param string $content
+	 */
+	protected function storeInputData(string $content): void {
+		$dir = SRC_PATH . '/data/input_xmls';
+		if (!is_dir($dir)) {
+			mkdir($dir, 0755, true);
+		}
+		file_put_contents($dir . '/' . time() . '.xml', $content);
 	}
 
 

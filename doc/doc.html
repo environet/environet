@@ -4,6 +4,10 @@
 	<meta charset="UTF-8">
 	<title>Environet</title>
 	<style type="text/css">
+		body {
+			max-width: 960px;
+			margin: 0 auto;
+		}
 		.markdown-body .octicon {
 			display: inline-block;
 			fill: currentColor;
@@ -999,15 +1003,22 @@
 <p>This document is the documentation of the Environet system.</p>
 <ul>
 <li><a href="#10_system_requirements">System requirements</a></li>
-<li><a href="#20_distribution_node_functionality">Distribution node functionality</a>
+<li><a href="#11_setup">Setup</a></li>
+<li><a href="#20_distribution_node">Distribution node</a>
 <ul>
-<li><a href="#21_database_structure">Database structure</a></li>
-<li><a href="#22_api_upload">Upload API</a></li>
-<li><a href="#23_api_download">Download API</a></li>
-<li><a href="#24_admin_user_manual">Administration area</a></li>
+<li><a href="#20_distribution_node">Overview</a></li>
+<li><a href="#21_setup">Setup</a></li>
+<li><a href="#22_database_structure">Database structure</a></li>
+<li><a href="#23_api_upload">Upload API</a></li>
+<li><a href="#24_api_download">Download API</a></li>
+<li><a href="#25_admin_user_manual">Administration area</a></li>
 </ul></li>
-<li><a href="#30_data_node_functionality">Data node functionality</a></li>
-<li><a href="#41_key_gen">Keypair generation help</a></li>
+<li><a href="#30_data_node">Data node</a>
+<ul>
+<li><a href="#30_data_node">Overview</a></li>
+<li><a href="#30_data_node">Setup</a></li>
+</ul></li>
+<li><a href="#41_key_gen">SSL keypair generation guide</a></li>
 </ul>
 <p><a name="10_system_requirements"></a></p>
 <h1 id="system-requirements">System requirements</h1>
@@ -1018,15 +1029,39 @@
 <li><strong>RAM</strong>: at least 2GB</li>
 <li><strong>HDD</strong>: at least 1GB</li>
 </ul>
-<p><a name="20_distribution_node_functionality"></a></p>
-<h1 id="distribution-node-functionality">Distribution node functionality</h1>
-<p>A Distribution node, in it’s minimal form, is a service aspect that’s able to maintain the central database and service API requests. In the first phase the domain of the distribution node is: <a href="https://environet.environ.hu">https://environet.environ.hu</a></p>
+<p><a name="11_setup"></a></p>
+<h1 id="setup">Setup</h1>
+<h2 id="required-software">Required software</h2>
+<p>Docker engine - <a href="https://docs.docker.com/install" class="uri">https://docs.docker.com/install</a><br />
+Docker compose - <a href="https://docs.docker.com/compose" class="uri">https://docs.docker.com/compose</a></p>
+<h2 id="source-code">Source code</h2>
+<ol type="1">
+<li><p>Clone the two git repositories needed to run the app:</p>
+<ul>
+<li>The Environet docker environment: <a href="https://github.com/environet/environet-docker" class="uri">https://github.com/environet/environet-docker</a></li>
+<li>The Environet source code <a href="https://github.com/environet/environet" class="uri">https://github.com/environet/environet</a></li>
+</ul></li>
+<li><p>Configure the environment</p>
+<p>In the <em>environet-docker</em> folder, create a new .env file by copying .env.example.</p>
+<ul>
+<li>If the two repositories are not in the same folder, change the SRC_ROOT variable to the path of the <em>environet</em> repository (relative or absolute).</li>
+</ul></li>
+</ol>
+<p><a name="20_distribution_node"></a></p>
+<h1 id="distribution-node">Distribution node</h1>
+<h2 id="overview">Overview</h2>
+<p>A Distribution node, in it’s minimal form, is a service aspect that’s able to maintain the central database and service API requests. In the first phase the domain of the distribution node is: <a href="https://environet.environ.hu" class="uri">https://environet.environ.hu</a></p>
+<h2 id="setup-1">Setup</h2>
+<h3 id="required-software-1">Required software</h3>
+<p>Docker engine - <a href="https://docs.docker.com/install" class="uri">https://docs.docker.com/install</a><br />
+Docker compose - <a href="https://docs.docker.com/compose" class="uri">https://docs.docker.com/compose</a></p>
+<h3 id="section"></h3>
 <h2 id="central-database">Central database</h2>
 <p>The distribution node has a database backend. It contains: * Data and configuration of hydro and meteo points * Measurement data tables of these monitoring points * User and access (ACL) tables (users, groups, permissions) * System runtime data</p>
 <p>Schema of the database can be found here: <a href="#21_database_structure">Database structure</a></p>
 <h2 id="administration-area">Administration area</h2>
-<p>On the administration are the administrators can maintain: * The data and configuration of monitoring points and observed properties * Operators * Users, groups, and it’s permissions (ACL) * Public keys of operator-users</p>
-<p>The url of the administration are: https://distribution-node.com/admin</p>
+<p>On the administration area, administrators can maintain: * The data and configuration of monitoring points and observed properties * Operators * Users, groups, and their permissions (ACL) * Public keys of operator-users</p>
+<p>The url of the administration area: https://distribution-node.com/admin</p>
 <h2 id="api-endpoints">API endpoints</h2>
 <h3 id="upload">Upload</h3>
 <p>With this endpoint data nodes can upload data of some monitoring points.<br />
@@ -1034,7 +1069,16 @@ The detailed documentation of this endpoint can found here: <a href="#22_api_upl
 <h3 id="download">Download</h3>
 <p>With this endpoint clients can query data from the distribution node. This endpoint is available only after authentication, and authorization, so only permitted users can run queries. The response can be filtered by date, monitoring point type, and some other properties.<br />
 The detailed documentation of this endpoint can found here: <a href="#23_api_download">Download API documentation</a></p>
-<p><a name="21_database_structure"></a></p>
+<p><a name="21_setup"></a></p>
+<h1 id="setup-2">Setup</h1>
+<ol type="1">
+<li><p>Install the environet project. Refer to <a href="#11_setup">Setup</a>.</p></li>
+<li><p>Start the distribution node services <code>./environet dist up</code></p></li>
+<li><p>Create a distribution node configuration <code>./environet dist install</code></p></li>
+<li><p>Initialize database, and create admin user <code>./environet dist init database</code></p></li>
+</ol>
+<p>After going through these steps, the distribution node should be up and running. You can access the admin panel at YOUR_IP/admin.</p>
+<p><a name="22_database_structure"></a></p>
 <h1 id="database-structure">Database structure</h1>
 <h2 id="database-engine">Database engine</h2>
 <ul>
@@ -1043,11 +1087,11 @@ The detailed documentation of this endpoint can found here: <a href="#23_api_dow
 </ul>
 <h2 id="schema-diagram">Schema diagram</h2>
 <figure>
-<img src="resources/model.jpg" alt="" /><figcaption>Schema diagram images</figcaption>
+<img src="resources/model.jpg" alt="Schema diagram images" /><figcaption>Schema diagram images</figcaption>
 </figure>
 <h2 id="schema-sql-structure">Schema sql structure</h2>
 <p><a href="resources/schema.sql">Link to sql file</a></p>
-<p><a name="22_api_upload"></a></p>
+<p><a name="23_api_upload"></a></p>
 <h1 id="upload-api-documentation">Upload API documentation</h1>
 <h2 id="url-method">URL &amp; METHOD</h2>
 <ul>
@@ -1075,7 +1119,7 @@ The detailed documentation of this endpoint can found here: <a href="#23_api_dow
 </tbody>
 </table>
 <h3 id="signature-header">Signature header:</h3>
-<p>The pattern of the header: <code>Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"</code></p>
+<p>The pattern of the header: <code>Signature keyId=&quot;[username]&quot;,algorithm=&quot;rsa-sha256&quot;,signature=&quot;[signature]&quot;</code></p>
 <p>The <code>keyId</code> is the username of the uploader user. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the from the body of the response, which is the XML data.</p>
 <hr />
 <h2 id="body">Body</h2>
@@ -1115,19 +1159,19 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </ul>
 <h3 id="invalid-request">Invalid request</h3>
 <ul>
-<li><p><strong>Status code</strong>: 400</p></li>
-<li><p><strong>Content-type</strong>: application/xml</p></li>
-<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
-<li><p><strong>Description</strong>: Input or processing error during the upload process. The reponse in an error xml which is valid agains environet’ upload api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
+<li><strong>Status code</strong>: 400</li>
+<li><strong>Content-type</strong>: application/xml</li>
+<li><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></li>
+<li><strong>Description</strong>: Input or processing error during the upload process. The reponse in an error xml which is valid agains environet’ upload api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb2-3"><a href="#cb2-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
-<span id="cb2-5"><a href="#cb2-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
-<span id="cb2-6"><a href="#cb2-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
-<span id="cb2-7"><a href="#cb2-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
-<li><p><strong>Error codes</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></a>
+<a class="sourceLine" id="cb2-3" title="3">    <span class="kw">&lt;environet:Error&gt;</span></a>
+<a class="sourceLine" id="cb2-4" title="4">        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span></a>
+<a class="sourceLine" id="cb2-5" title="5">        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></a>
+<a class="sourceLine" id="cb2-6" title="6">    <span class="kw">&lt;/environet:Error&gt;</span></a>
+<a class="sourceLine" id="cb2-7" title="7"><span class="kw">&lt;/environet:ErrorResponse&gt;</span></a></code></pre></div></li>
+<li><strong>Error codes</strong>
 <ul>
 <li><code>101</code>: Unknown error</li>
 <li><code>102</code>: Server error</li>
@@ -1148,20 +1192,20 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </ul>
 <h3 id="server-error">Server error</h3>
 <ul>
-<li><p><strong>Status code</strong>: 500</p></li>
-<li><p><strong>Content-type</strong>: application/xml</p></li>
-<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
-<li><p><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet’s upload api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
+<li><strong>Status code</strong>: 500</li>
+<li><strong>Content-type</strong>: application/xml</li>
+<li><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></li>
+<li><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet’s upload api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb3-3"><a href="#cb3-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
-<span id="cb3-4"><a href="#cb3-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
-<span id="cb3-5"><a href="#cb3-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
-<span id="cb3-6"><a href="#cb3-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
-<span id="cb3-7"><a href="#cb3-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb3"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></a>
+<a class="sourceLine" id="cb3-3" title="3">    <span class="kw">&lt;environet:Error&gt;</span></a>
+<a class="sourceLine" id="cb3-4" title="4">        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span></a>
+<a class="sourceLine" id="cb3-5" title="5">        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></a>
+<a class="sourceLine" id="cb3-6" title="6">    <span class="kw">&lt;/environet:Error&gt;</span></a>
+<a class="sourceLine" id="cb3-7" title="7"><span class="kw">&lt;/environet:ErrorResponse&gt;</span></a></code></pre></div></li>
 </ul>
-<p><a name="23_api_download"></a></p>
+<p><a name="24_api_download"></a></p>
 <h1 id="download-api-documentation">Download API documentation</h1>
 <h2 id="url-method-1">URL &amp; METHOD</h2>
 <ul>
@@ -1175,8 +1219,8 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <li><strong>type</strong>: The type of the monitoring points. The value must be one of the following: <code>hydro</code> | <code>meteo</code></li>
 <li><strong>start</strong>: Minimum date of time series. Date format: <a href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a></li>
 <li><strong>end</strong>: Maximum date of time series. Date format: <a href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a></li>
-<li><strong>country[]</strong>: Query time series only for monitoring points from the given countries. Country code format: <a href="https://www.iso.org/iso-3166-country-codes.html">ISO 3166-1 - alpha-2</a></li>
-<li><strong>symbol[]</strong>: Query time series only of the given observed properties.</li>
+<li><strong>country<a href="#section"></a></strong>: Query time series only for monitoring points from the given countries. Country code format: <a href="https://www.iso.org/iso-3166-country-codes.html">ISO 3166-1 - alpha-2</a></li>
+<li><strong>symbol<a href="#section"></a></strong>: Query time series only of the given observed properties.</li>
 </ul>
 <h2 id="headers-1">Headers</h2>
 <table>
@@ -1198,7 +1242,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </tbody>
 </table>
 <h3 id="signature-header-1">Signature header:</h3>
-<p>The pattern of the header: <code>Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"</code></p>
+<p>The pattern of the header: <code>Signature keyId=&quot;[username]&quot;,algorithm=&quot;rsa-sha256&quot;,signature=&quot;[signature]&quot;</code></p>
 <p>The <code>keyId</code> is the username of the user who wants to query data. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the token in the query parameters.</p>
 <h2 id="repsonses-1">Repsonses</h2>
 <h3 id="success-1">Success</h3>
@@ -1210,19 +1254,19 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </ul>
 <h3 id="invalid-request-1">Invalid request</h3>
 <ul>
-<li><p><strong>Status code</strong>: 400</p></li>
-<li><p><strong>Content-type</strong>: application/xml</p></li>
-<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
-<li><p><strong>Description</strong>: The query request is invalid. The response is an xml which is valid agains environet’ upload api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
+<li><strong>Status code</strong>: 400</li>
+<li><strong>Content-type</strong>: application/xml</li>
+<li><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></li>
+<li><strong>Description</strong>: The query request is invalid. The response is an xml which is valid agains environet’ upload api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
-<span id="cb4-4"><a href="#cb4-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
-<span id="cb4-5"><a href="#cb4-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
-<span id="cb4-6"><a href="#cb4-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
-<span id="cb4-7"><a href="#cb4-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
-<li><p><strong>Error codes</strong></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></a>
+<a class="sourceLine" id="cb4-3" title="3">    <span class="kw">&lt;environet:Error&gt;</span></a>
+<a class="sourceLine" id="cb4-4" title="4">        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span></a>
+<a class="sourceLine" id="cb4-5" title="5">        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></a>
+<a class="sourceLine" id="cb4-6" title="6">    <span class="kw">&lt;/environet:Error&gt;</span></a>
+<a class="sourceLine" id="cb4-7" title="7"><span class="kw">&lt;/environet:ErrorResponse&gt;</span></a></code></pre></div></li>
+<li><strong>Error codes</strong>
 <ul>
 <li><code>101</code>: Unknown error</li>
 <li><code>102</code>: Server error</li>
@@ -1242,20 +1286,20 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </ul>
 <h3 id="server-error-1">Server error</h3>
 <ul>
-<li><p><strong>Status code</strong>: 500</p></li>
-<li><p><strong>Content-type</strong>: application/xml</p></li>
-<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
-<li><p><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet’ upload api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
+<li><strong>Status code</strong>: 500</li>
+<li><strong>Content-type</strong>: application/xml</li>
+<li><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></li>
+<li><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet’ upload api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb5-3"><a href="#cb5-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
-<span id="cb5-4"><a href="#cb5-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
-<span id="cb5-6"><a href="#cb5-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
-<span id="cb5-7"><a href="#cb5-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb5"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></a>
+<a class="sourceLine" id="cb5-3" title="3">    <span class="kw">&lt;environet:Error&gt;</span></a>
+<a class="sourceLine" id="cb5-4" title="4">        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span></a>
+<a class="sourceLine" id="cb5-5" title="5">        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></a>
+<a class="sourceLine" id="cb5-6" title="6">    <span class="kw">&lt;/environet:Error&gt;</span></a>
+<a class="sourceLine" id="cb5-7" title="7"><span class="kw">&lt;/environet:ErrorResponse&gt;</span></a></code></pre></div></li>
 </ul>
-<p><a name="24_admin_user_manual"></a></p>
+<p><a name="25_admin_user_manual"></a></p>
 <p>﻿# Admin user manual</p>
 <p>This document’s goals to represents the different parts of the administration area to help to understand how it works. Help you to see through how works the specified relationships and how you can handle them.</p>
 <h3 id="general-information">General information</h3>
@@ -1472,63 +1516,54 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>Here you can see the results of the different monitoring point, what has arrived via API.</p>
 <p>Path: /admin/meteo/results</p>
 <p>Searchable: name, symbol</p>
-<p><a name="30_data_node_functionality"></a></p>
-<h1 id="data-node-functionality">Data node functionality</h1>
-<p>A data node is a special configuration of Environet, which runs at a data source with the purpose of gathering metering point measurements from any third party format, such as a plain text file, spreadsheet or web resource, transform these data to a format compatible with the Environet distribution node API, and upload the results to a distribution node on behalf of an API user. The gathering and uploading of data is accomplished by way of uploader plugins, which are defined by configuration files which can then be run by calling a script, typically by a cron job.</p>
-<h2 id="required-software">Required software</h2>
-<p>Docker engine - https://docs.docker.com/install/ Docker compose - https://docs.docker.com/compose/</p>
-<h2 id="setup">Setup</h2>
+<p><a name="30_data_node"></a></p>
+<h1 id="data-node">Data node</h1>
+<h2 id="overview-1">Overview</h2>
+<p>A <em>data node</em> is a configuration mode of Environet, which designed to be run at a data source with the purpose of gathering metering point measurements stored in some third party format, such as a plain text file, spreadsheet or web resource.<br />
+It transforms these data to a format compatible with the Environet <em>distribution node</em> API, and uploads the results to a distribution node on behalf of an API user.<br />
+The gathering and uploading of data is accomplished by way of uploader plugin configurations, which can then be run by calling a script, typically by a cron job.</p>
+<h2 id="setup-3">Setup</h2>
 <ol type="1">
-<li>Clone the two git repositories needed to run the app:</li>
-</ol>
+<li><p>Install the environet project. Refer to <a href="#11_setup">Setup</a></p></li>
+<li>Configure data directory
 <ul>
-<li>The Environet docker environment: https://github.com/environet/environet-docker</li>
-<li>The Environet source code https://github.com/environet/environet</li>
-</ul>
-<ol start="2" type="1">
-<li>Configure docker</li>
+<li>If your data node will be reading data from a file or directory, configure the LOCAL_DATA_DIR variable with the path to the directory where the data will be found.</li>
+</ul></li>
+<li><p>Start the data node container</p>
+<p><code>./environet data up</code></p></li>
+<li><p>Creating uploader plugin configurations</p>
+<h5 id="prerequisites">Prerequisites</h5>
+<p>For an uploader configuration to work, the metering points and observable properties (for which the plugin will upload measurements) have to be configured beforehand on the Environet distribution node that the plugin will be uploading to.</p>
+<p>An API user with upload permissions and an SSL key will also need to be configured, to authenticate upload requests.<br />
+To generate an ssl key pair, you can run the command <code>./environet data tool keygen</code> Private keys should be placed in the <code>conf/plugins/credentials</code> directory, which is where the keygen tool will place them, by default.</p>
+<h5 id="plugin-configuration-command-line-tool">Plugin configuration command line tool</h5>
+<p>Run <code>./environet data plugin create</code> to start an interactive script, that will guide you through creating an uploader plugin configuration.</p>
+<p>Generated configurations will be saved to the <code>/conf/plugins/configurations</code> folder, with the filename provided.</p></li>
+<li><p>Running a configuration</p>
+<p>Run <code>./environet plugin run [configuration name]</code> to run an uploader plugin configuration. (If the upload needs to run regularly, you would have to set up a cron job to execute the command at regular intervals.)</p></li>
 </ol>
-<p>In the Environet docker project folder, create a new .env file by copying the .env.example.</p>
-<ul>
-<li>Change the SRC_ROOT variable to the path of the Environet source code folder (this would be “../environet” if the two repositories are in the same folder, or it can be set to an absolute path)</li>
-<li>If your data node will be reading data from the filesystem, configure the LOCAL_DATA_DIR variable with the path to the directory where the data file(s) will be found.</li>
-</ul>
-<ol start="3" type="1">
-<li>Start the data node container</li>
-</ol>
-<ul>
-<li><code>docker-compose up -d</code></li>
-</ul>
-<ol start="4" type="1">
-<li>Create your uploader plugin configuration</li>
-</ol>
-<p>For an uploader configuration, any metering points and observable properties for which the plugin will upload measurements, have to be configured beforehand on the Environet distribution node that the plugin will be uploading to. A user name and ssl private key will also need to be supplied, to authenticate the upload requests. Private keys should be placed in the <code>conf/plugins/credentials</code> folder of the Environet docker project</p>
-<p>Run <code>dareffort plugin create</code> to start an interactive script, that will guide you through creating an uploader plugin. Generated configurations will be saved to the <code>/conf/plugins/configurations</code> folder, with the filename provided.</p>
-<ol start="5" type="1">
-<li>Running a plugin</li>
-</ol>
-<p>Run <code>dareffort plugin run [configuration name]</code> to run the uploader plugin. If the upload needs to run regularly, set up a cron job to execute the command at regular intervals.</p>
 <p><a name="41_key_gen"></a></p>
-<p>﻿# Private and Public key generation</p>
-<p>First of all you have to download the openssl library.</p>
-<h2 id="in-case-of-windows">In case of windows</h2>
+<h1 id="ssl-keypair-generation-guide">SSL keypair generation guide</h1>
+<h2 id="windows">Windows</h2>
 <p>It is recommended to use the following:</p>
-<p>https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip</p>
+<p><a href="https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip" class="uri">https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip</a></p>
 <p>Download and extract it to an optional place. In the package, you can find the executable file at the: <em>bin/openssl.exe</em></p>
 <p>If you open the exe, it will prompt a command window, wherein you have to type the following lines:</p>
-<p><strong>1.</strong> Private key generation: &gt; <em>genrsa -out private.pem 2048</em></p>
-<p><strong>2.</strong> Public key generation from private key: &gt; <em>rsa -in private.pem -out public.pem -outform PEM -pubout</em></p>
-<p>After that you feel free to send your public key to anywhere.</p>
-<h2 id="in-case-of-linux">In case of linux</h2>
+<p><strong>1.</strong> Private key generation:<br />
+<code>genrsa -out private.pem 2048</code></p>
+<p><strong>2.</strong> Public key generation from private key:<br />
+<code>rsa -in private.pem -out public.pem -outform PEM -pubout</code></p>
+<h2 id="linux">Linux</h2>
 <p>You have to download one from the following link:</p>
-<p>https://www.openssl.org/source/</p>
+<p><a href="https://www.openssl.org/source/" class="uri">https://www.openssl.org/source/</a></p>
 <p>After that you have to extract and install it.</p>
 <p>Here you can find a detailed description about the installation:</p>
-<p>https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/</p>
+<p><a href="https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/" class="uri">https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/</a></p>
 <p>After the installation you have to run these commands:</p>
-<p><strong>1.</strong> Private key generation: &gt; <em>openssl genrsa -out private.pem 2048</em></p>
-<p><strong>2.</strong> Public key generation from private key: &gt; <em>openssl rsa -in private.pem -out public.pem -outform PEM -pubout</em></p>
-<p>After that you feel free to send your public key to anywhere.</p>
+<p><strong>1.</strong> Private key generation:<br />
+<code>openssl genrsa -out private.pem 2048</code></p>
+<p><strong>2.</strong> Public key generation from private key:<br />
+<code>openssl rsa -in private.pem -out public.pem -outform PEM -pubout</code></p>
 
 
 </body>

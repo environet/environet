@@ -48,17 +48,6 @@ class WaterbodyCrud extends CrudPage {
 
 
 	/**
-	 * List page action.
-	 *
-	 * @return Response
-	 * @throws RenderException
-	 */
-	public function list(): Response {
-		return $this->renderListPage();
-	}
-
-
-	/**
 	 * Show page action.
 	 *
 	 * @return Response

@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.1 (Debian 12.1-1.pgdg100+1)
--- Dumped by pg_dump version 12.1 (Debian 12.1-1.pgdg100+1)
+-- Dumped from database version 12.1
+-- Dumped by pg_dump version 12.1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -20,10 +20,6 @@ SET row_security = off;
 -- Name: dareffort; Type: DATABASE; Schema: -; Owner: -
 --
 
-CREATE DATABASE dareffort WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'C' LC_CTYPE = 'C';
-
-
-\connect dareffort
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -211,10 +207,17 @@ CREATE TABLE public.event_logs (
     id integer NOT NULL,
     event_type character varying(50) NOT NULL,
     data text,
+    created_at timestamp without time zone,
     user_id integer,
-    operator_id integer,
-    created_at timestamp without time zone
+    operator_id integer
 );
+
+
+--
+-- Name: COLUMN event_logs.event_type; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN public.event_logs.event_type IS 'Identifier of event type';
 
 
 --
@@ -367,7 +370,9 @@ CREATE TABLE public.hydro_result (
     id bigint NOT NULL,
     time_seriesid bigint NOT NULL,
     "time" timestamp(6) without time zone NOT NULL,
-    value numeric(20,10) NOT NULL
+    value numeric(20,10) NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    is_forecast boolean DEFAULT false NOT NULL
 );
 
 
@@ -471,28 +476,28 @@ ALTER SEQUENCE public.hydro_time_series_id_seq OWNED BY public.hydro_time_series
 
 CREATE TABLE public.hydropoint (
     id integer NOT NULL,
-    station_classificationid integer NOT NULL,
-    operatorid integer NOT NULL,
-    bankid integer NOT NULL,
-    waterbodyeuropean_river_code character varying(64) NOT NULL,
+    station_classificationid integer,
+    operatorid integer,
+    bankid integer,
+    waterbodyeuropean_river_code character varying(64),
     eucd_wgst character varying(64) NOT NULL,
     ncd_wgst character varying(64) NOT NULL,
-    vertical_reference character varying(32) NOT NULL,
-    long numeric(20,10) NOT NULL,
-    lat numeric(20,10) NOT NULL,
-    z numeric(20,10) NOT NULL,
+    vertical_reference character varying(32),
+    long numeric(20,10),
+    lat numeric(20,10),
+    z numeric(20,10),
     maplong numeric(20,10),
     maplat numeric(20,10),
     country character varying(2) NOT NULL,
     name character varying(128) NOT NULL,
-    location character varying(255) NOT NULL,
-    river_kilometer numeric(20,10) NOT NULL,
-    catchment_area numeric(20,10) NOT NULL,
-    gauge_zero numeric(20,10) NOT NULL,
-    start_time timestamp(6) without time zone NOT NULL,
-    end_time timestamp(6) without time zone NOT NULL,
-    utc_offset integer NOT NULL,
-    river_basin character varying(64) NOT NULL
+    location character varying(255),
+    river_kilometer numeric(20,10),
+    catchment_area numeric(20,10),
+    gauge_zero numeric(20,10),
+    start_time timestamp(6) without time zone,
+    end_time timestamp(6) without time zone,
+    utc_offset integer,
+    river_basin character varying(64)
 );
 
 
@@ -812,7 +817,9 @@ CREATE TABLE public.meteo_result (
     id bigint NOT NULL,
     meteo_time_seriesid bigint NOT NULL,
     "time" timestamp(6) without time zone NOT NULL,
-    value double precision NOT NULL
+    value double precision NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    is_forecast boolean DEFAULT false
 );
 
 
@@ -916,24 +923,24 @@ ALTER SEQUENCE public.meteo_time_series_id_seq OWNED BY public.meteo_time_series
 
 CREATE TABLE public.meteopoint (
     id integer NOT NULL,
-    meteostation_classificationid integer NOT NULL,
-    operatorid integer NOT NULL,
+    meteostation_classificationid integer,
+    operatorid integer,
     eucd_pst character varying(64) NOT NULL,
     ncd_pst character varying(64) NOT NULL,
-    vertical_reference character varying(32) NOT NULL,
-    long numeric(20,10) NOT NULL,
-    lat numeric(20,10) NOT NULL,
-    z numeric(20,10) NOT NULL,
+    vertical_reference character varying(32),
+    long numeric(20,10),
+    lat numeric(20,10),
+    z numeric(20,10),
     maplong numeric(20,10),
     maplat numeric(20,10),
     country character varying(2) NOT NULL,
     name character varying(128) NOT NULL,
-    location character varying(255) NOT NULL,
-    altitude numeric(20,10) NOT NULL,
-    start_time timestamp(6) without time zone NOT NULL,
-    end_time timestamp(6) without time zone NOT NULL,
-    utc_offset integer NOT NULL,
-    river_basin character varying(64) NOT NULL
+    location character varying(255),
+    altitude numeric(20,10),
+    start_time timestamp(6) without time zone,
+    end_time timestamp(6) without time zone,
+    utc_offset integer,
+    river_basin character varying(64)
 );
 
 
@@ -1921,11 +1928,11 @@ ALTER TABLE ONLY public.discharge_measurement
 
 
 --
--- Name: event_logs event_logs_pk; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: event_logs event_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.event_logs
-    ADD CONSTRAINT event_logs_pk PRIMARY KEY (id);
+    ADD CONSTRAINT event_logs_pkey PRIMARY KEY (id);
 
 
 --
@@ -2292,6 +2299,22 @@ ALTER TABLE ONLY public.discharge_measurement
 
 ALTER TABLE ONLY public.discharge_measurement
     ADD CONSTRAINT fkdischarge_808880 FOREIGN KEY (discharge_measurement_equipmentid) REFERENCES public.discharge_measurement_equipment(id);
+
+
+--
+-- Name: event_logs fkevent_logs578586; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.event_logs
+    ADD CONSTRAINT fkevent_logs578586 FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: event_logs fkevent_logs900211; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.event_logs
+    ADD CONSTRAINT fkevent_logs900211 FOREIGN KEY (operator_id) REFERENCES public.operator(id);
 
 
 --

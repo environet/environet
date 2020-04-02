@@ -21,6 +21,14 @@ interface BuilderLayerInterface {
 
 
 	/**
+	 * Get a human friendly name to identify the layer implementation
+	 *
+	 * @return string
+	 */
+	public static function getName(): string;
+
+
+	/**
 	 * Create an instance during plugin creation
 	 *
 	 * @param Console $console

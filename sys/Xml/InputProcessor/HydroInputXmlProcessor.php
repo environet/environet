@@ -122,7 +122,7 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 	 * @inheritDoc
 	 */
 	protected function createResultInsert(): Insert {
-		return (new Insert())->table('hydro_result')->columns(['time_seriesid', 'time', 'value']);
+		return (new Insert())->table('hydro_result')->columns(['time_seriesid', 'time', 'value', 'is_forecast', 'created_at']);
 	}
 
 
