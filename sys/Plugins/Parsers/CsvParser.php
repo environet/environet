@@ -111,7 +111,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 
 	private function parseResultLine($line): array {
 		$values = explode($this->csvDelimiter, $line);
-		if (!$values[$this->timeCol]) {
+		if (!array_key_exists($this->timeCol, $values)) {
 			return [];
 		}
 

@@ -106,18 +106,6 @@ class UserCrud extends CrudPage {
 
 
 	/**
-	 * Show page action.
-	 *
-	 * @return Response
-	 * @throws HttpNotFoundException
-	 * @throws RenderException
-	 */
-	public function show(): Response {
-		return $this->renderShowPage();
-	}
-
-
-	/**
 	 * @inheritDoc
 	 */
 	protected function formContext(): array {

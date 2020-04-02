@@ -1,7 +1,17 @@
-# Distribution node functionality
+# Distribution node
+
+## Overview
 
 A Distribution node, in it’s minimal form, is a service aspect that’s able to maintain the central database and service API requests. 
 In the first phase the domain of the distribution node is: [https://environet.environ.hu](https://environet.environ.hu)
+
+## Setup
+
+### Required software
+Docker engine - [https://docs.docker.com/install](https://docs.docker.com/install)  
+Docker compose - [https://docs.docker.com/compose](https://docs.docker.com/compose)  
+
+### 
 
 ## Central database
 
@@ -15,13 +25,13 @@ Schema of the database can be found here: [Database structure](21_database_struc
 
 ## Administration area
 
-On the administration are the administrators can maintain:
+On the administration area, administrators can maintain:
 * The data and configuration of monitoring points and observed properties
 * Operators
-* Users, groups, and it's permissions (ACL)
+* Users, groups, and their permissions (ACL)
 * Public keys of operator-users
 
-The url of the administration are: https://distribution-node.com/admin
+The url of the administration area: https://distribution-node.com/admin
 
 
 ## API endpoints

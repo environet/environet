@@ -20,10 +20,6 @@ SET row_security = off;
 -- Name: dareffort; Type: DATABASE; Schema: -; Owner: -
 --
 
-CREATE DATABASE dareffort WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'C' LC_CTYPE = 'C';
-
-
-\connect dareffort
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -212,8 +208,8 @@ CREATE TABLE public.event_logs (
     event_type character varying(50) NOT NULL,
     data text,
     created_at timestamp without time zone,
-    user_id integer NOT NULL,
-    operator_id integer NOT NULL
+    user_id integer,
+    operator_id integer
 );
 
 
@@ -480,28 +476,28 @@ ALTER SEQUENCE public.hydro_time_series_id_seq OWNED BY public.hydro_time_series
 
 CREATE TABLE public.hydropoint (
     id integer NOT NULL,
-    station_classificationid integer NOT NULL,
-    operatorid integer NOT NULL,
-    bankid integer NOT NULL,
-    waterbodyeuropean_river_code character varying(64) NOT NULL,
+    station_classificationid integer,
+    operatorid integer,
+    bankid integer,
+    waterbodyeuropean_river_code character varying(64),
     eucd_wgst character varying(64) NOT NULL,
     ncd_wgst character varying(64) NOT NULL,
-    vertical_reference character varying(32) NOT NULL,
-    long numeric(20,10) NOT NULL,
-    lat numeric(20,10) NOT NULL,
-    z numeric(20,10) NOT NULL,
+    vertical_reference character varying(32),
+    long numeric(20,10),
+    lat numeric(20,10),
+    z numeric(20,10),
     maplong numeric(20,10),
     maplat numeric(20,10),
     country character varying(2) NOT NULL,
     name character varying(128) NOT NULL,
-    location character varying(255) NOT NULL,
-    river_kilometer numeric(20,10) NOT NULL,
-    catchment_area numeric(20,10) NOT NULL,
-    gauge_zero numeric(20,10) NOT NULL,
-    start_time timestamp(6) without time zone NOT NULL,
-    end_time timestamp(6) without time zone NOT NULL,
-    utc_offset integer NOT NULL,
-    river_basin character varying(64) NOT NULL
+    location character varying(255),
+    river_kilometer numeric(20,10),
+    catchment_area numeric(20,10),
+    gauge_zero numeric(20,10),
+    start_time timestamp(6) without time zone,
+    end_time timestamp(6) without time zone,
+    utc_offset integer,
+    river_basin character varying(64)
 );
 
 
@@ -927,24 +923,24 @@ ALTER SEQUENCE public.meteo_time_series_id_seq OWNED BY public.meteo_time_series
 
 CREATE TABLE public.meteopoint (
     id integer NOT NULL,
-    meteostation_classificationid integer NOT NULL,
-    operatorid integer NOT NULL,
+    meteostation_classificationid integer,
+    operatorid integer,
     eucd_pst character varying(64) NOT NULL,
     ncd_pst character varying(64) NOT NULL,
-    vertical_reference character varying(32) NOT NULL,
-    long numeric(20,10) NOT NULL,
-    lat numeric(20,10) NOT NULL,
-    z numeric(20,10) NOT NULL,
+    vertical_reference character varying(32),
+    long numeric(20,10),
+    lat numeric(20,10),
+    z numeric(20,10),
     maplong numeric(20,10),
     maplat numeric(20,10),
     country character varying(2) NOT NULL,
     name character varying(128) NOT NULL,
-    location character varying(255) NOT NULL,
-    altitude numeric(20,10) NOT NULL,
-    start_time timestamp(6) without time zone NOT NULL,
-    end_time timestamp(6) without time zone NOT NULL,
-    utc_offset integer NOT NULL,
-    river_basin character varying(64) NOT NULL
+    location character varying(255),
+    altitude numeric(20,10),
+    start_time timestamp(6) without time zone,
+    end_time timestamp(6) without time zone,
+    utc_offset integer,
+    river_basin character varying(64)
 );
 
 

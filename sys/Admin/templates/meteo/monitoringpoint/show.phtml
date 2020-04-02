@@ -55,14 +55,18 @@
 
         <dt class="col-sm-3">Station classification</dt>
         <dd class="col-sm-9">
-            <a href="/admin/meteo/station-classifications?id=<?= $record['classification']['id'] ;?>">#<?= $record['classification']['id'] ?></a>
-            <span><?=$record['classification']['value'] ?? null;?></span>
+			<?php if(!empty($record['classification'])): ?>
+                <a href="/admin/meteo/station-classifications?id=<?= $record['classification']['id'] ;?>">#<?= $record['classification']['id'] ?></a>
+                <span><?=$record['classification']['value'] ?? null;?></span>
+            <?php endif; ?>
         </dd>
 
         <dt class="col-sm-3">Operator</dt>
         <dd class="col-sm-9">
-            <a href="/admin/data-providers?id=<?= $record['operator']['id'] ;?>">#<?= $record['operator']['id'] ?></a>
-            <span><?=$record['operator']['name'] ?? null;?></span>
+			<?php if(!empty($record['operator'])): ?>
+                <a href="/admin/data-providers?id=<?= $record['operator']['id'] ;?>">#<?= $record['operator']['id'] ?></a>
+                <span><?=$record['operator']['name'] ?? null;?></span>
+			<?php endif; ?>
         </dd>
 
 		<dt class="col-sm-3">Observerd properties</dt>

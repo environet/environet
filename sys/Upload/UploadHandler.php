@@ -130,7 +130,7 @@ class UploadHandler extends ApiHandler {
 			}
 
 			try {
-				//Validate the XML against XSD schama
+				//Validate the XML against XSD schema
 				(new SchemaValidator($parsedXml, SRC_PATH . '/public/schemas/environet.xsd'))->validate();
 			} catch (SchemaInvalidException $e) {
 				//XML is invalid
