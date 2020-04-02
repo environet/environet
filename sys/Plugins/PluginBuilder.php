@@ -8,29 +8,31 @@ use Environet\Sys\Plugins\Parsers\JsonParser;
 use Environet\Sys\Plugins\Transports\HttpTransport;
 use Environet\Sys\Plugins\Transports\LocalDirectoryTransport;
 use Environet\Sys\Plugins\Transports\LocalFileTransport;
-use Environet\Sys\Plugins\XmlGenerators\MPointPropertyXmlInputGenerator;
 
 /**
  * Class PluginBuilder
  *
+ * Builds a plugins and outputs it's generated configuration.
+ *
  * @package Environet\Sys\Plugins
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class PluginBuilder {
 
 	/** @var Plugin */
 	private $plugin;
 
-	/** @var PluginLayer[]  */
+	/** @var PluginLayer[] */
 	private $layers = [];
 
 
 	/**
 	 * PluginBuilder constructor.
+	 * Sets the available layers (transport, parser, client)
 	 */
 	public function __construct() {
 		$this->layers = [
-			new PluginLayer('transport', [ HttpTransport::class, LocalFileTransport::class, LocalDirectoryTransport::class]),
+			new PluginLayer('transport', [HttpTransport::class, LocalFileTransport::class, LocalDirectoryTransport::class]),
 			new PluginLayer('parser', [JsonParser::class, CsvParser::class]),
 			new PluginLayer('apiClient', [ApiClient::class])
 		];
@@ -38,9 +40,12 @@ class PluginBuilder {
 
 
 	/**
+	 * Create a new plugin and set it's layers' configuration.
+	 *
 	 * @param Console $console
 	 *
 	 * @return Plugin
+	 * @uses \Environet\Sys\Plugins\PluginLayer::createConfiguration()
 	 */
 	public function createConfiguration(Console $console): Plugin {
 		$this->plugin = new Plugin();
@@ -54,9 +59,12 @@ class PluginBuilder {
 
 
 	/**
+	 * Create a new plugin from an existing configuration.
+	 *
 	 * @param $config
 	 *
 	 * @return Plugin
+	 * @uses \Environet\Sys\Plugins\PluginLayer::getName()
 	 */
 	public function loadFromConfiguration($config): Plugin {
 		$this->plugin = new Plugin();
@@ -70,16 +78,26 @@ class PluginBuilder {
 
 
 	/**
+	 * Serializes the created plugin's configuration.
+	 * For each layer used, the following gets stored in a string, in separate lines:
+	 * - The layer's name
+	 * - The class of the layer implementation
+	 * - The serialized configuration object of the layer
+	 *
 	 * @return string
+	 * @uses \Environet\Sys\Plugins\BuilderLayerInterface::getName()
+	 * @uses \Environet\Sys\Plugins\BuilderLayerInterface::serializeConfiguration()
 	 */
 	public function serializeConfiguration(): string {
 		$result = '';
 
 		foreach ($this->layers as $layer) {
-			$result .= "[" . $layer->getName() . "]\n";
-			$result .= "className = " . get_class($this->plugin->{$layer->getName()}) . "\n";
-			$result .= $this->plugin->{$layer->getName()}->serializeConfiguration();
-			$result .= "\n";
+			$result .= sprintf(
+				"[%s]\nclassName = %s\n%s\n",
+				$layer->getName(),
+				get_class($this->plugin->{$layer->getName()}),
+				$this->plugin->{$layer->getName()}->serializeConfiguration()
+			);
 		}
 
 		return $result;

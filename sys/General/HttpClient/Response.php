@@ -91,6 +91,16 @@ class Response {
 
 
 	/**
+	 * Does the response have a body?
+	 *
+	 * @return bool
+	 */
+	public function hasBody(): bool {
+		return (bool) $this->body;
+	}
+
+
+	/**
 	 * Get raw body string
 	 *
 	 * @return string

@@ -9,8 +9,10 @@ use Environet\Sys\Plugins\TransportInterface;
 /**
  * Class LocalDirectoryTransport
  *
+ * Transport layer for importing data from a local directory.
+ *
  * @package Environet\Sys\Plugins\Transports
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterface {
 
@@ -25,8 +27,8 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 	 */
 	public static function create(Console $console): TransportInterface {
 		$console->writeLine('');
-		$console->writeLine("Configuring local directory transport");
-		$path = $console->ask("Enter path to the directory where the data is:", 200);
+		$console->writeLine('Configuring local directory transport');
+		$path = $console->ask('Enter path to the directory where the data is:', 200);
 		$config = [
 			'path' => $path,
 		];
@@ -44,7 +46,7 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 
 
 	/**
-	 * LocalFileTransport constructor.
+	 * LocalDirectoryTransport constructor.
 	 *
 	 * @param array $config
 	 */
@@ -55,10 +57,11 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 
 	/**
 	 * @inheritDoc
+	 * @see Resource
 	 */
 	public function get(): array {
 		$resources = [];
-		foreach (glob('/meteringdata/' . $this->path .'/*') as $path) {
+		foreach (glob("/meteringdata/{$this->path}/*") as $path) {
 			$resource = new Resource();
 			$resource->name = end(explode('/', $path));
 			$resource->contents = file_get_contents($path);
