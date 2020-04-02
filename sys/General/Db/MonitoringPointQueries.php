@@ -10,11 +10,10 @@ use Environet\Sys\General\Exceptions\QueryException;
 /**
  * Class MonitoringPointQueries
  *
- * Query builder singleton for hydro and meteo data serving
+ * Query builder singleton for hydro and meteo data serving.
  *
- * @package   Environet\Sys\General\Db
- * @author    SRG Group <dev@srg.hu>
- * @copyright 2020 SRG Group Kft.
+ * @package Environet\Sys\General\Db
+ * @author  SRG Group <dev@srg.hu>
  */
 class MonitoringPointQueries {
 
@@ -22,6 +21,7 @@ class MonitoringPointQueries {
 	public const TYPE_METEO = 'meteo';
 
 	/**
+	 * Query builder instance
 	 * @var MonitoringPointQueries
 	 */
 	private static $instance = null;
@@ -41,6 +41,8 @@ class MonitoringPointQueries {
 	protected $filters;
 
 	/**
+	 * Stored query
+	 *
 	 * @var Select
 	 */
 	protected $select;
@@ -52,11 +54,12 @@ class MonitoringPointQueries {
 	private function __construct() {
 		$this->filters = [];
 		$this->select = new Select();
+		$this->type = null;
 	}
 
 
 	/**
-	 * Get monitoring point query builder instance
+	 * Get monitoring point query builder instance.
 	 *
 	 * @return MonitoringPointQueries
 	 */
@@ -70,17 +73,17 @@ class MonitoringPointQueries {
 
 
 	/**
-	 * Reset builder data
+	 * Reset builder data.
 	 */
 	public function reset() {
-		$this->type = null;
 		$this->filters = [];
 		$this->select = new Select();
+		$this->type = null;
 	}
 
 
 	/**
-	 * Set measurement point type
+	 * Set measurement point type.
 	 *
 	 * @param string $type
 	 *
@@ -94,11 +97,12 @@ class MonitoringPointQueries {
 
 
 	/**
-	 * Set a start time of measurements (inclusive)
+	 * Set a start time of measurements (inclusive).
 	 *
 	 * @param DateTime $value
 	 *
 	 * @return MonitoringPointQueries
+	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::filterBy()
 	 */
 	public function setStartTime(DateTime $value) {
 		$this->filterBy('start_time', 'where', ["{type}_result.time >= timestamp '{$value->format('Y-m-d H:i:s.u')}'"]);
@@ -108,11 +112,12 @@ class MonitoringPointQueries {
 
 
 	/**
-	 * Set an end time of measurements (inclusive)
+	 * Set an end time of measurements (inclusive).
 	 *
 	 * @param DateTime $value
 	 *
 	 * @return MonitoringPointQueries
+	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::filterBy()
 	 */
 	public function setEndTime(DateTime $value) {
 		$this->filterBy('end_time', 'where', ["{type}_result.time <= timestamp '{$value->format('Y-m-d H:i:s.u')}'"]);
@@ -122,11 +127,12 @@ class MonitoringPointQueries {
 
 
 	/**
-	 * Set one or more country code to filter the measurement points by
+	 * Set one or more country code to filter the measurement points by.
 	 *
 	 * @param array $countries
 	 *
 	 * @return MonitoringPointQueries
+	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::filterBy()
 	 */
 	public function setCountries($countries = []) {
 		if (!is_array($countries)) {
@@ -142,11 +148,12 @@ class MonitoringPointQueries {
 
 
 	/**
-	 * Set measurement property symbols
+	 * Set measurement property symbols.
 	 *
 	 * @param array $symbols
 	 *
 	 * @return MonitoringPointQueries
+	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::filterBy()
 	 */
 	public function setObservedProperties($symbols = []): MonitoringPointQueries {
 		if (!is_array($symbols)) {
@@ -162,7 +169,7 @@ class MonitoringPointQueries {
 
 
 	/**
-	 * Internal function to store filters with
+	 * Internal function to store filters with.
 	 *
 	 * @param string $key
 	 * @param string $queryMethod
@@ -177,7 +184,7 @@ class MonitoringPointQueries {
 
 
 	/**
-	 * Apply previously set filters to the query
+	 * Apply previously set filters to the query.
 	 */
 	protected function applyFilters() {
 		foreach ($this->filters as $filter) {
@@ -190,18 +197,20 @@ class MonitoringPointQueries {
 
 
 	/**
-	 * Compile and execute the query
+	 * Compile and execute the query.
 	 *
 	 * @return array|int
 	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::applyFilters()
+	 * @uses \Environet\Sys\General\Db\Query\Select::run()
 	 */
 	public function getResults() {
 		if ($this->type === null) {
 			throw new QueryException('Missing measurement point type!');
 		}
 
-		//Sub-select for getting latest value by created at.
-		//There can be multiple values per 'time', for outputs we use the latest.
+		// Sub-select for getting latest value by created at.
+		// There can be multiple values per 'time', for outputs we use the latest.
 		$subSelect = (new Select())
 			->from("{$this->type}_result as result_sub")
 			->select("result_sub.value")
@@ -229,7 +238,7 @@ class MonitoringPointQueries {
 			"{$this->type}_time_series.result_time as time_series_result_time"
 		];
 
-		//Group-by fields for nearly all columns
+		// Group-by fields for nearly all columns
 		$groupBys = [
 			"{$this->type}point.id",
 			"{$this->type}_observed_property.id",
@@ -269,7 +278,7 @@ class MonitoringPointQueries {
 			->orderBy('mpoint_id')
 			->orderBy('property_id');
 
-		//Add group-bys
+		// Add group-bys
 		foreach ($groupBys as $groupBy) {
 			$this->select->groupBy($groupBy);
 		}

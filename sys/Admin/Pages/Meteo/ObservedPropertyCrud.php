@@ -11,8 +11,10 @@ use Environet\Sys\General\Response;
 /**
  * Class ObservedPropertyCrud
  *
+ * Handles CRUD operations for meteopoint observed properties.
+ *
  * @package Environet\Sys\Admin\Pages\Meteo
- * @author  Mate Kovacs <mate.kovacs@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class ObservedPropertyCrud extends CrudPage {
 

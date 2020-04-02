@@ -10,7 +10,6 @@ use Environet\Sys\General\Exceptions\ApiException;
  *
  * @package   Environet\Sys\Upload\Exceptions
  * @author    SRG Group <dev@srg.hu>
- * @copyright 2020 SRG Group Kft.
  */
 class UploadException extends ApiException {
 

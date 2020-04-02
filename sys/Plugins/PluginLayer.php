@@ -9,12 +9,12 @@ use Environet\Sys\Commands\Console;
  * Class PluginLayer
  *
  * @package Environet\Sys\Plugins
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class PluginLayer {
 
 	/**
-	 * @var string Name of layer
+	 * @var string Name of the layer
 	 */
 	private $name;
 
@@ -26,6 +26,7 @@ class PluginLayer {
 
 	/**
 	 * PluginLayer constructor.
+	 * Sets the name and the alternatives array.
 	 *
 	 * @param $name
 	 * @param $alternatives
@@ -37,6 +38,8 @@ class PluginLayer {
 
 
 	/**
+	 * Get the layer's name.
+	 *
 	 * @return mixed
 	 */
 	public function getName() {
@@ -45,14 +48,17 @@ class PluginLayer {
 
 
 	/**
-	 * Create configuration during install command
+	 * Create configuration during install command.
 	 *
 	 * @param Console $console
 	 *
 	 * @return mixed
+	 * @uses \Environet\Sys\Plugins\PluginLayer::chooseAlternative()
+	 * @uses \Environet\Sys\Plugins\BuilderLayerInterface::create()
 	 */
 	public function createConfiguration(Console $console) {
 		$class = $this->chooseAlternative($console);
+
 		return $class::create($console);
 	}
 
@@ -71,7 +77,7 @@ class PluginLayer {
 			foreach ($this->alternatives as $i => $alternative) {
 				$console->writeLine($i + 1 . ": " . $alternative::getName());
 			}
-            $console->writeLine('');
+			$console->writeLine('');
 			$choice = $console->askOption();
 
 			return ($this->alternatives[(int) $choice - 1]);

@@ -9,9 +9,10 @@ use Environet\Sys\General\Db\Query\Update;
 /**
  * Trait JoinTrait
  *
- * Trait for querys which can use join part
+ * Trait for queries which are able to use join clauses.
  *
- * @package Environet\Sys\General\Db\Query\Trait
+ * @package Environet\Sys\General\Db\Query\Traits
+ * @author  SRG Group <dev@srg.hu>
  */
 trait JoinTrait {
 
@@ -30,7 +31,7 @@ trait JoinTrait {
 
 
 	/**
-	 * Add a join part with table name, ON condition, and optional join type
+	 * Add a join part with table name, ON condition and optional join type
 	 *
 	 * @param string $table    The joined table name
 	 * @param string $on       The ON condition of join part
@@ -65,7 +66,7 @@ trait JoinTrait {
 	 *
 	 * @param array $queryString Reference to $queryString array
 	 */
-	protected function buildJoinPart(array &$queryString) {
+	protected function buildJoinClause(array &$queryString) {
 		foreach ($this->joins as $join) {
 			$queryString[] = "{$join['joinType']} JOIN {$join['table']} ON {$join['on']}";
 		}

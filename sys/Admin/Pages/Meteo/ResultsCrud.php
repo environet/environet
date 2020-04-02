@@ -12,14 +12,16 @@ use Environet\Sys\General\Response;
 /**
  * Class ResultsCrud
  *
+ * Handles CRUD operations for meteopoint measurement results.
+ *
  * @package Environet\Sys\Admin\Pages\Meteo
- * @author  Mate Kovacs <mate.kovacs@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class ResultsCrud extends CrudPage {
 
 
 	/**
-	 * List page action.
+	 * List page action for meteopoint measurement results.
 	 *
 	 * @return Response
 	 * @throws RenderException
@@ -31,19 +33,19 @@ class ResultsCrud extends CrudPage {
 
 			//Base query with joins and conditions
 			$query = (new Select())->from('meteo_result mr')
-						->join('meteo_time_series mts', 'mts.id = mr.meteo_time_seriesid', Query::JOIN_LEFT)
-						->join('meteopoint mp', 'mp.id = mts.meteopointid', Query::JOIN_LEFT)
-						->join('meteo_observed_property mop', 'mop.id = mts.meteo_observed_propertyid', Query::JOIN_LEFT)
-						->orderBy('mr.time', Query::DIR_DESC)
-						->select([
-							'mp.name',
-							'mop.symbol',
-							'mr.value',
-							'mr.time',
-							'mts.phenomenon_time_begin',
-							'mts.phenomenon_time_end',
-							'mts.result_time',
-						]);
+			                       ->join('meteo_time_series mts', 'mts.id = mr.meteo_time_seriesid', Query::JOIN_LEFT)
+			                       ->join('meteopoint mp', 'mp.id = mts.meteopointid', Query::JOIN_LEFT)
+			                       ->join('meteo_observed_property mop', 'mop.id = mts.meteo_observed_propertyid', Query::JOIN_LEFT)
+			                       ->orderBy('mr.time', Query::DIR_DESC)
+			                       ->select([
+				                       'mp.name',
+				                       'mop.symbol',
+				                       'mr.value',
+				                       'mr.time',
+				                       'mts.phenomenon_time_begin',
+				                       'mts.phenomenon_time_end',
+				                       'mts.result_time',
+			                       ]);
 
 			if (!is_null($searchString)) {
 				$query->search(

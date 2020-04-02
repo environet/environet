@@ -8,7 +8,7 @@ namespace Environet\Sys\General;
  * A helper class which represents a http response
  *
  * @package Environet\Sys\General
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class Response {
 
@@ -30,8 +30,11 @@ class Response {
 
 	/**
 	 * Response constructor.
+	 * Sets the content if available.
 	 *
 	 * @param string|null $content
+	 *
+	 * @uses \Environet\Sys\General\Response::setContent()
 	 */
 	public function __construct(string $content = null) {
 		if (!is_null($content)) {
@@ -42,6 +45,7 @@ class Response {
 
 	/**
 	 * Get the response body content
+	 *
 	 * @return string|null
 	 */
 	public function getContent(): ?string {
@@ -95,6 +99,7 @@ class Response {
 	 */
 	public function addHeader(string $header) {
 		$this->headers[] = $header;
+
 		return $this;
 	}
 
@@ -108,6 +113,7 @@ class Response {
 	 */
 	public function setHeaders(array $headers): Response {
 		$this->headers = $headers;
+
 		return $this;
 	}
 
@@ -130,6 +136,7 @@ class Response {
 			header($header, true);
 		}
 		http_response_code($this->statusCode);
+
 		return $this->content ?: '';
 	}
 
@@ -141,9 +148,11 @@ class Response {
 	 * @param int    $statusCode
 	 *
 	 * @return Response
+	 * @uses \Environet\Sys\General\Response::addHeader()
+	 * @uses \Environet\Sys\General\Response::setStatusCode()
 	 */
 	public function redirect(string $to, int $statusCode = 302) {
-		$this->addHeader('Location: '.$to);
+		$this->addHeader('Location: ' . $to);
 		$this->setStatusCode($statusCode);
 
 		return $this;

@@ -11,7 +11,7 @@ use Exception;
  * Exception of HTTP client errors
  *
  * @package Environet\Sys\General\HttpClient\Exceptions
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class HttpClientException extends Exception {
 

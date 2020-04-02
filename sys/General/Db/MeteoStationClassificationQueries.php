@@ -7,8 +7,10 @@ use Environet\Sys\General\EventLogger;
 /**
  * Class MeteoStationClassificationQueries
  *
+ * Base queries adjusted for meteo station classifications
+ *
  * @package Environet\Sys\General\Db
- * @author  Mate Kovacs <mate.kovacs@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class MeteoStationClassificationQueries extends BaseQueries {
 
@@ -24,6 +26,7 @@ class MeteoStationClassificationQueries extends BaseQueries {
 		'meteostation_classification.value',
 	];
 
+
 	/**
 	 * @inheritDoc
 	 */
@@ -37,7 +40,7 @@ class MeteoStationClassificationQueries extends BaseQueries {
 	/**
 	 * @inheritDoc
 	 */
-	public static function getUpdateEventType() : string {
+	public static function getUpdateEventType(): string {
 		return EventLogger::EVENT_TYPE_METEO_SC_UPDATE;
 	}
 
@@ -45,7 +48,7 @@ class MeteoStationClassificationQueries extends BaseQueries {
 	/**
 	 * @inheritDoc
 	 */
-	public static function getInsertEventType() : string {
+	public static function getInsertEventType(): string {
 		return EventLogger::EVENT_TYPE_METEO_SC_ADD;
 	}
 

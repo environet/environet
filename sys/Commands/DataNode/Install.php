@@ -13,7 +13,7 @@ use Environet\Sys\Config;
  * Install data node, create local config file
  *
  * @package Environet\Sys\Commands\DataNode
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class Install extends BaseCommand {
 

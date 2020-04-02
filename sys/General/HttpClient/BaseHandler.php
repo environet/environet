@@ -11,19 +11,18 @@ use Environet\Sys\General\Request;
  *
  * Base class for handler inheritance
  *
- * @package   Environet\Sys\General\HttpClient
- * @author    SRG Group <dev@srg.hu>
- * @copyright 2020 SRG Group Kft.
+ * @package Environet\Sys\General\HttpClient
+ * @author  SRG Group <dev@srg.hu>
  */
 abstract class BaseHandler implements RequestHandlerInterface {
 
 	/**
-	 * Permission type for this handler, which will be checked against the current identity
+	 * Permission type for this handler, which will be checked against the current identity.
 	 */
 	protected const HANDLER_PERMISSION = '';
 
 	/**
-	 * The request instance, which represents the current request
+	 * The request instance, which represents the current request.
 	 * @var Request
 	 */
 	protected $request;
@@ -31,6 +30,8 @@ abstract class BaseHandler implements RequestHandlerInterface {
 
 	/**
 	 * BaseHandler constructor.
+	 *
+	 * Sets the internal request property.
 	 *
 	 * @param Request $request
 	 */
@@ -40,7 +41,7 @@ abstract class BaseHandler implements RequestHandlerInterface {
 
 
 	/**
-	 * Base method to get the Identity object, which contains the current user's information
+	 * Base method to get the Identity object, which contains the current user's information.
 	 *
 	 * @return Identity|null
 	 */
@@ -48,7 +49,7 @@ abstract class BaseHandler implements RequestHandlerInterface {
 
 
 	/**
-	 * Base method for checking user and group permissions against the current action
+	 * Base method for checking user and group permissions against the current action.
 	 *
 	 * @return mixed
 	 */

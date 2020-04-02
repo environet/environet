@@ -10,7 +10,11 @@ use Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud as MonitoringP
 
 /**
  * Class MonitoringPointCrud
- * @package Environet\Sys\Admin\Pages\Hydro
+ *
+ * Handles CRUD operations for meteopoint monitoring points.
+ *
+ * @package Environet\Sys\Admin\Pages\Meteo
+ * @author  SRG Group <dev@srg.hu>
  */
 class MonitoringPointCrud extends MonitoringPointCrudBase {
 
@@ -39,16 +43,42 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 */
 	protected $listPagePath = '/admin/meteo/monitoring-points';
 
-	protected $observedPropertyQueriesClass = MeteoObservedPropertyQueries::class;
-	protected $observedPropertiesCsvColumn = 4;
-	protected $globalIdName = 'ncd_pst';
 
-	protected $csvColumnMappings = [
-		'name' => 0,
-		'eucd_pst' => 1,
-		'ncd_pst' => 2,
-		'country' => 3,
-	];
+	/**
+	 * @inheritDoc
+	 */
+	public function getObservedPropertyQueriesClass(): string {
+		return MeteoObservedPropertyQueries::class;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getObservedPropertiesCsvColumn(): int {
+		return 4;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getGlobalIdName(): string {
+		return 'ncd_pst';
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getCsvColumnMappings(): array {
+		return [
+			'name'     => 0,
+			'eucd_pst' => 1,
+			'ncd_pst'  => 2,
+			'country'  => 3,
+		];
+	}
 
 
 	/**
@@ -58,8 +88,8 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 */
 	protected function formContext(): array {
 		return [
-			'classifications' => MeteoStationClassificationQueries::getOptionList('value'),
-			'operators' => OperatorQueries::getOptionList('name'),
+			'classifications'    => MeteoStationClassificationQueries::getOptionList('value'),
+			'operators'          => OperatorQueries::getOptionList('name'),
 			'observedProperties' => MeteoObservedPropertyQueries::getOptionList('symbol')
 		];
 	}
@@ -93,6 +123,4 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 
 		return $valid;
 	}
-
-
 }

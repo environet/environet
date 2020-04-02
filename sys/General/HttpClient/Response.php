@@ -9,7 +9,7 @@ namespace Environet\Sys\General\HttpClient;
  * Class of HTTP-client responses
  *
  * @package Environet\Sys\General\HttpClient
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class Response {
 
@@ -33,8 +33,8 @@ class Response {
 	 * Response constructor.
 	 *
 	 * @param int    $statusCode HTTP status code
-	 * @param string $body Raw body
-	 * @param array  $headers Array of HTTP headers
+	 * @param string $body       Raw body
+	 * @param array  $headers    Array of HTTP headers
 	 */
 	public function __construct(int $statusCode = null, string $body = null, array $headers = null) {
 		if (!is_null($statusCode)) {
@@ -79,6 +79,7 @@ class Response {
 	 * @param string $status
 	 *
 	 * @return $this
+	 * @uses \Environet\Sys\General\HttpClient\Response::setStatusCode()
 	 */
 	public function setRawStatus(string $status) {
 		if (preg_match('/[2-5]\d{2}/', $status, $match)) {
@@ -86,6 +87,16 @@ class Response {
 		}
 
 		return $this;
+	}
+
+
+	/**
+	 * Does the response have a body?
+	 *
+	 * @return bool
+	 */
+	public function hasBody(): bool {
+		return (bool) $this->body;
 	}
 
 
@@ -117,6 +128,7 @@ class Response {
 	 * Get array of headers.
 	 *
 	 * @return array
+	 * @see Response::$headers
 	 */
 	public function getHeaders(): array {
 		return $this->headers;
@@ -129,6 +141,7 @@ class Response {
 	 * @param string $header
 	 *
 	 * @return Response
+	 * @see Response::$headers
 	 */
 	public function addRawHeader(string $header): Response {
 		$array = explode(':', $header);
