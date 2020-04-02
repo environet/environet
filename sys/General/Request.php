@@ -14,20 +14,22 @@ namespace Environet\Sys\General;
  * @method bool isDelete() True if request method is DELETE
  *
  * @package Environet\Sys\General
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class Request {
 
-	const PREFIX_ADMIN = 'admin';
-	const PREFIX_UPLOAD = 'upload';
+	const PREFIX_ADMIN    = 'admin';
+	const PREFIX_UPLOAD   = 'upload';
 	const PREFIX_DOWNLOAD = 'download';
 
 	/**
+	 * Request URI path
 	 * @var string|null
 	 */
 	protected $path;
 
 	/**
+	 * Request URI query
 	 * @var string|null
 	 */
 	protected $query;
@@ -57,11 +59,11 @@ class Request {
 	public function __construct() {
 		$requestUri = $_SERVER['REQUEST_URI'] ?? null;
 
-		//Parse url
+		// Parse url
 		$this->path = parse_url($requestUri, PHP_URL_PATH);
 		$this->query = parse_url($requestUri, PHP_URL_QUERY);
 
-		//Create path parts
+		// Create path parts
 		$this->pathParts = explode('/', trim($this->path, '/'));
 		parse_str($this->query, $this->parsedQuery);
 	}
@@ -181,6 +183,7 @@ class Request {
 	 */
 	public function setIdentity(?Identity $identity): self {
 		$this->identity = $identity;
+
 		return $this;
 	}
 
@@ -188,10 +191,11 @@ class Request {
 	/**
 	 * Magic method for HTTP method checks (isPost, isGet, etc)
 	 *
-	 * @param string $name Name of the method
-	 * @param mixed $arguments Arguments
+	 * @param string $name      Name of the method
+	 * @param mixed  $arguments Arguments
 	 *
 	 * @return bool
+	 * @uses \Environet\Sys\General\Request::getMethod()
 	 */
 	public function __call($name, $arguments) {
 		if (preg_match('/^is([a-zA-Z]+)$/', $name, $match)) {
@@ -204,8 +208,9 @@ class Request {
 	 * Return the trimmed post data.
 	 *
 	 * @return array
+	 * @uses \arrayMapRecursive()
 	 */
-	public function getCleanData() : array {
+	public function getCleanData(): array {
 		$data = $_POST;
 		if (empty($data)) {
 			return [];
@@ -220,7 +225,7 @@ class Request {
 	 *
 	 * @return string|null
 	 */
-	public function getReferer() : ?string {
+	public function getReferer(): ?string {
 		return $_SERVER['HTTP_REFERER'] ?? null;
 	}
 

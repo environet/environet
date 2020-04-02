@@ -1,15 +1,15 @@
 <?php
-/*!
+/**
  * File common.inc.php
  *
- * @uthor Levente Peres - VIZITERV Environ Kft.
+ * @author  Levente Peres - VIZITERV Environ Kft.
  *
  * General use library - common reusable functions.
  *
  * This file and it's siblings contain a number of common, simple functions that can be
  * used to solve programming-related problems, like concatenating strings, etc.
  *
- * @package Environet\Sys
+ * @package Environet\Sys\General
  */
 
 use Environet\Sys\General\Exceptions\QueryException;
@@ -25,6 +25,8 @@ defined('REGEX_RIVERCODE') || define('REGEX_RIVERCODE', '/^[a-zA-Z_-]*$/i');
 
 
 /**
+ * Translate a string.
+ *
  * @param $str
  *
  * @return mixed
@@ -51,7 +53,7 @@ function NCSRandStr($length = 20) {
 
 
 /**
- * Check if all values are defined as variable. The system support querys only with PDO-parameters
+ * Check if all values are defined as variable. The system support queries only with PDO-parameters
  *
  * @param string|array $values
  *
@@ -254,13 +256,13 @@ function makeAccentInsensitiveRegex(string $string) {
 function buildIni(array $array) {
 	$lines = [];
 	foreach ($array as $groupName => $groupProperties) {
-		//Add group
+		// Add group
 		$lines[] = "[$groupName]";
 		if (!is_array($groupProperties)) {
 			continue;
 		}
 		foreach ($groupProperties as $propertyName => $propertyValue) {
-			//Add property
+			// Add property
 			if (is_bool($propertyValue)) {
 				$propertyValue = $propertyValue ? 'true' : 'false';
 			}
@@ -268,5 +270,6 @@ function buildIni(array $array) {
 		}
 		$lines[] = '';
 	}
+
 	return implode("\n", $lines);
 }

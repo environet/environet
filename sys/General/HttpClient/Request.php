@@ -6,8 +6,10 @@ namespace Environet\Sys\General\HttpClient;
 /**
  * Class Request
  *
+ * Wrapper class for storing request information.
+ *
  * @package Environet\Sys\General\HttpClient
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class Request {
 
@@ -18,7 +20,7 @@ class Request {
 	protected $method = 'GET';
 
 	/**
-	 * Request uri
+	 * Request URI
 	 * @var string
 	 */
 	protected $uri;
@@ -42,7 +44,7 @@ class Request {
 	/**
 	 * Request constructor.
 	 *
-	 * @param string      $uri Request uri
+	 * @param string      $uri    Request uri
 	 * @param string|null $method HTTP method
 	 */
 	public function __construct(string $uri, string $method = null) {
@@ -64,6 +66,7 @@ class Request {
 
 	/**
 	 * Get HTTP method
+	 *
 	 * @param string $method
 	 *
 	 * @return Request
@@ -76,7 +79,7 @@ class Request {
 
 
 	/**
-	 * Overwrite the uri
+	 * Overwrite the URI
 	 *
 	 * @return string
 	 */
@@ -86,7 +89,7 @@ class Request {
 
 
 	/**
-	 * Get the request uri
+	 * Get the request URI
 	 *
 	 * @param string $uri
 	 *
@@ -101,7 +104,7 @@ class Request {
 
 	/**
 	 * Return the array of headers.
-	 * See structure in property definition
+	 * See structure in property definition: {@see Request::$headers}.
 	 *
 	 * @return array
 	 */
@@ -117,7 +120,7 @@ class Request {
 	 */
 	public function getCurlHeaders(): array {
 		return array_map(function (array $header) {
-			return $header['name'].': '.$header['value'];
+			return $header['name'] . ': ' . $header['value'];
 		}, $this->headers);
 	}
 
@@ -125,16 +128,17 @@ class Request {
 	/**
 	 * Add a single header to the headers array
 	 *
-	 * @param string $name Header name
+	 * @param string $name  Header name
 	 * @param string $value Header value
 	 *
 	 * @return Request
 	 */
 	public function addHeader(string $name, string $value) {
 		$this->headers[] = [
-			'name' => $name,
+			'name'  => $name,
 			'value' => $value
 		];
+
 		return $this;
 	}
 
@@ -151,6 +155,7 @@ class Request {
 
 	/**
 	 * Set a request body
+	 *
 	 * @param string $body
 	 *
 	 * @return Request

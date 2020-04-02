@@ -8,10 +8,10 @@ use Environet\Sys\General\HttpClient\Exceptions\HttpClientException;
 /**
  * Class HttpClient
  *
- * A simple class for making HTTP request, and return responses
+ * A simple class for making HTTP requests, and return responses
  *
  * @package Environet\Sys\General\HttpClient
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class HttpClient {
 
@@ -31,39 +31,42 @@ class HttpClient {
 
 
 	/**
-	 * Send a request with the given options
+	 * Send a request with the given options.
 	 *
 	 * @param Request $request Request object which container URL, and other options
 	 * @param array   $options Curl, and other request options.
 	 *
 	 * @return Response
 	 * @throws HttpClientException
+	 * @uses \curl_exec()
+	 * @uses \Environet\Sys\General\HttpClient\HttpClient::prepare()
+	 * @uses \Environet\Sys\General\HttpClient\HttpClient::parseError()
 	 */
 	public function sendRequest(Request $request, array $options = []): Response {
-		//Merg options with default values
+		// Merge options with default values
 		$this->options = array_merge($this->options, $options);
 
-		//Init curl resource
+		// Init curl resource
 		$curl = $curl = curl_init();
 
 		if (false === $curl) {
 			throw new HttpClientException('Unable to create a new cURL handle');
 		}
 
-		//Prepare the request.
-		//Returned response is not a complete response, just an object. It will be filled with body and header after curl_exec
+		// Prepare the request.
+		// Returned response is not a complete response, just an object. It will be filled with body and header after curl_exec
 		$response = $this->prepare($curl, $request, $options);
 
-		//Execute curl resourece
+		// Execute curl resource
 		curl_exec($curl);
 
-		//Create exceptions from curl error
+		// Create exceptions from curl error
 		$this->parseError(curl_errno($curl), $curl);
 
-		//Destroy resource
+		// Destroy resource
 		curl_close($curl);
 
-		//Return the complete response object
+		// Return the complete response object
 		return $response;
 	}
 
@@ -76,9 +79,13 @@ class HttpClient {
 	 * @param array    $options See options property
 	 *
 	 * @return Response
+	 * @uses \curl_setopt()
+	 * @uses \curl_setopt_array()
+	 * @uses \Environet\Sys\General\HttpClient\HttpClient::processOptions()
+	 * @uses \Environet\Sys\General\HttpClient\HttpClient::setOptionsFromRequest()
 	 */
 	protected function prepare($curl, Request $request, array $options): Response {
-		//Set some default cURL options
+		// Set some default cURL options
 		if (defined('CURLOPT_PROTOCOLS')) {
 			curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
 			curl_setopt($curl, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
@@ -88,16 +95,16 @@ class HttpClient {
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, false);
 		curl_setopt($curl, CURLOPT_FAILONERROR, false);
 
-		//Add cURL options based on options array
+		// Add cURL options based on options array
 		$this->processOptions($curl, $this->options);
 
-		//Add cURL options based on request properties
+		// Add cURL options based on request properties
 		$this->setOptionsFromRequest($curl, $request);
 
-		//Create an empty response object. Body and header will be added later in callbacks
+		// Create an empty response object. Body and header will be added later in callbacks
 		$response = new Response();
 
-		//Callback which handles headers (status code, and other headers)
+		// Callback which handles headers (status code, and other headers)
 		curl_setopt($curl, CURLOPT_HEADERFUNCTION, function ($ch, $data) use ($response) {
 			$str = trim($data);
 			if ('' !== $str) {
@@ -113,14 +120,14 @@ class HttpClient {
 			return strlen($data);
 		});
 
-		//Callbak which writes body to response object
+		// Callback which writes body to response object
 		curl_setopt($curl, CURLOPT_WRITEFUNCTION, function ($ch, $data) use ($response) {
 			$response->setBody($data);
 
 			return strlen($data);
 		});
 
-		//Apply additional options. It can overrid any previously added cURL options
+		// Apply additional options. It can override any previously added cURL options
 		curl_setopt_array($curl, $options['curl'] ?? []);
 
 		return $response;
@@ -132,6 +139,8 @@ class HttpClient {
 	 *
 	 * @param resource $curl    A cURL resource
 	 * @param Request  $request A request object
+	 *
+	 * @uses \curl_setopt_array()
 	 */
 	private function setOptionsFromRequest($curl, Request $request): void {
 		$options = [
@@ -141,7 +150,7 @@ class HttpClient {
 			CURLOPT_HTTP_VERSION  => CURL_HTTP_VERSION_1_1
 		];
 
-		//Set properties based on method type
+		// Set properties based on method type
 		switch (strtoupper($request->getMethod())) {
 			case 'HEAD':
 				$options[CURLOPT_NOBODY] = true;
@@ -157,7 +166,7 @@ class HttpClient {
 				$options[CURLOPT_POSTFIELDS] = (string) $request->getBody();
 		}
 
-		//Set options array
+		// Set options array
 		curl_setopt_array($curl, $options);
 	}
 
@@ -167,14 +176,16 @@ class HttpClient {
 	 *
 	 * @param resource $curl
 	 * @param array    $options
+	 *
+	 * @uses \curl_setopt()
 	 */
 	private function processOptions($curl, array $options): void {
-		//Verify-host and peer options
+		// Verify-host and peer options
 		$verify = $options['verify'] ?? true;
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, $verify ? 0 : 1);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, $verify ? 2 : 0);
 
-		//Set timeout
+		// Set timeout
 		if (!empty($options['timeout'])) {
 			curl_setopt($curl, CURLOPT_TIMEOUT, $options['timeout']);
 		}

@@ -14,7 +14,7 @@ use Environet\Sys\General\Exceptions\PermissionException;
  * A global auth-identity request. It can handle identities from multiple source (e.g user), and can be attached the requests
  *
  * @package Environet\Sys\General
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class Identity {
 
@@ -61,6 +61,8 @@ class Identity {
 
 
 	/**
+	 * Get identity data.
+	 *
 	 * @return array
 	 */
 	public function getData() {
@@ -69,15 +71,16 @@ class Identity {
 
 
 	/**
-	 * Create an identity from a user
+	 * Create an identity from a user.
 	 *
 	 * @param int $userId
 	 *
 	 * @return Identity|null
+	 * @uses \Environet\Sys\General\Db\Query\Select::run()
 	 */
 	public static function createFromUser(int $userId): ?Identity {
 		try {
-			//Find the user, and create a new Identity with it
+			// Find the user, and create a new Identity with it
 			$user = (new Select())
 				->from('users')
 				->where('id = :userId')
@@ -87,12 +90,9 @@ class Identity {
 
 			return new static(self::TYPE_USER, $userId, $user);
 		} catch (Exceptions\QueryException $e) {
-			//Error during sql query
+			// Error during sql query
 			return null;
 		}
-
-		//User not found
-		return null;
 	}
 
 
@@ -125,6 +125,7 @@ class Identity {
 	 * @return array
 	 * @throws Exceptions\QueryException
 	 * @throws PermissionException
+	 * @uses \Environet\Sys\General\Db\UserQueries::getUserPermissions()
 	 */
 	public function getPermissions(): array {
 		if ($this->type !== self::TYPE_USER) {
