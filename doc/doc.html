@@ -1051,11 +1051,6 @@ Docker compose - <a href="https://docs.docker.com/compose" class="uri">https://d
 <h1 id="distribution-node">Distribution node</h1>
 <h2 id="overview">Overview</h2>
 <p>A Distribution node, in it’s minimal form, is a service aspect that’s able to maintain the central database and service API requests. In the first phase the domain of the distribution node is: <a href="https://environet.environ.hu" class="uri">https://environet.environ.hu</a></p>
-<h2 id="setup-1">Setup</h2>
-<h3 id="required-software-1">Required software</h3>
-<p>Docker engine - <a href="https://docs.docker.com/install" class="uri">https://docs.docker.com/install</a><br />
-Docker compose - <a href="https://docs.docker.com/compose" class="uri">https://docs.docker.com/compose</a></p>
-<h3 id="section"></h3>
 <h2 id="central-database">Central database</h2>
 <p>The distribution node has a database backend. It contains: * Data and configuration of hydro and meteo points * Measurement data tables of these monitoring points * User and access (ACL) tables (users, groups, permissions) * System runtime data</p>
 <p>Schema of the database can be found here: <a href="#21_database_structure">Database structure</a></p>
@@ -1070,7 +1065,7 @@ The detailed documentation of this endpoint can found here: <a href="#22_api_upl
 <p>With this endpoint clients can query data from the distribution node. This endpoint is available only after authentication, and authorization, so only permitted users can run queries. The response can be filtered by date, monitoring point type, and some other properties.<br />
 The detailed documentation of this endpoint can found here: <a href="#23_api_download">Download API documentation</a></p>
 <p><a name="21_setup"></a></p>
-<h1 id="setup-2">Setup</h1>
+<h1 id="setup-1">Setup</h1>
 <ol type="1">
 <li><p>Install the environet project. Refer to <a href="#11_setup">Setup</a>.</p></li>
 <li><p>Start the distribution node services <code>./environet dist up</code></p></li>
@@ -1219,8 +1214,8 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <li><strong>type</strong>: The type of the monitoring points. The value must be one of the following: <code>hydro</code> | <code>meteo</code></li>
 <li><strong>start</strong>: Minimum date of time series. Date format: <a href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a></li>
 <li><strong>end</strong>: Maximum date of time series. Date format: <a href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a></li>
-<li><strong>country<a href="#section"></a></strong>: Query time series only for monitoring points from the given countries. Country code format: <a href="https://www.iso.org/iso-3166-country-codes.html">ISO 3166-1 - alpha-2</a></li>
-<li><strong>symbol<a href="#section"></a></strong>: Query time series only of the given observed properties.</li>
+<li><strong>country[]</strong>: Query time series only for monitoring points from the given countries. Country code format: <a href="https://www.iso.org/iso-3166-country-codes.html">ISO 3166-1 - alpha-2</a></li>
+<li><strong>symbol[]</strong>: Query time series only of the given observed properties.</li>
 </ul>
 <h2 id="headers-1">Headers</h2>
 <table>
@@ -1522,7 +1517,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>A <em>data node</em> is a configuration mode of Environet, which designed to be run at a data source with the purpose of gathering metering point measurements stored in some third party format, such as a plain text file, spreadsheet or web resource.<br />
 It transforms these data to a format compatible with the Environet <em>distribution node</em> API, and uploads the results to a distribution node on behalf of an API user.<br />
 The gathering and uploading of data is accomplished by way of uploader plugin configurations, which can then be run by calling a script, typically by a cron job.</p>
-<h2 id="setup-3">Setup</h2>
+<h2 id="setup-2">Setup</h2>
 <ol type="1">
 <li><p>Install the environet project. Refer to <a href="#11_setup">Setup</a></p></li>
 <li>Configure data directory
