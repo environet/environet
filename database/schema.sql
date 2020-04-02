@@ -20,10 +20,6 @@ SET row_security = off;
 -- Name: dareffort; Type: DATABASE; Schema: -; Owner: -
 --
 
-CREATE DATABASE dareffort WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'C' LC_CTYPE = 'C';
-
-
-\connect dareffort
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
