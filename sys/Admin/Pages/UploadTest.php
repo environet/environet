@@ -59,6 +59,8 @@ class UploadTest extends BasePage {
 	 * @throws QueryException
 	 * @throws RenderException
 	 * @throws PKIException
+	 * @uses \Environet\Sys\Admin\Pages\UploadTest::render()
+	 * @uses \Environet\Sys\Admin\Pages\UploadTest::sendData()
 	 */
 	public function handle(): ?Response {
 
@@ -108,7 +110,9 @@ class UploadTest extends BasePage {
 	 * @throws CreateInputXmlException
 	 * @throws HttpClientException
 	 * @throws PKIException
-	 * @see HttpClient::sendRequest()
+	 * @see CreateInputXml
+	 * @uses \Environet\Sys\Admin\Pages\UploadTest::generateSignatureHeader()
+	 * @uses \Environet\Sys\General\HttpClient\HttpClient::sendRequest()
 	 */
 	protected function sendData(): HttpClientResponse {
 		$mpointId = $_POST['mpoint'] ?? null;
@@ -159,8 +163,8 @@ class UploadTest extends BasePage {
 	 * @throws InvalidArgumentException
 	 * @throws PKIException
 	 * @throws Exception
-	 * @see PKI::generateSignature()
-	 * @see PKI::authHeaderWithSignature()
+	 * @uses \Environet\Sys\General\PKI::generateSignature()
+	 * @uses \Environet\Sys\General\PKI::authHeaderWithSignature()
 	 */
 	protected function generateSignatureHeader($xml, $username): string {
 		$privateKeyFile = SRC_PATH . '/data/test_private_keys/' . $username . '.key';

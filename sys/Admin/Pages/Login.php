@@ -19,7 +19,7 @@ use Exception;
  *
  * Handle login page requests
  * For GET requests it creates the login page with the form.
- * If the request is POST, it checks the username, password, and store loggedin state in session
+ * If the request is POST, it checks the username, password, and store logged in state in session
  *
  * @package Environet\Sys\Admin\Pages
  * @author  SRG Group <dev@srg.hu>
@@ -37,8 +37,12 @@ class Login extends BasePage {
 	 * @throws RenderException
 	 * @throws HttpBadRequestException
 	 * @throws QueryException
-	 * @see Login::handleLogin()
-	 * @see Login::logLoginDetails()
+	 * @uses \Environet\Sys\Admin\Pages\Login::checkCsrf()
+	 * @uses \Environet\Sys\Admin\Pages\Login::handleLogin()
+	 * @uses \Environet\Sys\Admin\Pages\Login::logLoginDetails()
+	 * @uses \Environet\Sys\Admin\Pages\Login::messagesToSession()
+	 * @uses \Environet\Sys\Admin\Pages\Login::render()
+	 * @uses \httpRedirect()
 	 */
 	public function handle(): ?Response {
 
@@ -136,7 +140,7 @@ class Login extends BasePage {
 	 * @param string $status
 	 *
 	 * @throws QueryException
-	 * @see EventLogger::log()
+	 * @uses \Environet\Sys\General\EventLogger::log()
 	 */
 	protected function logLoginDetails(string $status) {
 		EventLogger::log($status, [

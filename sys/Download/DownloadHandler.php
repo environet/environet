@@ -183,8 +183,11 @@ class DownloadHandler extends ApiHandler {
 	 * 5. Queries the results and generates the output XML containing them.
 	 *
 	 * @return Response|mixed
-	 * @see MonitoringPointQueries
-	 * @see CreateOutputXml
+	 * @uses \Environet\Sys\Download\DownloadHandler::getIdentity()
+	 * @uses \Environet\Sys\Download\DownloadHandler::getAuthHeaderParts()
+	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::getBuilder()
+	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::getResults()
+	 * @uses \Environet\Sys\Xml\CreateOutputXml::generateXml()
 	 */
 	public function handleRequest() {
 		try {

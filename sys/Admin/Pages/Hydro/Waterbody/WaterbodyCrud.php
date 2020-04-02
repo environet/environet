@@ -65,6 +65,7 @@ class WaterbodyCrud extends CrudPage {
 	 *
 	 * @return Response
 	 * @throws RenderException
+	 * @uses \httpErrorPage()
 	 */
 	public function show(): Response {
 		// Get id from url and get record by id
@@ -89,6 +90,7 @@ class WaterbodyCrud extends CrudPage {
 	 *
 	 * @return Response
 	 * @throws RenderException
+	 * @uses \httpErrorPage()
 	 */
 	public function edit(): Response {
 		$id = $this->request->getQueryParam('id');
@@ -118,6 +120,7 @@ class WaterbodyCrud extends CrudPage {
 	 *
 	 * @return Response
 	 * @throws RenderException
+	 * @uses \httpErrorPage()
 	 */
 	protected function handleFormPost($id = null, $record = null): Response {
 		$postData = $this->request->getCleanData();

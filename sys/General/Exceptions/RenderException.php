@@ -11,7 +11,7 @@ use Exception;
  * Exception for errors during rendering a view
  *
  * @package Environet\Sys\General\Exceptions
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class RenderException extends Exception {
 

@@ -32,7 +32,7 @@ class GenerateSignature extends BaseCommand {
 	 *
 	 * @return int
 	 * @throws PKIException
-	 * @see PKI::generateSignature()
+	 * @uses \Environet\Sys\General\PKI::generateSignature()
 	 */
 	public function run($arguments): int {
 

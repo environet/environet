@@ -13,14 +13,14 @@ use Environet\Sys\General\Exceptions\QueryException;
  * Query class for select operations
  *
  * @package Environet\Sys\General\Db\Query
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class Select extends Query {
 
 	use WhereTrait, JoinTrait;
 
 	/**
-	 * Array of select column definitions. Each item should be a strint
+	 * Array of select column definitions. Each item should be a string
 	 *
 	 * @var array
 	 */
@@ -33,7 +33,7 @@ class Select extends Query {
 	protected $orders = [];
 
 	/**
-	 * Array of unioned select statements
+	 * Array of select statements to be merged by UNION clause
 	 * @var array
 	 */
 	protected $unions = [];
@@ -59,7 +59,7 @@ class Select extends Query {
 	/**
 	 * Add some (one, or multiple) select columns
 	 *
-	 * @param array|string $selects If array, all items will be added the selects array.
+	 * @param array|string $selects If an array, all items will be added to the selects array.
 	 *
 	 * @return self
 	 */
@@ -194,39 +194,44 @@ class Select extends Query {
 
 	/**
 	 * Build a select operation query with conditions
+	 *
+	 * @return mixed|string
+	 * @uses \Environet\Sys\General\Db\Query\Select::buildJoinClause()
+	 * @uses \Environet\Sys\General\Db\Query\Select::buildWhereClause()
+	 * @uses \Environet\Sys\General\Db\Query\Select::buildHavingClause()
 	 */
 	public function buildQuery() {
-		//Build SELECT columns FROM table
+		// Build SELECT columns FROM table
 		$queryString = ['SELECT'];
 		$queryString[] = $this->selects ? implode(', ', $this->selects) : '*';
 		$queryString[] = 'FROM';
 		$queryString[] = $this->table;
 
-		//Add joins
-		$this->buildJoinPart($queryString);
+		// Add joins
+		$this->buildJoinClause($queryString);
 
-		//Add where conditions
-		$this->buildWherePart($queryString);
+		// Add where conditions
+		$this->buildWhereClause($queryString);
 
-		//Add having conditions
-		$this->buildHavingPart($queryString);
+		// Add having conditions
+		$this->buildHavingClause($queryString);
 
-		//Add group by parts if has any
+		// Add group by parts if has any
 		if (count($this->groupBy) > 0) {
 			$queryString[] = 'GROUP BY ' . implode(', ', $this->groupBy);
 		}
 
-		//Add order by if has any
+		// Add order by if has any
 		if (count($this->orders) > 0) {
 			$queryString[] = 'ORDER BY ' . implode(', ', $this->orders);
 		}
 
-		//Add order by if has any
+		// Add order by if has any
 		if (!is_null($this->limit)) {
 			$queryString[] = 'LIMIT ' . $this->limit;
 		}
 
-		//Add order by if has any
+		// Add order by if has any
 		if (!is_null($this->offset)) {
 			$queryString[] = 'OFFSET ' . $this->offset;
 		}
@@ -240,29 +245,32 @@ class Select extends Query {
 
 
 	/**
-	 * Add limit and offset parameters to query to implement pagination.
-	 * It also runs a cloned, cleaned query to get the total count (without pagination),
-	 * and calculate page count
+	 * Paginate the query.
+	 *
+	 * Add limit and offset parameters to the query to implement pagination.
+	 * It also runs a cloned, cleaned query to get the total count (without pagination) and calculate the page count.
 	 *
 	 * @param int      $pageSize
 	 * @param int|null $totalCount  Reference for storing total count (without pagination)
 	 * @param int|null $currentPage Reference for storing the number of current page
 	 * @param int|null $maxPage     Reference for storing page count
+	 *
+	 * @uses \Environet\Sys\General\Db\Query\Select::limit()
+	 * @uses \Environet\Sys\General\Db\Query\Select::offset()
 	 */
 	public function paginate($pageSize, &$currentPage = null, &$totalCount = null, &$maxPage = null) {
-		//Default limit and offset
+		// Default limit and offset
 		$limit = $pageSize;
 		$offset = 0;
 
 		if (!is_null($currentPage)) {
-			//Page is set, calculate offset, and current page
+			// Page is set, calculate offset, and current page
 			$currentPage = max(1, (int) $currentPage);
 			$offset = ($currentPage - 1) * $limit;
 		}
 
 		try {
-			//Clone the select query, clean it (selects, joins, etc)
-			//And get the total count of rows
+			// Clone the select query, clean it (selects, joins, etc) and get the total count of rows
 			$totalCount = (clone $this)
 				->clearSelects()->clearGroupBy()->clearOrderBy()->clearJoins()
 				->select('COUNT(*)')
@@ -271,10 +279,10 @@ class Select extends Query {
 			$totalCount = 0;
 		}
 
-		//Calculate max page based on total count
+		// Calculate max page based on total count
 		$maxPage = (int) ceil($totalCount / $limit);
 
-		//Set limit and offset
+		// Set limit and offset
 		$this->limit($limit)->offset($offset);
 	}
 
@@ -284,6 +292,8 @@ class Select extends Query {
 	 *
 	 * @param string|null $orderBy
 	 * @param string|null $orderDir
+	 *
+	 * @uses \Environet\Sys\General\Db\Query\Select::orderBy()
 	 */
 	public function sort(string $orderBy = null, string $orderDir = null) {
 		if (!is_null($orderBy) && !is_null($orderDir)) {

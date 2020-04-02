@@ -48,6 +48,8 @@ class BasePage {
 	 * Request is a required parameter for page handlers
 	 *
 	 * @param Request $request
+	 *
+	 * @uses \Environet\Sys\Admin\Pages\BasePage::readMessagesFromSession()
 	 */
 	public function __construct(Request $request) {
 		$this->request = $request;
@@ -65,6 +67,8 @@ class BasePage {
 	 *
 	 * @return Response
 	 * @throws RenderException
+	 * @uses \Environet\Sys\General\Request::getIdentity()
+	 * @uses \Environet\Sys\Admin\Pages\BasePage::generateCsrf()
 	 */
 	public function render(string $template, array $vars = []): Response {
 		$vars['messages'] = $this->messages;
@@ -81,6 +85,8 @@ class BasePage {
 	 * @param string $uri
 	 *
 	 * @return Response
+	 * @uses \Environet\Sys\Admin\Pages\BasePage::messagesToSession()
+	 * @uses \httpRedirect()
 	 */
 	protected function redirect(string $uri): Response {
 		$this->messagesToSession();
@@ -95,6 +101,8 @@ class BasePage {
 	 * @param string $defaultUri
 	 *
 	 * @return Response
+	 * @uses \Environet\Sys\General\Request::getReferer()
+	 * @uses \Environet\Sys\Admin\Pages\BasePage::redirect()
 	 */
 	protected function redirectBack(string $defaultUri) {
 		$redirectUrl = $this->request->getReferer();
@@ -123,6 +131,7 @@ class BasePage {
 	 * Generate a CSRF token and store it in session
 	 *
 	 * @return string
+	 * @uses \NCSRandStr()
 	 */
 	protected function generateCsrf(): string {
 		$csrf = NCSRandStr();

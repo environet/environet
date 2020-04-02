@@ -94,6 +94,10 @@ class AdminHandler extends BaseHandler {
 	 * It finds the page handler based on the admin path, and forward the request to the handler
 	 *
 	 * @throws RenderException
+	 * @uses \httpRedirect()
+	 * @uses \Environet\Sys\Admin\AdminHandler::getIdentity()
+	 * @uses \Environet\Sys\Admin\AdminHandler::authorizeRequest()
+	 * @uses \Environet\Sys\Admin\AdminHandler::getAdminPath()
 	 */
 	public function handleRequest() {
 

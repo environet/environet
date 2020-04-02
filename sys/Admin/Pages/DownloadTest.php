@@ -58,6 +58,7 @@ class DownloadTest extends BasePage {
 	 * @throws HttpBadRequestException
 	 * @throws QueryException
 	 * @throws RenderException
+	 * @uses \Environet\Sys\Admin\Pages\DownloadTest::sendData()
 	 */
 	public function handle(): ?Response {
 		// Get available countries
@@ -133,8 +134,8 @@ class DownloadTest extends BasePage {
 	 * Generates a signature header based on the current user's private key and the test token ({@see DownloadTest::$token}).
 	 *
 	 * @throws Exception
-	 * @see DownloadTest::generateSignatureHeader()
-	 * @see HttpClient::sendRequest()
+	 * @uses \Environet\Sys\Admin\Pages\DownloadTest::generateSignatureHeader()
+	 * @uses \Environet\Sys\General\HttpClient\HttpClient::sendRequest()
 	 */
 	protected function sendData() {
 		$countries = $_POST['country'] ?? false;
@@ -201,8 +202,8 @@ class DownloadTest extends BasePage {
 	 * @throws InvalidArgumentException
 	 * @throws PKIException
 	 * @throws Exception
-	 * @see PKI::authHeaderWithSignature()
-	 * @see PKI::generateSignature()
+	 * @uses \Environet\Sys\General\PKI::authHeaderWithSignature()
+	 * @uses \Environet\Sys\General\PKI::generateSignature()
 	 */
 	protected function generateSignatureHeader($username): string {
 		$privateKeyFile = SRC_PATH . '/data/test_private_keys/' . $username . '.key';

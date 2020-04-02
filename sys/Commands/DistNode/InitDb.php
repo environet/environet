@@ -35,6 +35,8 @@ class InitDb extends BaseCommand {
 	 *
 	 * @return int
 	 * @throws CommandException
+	 * @uses \Environet\Sys\Commands\DistNode\InitDb::importSchema()
+	 * @uses \Environet\Sys\Commands\DistNode\InitDb::importData()
 	 */
 	public function run($arguments): int {
 		$output = [];
@@ -141,6 +143,7 @@ class InitDb extends BaseCommand {
 	 *
 	 * @return int
 	 * @throws CommandException
+	 * @uses \Environet\Sys\Commands\DistNode\InitDb::runSqlFile()
 	 */
 	protected function importSchema(array &$output): int {
 		$schemaPath = SRC_PATH . '/database/schema.sql';
@@ -162,6 +165,7 @@ class InitDb extends BaseCommand {
 	 *
 	 * @return int
 	 * @throws CommandException
+	 * @uses \Environet\Sys\Commands\DistNode\InitDb::runSqlFile()
 	 */
 	protected function importData(array &$output): int {
 		$dataP1th = SRC_PATH . '/database/clean_data.sql';

@@ -12,7 +12,11 @@ use Environet\Sys\General\Exceptions\QueryException;
 
 /**
  * Class MeteoMonitoringPointQueries
+ *
+ * Queries for meteo monitoring points.
+ *
  * @package Environet\Sys\General\Db
+ * @author  SRG Group <dev@srg.hu>
  */
 class MeteoMonitoringPointQueries extends BaseQueries {
 
@@ -30,8 +34,12 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 		'meteopoint.location',
 	];
 
+
 	/**
 	 * @inheritDoc
+	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\MeteoStationClassificationQueries::getById()
+	 * @uses \Environet\Sys\General\Db\OperatorQueries::getById()
 	 */
 	public static function getById($id, string $primaryKey = 'id'): ?array {
 		$monitoringPoint = parent::getById($id);
@@ -39,17 +47,20 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 		if ($monitoringPoint) {
 			$monitoringPoint['classification'] = MeteoStationClassificationQueries::getById($monitoringPoint['meteostation_classificationid']);
 			$monitoringPoint['operator'] = OperatorQueries::getById($monitoringPoint['operatorid']);
-			$monitoringPoint['observedProperties'] = (new Select())->select('meteo_observed_propertyid')->from('meteopoint_observed_property')
-														->where('meteopointid = :meteopointId')
-														->addParameter(':meteopointId', $id)
-														->run(Query::FETCH_COLUMN);
+			$monitoringPoint['observedProperties'] = (new Select())
+				->select('meteo_observed_propertyid')
+				->from('meteopoint_observed_property')
+				->where('meteopointid = :meteopointId')
+				->addParameter(':meteopointId', $id)
+				->run(Query::FETCH_COLUMN);
 
-			$monitoringPoint['showObservedProperty'] = (new Select())->from('meteo_observed_property mop')
-														->select(['mop.id', 'mop.symbol'])
-														->join('meteopoint_observed_property mpop', 'mpop.meteo_observed_propertyid = mop.id', Query::JOIN_LEFT)
-														->where('mpop.meteopointid = :mpopId')
-														->addParameter(':mpopId', $id)
-														->run();
+			$monitoringPoint['showObservedProperty'] = (new Select())
+				->from('meteo_observed_property mop')
+				->select(['mop.id', 'mop.symbol'])
+				->join('meteopoint_observed_property mpop', 'mpop.meteo_observed_propertyid = mop.id', Query::JOIN_LEFT)
+				->where('mpop.meteopointid = :mpopId')
+				->addParameter(':mpopId', $id)
+				->run();
 		}
 
 		return $monitoringPoint;
@@ -57,11 +68,21 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 
 
 	/**
-	 * @param array  $data
+	 * Update or insert an item to the meteopoint table (@param array $data
+	 *
 	 * @param null   $id
 	 * @param string $primaryKey
 	 *
 	 * @throws QueryException
+	 * @see  MeteoMonitoringPointQueries::$tableName}).
+	 * Logs the transaction regardless of updating or inserting.
+	 * Once done, passes id and observed property data to {@see MeteoMonitoringPointQueries::saveMeteopointObservedProperty()}.
+	 *
+	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
+	 * @uses \Environet\Sys\General\Db\Query\Update::run()
+	 * @uses \Environet\Sys\General\EventLogger::log()
+	 * @uses \Environet\Sys\General\Db\MeteoMonitoringPointQueries::prepareData()
+	 * @uses \Environet\Sys\General\Db\MeteoMonitoringPointQueries::saveMeteopointObservedProperty()
 	 */
 	public static function save(array $data, $id = null, string $primaryKey = 'id') {
 		$dataToSave = static::prepareData($data);
@@ -70,12 +91,17 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 			EventLogger::log(EventLogger::EVENT_TYPE_METEO_MP_UPDATE, array_merge($dataToSave, [
 				'id' => $id
 			]));
-			(new Update())->table(static::$tableName)
+			(new Update())
+				->table(static::$tableName)
 				->updateData($dataToSave)
-				->where(static::$tableName . '.'.$primaryKey.' = :id')->addParameter(':id', $id)->run(Query::RETURN_BOOL);
+				->where(static::$tableName . ".$primaryKey = :id")
+				->addParameter(':id', $id)
+				->run(Query::RETURN_BOOL);
 		} else {
-			$id = (new Insert())->table(static::$tableName)
-					->addSingleData($dataToSave)->run();
+			$id = (new Insert())
+				->table(static::$tableName)
+				->addSingleData($dataToSave)
+				->run();
 
 			EventLogger::log(EventLogger::EVENT_TYPE_METEO_MP_ADD, array_merge($dataToSave, [
 				'id' => $id
@@ -91,24 +117,24 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 	 */
 	public static function prepareData(array $data): array {
 		return [
-			'name' => $data['name'] ?? null,
-			'eucd_pst' => $data['eucd_pst'] ?? null,
-			'ncd_pst' => $data['ncd_pst'] ?? null,
-			'lat' => $data['lat'] ?? null,
-			'long' => $data['long'] ?? null,
-			'z' => $data['z'] ?? null,
-			'maplat' => $data['lat'] ?? null,
-			'maplong' => $data['long'] ?? null,
-			'altitude' => $data['altitude'] ?? null,
-			'river_basin' => $data['river_basin'] ?? null,
-			'start_time' => '1999-09-09',
-			'end_time' => '2060-09-09',
-			'utc_offset' => 0,
+			'name'                          => $data['name'] ?? null,
+			'eucd_pst'                      => $data['eucd_pst'] ?? null,
+			'ncd_pst'                       => $data['ncd_pst'] ?? null,
+			'lat'                           => $data['lat'] ?? null,
+			'long'                          => $data['long'] ?? null,
+			'z'                             => $data['z'] ?? null,
+			'maplat'                        => $data['lat'] ?? null,
+			'maplong'                       => $data['long'] ?? null,
+			'altitude'                      => $data['altitude'] ?? null,
+			'river_basin'                   => $data['river_basin'] ?? null,
+			'start_time'                    => '1999-09-09',
+			'end_time'                      => '2060-09-09',
+			'utc_offset'                    => 0,
 			'meteostation_classificationid' => (int) $data['classification'] ?? null,
-			'operatorid' => (int) $data['operator'] ?? null,
-			'vertical_reference' => $data['vertical_reference'] ?? null,
-			'country' => $data['country'] ?? null,
-			'location' => $data['location'] ?? null,
+			'operatorid'                    => (int) $data['operator'] ?? null,
+			'vertical_reference'            => $data['vertical_reference'] ?? null,
+			'country'                       => $data['country'] ?? null,
+			'location'                      => $data['location'] ?? null,
 		];
 	}
 
@@ -120,39 +146,45 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 	 * @param $idRight
 	 *
 	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\Query\Delete::run()
+	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
+	 * @uses \Environet\Sys\General\Db\Query\Select::run()
 	 */
 	public static function saveMeteopointObservedProperty($values, $idRight) {
-		//Get user ids'f from posted data, filter it, and filter out duplicates
+		// Get user ids from posted data, filter it, and filter out duplicates
 		if (!empty($values)) {
-			// get all assigned observed property to the current monitoring point
-			$assignedProperties = (new Select())->select('meteo_observed_propertyid')->from('meteopoint_observed_property')
-									->where('meteopointid = :meteopointId')
-									->addParameter(':meteopointId', $idRight)
-									->run(Query::FETCH_COLUMN);
+			// Get all assigned observed property to the current monitoring point
+			$assignedProperties = (new Select())
+				->select('meteo_observed_propertyid')
+				->from('meteopoint_observed_property')
+				->where('meteopointid = :meteopointId')
+				->addParameter(':meteopointId', $idRight)
+				->run(Query::FETCH_COLUMN);
 
-			//Create insert query for new connections
+			// Create insert query for new connections
 			$insert = (new Insert())->table('meteopoint_observed_property')->columns(['meteo_observed_propertyid', 'meteopointid']);
-			// add default values
+			// Add default values
 			$insert->addParameter(':rightId', $idRight);
 
-			//Add values for all ids
+			// Add values for all ids
 			$skippedRows = 0;
 			foreach ($values as $key => $id) {
-				// if id is empty = no option selected in the dropdown
+				// If id is empty = no option selected in the dropdown
 				// and the dropdown "key" / identifier has already assigned to the current monitoring point
 				// we have to delete
 				if (empty($id) && in_array((int) $key, $assignedProperties)) {
-					(new Delete())->table('meteopoint_observed_property')
+					(new Delete())
+						->table('meteopoint_observed_property')
 						->where('meteopointid = :meteopointId')
 						->where('meteo_observed_propertyid = :observedPropertyId')
 						->addParameter(':meteopointId', $idRight)
 						->addParameter(':observedPropertyId', $key)
 						->run();
 				}
-				// if the current "id" is empty, so we want to delete or the current "key" / identifier of the select field
+				// If the current "id" is empty, so we want to delete or the current "key" / identifier of the select field
 				// has already assigned to the current monitoring point we want to do nothing with the current "option"
 				if (empty($id) || in_array((int) $id, $assignedProperties)) {
-					$skippedRows++;
+					$skippedRows ++;
 					continue;
 				}
 
@@ -160,7 +192,7 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 				$insert->addParameters([":leftId$key" => (int) $id]);
 			}
 
-			//Run, but without returning last insert id
+			// Run, but without returning last insert id
 			if (count($values) > $skippedRows) {
 				$insert->run(Query::RETURN_BOOL);
 			}

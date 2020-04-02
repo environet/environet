@@ -7,8 +7,10 @@ use Environet\Sys\General\EventLogger;
 /**
  * Class HydroStationClassificationQueries
  *
+ * Base queries adjusted for hydro station classifications
+ *
  * @package Environet\Sys\General\Db
- * @author  Mate Kovacs <mate.kovacs@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class HydroStationClassificationQueries extends BaseQueries {
 

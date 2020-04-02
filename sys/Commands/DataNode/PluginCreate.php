@@ -25,8 +25,8 @@ class PluginCreate extends BaseCommand {
 	 * @param $arguments
 	 *
 	 * @return int
-	 * @see PluginBuilder::createConfiguration()
-	 * @see PluginBuilder::serializeConfiguration()
+	 * @uses \Environet\Sys\Plugins\PluginBuilder::createConfiguration()
+	 * @uses \Environet\Sys\Plugins\PluginBuilder::serializeConfiguration()
 	 */
 	public function run($arguments): int {
 		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';

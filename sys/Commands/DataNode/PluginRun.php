@@ -26,7 +26,7 @@ class PluginRun extends BaseCommand {
 	 * @param $arguments
 	 *
 	 * @return int
-	 * @see PluginBuilder::loadFromConfiguration()
+	 * @uses \Environet\Sys\Plugins\PluginBuilder::loadFromConfiguration()
 	 */
 	public function run($arguments): int {
 		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
