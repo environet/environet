@@ -10,7 +10,6 @@
  *
  * @package Environet
  */
-
 use Environet\Sys\Config;
 
 //The root path of the source code. Every include and other file links should be relative to this.

@@ -98,7 +98,7 @@ function exception_handler(Throwable $exception) {
 	//Add exception message
 	exception_logger($exception);
 	if (EN_DEV_MODE) {
-		//If developer mode is enabled, display the expcetion after logging
+		//If developer mode is enabled, display the exception after logging
 		throw $exception;
 	}
 }

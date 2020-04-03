@@ -1031,28 +1031,36 @@
 </ul>
 <p><a name="11_setup"></a></p>
 <h1 id="setup">Setup</h1>
-<h2 id="required-software">Required software</h2>
-<p>Docker engine - <a href="https://docs.docker.com/install" class="uri">https://docs.docker.com/install</a><br />
-Docker compose - <a href="https://docs.docker.com/compose" class="uri">https://docs.docker.com/compose</a></p>
-<h2 id="source-code">Source code</h2>
-<ol type="1">
-<li><p>Clone the two git repositories needed to run the app:</p>
-<ul>
-<li>The Environet docker environment: <a href="https://github.com/environet/environet-docker" class="uri">https://github.com/environet/environet-docker</a></li>
-<li>The Environet source code <a href="https://github.com/environet/environet" class="uri">https://github.com/environet/environet</a></li>
-</ul></li>
-<li><p>Configure the environment</p>
-<p>In the <em>environet-docker</em> folder, create a new .env file by copying .env.example.</p>
-<ul>
-<li>If the two repositories are not in the same folder, change the SRC_ROOT variable to the path of the <em>environet</em> repository (relative or absolute).</li>
-</ul></li>
-</ol>
+<p>This guide assumes you are installing Environet in a Linux environment.</p>
+<h2 id="install-the-docker-engine-and-docker-compose">Install the Docker Engine and Docker Compose</h2>
+<h3 id="docker-engine">Docker Engine</h3>
+<p>The docker documentation has lots of helpful information, along with distribution specific installation instructions. If you are new to Docker, we recommend reading the <a href="https://docs.docker.com/install/">overview</a> first.<br />
+To see distribution specific installation instructions, navigate to Docker Engine &gt; Linux &gt; Your distribution in the <a href="https://docs.docker.com/install/">documentation</a>.</p>
+<p>Be sure to follow the <a href="https://docs.docker.com/install/linux/linux-postinstall/">post installation steps</a> to allow using docker as a non-root user.</p>
+<p>You can verify that Docker is installed correctly by running:<br />
+<code>$ docker run hello-world</code><br />
+If should output a friendly message to the terminal.</p>
+<h3 id="docker-compose">Docker Compose</h3>
+<p>Setting up Compose is a simpler process, which is described in detail on <a href="https://docs.docker.com/compose/install/#install-compose-on-linux-systems">this page</a>.<br />
+It involves downloading the docker-compose binary from github and setting executable permissions on it.</p>
+<p>You can verify that Docker Compose is installed correctly by running:<br />
+<code>$ docker-compose --version</code><br />
+It should output the currently installed version number.</p>
+<h2 id="get-the-source">Get the source</h2>
+<p>You will need to have Git installed to be able to download the project source, and to receive updates later. It is easiest to install Git on Linux using the preferred package manager of your Linux distribution. See the <a href="https://git-scm.com/download/linux">Git downloads page</a> for details.</p>
+<p>Checkout the Environet docker repository - Navigate to the directory where you would like to install environet<br />
+- Run <code>$ git clone git@github.com:environet/environet-docker.git</code></p>
+<p>By default, the files will be downloaded to a directory named <code>environet-docker</code>, you can specify a custom name by providing a third argument to the command, e.g.:<br />
+<code>$ git clone git@github.com:environet/environet-docker.git my_directory</code></p>
+<p>Change to the directory you checked the code out to, and you should be ready to proceed with the setup.</p>
+<p>If you are installing a data node, refer to the data node <a href="#30_data_node">setup instructions</a></p>
+<p>If you are installing a distribution node, refer to the distribution node <a href="#21_setup">setup instructions</a></p>
 <p><a name="20_distribution_node"></a></p>
 <h1 id="distribution-node">Distribution node</h1>
 <h2 id="overview">Overview</h2>
 <p>A Distribution node, in it’s minimal form, is a service aspect that’s able to maintain the central database and service API requests. In the first phase the domain of the distribution node is: <a href="https://environet.environ.hu" class="uri">https://environet.environ.hu</a></p>
 <h2 id="setup-1">Setup</h2>
-<h3 id="required-software-1">Required software</h3>
+<h3 id="required-software">Required software</h3>
 <p>Docker engine - <a href="https://docs.docker.com/install" class="uri">https://docs.docker.com/install</a><br />
 Docker compose - <a href="https://docs.docker.com/compose" class="uri">https://docs.docker.com/compose</a></p>
 <h3 id="section"></h3>
@@ -1300,7 +1308,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <a class="sourceLine" id="cb5-7" title="7"><span class="kw">&lt;/environet:ErrorResponse&gt;</span></a></code></pre></div></li>
 </ul>
 <p><a name="25_admin_user_manual"></a></p>
-<p>﻿# Admin user manual</p>
+<h1 id="admin-user-manual">Admin user manual</h1>
 <p>This document’s goals to represents the different parts of the administration area to help to understand how it works. Help you to see through how works the specified relationships and how you can handle them.</p>
 <h3 id="general-information">General information</h3>
 <p>Good to know, that on each list page, there are on the top right a search field. In the following each sections you can see a “searchable” part, where you can find in what kind of fields can the system search on the specified page.</p>
@@ -1519,31 +1527,40 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p><a name="30_data_node"></a></p>
 <h1 id="data-node">Data node</h1>
 <h2 id="overview-1">Overview</h2>
-<p>A <em>data node</em> is a configuration mode of Environet, which designed to be run at a data source with the purpose of gathering metering point measurements stored in some third party format, such as a plain text file, spreadsheet or web resource.<br />
-It transforms these data to a format compatible with the Environet <em>distribution node</em> API, and uploads the results to a distribution node on behalf of an API user.<br />
-The gathering and uploading of data is accomplished by way of uploader plugin configurations, which can then be run by calling a script, typically by a cron job.</p>
-<h2 id="setup-3">Setup</h2>
-<ol type="1">
-<li><p>Install the environet project. Refer to <a href="#11_setup">Setup</a></p></li>
-<li>Configure data directory
+<p>A <em>data node</em> is designed to be run at a data source with the purpose of gathering metering point measurements stored in some third party format, such as a plain text file, spreadsheet or web resource.</p>
+<p>It transforms these data to a format compatible with the Environet <em>distribution node</em> API, and uploads the results to a distribution node.</p>
+<p>The gathering and uploading of data is accomplished by way of uploader plugin configurations, which can then be run by calling a script, typically by a cron job.</p>
+<p>Before a data node can start uploading measurements, the metering points and observable properties (for which the plugin will upload measurements) have to be configured beforehand on the Environet distribution node that the plugin will be uploading to.</p>
+<p>An API user with will also need to be configured, to authenticate upload requests.</p>
+<h2 id="prepare-distribution-node-to-receive-data">Prepare distribution node to receive data</h2>
+<p>You can set the following up if you have access to the <a href="#25_admin_user_manual">distribution node admin panel</a>.</p>
+<p><strong>API user</strong></p>
+<p>Configure a new or existing user with <strong>public ssl key</strong> for . Click <a href="#ssl-key-pair-generation-tool">here</a> if you need help creating SSL keys. Take note of the <strong>username</strong>, you are going to need it later - along with the <strong>private key</strong> - to configure your data node.</p>
+<p><strong>Observed properties</strong></p>
+<p>Check that the distribution node has an <em>observed property</em> corresponding to each type of data to be uploaded. Take note of the <strong>symbol</strong> value of these for later.</p>
+<p><strong>Monitoring points</strong></p>
+<p>Finally, define the monitoring points for which data will be uploaded.<br />
+<strong>You will have to link observed properties to each monitoring point as well.</strong></p>
+<h2 id="setup-steps">Setup steps</h2>
+<p>Before configuring the data node, you need to install the Environet project. The steps to install dependencies and download the Environet source itself, are outlined in the <a href="#11_setup">setup</a> section of this document.</p>
+<p><strong>Configure data directory</strong></p>
+<p>If your data node will be reading data from a file or directory on the system where the node is running, you will have to configure the LOCAL_DATA_DIR environment variable with the path to the directory where the data will be found.<br />
+If the data node is going to access the measurements over a network connection, you can skip this step.</p>
 <ul>
-<li>If your data node will be reading data from a file or directory, configure the LOCAL_DATA_DIR variable with the path to the directory where the data will be found.</li>
-</ul></li>
-<li><p>Start the data node container</p>
-<p><code>./environet data up</code></p></li>
-<li><p>Creating uploader plugin configurations</p>
-<h5 id="prerequisites">Prerequisites</h5>
-<p>For an uploader configuration to work, the metering points and observable properties (for which the plugin will upload measurements) have to be configured beforehand on the Environet distribution node that the plugin will be uploading to.</p>
-<p>An API user with upload permissions and an SSL key will also need to be configured, to authenticate upload requests.<br />
-To generate an ssl key pair, you can run the command <code>./environet data tool keygen</code> Private keys should be placed in the <code>conf/plugins/credentials</code> directory, which is where the keygen tool will place them, by default.</p>
-<h5 id="plugin-configuration-command-line-tool">Plugin configuration command line tool</h5>
+<li>Create an <code>.env</code> file by copying <code>.env.example</code></li>
+<li>Uncomment the line containing LOCAL_DATA_DIR (by deleting the # character from the beginning of the line)</li>
+<li>Enter the path to the data directory. For example: On a system where the measurements are stored in csv files in the <code>/var/measurements</code> directory, the line would read:<code>LOCAL_DATA_DIR=/var/measurements</code></li>
+</ul>
+<h2 id="creating-configurations">Creating configurations</h2>
 <p>Run <code>./environet data plugin create</code> to start an interactive script, that will guide you through creating an uploader plugin configuration.</p>
-<p>Generated configurations will be saved to the <code>/conf/plugins/configurations</code> folder, with the filename provided.</p></li>
-<li><p>Running a configuration</p>
-<p>Run <code>./environet plugin run [configuration name]</code> to run an uploader plugin configuration. (If the upload needs to run regularly, you would have to set up a cron job to execute the command at regular intervals.)</p></li>
-</ol>
+<p>Generated configurations will be saved to the <code>/conf/plugins/configurations</code> folder, with the filename provided at the end of the process.</p>
+<h2 id="running-a-configuration">Running a configuration</h2>
+<p>Run <code>./environet plugin run [configuration name]</code> to run an uploader plugin configuration. (If you want to run regularly, you should set up a cron job to execute this command at regular intervals.)</p>
+<h2 id="ssl-key-pair-generation-tool">SSL key pair generation tool</h2>
+<p>To generate an ssl key pair, you can run the command <code>./environet data tool keygen</code>.<br />
+Private keys should be placed in the <code>conf/plugins/credentials</code> directory, which is where the keygen tool will place them, by default.</p>
 <p><a name="41_key_gen"></a></p>
-<h1 id="ssl-keypair-generation-guide">SSL keypair generation guide</h1>
+<h1 id="ssl-key-pair-generation-guide">SSL key pair generation guide</h1>
 <h2 id="windows">Windows</h2>
 <p>It is recommended to use the following:</p>
 <p><a href="https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip" class="uri">https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip</a></p>

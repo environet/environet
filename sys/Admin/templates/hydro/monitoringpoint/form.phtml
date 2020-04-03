@@ -119,7 +119,7 @@
 
         <fieldset class="form-group">
             <div class="field">
-                <legend><?=__('Observed properties)');?></legend>
+                <legend><?=__('Observed properties');?></legend>
                 <select name="observedProperties[]" multiple>
                     <?php foreach ($observedProperties as $id => $symbol): ?>
                         <option value="<?= $id; ?>" <?= in_array($id, $record['observedProperties']) ? 'selected' : '' ?>><?= $symbol; ?></option>

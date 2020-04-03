@@ -27,8 +27,11 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 	 */
 	public static function create(Console $console): TransportInterface {
 		$console->writeLine('');
-		$console->writeLine('Configuring local directory transport');
-		$path = $console->ask('Enter path to the directory where the data is:', 200);
+		$console->writeLine('Configuring local directory transport', Console::COLOR_YELLOW);
+
+		$console->writeLine('Enter path to the directory where the data is. This should be a path relative to the LOCAL_DATA_DIR');
+		$console->write('Leave empty if the data files are located immediately under that directory.');
+		$path = $console->ask('', 200);
 		$config = [
 			'path' => $path,
 		];
@@ -78,6 +81,14 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 	 */
 	public static function getName(): string {
 		return 'local directory transport';
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function getHelp(): string {
+		return 'Reads files from a directory. Useful for when measurements are stored in multiple files inside a directory';
 	}
 
 

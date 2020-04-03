@@ -27,8 +27,12 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 	 */
 	public static function create(Console $console): TransportInterface {
 		$console->writeLine('');
-		$console->writeLine('Configuring local file transport', '32');
-		$path = $console->ask('Enter path to the file to be imported:', 200);
+		$console->writeLine('Configuring local file transport', Console::COLOR_YELLOW);
+
+		$console->writeLine('Enter path to the file to be imported. This should be relative to the LOCAL_DATA_DIR');
+		$console->write('Leave empty if the data file is located immediately under that directory.');
+
+		$path = $console->ask('', 200);
 		$config = [
 			'path' => $path,
 		];
@@ -73,6 +77,14 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 	 */
 	public static function getName(): string {
 		return 'local file transport';
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function getHelp(): string {
+		return 'Reads data from a specific file. Use if measurements are stored in one file, the contents of which are updated over time with new measurements.';
 	}
 
 
