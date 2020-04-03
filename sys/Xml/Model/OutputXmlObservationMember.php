@@ -12,9 +12,8 @@ use SimpleXMLElement;
  *
  * Wrapper class for handling WML observationMember data structure
  *
- * @package   Environet\Sys\Xml\Model
- * @author    SRG Group <dev@srg.hu>
- * @copyright 2020 SRG Group Kft.
+ * @package Environet\Sys\Xml\Model
+ * @author  SRG Group <dev@srg.hu>
  */
 class OutputXmlObservationMember implements XmlRenderable {
 
@@ -42,11 +41,12 @@ class OutputXmlObservationMember implements XmlRenderable {
 
 
 	/**
-	 * Render the observation member's metadata
+	 * Render the observation member's metadata.
 	 *
 	 * @param SimpleXMLElement $container
 	 *
 	 * @throws Exception
+	 * @uses \Environet\Sys\Xml\Model\OutputXmlData::dateToISO()
 	 */
 	protected function renderMeta(SimpleXMLElement &$container) {
 		$timePeriod = $container->addChild('om:phenomenonTime')->addChild('gml:TimePeriod');
@@ -86,11 +86,12 @@ class OutputXmlObservationMember implements XmlRenderable {
 
 
 	/**
-	 * Render the measurement members results
+	 * Render the measurement members results.
 	 *
 	 * @param SimpleXMLElement $container
 	 *
 	 * @throws Exception
+	 * @uses \Environet\Sys\Xml\Model\OutputXmlObservationMember::renderValues()
 	 */
 	protected function renderMeasurementResult(SimpleXMLElement &$container) {
 		$timeSeries = $container->addChild('om:result')->addChild('wml2:MeasurementTimeseries');
@@ -108,11 +109,12 @@ class OutputXmlObservationMember implements XmlRenderable {
 
 
 	/**
-	 * Render Value points
+	 * Render Value points.
 	 *
 	 * @param SimpleXMLElement $timeSeries
 	 *
 	 * @throws Exception
+	 * @uses \Environet\Sys\Xml\Model\OutputXmlData::dateToISO()
 	 */
 	protected function renderValues(SimpleXMLElement &$timeSeries) {
 		// TVP Point
@@ -125,9 +127,13 @@ class OutputXmlObservationMember implements XmlRenderable {
 
 
 	/**
-	 * @inheritDoc
-	 * Render one observation member
+	 * Render one observation member.
+	 *
+	 * @param SimpleXMLElement $parent
+	 *
 	 * @throws Exception
+	 * @uses \Environet\Sys\Xml\Model\OutputXmlObservationMember::renderMeta()
+	 * @uses \Environet\Sys\Xml\Model\OutputXmlObservationMember::renderMeasurementResult()
 	 */
 	public function render(SimpleXMLElement &$parent): void {
 		$observation = $parent->addChild('wml2:observationMember')->addChild('om:OM_Observation');

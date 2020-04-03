@@ -8,27 +8,32 @@ use Environet\Sys\General\Db\Query\Insert;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\Query\Update;
+use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\Upload\Exceptions\UploadException;
+use Exception;
 
 /**
  * Class HydroInputXmlProcessor
  *
  * XML processor class for hydro points
  *
- * @package Environet\Sys\Xml
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @package Environet\Sys\Xml\InputProcessor
+ * @author  SRG Group <dev@srg.hu>
  */
 class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 
 
 	/**
 	 * @inheritDoc
+	 * @throws ApiException
+	 * @uses \Environet\Sys\General\Db\Query\Select::run()
 	 */
 	protected function findMonitoringPoint(string $identifier): ?array {
 		try {
-			//Find hydro monitoring point
-			$mPoint = (new Select())->from('hydropoint')
+			// Find hydro monitoring point
+			$mPoint = (new Select())
+				->from('hydropoint')
 				->where('eucd_wgst = :id')
 				->addParameter('id', $identifier)
 				->run(Query::FETCH_FIRST);
@@ -42,11 +47,14 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 
 	/**
 	 * @inheritDoc
+	 * @throws ApiException
+	 * @uses \Environet\Sys\General\Db\Query\Select::run()
 	 */
 	protected function getPropertyIdIfAllowed(int $mPointId, string $propertySymbol): ?int {
 		try {
-			//Get the property id with an inner join to hydropoint_observed_property, to get only allowed property id
-			$propertyId = (new Select())->from('hydro_observed_property as property')
+			// Get the property id with an inner join to hydropoint_observed_property, to get only allowed property id
+			$propertyId = (new Select())
+				->from('hydro_observed_property as property')
 				->select('property.id')
 				->join(
 					'hydropoint_observed_property as point_property',
@@ -61,7 +69,7 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 				])
 				->run(Query::FETCH_FIRST);
 
-			//Return the property id
+			// Return the property id
 			return $propertyId ? $propertyId['id'] : null;
 		} catch (QueryException $e) {
 			throw UploadException::serverError();
@@ -71,11 +79,17 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 
 	/**
 	 * @inheritDoc
+	 * @throws ApiException
+	 * @throws Exception
+	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
+	 * @uses \Environet\Sys\General\Db\Query\Update::run()
 	 */
 	protected function getOrCreateTimeSeries(int $mPointId, int $propertyId, DateTime $now): ?int {
 		try {
-			//Find time series by id
-			$timeSeriesId = (new Select())->from('hydro_time_series as time_series')
+			// Find time series by id
+			$timeSeriesId = (new Select())
+				->from('hydro_time_series as time_series')
 				->select('time_series.id')
 				->where('time_series.observed_propertyid = :propertyId')
 				->where('time_series.mpointid = :pointId')
@@ -85,25 +99,28 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 				])
 				->run(Query::FETCH_FIRST);
 
-			//Get id from result
+			// Get id from result
 			$timeSeriesId = $timeSeriesId ? $timeSeriesId['id'] : null;
 			if (!$timeSeriesId) {
-				//Time series for property and monitoring point not found, create a new one
+				// Time series for property and monitoring point not found, create a new one
 				$now = new DateTime('now', (new DateTimeZone('UTC')));
-				$timeSeriesId = (new Insert())->table('hydro_time_series')
+				$timeSeriesId = (new Insert())
+					->table('hydro_time_series')
 					->columns(['observed_propertyid', 'mpointid', 'result_time'])
 					->addValueRow([':propertyId', ':mPointId', ':resultTime'])
 					->setParameters([
 						'propertyId' => $propertyId,
-						'mPointId' => $mPointId,
+						'mPointId'   => $mPointId,
 						'resultTime' => $now->format('c')
 					])
 					->run();
+
 				return $timeSeriesId ?? null;
 			}
 
-			//Update time series result time
-			(new Update())->table('hydro_time_series')
+			// Update time series result time
+			(new Update())
+				->table('hydro_time_series')
 				->where('hydro_time_series.id = :tsid')
 				->updateData([
 					'result_time' => $now->format('c')

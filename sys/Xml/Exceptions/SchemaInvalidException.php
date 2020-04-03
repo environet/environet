@@ -10,7 +10,7 @@ use Exception;
  * XSD validation exception
  *
  * @package Environet\Sys\Xml\Exceptions
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class SchemaInvalidException extends Exception {
 
@@ -29,7 +29,7 @@ class SchemaInvalidException extends Exception {
 	 */
 	public function __construct(array $libXmlErrors) {
 		foreach ($libXmlErrors as $error) {
-			//Message prefix based on error level
+			// Message prefix based on error level
 			switch ($error->level) {
 				case LIBXML_ERR_WARNING:
 					$messagePrefix = 'Warning';
@@ -43,13 +43,13 @@ class SchemaInvalidException extends Exception {
 					break;
 			}
 
-			//Build message and append to errorMessages
+			// Build message and append to errorMessages
 			$message = trim($error->message);
 			$line = trim($error->line);
 			$this->errorMessages[] = "$messagePrefix $error->code: $message on line $line";
 		}
 
-		//Create a simple oneline message from error messages - just for the compatibility
+		// Create a simple one-line message from error messages - just for the compatibility
 		$message = implode(' | ', $this->errorMessages);
 		parent::__construct($message);
 	}

@@ -14,7 +14,7 @@ use SimpleXMLElement;
  * Validate a parsed SimepleXmlElement against an xsd schema
  *
  * @package Environet\Sys\Xml
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class SchemaValidator {
 
@@ -42,17 +42,18 @@ class SchemaValidator {
 	public function __construct(SimpleXMLElement $xml, string $schemaFile) {
 		$this->xml = $xml;
 
-		//Check if schema exists
+		// Check if schema exists
 		if (!file_exists($schemaFile)) {
-			throw new Exception('File doesn\'t exist: '.$schemaFile);
+			throw new Exception("File doesn't exist: {$schemaFile}");
 		}
 		$this->schemaFile = $schemaFile;
 	}
 
 
 	/**
-	 * Validate the xml, and throw an exception on error or warning
+	 * Validate the xml, and throw an exception on error or warning.
 	 *
+	 * @return bool
 	 * @throws SchemaInvalidException
 	 */
 	public function validate(): bool {
@@ -62,13 +63,13 @@ class SchemaValidator {
 		$xml->loadXML($this->xml->asXml());
 
 		if (!$xml->schemaValidate($this->schemaFile)) {
-			//Create exception from errors
+			// Create exception from errors
 			$errors = libxml_get_errors();
 			libxml_clear_errors();
 			throw new SchemaInvalidException($errors);
 		}
 
-		//Xml is valid
+		// Xml is valid
 		return true;
 	}
 

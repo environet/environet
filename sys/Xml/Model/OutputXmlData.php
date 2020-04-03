@@ -13,9 +13,8 @@ use SimpleXMLElement;
  *
  * Wrapper class for the complete output XML structure
  *
- * @package   Environet\Sys\Xml\Model
- * @author    SRG Group <dev@srg.hu>
- * @copyright 2020 SRG Group Kft.
+ * @package Environet\Sys\Xml\Model
+ * @author  SRG Group <dev@srg.hu>
  */
 class OutputXmlData implements XmlRenderable {
 
@@ -36,7 +35,7 @@ class OutputXmlData implements XmlRenderable {
 
 
 	/**
-	 * Formats a valid date string to ISO 8601 date sting
+	 * Formats a valid date string to ISO 8601 date sting.
 	 *
 	 * @param $string
 	 *
@@ -49,7 +48,7 @@ class OutputXmlData implements XmlRenderable {
 
 
 	/**
-	 * Add observation member to the output
+	 * Add observation member to the output.
 	 *
 	 * @param OutputXmlObservationMember $member
 	 */
@@ -59,7 +58,11 @@ class OutputXmlData implements XmlRenderable {
 
 
 	/**
+	 * Render items in the observation member collection.
+	 *
 	 * @param SimpleXMLElement $collection
+	 *
+	 * @uses \Environet\Sys\Xml\Model\OutputXmlObservationMember::render()
 	 */
 	protected function renderObservationMembers(SimpleXMLElement &$collection) {
 		foreach ($this->observationMembers as $member) {
@@ -69,9 +72,12 @@ class OutputXmlData implements XmlRenderable {
 
 
 	/**
-	 * @inheritDoc
 	 * Render the complete report
+	 *
+	 * @param SimpleXMLElement $xml
+	 *
 	 * @throws Exception
+	 * @uses \Environet\Sys\Xml\Model\OutputXmlData::renderObservationMembers()
 	 */
 	public function render(SimpleXMLElement &$xml): void {
 		$docMeta = $xml->addChild('wml2:metadata')->addChild('wml2:DocumentMetadata');
