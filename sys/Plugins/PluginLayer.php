@@ -8,6 +8,8 @@ use Environet\Sys\Commands\Console;
 /**
  * Class PluginLayer
  *
+ * Wrapper class for a transport, parser or client layer to be created in a plugin.
+ *
  * @package Environet\Sys\Plugins
  * @author  SRG Group <dev@srg.hu>
  */

@@ -7,8 +7,8 @@ namespace Environet\Sys\Xml\Model;
  *
  * Data model for input XML element
  *
- * @package Sys\Xml
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @package Environet\Sys\Xml\Model
+ * @author  SRG Group <dev@srg.hu>
  */
 class InputXmlData {
 
@@ -30,6 +30,9 @@ class InputXmlData {
 	 *
 	 * @param string     $pointId
 	 * @param array|null $properties
+	 *
+	 * @uses \Environet\Sys\Xml\Model\InputXmlData::setPointId()
+	 * @uses \Environet\Sys\Xml\Model\InputXmlData::addProperty()
 	 */
 	public function __construct(string $pointId = null, array $properties = null) {
 		if (!is_null($pointId)) {

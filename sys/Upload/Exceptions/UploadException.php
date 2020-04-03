@@ -8,14 +8,18 @@ use Environet\Sys\General\Exceptions\ApiException;
 /**
  * Class UploadException
  *
- * @package   Environet\Sys\Upload\Exceptions
- * @author    SRG Group <dev@srg.hu>
+ * Common exception for upload API errors.
+ *
+ * @package Environet\Sys\Upload\Exceptions
+ * @author  SRG Group <dev@srg.hu>
  */
 class UploadException extends ApiException {
 
 
 	/**
 	 * UploadException constructor.
+	 *
+	 * Merges error codes and messages unique for this exception with {@see ApiException::$errors}.
 	 *
 	 * @param int   $code
 	 * @param array $errorMessages

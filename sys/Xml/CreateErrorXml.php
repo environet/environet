@@ -10,8 +10,8 @@ use SimpleXMLElement;
  *
  * Create Error response XML based on array of ErrorXmlData data models
  *
- * @package Sys\Xml
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @package Environet\Sys\Xml
+ * @author  SRG Group <dev@srg.hu>
  */
 class CreateErrorXml {
 
@@ -24,12 +24,12 @@ class CreateErrorXml {
 	 * @return SimpleXMLElement
 	 */
 	public function generateXml(array $errors): SimpleXMLElement {
-		//Create xml root
+		// Create xml root
 		$xmlNamespaces = 'xmlns:environet="environet"';
-		$xmlHeader = '<?xml version="1.0" encoding="UTF-8"?><environet:ErrorResponse '.$xmlNamespaces.'></environet:ErrorResponse>';
+		$xmlHeader = '<?xml version="1.0" encoding="UTF-8"?><environet:ErrorResponse ' . $xmlNamespaces . '></environet:ErrorResponse>';
 		$xml = new SimpleXMLElement($xmlHeader);
 
-		//Add Error elements for each error with code and message
+		// Add Error elements for each error with code and message
 		foreach ($errors as $errorKey => $error) {
 			if (!($error instanceof ErrorXmlData)) {
 				continue;
