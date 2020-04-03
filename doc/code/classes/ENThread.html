@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>Documentation</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="../css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="../js/html5.js"></script>
+    <![endif]-->
+    <script src="../js/jquery-1.11.0.min.js"></script>
+    <script src="../js/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src').replace( /\\/g, '/');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
+
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
+
+            pre.textContent = '';
+
+            code.textContent = 'Loading…';
+
+            pre.appendChild(code);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', src, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
+
+                        Prism.highlightElement(code);
+                    }
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist, is empty or trying to view from localhost';
+                    }
+                }
+            };
+
+            xhr.send(null);
+        });
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                                        <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                        <li><a href="../namespaces/environet.html"><abbr title="\Environet">normal</abbr></a></li>
+                                                    </ul>
+                    </li>
+                                        <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">2</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/deprecated.html">
+                                                                                                            <i class="icon-list-alt"></i>&#160;Deprecated <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1225603499"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-1225603499" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1258740958"></a>
+                                <a href="../namespaces/environet.html" style="margin-left: 30px; padding-left: 0">Environet</a>
+            </div>
+            <div id="namespace-1258740958" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2132311280"></a>
+                                <a href="../namespaces/environet-sys.html" style="margin-left: 30px; padding-left: 0">Sys</a>
+            </div>
+            <div id="namespace-2132311280" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1172257077"></a>
+                                <a href="../namespaces/environet-sys-admin.html" style="margin-left: 30px; padding-left: 0">Admin</a>
+            </div>
+            <div id="namespace-1172257077" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2063029060"></a>
+                                <a href="../namespaces/environet-sys-admin-pages.html" style="margin-left: 30px; padding-left: 0">Pages</a>
+            </div>
+            <div id="namespace-2063029060" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1896082821"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-dataprovider.html" style="margin-left: 30px; padding-left: 0">DataProvider</a>
+            </div>
+            <div id="namespace-1896082821" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-DataProvider-DataProviderCrud.html"><abbr title="\Environet\Sys\Admin\Pages\DataProvider\DataProviderCrud">DataProviderCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-396475493"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-group.html" style="margin-left: 30px; padding-left: 0">Group</a>
+            </div>
+            <div id="namespace-396475493" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Group-GroupCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Group\GroupCrud">GroupCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-915059186"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-hydro.html" style="margin-left: 30px; padding-left: 0">Hydro</a>
+            </div>
+            <div id="namespace-915059186" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1914573297"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-hydro-observedproperty.html" style="margin-left: 30px; padding-left: 0">ObservedProperty</a>
+            </div>
+            <div id="namespace-1914573297" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Hydro-ObservedProperty-ObservedPropertyCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Hydro\ObservedProperty\ObservedPropertyCrud">ObservedPropertyCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-916702620"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-hydro-waterbody.html" style="margin-left: 30px; padding-left: 0">Waterbody</a>
+            </div>
+            <div id="namespace-916702620" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Hydro-Waterbody-WaterbodyCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Hydro\Waterbody\WaterbodyCrud">WaterbodyCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Hydro-MonitoringPointCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Hydro\MonitoringPointCrud">MonitoringPointCrud</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Hydro-ResultsCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Hydro\ResultsCrud">ResultsCrud</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Hydro-StationClassificationCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Hydro\StationClassificationCrud">StationClassificationCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1765547577"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-meteo.html" style="margin-left: 30px; padding-left: 0">Meteo</a>
+            </div>
+            <div id="namespace-1765547577" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Meteo-MonitoringPointCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Meteo\MonitoringPointCrud">MonitoringPointCrud</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Meteo-ObservedPropertyCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Meteo\ObservedPropertyCrud">ObservedPropertyCrud</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Meteo-ResultsCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Meteo\ResultsCrud">ResultsCrud</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Meteo-StationClassificationCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Meteo\StationClassificationCrud">StationClassificationCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2118043948"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-monitoringpoint.html" style="margin-left: 30px; padding-left: 0">MonitoringPoint</a>
+            </div>
+            <div id="namespace-2118043948" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Admin-Pages-MonitoringPoint-MonitoringPointCSVMapInterface.html"><abbr title="\Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCSVMapInterface">MonitoringPointCSVMapInterface</abbr></a></li>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-MonitoringPoint-MonitoringPointCrud.html"><abbr title="\Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud">MonitoringPointCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2017512437"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-user.html" style="margin-left: 30px; padding-left: 0">User</a>
+            </div>
+            <div id="namespace-2017512437" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-User-UserCrud.html"><abbr title="\Environet\Sys\Admin\Pages\User\UserCrud">UserCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-BasePage.html"><abbr title="\Environet\Sys\Admin\Pages\BasePage">BasePage</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-CrudPage.html"><abbr title="\Environet\Sys\Admin\Pages\CrudPage">CrudPage</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Dashboard.html"><abbr title="\Environet\Sys\Admin\Pages\Dashboard">Dashboard</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-DownloadTest.html"><abbr title="\Environet\Sys\Admin\Pages\DownloadTest">DownloadTest</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Login.html"><abbr title="\Environet\Sys\Admin\Pages\Login">Login</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Logout.html"><abbr title="\Environet\Sys\Admin\Pages\Logout">Logout</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-UploadTest.html"><abbr title="\Environet\Sys\Admin\Pages\UploadTest">UploadTest</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-AdminHandler.html"><abbr title="\Environet\Sys\Admin\AdminHandler">AdminHandler</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-190752635"></a>
+                                <a href="../namespaces/environet-sys-commands.html" style="margin-left: 30px; padding-left: 0">Commands</a>
+            </div>
+            <div id="namespace-190752635" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1704091244"></a>
+                                <a href="../namespaces/environet-sys-commands-datanode.html" style="margin-left: 30px; padding-left: 0">DataNode</a>
+            </div>
+            <div id="namespace-1704091244" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DataNode-Install.html"><abbr title="\Environet\Sys\Commands\DataNode\Install">Install</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DataNode-PluginCreate.html"><abbr title="\Environet\Sys\Commands\DataNode\PluginCreate">PluginCreate</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DataNode-PluginRun.html"><abbr title="\Environet\Sys\Commands\DataNode\PluginRun">PluginRun</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-642436647"></a>
+                                <a href="../namespaces/environet-sys-commands-distnode.html" style="margin-left: 30px; padding-left: 0">DistNode</a>
+            </div>
+            <div id="namespace-642436647" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DistNode-InitDb.html"><abbr title="\Environet\Sys\Commands\DistNode\InitDb">InitDb</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DistNode-Install.html"><abbr title="\Environet\Sys\Commands\DistNode\Install">Install</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1089720996"></a>
+                                <a href="../namespaces/environet-sys-commands-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-1089720996" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-Exceptions-CommandException.html"><abbr title="\Environet\Sys\Commands\Exceptions\CommandException">CommandException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1597524587"></a>
+                                <a href="../namespaces/environet-sys-commands-tools.html" style="margin-left: 30px; padding-left: 0">Tools</a>
+            </div>
+            <div id="namespace-1597524587" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-Tools-GenerateKeys.html"><abbr title="\Environet\Sys\Commands\Tools\GenerateKeys">GenerateKeys</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-Tools-GenerateSignature.html"><abbr title="\Environet\Sys\Commands\Tools\GenerateSignature">GenerateSignature</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-BaseCommand.html"><abbr title="\Environet\Sys\Commands\BaseCommand">BaseCommand</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-Console.html"><abbr title="\Environet\Sys\Commands\Console">Console</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-203232217"></a>
+                                <a href="../namespaces/environet-sys-datanode.html" style="margin-left: 30px; padding-left: 0">DataNode</a>
+            </div>
+            <div id="namespace-203232217" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1873799594"></a>
+                                <a href="../namespaces/environet-sys-datanode-interfaces.html" style="margin-left: 30px; padding-left: 0">Interfaces</a>
+            </div>
+            <div id="namespace-1873799594" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-DataNode-Interfaces-UploaderInterface.html"><abbr title="\Environet\Sys\DataNode\Interfaces\UploaderInterface">UploaderInterface</abbr></a></li>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-736930204"></a>
+                                <a href="../namespaces/environet-sys-download.html" style="margin-left: 30px; padding-left: 0">Download</a>
+            </div>
+            <div id="namespace-736930204" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-642305957"></a>
+                                <a href="../namespaces/environet-sys-download-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-642305957" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Download-Exceptions-DownloadException.html"><abbr title="\Environet\Sys\Download\Exceptions\DownloadException">DownloadException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Download-DownloadHandler.html"><abbr title="\Environet\Sys\Download\DownloadHandler">DownloadHandler</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1266332770"></a>
+                                <a href="../namespaces/environet-sys-general.html" style="margin-left: 30px; padding-left: 0">General</a>
+            </div>
+            <div id="namespace-1266332770" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-765943814"></a>
+                                <a href="../namespaces/environet-sys-general-db.html" style="margin-left: 30px; padding-left: 0">Db</a>
+            </div>
+            <div id="namespace-765943814" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-125033633"></a>
+                                <a href="../namespaces/environet-sys-general-db-query.html" style="margin-left: 30px; padding-left: 0">Query</a>
+            </div>
+            <div id="namespace-125033633" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-129370062"></a>
+                                <a href="../namespaces/environet-sys-general-db-query-traits.html" style="margin-left: 30px; padding-left: 0">Traits</a>
+            </div>
+            <div id="namespace-129370062" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                            <li class="trait"><a href="../classes/Environet-Sys-General-Db-Query-Traits-JoinTrait.html"><abbr title="\Environet\Sys\General\Db\Query\Traits\JoinTrait">JoinTrait</abbr></a></li>
+                                                    <li class="trait"><a href="../classes/Environet-Sys-General-Db-Query-Traits-WhereTrait.html"><abbr title="\Environet\Sys\General\Db\Query\Traits\WhereTrait">WhereTrait</abbr></a></li>
+                                                                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Query-Delete.html"><abbr title="\Environet\Sys\General\Db\Query\Delete">Delete</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Query-Insert.html"><abbr title="\Environet\Sys\General\Db\Query\Insert">Insert</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Query-Query.html"><abbr title="\Environet\Sys\General\Db\Query\Query">Query</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Query-Select.html"><abbr title="\Environet\Sys\General\Db\Query\Select">Select</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Query-Update.html"><abbr title="\Environet\Sys\General\Db\Query\Update">Update</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-BaseQueries.html"><abbr title="\Environet\Sys\General\Db\BaseQueries">BaseQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Connection.html"><abbr title="\Environet\Sys\General\Db\Connection">Connection</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-GroupQueries.html"><abbr title="\Environet\Sys\General\Db\GroupQueries">GroupQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-HydroMonitoringPointQueries.html"><abbr title="\Environet\Sys\General\Db\HydroMonitoringPointQueries">HydroMonitoringPointQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-HydroObservedPropertyQueries.html"><abbr title="\Environet\Sys\General\Db\HydroObservedPropertyQueries">HydroObservedPropertyQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-HydroStationClassificationQueries.html"><abbr title="\Environet\Sys\General\Db\HydroStationClassificationQueries">HydroStationClassificationQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-MeteoMonitoringPointQueries.html"><abbr title="\Environet\Sys\General\Db\MeteoMonitoringPointQueries">MeteoMonitoringPointQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-MeteoObservedPropertyQueries.html"><abbr title="\Environet\Sys\General\Db\MeteoObservedPropertyQueries">MeteoObservedPropertyQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-MeteoStationClassificationQueries.html"><abbr title="\Environet\Sys\General\Db\MeteoStationClassificationQueries">MeteoStationClassificationQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-MonitoringPointQueries.html"><abbr title="\Environet\Sys\General\Db\MonitoringPointQueries">MonitoringPointQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-OperatorQueries.html"><abbr title="\Environet\Sys\General\Db\OperatorQueries">OperatorQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-PermissionQueries.html"><abbr title="\Environet\Sys\General\Db\PermissionQueries">PermissionQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-RiverbankQueries.html"><abbr title="\Environet\Sys\General\Db\RiverbankQueries">RiverbankQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-UserQueries.html"><abbr title="\Environet\Sys\General\Db\UserQueries">UserQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-WaterbodyQueries.html"><abbr title="\Environet\Sys\General\Db\WaterbodyQueries">WaterbodyQueries</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1782001432"></a>
+                                <a href="../namespaces/environet-sys-general-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-1782001432" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-ApiException.html"><abbr title="\Environet\Sys\General\Exceptions\ApiException">ApiException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-HttpBadRequestException.html"><abbr title="\Environet\Sys\General\Exceptions\HttpBadRequestException">HttpBadRequestException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-HttpNotAuthenticatedException.html"><abbr title="\Environet\Sys\General\Exceptions\HttpNotAuthenticatedException">HttpNotAuthenticatedException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-HttpNotFoundException.html"><abbr title="\Environet\Sys\General\Exceptions\HttpNotFoundException">HttpNotFoundException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-InvalidConfigurationException.html"><abbr title="\Environet\Sys\General\Exceptions\InvalidConfigurationException">InvalidConfigurationException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-MissingEventTypeException.html"><abbr title="\Environet\Sys\General\Exceptions\MissingEventTypeException">MissingEventTypeException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-PermissionException.html"><abbr title="\Environet\Sys\General\Exceptions\PermissionException">PermissionException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-PKIException.html"><abbr title="\Environet\Sys\General\Exceptions\PKIException">PKIException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-QueryException.html"><abbr title="\Environet\Sys\General\Exceptions\QueryException">QueryException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-RenderException.html"><abbr title="\Environet\Sys\General\Exceptions\RenderException">RenderException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1180905000"></a>
+                                <a href="../namespaces/environet-sys-general-httpclient.html" style="margin-left: 30px; padding-left: 0">HttpClient</a>
+            </div>
+            <div id="namespace-1180905000" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-226888391"></a>
+                                <a href="../namespaces/environet-sys-general-httpclient-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-226888391" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-Exceptions-HttpClientException.html"><abbr title="\Environet\Sys\General\HttpClient\Exceptions\HttpClientException">HttpClientException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-General-HttpClient-RequestHandlerInterface.html"><abbr title="\Environet\Sys\General\HttpClient\RequestHandlerInterface">RequestHandlerInterface</abbr></a></li>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-ApiHandler.html"><abbr title="\Environet\Sys\General\HttpClient\ApiHandler">ApiHandler</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-BaseHandler.html"><abbr title="\Environet\Sys\General\HttpClient\BaseHandler">BaseHandler</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-HttpClient.html"><abbr title="\Environet\Sys\General\HttpClient\HttpClient">HttpClient</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-Request.html"><abbr title="\Environet\Sys\General\HttpClient\Request">Request</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-Response.html"><abbr title="\Environet\Sys\General\HttpClient\Response">Response</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-722440884"></a>
+                                <a href="../namespaces/environet-sys-general-view.html" style="margin-left: 30px; padding-left: 0">View</a>
+            </div>
+            <div id="namespace-722440884" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-View-Renderer.html"><abbr title="\Environet\Sys\General\View\Renderer">Renderer</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-EventLogger.html"><abbr title="\Environet\Sys\General\EventLogger">EventLogger</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Identity.html"><abbr title="\Environet\Sys\General\Identity">Identity</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-PKI.html"><abbr title="\Environet\Sys\General\PKI">PKI</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Request.html"><abbr title="\Environet\Sys\General\Request">Request</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Response.html"><abbr title="\Environet\Sys\General\Response">Response</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1469618440"></a>
+                                <a href="../namespaces/environet-sys-plugins.html" style="margin-left: 30px; padding-left: 0">Plugins</a>
+            </div>
+            <div id="namespace-1469618440" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-703241164"></a>
+                                <a href="../namespaces/environet-sys-plugins-parsers.html" style="margin-left: 30px; padding-left: 0">Parsers</a>
+            </div>
+            <div id="namespace-703241164" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Parsers-CsvParser.html"><abbr title="\Environet\Sys\Plugins\Parsers\CsvParser">CsvParser</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Parsers-JsonParser.html"><abbr title="\Environet\Sys\Plugins\Parsers\JsonParser">JsonParser</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1694299040"></a>
+                                <a href="../namespaces/environet-sys-plugins-transports.html" style="margin-left: 30px; padding-left: 0">Transports</a>
+            </div>
+            <div id="namespace-1694299040" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Transports-HttpTransport.html"><abbr title="\Environet\Sys\Plugins\Transports\HttpTransport">HttpTransport</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Transports-LocalDirectoryTransport.html"><abbr title="\Environet\Sys\Plugins\Transports\LocalDirectoryTransport">LocalDirectoryTransport</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Transports-LocalFileTransport.html"><abbr title="\Environet\Sys\Plugins\Transports\LocalFileTransport">LocalFileTransport</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Transports-Resource.html"><abbr title="\Environet\Sys\Plugins\Transports\Resource">Resource</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Plugins-ApiClientInterface.html"><abbr title="\Environet\Sys\Plugins\ApiClientInterface">ApiClientInterface</abbr></a></li>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Plugins-BuilderLayerInterface.html"><abbr title="\Environet\Sys\Plugins\BuilderLayerInterface">BuilderLayerInterface</abbr></a></li>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Plugins-ParserInterface.html"><abbr title="\Environet\Sys\Plugins\ParserInterface">ParserInterface</abbr></a></li>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Plugins-TransportInterface.html"><abbr title="\Environet\Sys\Plugins\TransportInterface">TransportInterface</abbr></a></li>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-ApiClient.html"><abbr title="\Environet\Sys\Plugins\ApiClient">ApiClient</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Plugin.html"><abbr title="\Environet\Sys\Plugins\Plugin">Plugin</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-PluginBuilder.html"><abbr title="\Environet\Sys\Plugins\PluginBuilder">PluginBuilder</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-PluginLayer.html"><abbr title="\Environet\Sys\Plugins\PluginLayer">PluginLayer</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1755406493"></a>
+                                <a href="../namespaces/environet-sys-upload.html" style="margin-left: 30px; padding-left: 0">Upload</a>
+            </div>
+            <div id="namespace-1755406493" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-721541022"></a>
+                                <a href="../namespaces/environet-sys-upload-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-721541022" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Upload-Exceptions-UploadException.html"><abbr title="\Environet\Sys\Upload\Exceptions\UploadException">UploadException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Upload-UploadHandler.html"><abbr title="\Environet\Sys\Upload\UploadHandler">UploadHandler</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-248479035"></a>
+                                <a href="../namespaces/environet-sys-xml.html" style="margin-left: 30px; padding-left: 0">Xml</a>
+            </div>
+            <div id="namespace-248479035" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1653691062"></a>
+                                <a href="../namespaces/environet-sys-xml-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-1653691062" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Exceptions-CreateInputXmlException.html"><abbr title="\Environet\Sys\Xml\Exceptions\CreateInputXmlException">CreateInputXmlException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Exceptions-InputProcessorException.html"><abbr title="\Environet\Sys\Xml\Exceptions\InputProcessorException">InputProcessorException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Exceptions-InputXmlProcessException.html"><abbr title="\Environet\Sys\Xml\Exceptions\InputXmlProcessException">InputXmlProcessException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Exceptions-SchemaInvalidException.html"><abbr title="\Environet\Sys\Xml\Exceptions\SchemaInvalidException">SchemaInvalidException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-124629233"></a>
+                                <a href="../namespaces/environet-sys-xml-inputprocessor.html" style="margin-left: 30px; padding-left: 0">InputProcessor</a>
+            </div>
+            <div id="namespace-124629233" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-InputProcessor-AbstractInputXmlProcessor.html"><abbr title="\Environet\Sys\Xml\InputProcessor\AbstractInputXmlProcessor">AbstractInputXmlProcessor</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-InputProcessor-HydroInputXmlProcessor.html"><abbr title="\Environet\Sys\Xml\InputProcessor\HydroInputXmlProcessor">HydroInputXmlProcessor</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2091085775"></a>
+                                <a href="../namespaces/environet-sys-xml-model.html" style="margin-left: 30px; padding-left: 0">Model</a>
+            </div>
+            <div id="namespace-2091085775" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Model-ErrorXmlData.html"><abbr title="\Environet\Sys\Xml\Model\ErrorXmlData">ErrorXmlData</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Model-InputXmlData.html"><abbr title="\Environet\Sys\Xml\Model\InputXmlData">InputXmlData</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Model-InputXmlPropertyData.html"><abbr title="\Environet\Sys\Xml\Model\InputXmlPropertyData">InputXmlPropertyData</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Model-OutputXmlData.html"><abbr title="\Environet\Sys\Xml\Model\OutputXmlData">OutputXmlData</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Model-OutputXmlObservationMember.html"><abbr title="\Environet\Sys\Xml\Model\OutputXmlObservationMember">OutputXmlObservationMember</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Xml-XmlRenderable.html"><abbr title="\Environet\Sys\Xml\XmlRenderable">XmlRenderable</abbr></a></li>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-CreateErrorXml.html"><abbr title="\Environet\Sys\Xml\CreateErrorXml">CreateErrorXml</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-CreateInputXml.html"><abbr title="\Environet\Sys\Xml\CreateInputXml">CreateInputXml</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-CreateOutputXml.html"><abbr title="\Environet\Sys\Xml\CreateOutputXml">CreateOutputXml</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-SchemaValidator.html"><abbr title="\Environet\Sys\Xml\SchemaValidator">SchemaValidator</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Config.html"><abbr title="\Environet\Sys\Config">Config</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/EN-AsyncExecute.html"><abbr title="\EN_AsyncExecute">EN_AsyncExecute</abbr></a></li>
+                                                    <li class="class"><a href="../classes/ENThread.html"><abbr title="\ENThread">ENThread</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Loader.html"><abbr title="\Loader">Loader</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/default.html"><abbr title="\">normal</abbr></a> <i class="icon-level-up"></i>
+                                            </nav>
+                    
+                    <h1><small>\</small>ENThread</h1>
+                    <p><em></em></p>
+                    
+                    
+                                        
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/ENThread.html#method_isAvailable" class="">isAvailable()</a><br />
+                                                                    <a href="../classes/ENThread.html#method___destruct" class="">__destruct()</a><br />
+                                                                    <a href="../classes/ENThread.html#method___construct" class="">__construct()</a><br />
+                                                                    <a href="../classes/ENThread.html#method_setRunnable" class="">setRunnable()</a><br />
+                                                                    <a href="../classes/ENThread.html#method_getRunnable" class="">getRunnable()</a><br />
+                                                                    <a href="../classes/ENThread.html#method_isRunnableOk" class="">isRunnableOk()</a><br />
+                                                                    <a href="../classes/ENThread.html#method_getPid" class="">getPid()</a><br />
+                                                                    <a href="../classes/ENThread.html#method_isAlive" class="">isAlive()</a><br />
+                                                                    <a href="../classes/ENThread.html#method_getResult" class="">getResult()</a><br />
+                                                                    <a href="../classes/ENThread.html#method_start" class="">start()</a><br />
+                                                                    <a href="../classes/ENThread.html#method_stop" class="">stop()</a><br />
+                                                                    <a href="../classes/ENThread.html#method_kill" class="">kill()</a><br />
+                                                                    <a href="../classes/ENThread.html#method_getError" class="">getError()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/ENThread.html#property_uniqueID" class="">$uniqueID</a><br />
+                                                                    <a href="../classes/ENThread.html#property_initdone" class="">$initdone</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/ENThread.html#constant_FUNCTION_NOT_CALLABLE" class="">FUNCTION_NOT_CALLABLE</a><br />
+                                                                    <a href="../classes/ENThread.html#constant_COULD_NOT_FORK" class="">COULD_NOT_FORK</a><br />
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <a href="../classes/ENThread.html#method_handleSignal" class="">handleSignal()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/ENThread.html#property_runnable" class="">$runnable</a><br />
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <a href="../classes/ENThread.html#method_fatalError" class="">fatalError()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/ENThread.html#property__errors" class="">$_errors</a><br />
+                                                                    <a href="../classes/ENThread.html#property__pid" class="">$_pid</a><br />
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        
+                    
+                    <dl>
+                        <dt>File</dt>
+                            <dd><a href="../files/general-posixthreads-inc.html"><div class="path-wrapper">General/posixthreads.inc.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">Default</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                                                                                                                                                
+                                        <div class="namespace-wrapper">\en_connection</div>
+                                                                                                    <div class="namespace-wrapper">\ENThread</div>
+                            </dd>
+
+                        
+                        
+                        
+                                                
+                                                                        </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr><td colspan="2"><em>None found</em></td></tr>
+                                        </table>
+                </aside>
+            </div>
+
+                                    <a id="constants" name="constants"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Constants</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="constant_FUNCTION_NOT_CALLABLE" name="constant_FUNCTION_NOT_CALLABLE" class="anchor"></a>
+            <article id="constant_FUNCTION_NOT_CALLABLE" class="constant">
+                <h3 class="">FUNCTION_NOT_CALLABLE</h3>
+                <pre class="signature">FUNCTION_NOT_CALLABLE = 10 : </pre>
+                <p><em></em></p>
+                
+            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="constant_COULD_NOT_FORK" name="constant_COULD_NOT_FORK" class="anchor"></a>
+            <article id="constant_COULD_NOT_FORK" class="constant">
+                <h3 class="">COULD_NOT_FORK</h3>
+                <pre class="signature">COULD_NOT_FORK = 15 : </pre>
+                <p><em></em></p>
+                
+            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                            
+                                    <a id="properties" name="properties"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Properties</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_uniqueID" name="property_uniqueID" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$uniqueID</h3>
+                <pre class="signature">$uniqueID</pre>
+                <p><em></em></p>
+                
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_initdone" name="property_initdone" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$initdone</h3>
+                <pre class="signature">$initdone</pre>
+                <p><em></em></p>
+                
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_runnable" name="property_runnable" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$runnable</h3>
+                <pre class="signature">$runnable : callable</pre>
+                <p><em>Callback for the function that should run as a separate thread</em></p>
+                
+
+                                <h4>Type</h4>
+                <a href="../callable"><abbr title="callable">normal</abbr></a>
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__errors" name="property__errors" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$_errors</h3>
+                <pre class="signature">$_errors : array</pre>
+                <p><em>We define some common error causes</em></p>
+                
+
+                                <h4>Type</h4>
+                <a href="../array"><abbr title="array">normal</abbr></a>
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__pid" name="property__pid" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$_pid</h3>
+                <pre class="signature">$_pid : int</pre>
+                <p><em>Holds the current process id</em></p>
+                
+
+                                <h4>Type</h4>
+                <a href="../int"><abbr title="int">normal</abbr></a>
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                            
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_isAvailable" name="method_isAvailable" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">isAvailable()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">isAvailable() : bool</pre>
+                <p><em>Checks if threading is supported by the current PHP configuration</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/ENThread.html"><div class="path-wrapper">\ENThread</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___destruct" name="method___destruct" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__destruct()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__destruct() : mixed</pre>
+                <p><em>Class destructor</em></p>
+                <p>{@inheritDoc}</p>
+
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/ENThread.html"><div class="path-wrapper">\ENThread</div></a></dd>
+                                                                            <dt>See also</dt>
+                                                                <dd><a href="\en_connection::__destruct()"><span class="namespace-wrapper">\en_connection::__destruct()</span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___construct" name="method___construct" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__construct()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__construct(callable  <span class="argument">$runnable = null</span>) : mixed</pre>
+                <p><em>Class constructor - you can pass
+the callback function as an argument</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>callable</td>
+                                <td>$runnable </td>
+                                <td><p>Callback reference</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/ENThread.html"><div class="path-wrapper">\ENThread</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setRunnable" name="method_setRunnable" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setRunnable()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setRunnable(callable  <span class="argument">$runnable</span>) : callable</pre>
+                <p><em>Sets the callback</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>callable</td>
+                                <td>$runnable </td>
+                                <td><p>Callback reference</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    callable
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/ENThread.html"><div class="path-wrapper">\ENThread</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getRunnable" name="method_getRunnable" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getRunnable()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getRunnable() : callable</pre>
+                <p><em>Gets the callback</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    callable
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/ENThread.html"><div class="path-wrapper">\ENThread</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_isRunnableOk" name="method_isRunnableOk" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">isRunnableOk()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">isRunnableOk(callable  <span class="argument">$runnable</span>) : bool</pre>
+                <p><em>Checks if the callback is ok (the function/method
+is runnable from the current context)</em></p>
+                <p>can be called statically</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>callable</td>
+                                <td>$runnable </td>
+                                <td><p>Callback</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/ENThread.html"><div class="path-wrapper">\ENThread</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getPid" name="method_getPid" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getPid()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getPid() : int</pre>
+                <p><em>Returns the process id (pid) of the simulated thread</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    int
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/ENThread.html"><div class="path-wrapper">\ENThread</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_isAlive" name="method_isAlive" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">isAlive()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">isAlive() : bool</pre>
+                <p><em>Checks if the child thread is alive</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/ENThread.html"><div class="path-wrapper">\ENThread</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getResult" name="method_getResult" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getResult()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getResult() : mixed|string</pre>
+                <p><em>Returns the return value of the finished thread function.</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    mixed|string
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/ENThread.html"><div class="path-wrapper">\ENThread</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_start" name="method_start" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">start()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">start() : void</pre>
+                <p><em>Starts the thread, all the parameters are
+passed to the callback function</em></p>
+                
+
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/ENThread.html"><div class="path-wrapper">\ENThread</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_stop" name="method_stop" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">stop()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">stop(int  <span class="argument">$signal = SIGKILL</span>, bool  <span class="argument">$wait = false</span>) : void</pre>
+                <p><em>Attempts to stop the thread
+returns true on success and false otherwise</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>int</td>
+                                <td>$signal </td>
+                                <td><p>SIGKILL or SIGTERM</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>bool</td>
+                                <td>$wait </td>
+                                <td><p>Wait until child has exited</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/ENThread.html"><div class="path-wrapper">\ENThread</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_kill" name="method_kill" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">kill()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">kill(int  <span class="argument">$signal = SIGKILL</span>, bool  <span class="argument">$wait = false</span>) : void</pre>
+                <p><em>Alias of stop();</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>int</td>
+                                <td>$signal </td>
+                                <td><p>SIGKILL or SIGTERM</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>bool</td>
+                                <td>$wait </td>
+                                <td><p>Wait until child has exited</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/ENThread.html"><div class="path-wrapper">\ENThread</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getError" name="method_getError" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getError()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getError(int  <span class="argument">$code</span>) : string</pre>
+                <p><em>Gets the error&#039;s message based on its id</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>int</td>
+                                <td>$code </td>
+                                <td><p>The error code</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/ENThread.html"><div class="path-wrapper">\ENThread</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_handleSignal" name="method_handleSignal" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">handleSignal()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">handleSignal(int  <span class="argument">$signal</span>) : void</pre>
+                <p><em>Signal handler</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>int</td>
+                                <td>$signal </td>
+                                <td><p>Signal</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/ENThread.html"><div class="path-wrapper">\ENThread</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_fatalError" name="method_fatalError" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">fatalError()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">fatalError(mixed  <span class="argument">$errorCode</span>) : void</pre>
+                <p><em>Exits with error</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>mixed</td>
+                                <td>$errorCode </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/ENThread.html"><div class="path-wrapper">\ENThread</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">posixthreads.inc.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/General/posixthreads.inc.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                            <li><a href="../namespaces/environet.html"><abbr title="\Environet">normal</abbr></a></li>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../reports/errors.html">Errors</a></li>
+                                    <li><a href="../reports/markers.html">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on April 3rd, 2020 at 16:58.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>
