@@ -9,17 +9,27 @@ use Environet\Sys\Plugins\TransportInterface;
 /**
  * Class HttpTransport
  *
- * Transport layer through http connection
+ * Transport layer for http connections.
  *
  * @package Environet\Sys\Plugins\Transports
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class HttpTransport implements TransportInterface, BuilderLayerInterface {
 
 	/**
-	 * @var string URL of data source
+	 * @var string URL of the data source
 	 */
 	private $url;
+
+
+	/**
+	 * HttpTransport constructor.
+	 *
+	 * @param array $config
+	 */
+	public function __construct(array $config) {
+		$this->url = $config['url'];
+	}
 
 
 	/**
@@ -42,16 +52,6 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 	 */
 	public function serializeConfiguration(): string {
 		return 'url = ' . $this->url . "\n";
-	}
-
-
-	/**
-	 * HttpTransport constructor.
-	 *
-	 * @param array $config
-	 */
-	public function __construct(array $config) {
-		$this->url = $config['url'];
 	}
 
 

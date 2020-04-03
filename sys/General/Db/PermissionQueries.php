@@ -8,9 +8,10 @@ use Environet\Sys\General\Exceptions\QueryException;
 /**
  * Class PermissionQueries
  *
- * @package   Environet\Sys\General\Db
- * @author    SRG Group <dev@srg.hu>
- * @copyright 2020 SRG Group Kft.
+ * Base queries adjusted for permissions
+ *
+ * @package Environet\Sys\General\Db
+ * @author  SRG Group <dev@srg.hu>
  */
 class PermissionQueries extends BaseQueries {
 

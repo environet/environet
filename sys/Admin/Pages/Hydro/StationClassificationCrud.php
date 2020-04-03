@@ -11,8 +11,10 @@ use Environet\Sys\General\Response;
 /**
  * Class StationClassificationCrud
  *
+ * Handles CRUD operations for hydropoint station classifications.
+ *
  * @package Environet\Sys\Admin\Pages\Hydro
- * @author  Mate Kovacs <mate.kovacs@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class StationClassificationCrud extends CrudPage {
 

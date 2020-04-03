@@ -11,8 +11,10 @@ use Environet\Sys\General\Response;
 /**
  * Class WaterbodyCrud
  *
+ * Handles CRUD operations for hydropoint waterbodies.
+ *
  * @package Environet\Sys\Admin\Pages\Hydro\Waterbody
- * @author  Mate Kovacs <mate.kovacs@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class WaterbodyCrud extends CrudPage {
 
@@ -52,6 +54,7 @@ class WaterbodyCrud extends CrudPage {
 	 *
 	 * @return Response
 	 * @throws RenderException
+	 * @uses \httpErrorPage()
 	 */
 	public function show(): Response {
 		// Get id from url and get record by id
@@ -76,6 +79,7 @@ class WaterbodyCrud extends CrudPage {
 	 *
 	 * @return Response
 	 * @throws RenderException
+	 * @uses \httpErrorPage()
 	 */
 	public function edit(): Response {
 		$id = $this->request->getQueryParam('id');
@@ -105,6 +109,7 @@ class WaterbodyCrud extends CrudPage {
 	 *
 	 * @return Response
 	 * @throws RenderException
+	 * @uses \httpErrorPage()
 	 */
 	protected function handleFormPost($id = null, $record = null): Response {
 		$postData = $this->request->getCleanData();
@@ -121,7 +126,7 @@ class WaterbodyCrud extends CrudPage {
 
 		if (is_null($id)) {
 			$postData = [
-				'cname' => $postData['cname'] ?? null,
+				'cname'               => $postData['cname'] ?? null,
 				'european_river_code' => $postData['european_river_code'] ?? null,
 			];
 		} else {
@@ -134,9 +139,11 @@ class WaterbodyCrud extends CrudPage {
 		try {
 			$this->queriesClass::save($postData, $id, 'european_river_code');
 			$this->addMessage($this->successAddMessage, self::MESSAGE_SUCCESS);
+
 			return $this->redirect($this->listPagePath);
 		} catch (QueryException $e) {
 			$this->addMessage('Error while saving data: ' . $e->getMessage(), self::MESSAGE_ERROR);
+
 			return $this->renderForm();
 		}
 	}

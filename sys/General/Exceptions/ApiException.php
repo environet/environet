@@ -4,7 +4,6 @@
  *
  * @package   Environet\Sys\General\Exceptions
  * @author    SRG Group <dev@srg.hu>
- * @copyright 2020 SRG Group Kft.
  */
 
 namespace Environet\Sys\General\Exceptions;
@@ -14,9 +13,10 @@ use Environet\Sys\Xml\Model\ErrorXmlData;
 /**
  * Class ApiException
  *
- * @package   Environet\Sys\General\Exceptions
- * @author    SRG Group <dev@srg.hu>
- * @copyright 2020 SRG Group Kft.
+ * Common exception for api related issues
+ *
+ * @package Environet\Sys\General\Exceptions
+ * @author  SRG Group <dev@srg.hu>
  */
 class ApiException extends \Exception {
 
@@ -45,15 +45,16 @@ class ApiException extends \Exception {
 
 	/**
 	 * UploadException constructor.
+	 * Populates {@see ApiException::$errorMessages} with the message that belongs to the current error code and additional error messages (if there are any).
 	 *
-	 * @param int   $code
-	 * @param array $errorMessages
+	 * @param int   $code          The error code
+	 * @param array $errorMessages Optional additional error messages
 	 */
 	public function __construct(int $code = 101, array $errorMessages = []) {
-		//Add the default error message of code first
+		// Add the default error message of code first
 		$this->errorMessages[] = $this->errors[$code] ?? $this->errors[101];
 
-		//Optionally add other error messages
+		// Optionally add other error messages
 		if (!empty($errorMessages)) {
 			$this->errorMessages = array_merge($this->errorMessages, $errorMessages);
 		}
@@ -65,6 +66,7 @@ class ApiException extends \Exception {
 	 * Get the array of error messages which will be compatible with error response xml
 	 *
 	 * @return array|ErrorXmlData[]
+	 * @see ErrorXmlData
 	 */
 	public function getErrorXmlData(): array {
 		$xmlErrors = [];

@@ -7,7 +7,11 @@ use SimpleXMLElement;
 
 /**
  * Interface ParserInterface
+ *
+ * Interface for input parser implementations.
+ *
  * @package Environet\Sys\Plugins
+ * @author  SRG Group <dev@srg.hu>
  */
 interface ParserInterface {
 
@@ -15,7 +19,7 @@ interface ParserInterface {
 	/**
 	 * @param string $data
 	 *
-	 * Parse string date (string is from for example a file)
+	 * Parse input string data (string is from for example a file)
 	 *
 	 * @return SimpleXMLElement[]
 	 */

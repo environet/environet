@@ -11,7 +11,7 @@ use Environet\Sys\General\Db\Query\Traits\WhereTrait;
  * Query class for delete operations
  *
  * @package Environet\Sys\General\Db\Query
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class Delete extends Query {
 
@@ -20,17 +20,18 @@ class Delete extends Query {
 
 	/**
 	 * Build a delete operation query with where conditions
+	 *
+	 * @return mixed|string
+	 * @uses \Environet\Sys\General\Db\Query\Traits\WhereTrait::buildWhereClause()
 	 */
 	public function buildQuery() {
-		//Build DELETE FROM table
-		$queryString = ['DELETE'];
-		$queryString[] = 'FROM';
-		$queryString[] = $this->table;
+		// Build DELETE FROM table
+		$queryString = ['DELETE FROM', $this->table];
 
-		//Add where conditions
-		$this->buildWherePart($queryString);
+		// Add where conditions
+		$this->buildWhereClause($queryString);
 
-		return implode(' ', $queryString).';';
+		return implode(' ', $queryString) . ';';
 	}
 
 

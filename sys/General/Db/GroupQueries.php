@@ -15,7 +15,7 @@ use Environet\Sys\General\Exceptions\QueryException;
  * Useful queries for groups
  *
  * @package Environet\Sys\General\Db
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class GroupQueries extends BaseQueries {
 
@@ -33,13 +33,18 @@ class GroupQueries extends BaseQueries {
 
 
 	/**
-	 * Save group's data. If id exists, update the record, otherwise insert new record.
+	 * Save group's data.
+	 * If the id exists, update the record, otherwise insert new record.
 	 *
 	 * @param array  $data
 	 * @param mixed  $id
 	 * @param string $primaryKey
 	 *
 	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
+	 * @uses \Environet\Sys\General\Db\Query\Update::run()
+	 * @uses \Environet\Sys\General\EventLogger::log()
+	 * @uses \Environet\Sys\General\Db\GroupQueries::savePermissions()
 	 */
 	public static function save(array $data, $id = null, string $primaryKey = 'id') {
 		$dataToRun = [
@@ -52,7 +57,8 @@ class GroupQueries extends BaseQueries {
 			]));
 
 			// update group
-			(new Update())->table('groups')
+			(new Update())
+				->table('groups')
 				->where('id = :groupId')
 				->updateData($dataToRun)
 				->addParameter(':groupId', $id)
@@ -61,9 +67,10 @@ class GroupQueries extends BaseQueries {
 			self::savePermissions($data['group_permissions'], $id);
 		} else {
 			// insert new record
-			$insertId = (new Insert())->table('groups')
-							->addSingleData($dataToRun)
-							->run();
+			$insertId = (new Insert())
+				->table('groups')
+				->addSingleData($dataToRun)
+				->run();
 
 			EventLogger::log(EventLogger::EVENT_TYPE_GROUP_ADD, array_merge($dataToRun, [
 				'id' => $insertId
@@ -82,6 +89,7 @@ class GroupQueries extends BaseQueries {
 	 * @param $idRight
 	 *
 	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\BaseQueries::saveConnections()
 	 */
 	public static function savePermissions($values, $idRight) {
 		parent::saveConnections($values, "group_permissions", "permissionsid", "groupsid", $idRight, true);
@@ -94,11 +102,12 @@ class GroupQueries extends BaseQueries {
 	public static function getById($id, string $primaryKey = 'id'): ?array {
 		$record = parent::getById($id, $primaryKey);
 
-		$record['permissions'] = (new Select())->select('permissionsid')
-									->from('group_permissions')
-									->where('groupsid = :groupId')
-									->addParameter(':groupId', $id)
-									->run(Query::FETCH_COLUMN);
+		$record['permissions'] = (new Select())
+			->select('permissionsid')
+			->from('group_permissions')
+			->where('groupsid = :groupId')
+			->addParameter(':groupId', $id)
+			->run(Query::FETCH_COLUMN);
 
 		return $record;
 	}

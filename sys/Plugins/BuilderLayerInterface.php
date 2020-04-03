@@ -7,7 +7,11 @@ use Environet\Sys\Commands\Console;
 
 /**
  * Interface BuilderLayerInterface
+ *
+ * Interface for transport layer implementations.
+ *
  * @package Environet\Sys\Plugins
+ * @author  SRG Group <dev@srg.hu>
  */
 interface BuilderLayerInterface {
 

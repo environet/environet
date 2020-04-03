@@ -16,8 +16,10 @@ use Environet\Sys\General\Response;
 /**
  * Class UserCrud
  *
- * @package Environet\Sys\Admin\Pages\User
- * @author  Mate Kovacs <mate.kovacs@srg.hu>
+ * Handles CRUD operations for user management.
+ *
+ * @package   Environet\Sys\Admin\Pages\User
+ * @author    SRG Group <dev@srg.hu>
  */
 class UserCrud extends CrudPage {
 
@@ -53,7 +55,7 @@ class UserCrud extends CrudPage {
 
 
 	/**
-	 * List page action.
+	 * List page action for users.
 	 *
 	 * @return Response
 	 * @throws RenderException
@@ -110,18 +112,19 @@ class UserCrud extends CrudPage {
 	 */
 	protected function formContext(): array {
 		return [
-			'permissions'   => PermissionQueries::getOptionList(),
-			'groups'        => GroupQueries::getOptionList(),
+			'permissions' => PermissionQueries::getOptionList(),
+			'groups'      => GroupQueries::getOptionList(),
 		];
 	}
 
 
 	/**
 	 * @inheritDoc
+	 * @throws QueryException
 	 */
 	protected function validateData(array $data): bool {
 		$userId = $this->request->getQueryParam('id');
-		$valid  = true;
+		$valid = true;
 
 		if (!validate($data, 'name', null, true)) {
 			$this->addMessage('The user\'s name is required', self::MESSAGE_ERROR);
@@ -149,15 +152,19 @@ class UserCrud extends CrudPage {
 				$this->addMessage('The user\'s e-mail address is required and should be valid e-mail address', self::MESSAGE_ERROR);
 				$valid = false;
 			} else {
-				$userEmailInDb = (new Select())->select('COUNT(*)')->from('users')
-									->where('email = :email')
-									->addParameter(':email', $data['email'])
-									->run(Query::FETCH_COUNT);
+				$userEmailInDb = (new Select())
+					->select('COUNT(*)')
+					->from('users')
+					->where('email = :email')
+					->addParameter(':email', $data['email'])
+					->run(Query::FETCH_COUNT);
 
-				$user = (new Select())->select(['id', 'email'])->from('users')
-							->where('id = :id')
-							->addParameter(':id', $userId)
-							->run(Query::FETCH_FIRST);
+				$user = (new Select())
+					->select(['id', 'email'])
+					->from('users')
+					->where('id = :id')
+					->addParameter(':id', $userId)
+					->run(Query::FETCH_FIRST);
 
 				if ($userEmailInDb > 0 && $user['email'] != $data['email']) {
 					$this->addMessage(__('This e-mail has already taken'), self::MESSAGE_ERROR);
@@ -177,10 +184,12 @@ class UserCrud extends CrudPage {
 				$this->addMessage('The user\'s e-mail address is required and should be valid e-mail address', self::MESSAGE_ERROR);
 				$valid = false;
 			} else {
-				$userWithEmail = (new Select())->select('COUNT(*)')->from('users')
-									->where('email = :email')
-									->addParameter(':email', $data['email'])
-									->run(Query::FETCH_COUNT);
+				$userWithEmail = (new Select())
+					->select('COUNT(*)')
+					->from('users')
+					->where('email = :email')
+					->addParameter(':email', $data['email'])
+					->run(Query::FETCH_COUNT);
 				if ($userWithEmail > 0) {
 					$this->addMessage(__('User with this e-mail already exists'), self::MESSAGE_ERROR);
 					$valid = false;
@@ -192,10 +201,12 @@ class UserCrud extends CrudPage {
 				$this->addMessage('The user\'s username is required', self::MESSAGE_ERROR);
 				$valid = false;
 			} else {
-				$userWithUsername = (new Select())->select('COUNT(*)')->from('users')
-										->where('username = :username')
-										->addParameter(':username', $data['username'])
-										->run(Query::FETCH_COUNT);
+				$userWithUsername = (new Select())
+					->select('COUNT(*)')
+					->from('users')
+					->where('username = :username')
+					->addParameter(':username', $data['username'])
+					->run(Query::FETCH_COUNT);
 				if ($userWithUsername > 0) {
 					$this->addMessage(__('User with this username already exists'), self::MESSAGE_ERROR);
 					$valid = false;

@@ -14,10 +14,10 @@ use SimpleXMLElement;
 /**
  * Class ApiClient
  *
- * Client for api connections to distribution node
+ * Client for api connections to a distribution node.
  *
  * @package Environet\Sys\Plugins
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 
@@ -71,6 +71,7 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 
 	/**
 	 * ApiClient constructor.
+	 * Sets API address, username and private key path.
 	 *
 	 * @param array $config
 	 */
@@ -82,11 +83,15 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 
 
 	/**
+	 * Upload an XML file to the distribution node.
+	 *
 	 * @param SimpleXMLElement $payload
 	 *
 	 * @return Response
 	 * @throws HttpClientException
 	 * @throws Exception
+	 * @uses \Environet\Sys\Plugins\ApiClient::requestFromPayload()
+	 * @uses \Environet\Sys\General\HttpClient\HttpClient::sendRequest()
 	 */
 	public function upload(SimpleXMLElement $payload): Response {
 		$request = $this->requestFromPayload($payload);
@@ -95,22 +100,27 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 		if ($response->getStatusCode() !== 200) {
 			throw new Exception($response->getBody());
 		}
+
 		return $response;
 	}
 
 
 	/**
+	 * Create a request with an XML payload.
+	 *
 	 * @param SimpleXMLElement $payload
 	 *
 	 * @return Request
 	 * @throws Exception
+	 * @uses \Environet\Sys\General\HttpClient\Request
+	 * @uses \Environet\Sys\Plugins\ApiClient::generateSignatureHeader()
 	 */
 	private function requestFromPayload(SimpleXMLElement $payload): Request {
 		$request = new Request(rtrim($this->apiAddress, '/') . '/upload');
 		$request->setMethod('POST')->setBody($payload->asXML());
 
 		$request->addHeader('Accept', 'application/json');
-		//Add generated auth header with signature
+		// Add generated auth header with signature
 		$request->addHeader('Authorization', $this->generateSignatureHeader($payload, $this->apiUsername));
 
 		return $request;
@@ -118,18 +128,24 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 
 
 	/**
+	 * Generate authorization header information.
+	 * The signature is built from the hashed XML data and the given user's private key.
+	 *
 	 * @param SimpleXMLElement $xml
 	 * @param string           $username
 	 *
 	 * @return string
 	 * @throws Exception
+	 * @uses \Environet\Sys\General\PKI::generateSignature()
+	 * @uses \Environet\Sys\General\PKI::authHeaderWithSignature()
 	 */
 	private function generateSignatureHeader(SimpleXMLElement $xml, string $username): string {
-		if (!file_exists(SRC_PATH . '/conf/plugins/credentials/' . $this->privateKeyPath)) {
-			throw new Exception('Test private key at ' . $this->privateKeyPath . ' doesn\'t exist');
+		$fullPath = SRC_PATH . "/conf/plugins/credentials/{$this->privateKeyPath}";
+		if (!file_exists($fullPath)) {
+			throw new Exception("Test private key at {$this->privateKeyPath} doesn't exist");
 		}
 		$pkiLib = new PKI();
-		$signature = $pkiLib->generateSignature(md5($xml->asXML()), file_get_contents(SRC_PATH . '/conf/plugins/credentials/' . $this->privateKeyPath));
+		$signature = $pkiLib->generateSignature(md5($xml->asXML()), file_get_contents($fullPath));
 
 		return $pkiLib->authHeaderWithSignature($signature, $username);
 	}

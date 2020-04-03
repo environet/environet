@@ -12,7 +12,11 @@ use Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud as MonitoringP
 
 /**
  * Class MonitoringPointCrud
+ *
+ * Handles CRUD operations for hydropoint monitoring points.
+ *
  * @package Environet\Sys\Admin\Pages\Hydro
+ * @author  SRG Group <dev@srg.hu>
  */
 class MonitoringPointCrud extends MonitoringPointCrudBase {
 
@@ -41,16 +45,42 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 */
 	protected $listPagePath = '/admin/hydro/monitoring-points';
 
-	protected $observedPropertyQueriesClass = HydroObservedPropertyQueries::class;
-	protected $observedPropertiesCsvColumn = 4;
-	protected $globalIdName = 'ncd_wgst';
 
-	protected $csvColumnMappings = [
-		'name' => 0,
-		'eucd_wgst' => 1,
-		'ncd_wgst' => 2,
-		'country' => 3,
-	];
+	/**
+	 * @inheritDoc
+	 */
+	public function getObservedPropertyQueriesClass(): string {
+		return HydroObservedPropertyQueries::class;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getObservedPropertiesCsvColumn(): int {
+		return 4;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getGlobalIdName(): string {
+		return 'ncd_wgst';
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getCsvColumnMappings(): array {
+		return [
+			'name'      => 0,
+			'eucd_wgst' => 1,
+			'ncd_wgst'  => 2,
+			'country'   => 3,
+		];
+	}
 
 
 	/**
@@ -60,10 +90,10 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 */
 	protected function formContext(): array {
 		return [
-			'classifications' => HydroStationClassificationQueries::getOptionList('value'),
-			'operators' => OperatorQueries::getOptionList('name'),
-			'riverbanks' => RiverbankQueries::getOptionList('value'),
-			'waterbodies' => WaterbodyQueries::getOptionList('cname', 'european_river_code'),
+			'classifications'    => HydroStationClassificationQueries::getOptionList('value'),
+			'operators'          => OperatorQueries::getOptionList('name'),
+			'riverbanks'         => RiverbankQueries::getOptionList('value'),
+			'waterbodies'        => WaterbodyQueries::getOptionList('cname', 'european_river_code'),
 			'observedProperties' => HydroObservedPropertyQueries::getOptionList('symbol'),
 		];
 	}
@@ -107,6 +137,4 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 
 		return $valid;
 	}
-
-
 }

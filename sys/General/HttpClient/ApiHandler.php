@@ -7,22 +7,22 @@ namespace Environet\Sys\General\HttpClient;
  *
  * Abstract class for API related handlers
  *
- * @package   Environet\Sys\General\HttpClient
- * @author    SRG Group <dev@srg.hu>
- * @copyright 2020 SRG Group Kft.
+ * @package Environet\Sys\General\HttpClient
+ * @author  SRG Group <dev@srg.hu>
  */
 abstract class ApiHandler extends BaseHandler {
 
 
 	/**
-	 * Parse auth header which contains the signature, the username (as keyId) and the algorithm of signature
+	 * Parse auth header which contains the signature, the username (as keyId) and the algorithm of signature.
+	 * Example auth header: keyId="test.user",algorithm="rsa-sha256",signature=""
 	 *
 	 * @param string $authHeader
 	 *
 	 * @return array|null
 	 */
 	protected function parseAuthHeader(string $authHeader): ?array {
-		//Signature keyId="adam.balint",algorithm="rsa-sha256",signature=""
+		// Example auth header: keyId="test.user",algorithm="rsa-sha256",signature=""
 		if (preg_match('/^Signature\s(.*)$/i', $authHeader, $match)) {
 			$parts = [];
 			foreach (explode(',', $match[1]) as $value) {
@@ -31,11 +31,11 @@ abstract class ApiHandler extends BaseHandler {
 				}
 			}
 
-			//Format is valid
+			// Format is valid
 			return $parts;
 		}
 
-		//Invalid header format
+		// Invalid header format
 		return null;
 	}
 

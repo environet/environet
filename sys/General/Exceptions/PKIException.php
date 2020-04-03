@@ -12,7 +12,7 @@ use Exception;
  * Exception in case of PKI errors
  *
  * @package Environet\Sys\General\Exceptions
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class PKIException extends Exception {
 
@@ -27,7 +27,8 @@ class PKIException extends Exception {
 		while ($msg = openssl_error_string()) {
 			$messages[] = $msg;
 		}
-		return new static(sprintf('Can\'t create signature: '.implode(' | ', $messages)));
+
+		return new static(sprintf('Can\'t create signature: ' . implode(' | ', $messages)));
 	}
 
 

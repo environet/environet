@@ -7,8 +7,10 @@ use Environet\Sys\General\EventLogger;
 /**
  * Class WaterbodyQueries
  *
+ * Base queries adjusted for waterbodies
+ *
  * @package Environet\Sys\General\Db
- * @author  Mate Kovacs <mate.kovacs@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class WaterbodyQueries extends BaseQueries {
 
@@ -36,7 +38,7 @@ class WaterbodyQueries extends BaseQueries {
 	/**
 	 * @inheritDoc
 	 */
-	public static function getUpdateEventType() : string {
+	public static function getUpdateEventType(): string {
 		return EventLogger::EVENT_TYPE_WATERBODY_UPDATE;
 	}
 
@@ -44,7 +46,7 @@ class WaterbodyQueries extends BaseQueries {
 	/**
 	 * @inheritDoc
 	 */
-	public static function getInsertEventType() : string {
+	public static function getInsertEventType(): string {
 		return EventLogger::EVENT_TYPE_WATERBODY_ADD;
 	}
 

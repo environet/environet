@@ -12,7 +12,11 @@ use Environet\Sys\General\Exceptions\QueryException;
 
 /**
  * Class MeteoMonitoringPointQueries
+ *
+ * Queries for meteo monitoring points.
+ *
  * @package Environet\Sys\General\Db
+ * @author  SRG Group <dev@srg.hu>
  */
 class MeteoMonitoringPointQueries extends BaseQueries {
 
@@ -33,6 +37,9 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 
 	/**
 	 * @inheritDoc
+	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\MeteoStationClassificationQueries::getById()
+	 * @uses \Environet\Sys\General\Db\OperatorQueries::getById()
 	 */
 	public static function getById($id, string $primaryKey = 'id'): ?array {
 		$monitoringPoint = parent::getById($id);
@@ -40,21 +47,20 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 		if ($monitoringPoint) {
 			$monitoringPoint['classification'] = $monitoringPoint['meteostation_classificationid'] ? MeteoStationClassificationQueries::getById($monitoringPoint['meteostation_classificationid']) : null;
 			$monitoringPoint['operator'] = $monitoringPoint['operatorid'] ? OperatorQueries::getById($monitoringPoint['operatorid']) : null;
-			$monitoringPoint['observedProperties'] = (new Select())->select('meteo_observed_propertyid')->from('meteopoint_observed_property')
-														->where('meteopointid = :meteopointId')
-														->addParameter(':meteopointId', $id)
-														->run(Query::FETCH_COLUMN);
+			$monitoringPoint['observedProperties'] = (new Select())
+				->select('meteo_observed_propertyid')
+				->from('meteopoint_observed_property')
+				->where('meteopointid = :meteopointId')
+				->addParameter(':meteopointId', $id)
+				->run(Query::FETCH_COLUMN);
 
-			$monitoringPoint['showObservedProperty'] = (new Select())->from('meteo_observed_property mop')
-														->select(['mop.id', 'mop.symbol'])
-														->join(
-															'meteopoint_observed_property mpop',
-															'mpop.meteo_observed_propertyid = mop.id',
-															Query::JOIN_LEFT
-														)
-														->where('mpop.meteopointid = :mpopId')
-														->addParameter(':mpopId', $id)
-														->run();
+			$monitoringPoint['showObservedProperty'] = (new Select())
+				->select(['mop.id', 'mop.symbol'])
+				->from('meteo_observed_property mop')
+				->join('meteopoint_observed_property mpop', 'mpop.meteo_observed_propertyid = mop.id', Query::JOIN_LEFT)
+				->where('mpop.meteopointid = :mpopId')
+				->addParameter(':mpopId', $id)
+				->run();
 		}
 
 		return $monitoringPoint;
@@ -62,11 +68,20 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 
 
 	/**
+	 * Update or insert an item to the meteopoint table ({@see  MeteoMonitoringPointQueries::$tableName}).
+	 * Logs the transaction regardless of updating or inserting.
+	 * Once done, passes id and observed property data to {@see BaseQueries::saveConnections()}.
+	 *
 	 * @param array  $data
 	 * @param null   $id
 	 * @param string $primaryKey
 	 *
 	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
+	 * @uses \Environet\Sys\General\Db\Query\Update::run()
+	 * @uses \Environet\Sys\General\EventLogger::log()
+	 * @uses \Environet\Sys\General\Db\MeteoMonitoringPointQueries::prepareData()
+	 * @uses \Environet\Sys\General\Db\BaseQueries::saveConnections()
 	 */
 	public static function save(array $data, $id = null, string $primaryKey = 'id') {
 		$dataToSave = static::prepareData($data);
@@ -75,12 +90,17 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 			EventLogger::log(EventLogger::EVENT_TYPE_METEO_MP_UPDATE, array_merge($dataToSave, [
 				'id' => $id
 			]));
-			(new Update())->table(static::$tableName)
+			(new Update())
+				->table(static::$tableName)
 				->updateData($dataToSave)
-				->where(static::$tableName . '.'.$primaryKey.' = :id')->addParameter(':id', $id)->run(Query::RETURN_BOOL);
+				->where(static::$tableName . ".$primaryKey = :id")
+				->addParameter(':id', $id)
+				->run(Query::RETURN_BOOL);
 		} else {
-			$id = (new Insert())->table(static::$tableName)
-					->addSingleData($dataToSave)->run();
+			$id = (new Insert())
+				->table(static::$tableName)
+				->addSingleData($dataToSave)
+				->run();
 
 			EventLogger::log(EventLogger::EVENT_TYPE_METEO_MP_ADD, array_merge($dataToSave, [
 				'id' => $id
@@ -105,33 +125,30 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 	public static function prepareData(array $data): array {
 		return [
 			//strings
-			'name' => $data['name'],
-			'eucd_pst' => $data['eucd_pst'],
-			'ncd_pst' => $data['ncd_pst'],
-			'country' => $data['country'],
-
-			'location' => $data['location'] ?? null,
-			'river_basin' => $data['river_basin'] ?? null,
+			'name'                          => $data['name'],
+			'eucd_pst'                      => $data['eucd_pst'],
+			'ncd_pst'                       => $data['ncd_pst'],
+			'country'                       => $data['country'],
+			'location'                      => $data['location'] ?? null,
+			'river_basin'                   => $data['river_basin'] ?? null,
 
 			// numbers
-			'long' => isset($data['long']) ? (int) $data['long'] : null,
-			'lat' => isset($data['lat']) ? (int) $data['lat'] : null,
-			'z' => isset($data['z']) ? (int) $data['z'] : null,
-			'maplat' => isset($data['maplat']) ? (int) $data['maplat'] : null,
-			'maplong' => isset($data['maplong']) ? (int) $data['maplong'] : null,
-			'altitude' => isset($data['altitude']) ? (int) $data['altitude'] : null,
-			'vertical_reference' => isset($data['vertical_reference']) ? (int) $data['vertical_reference'] : null,
-
+			'long'                          => isset($data['long']) ? (int) $data['long'] : null,
+			'lat'                           => isset($data['lat']) ? (int) $data['lat'] : null,
+			'z'                             => isset($data['z']) ? (int) $data['z'] : null,
+			'maplat'                        => isset($data['maplat']) ? (int) $data['maplat'] : null,
+			'maplong'                       => isset($data['maplong']) ? (int) $data['maplong'] : null,
+			'altitude'                      => isset($data['altitude']) ? (int) $data['altitude'] : null,
+			'vertical_reference'            => isset($data['vertical_reference']) ? (int) $data['vertical_reference'] : null,
 
 			// foreign keys
 			'meteostation_classificationid' => isset($data['classification']) ? $data['classification'] ?: null : null,
-			'operatorid' => isset($data['operator']) ? $data['operator'] ?: null : null,
-
+			'operatorid'                    => isset($data['operator']) ? $data['operator'] ?: null : null,
 
 			// hidden
-			'start_time' => '1999-09-09',
-			'end_time' => '2060-09-09',
-			'utc_offset' => 0,
+			'start_time'                    => '1999-09-09',
+			'end_time'                      => '2060-09-09',
+			'utc_offset'                    => 0,
 
 		];
 	}

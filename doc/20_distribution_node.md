@@ -5,6 +5,13 @@
 A Distribution node, in it’s minimal form, is a service aspect that’s able to maintain the central database and service API requests. 
 In the first phase the domain of the distribution node is: [https://environet.environ.hu](https://environet.environ.hu)
 
+## Setup
+
+### Required software
+Docker engine - [https://docs.docker.com/install](https://docs.docker.com/install)  
+Docker compose - [https://docs.docker.com/compose](https://docs.docker.com/compose)  
+
+### 
 
 ## Central database
 

@@ -16,7 +16,7 @@ use Environet\Sys\General\Exceptions\QueryException;
  * Useful queries for users
  *
  * @package Environet\Sys\General\Db
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class UserQueries extends BaseQueries {
 
@@ -36,82 +36,94 @@ class UserQueries extends BaseQueries {
 
 
 	/**
-	 * Save user's data. If id exists, update the record, otherwise insert new record.
+	 * Save user's data.
+	 * If id exists, update the record, otherwise insert new record.
+	 * Also saves the user's permissions and groups.
 	 *
 	 * @param array  $data
 	 * @param mixed  $id
 	 * @param string $primaryKey
 	 *
 	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
+	 * @uses \Environet\Sys\General\Db\Query\Update::run()
+	 * @uses \Environet\Sys\General\EventLogger::log()
+	 * @uses \Environet\Sys\General\Db\UserQueries::saveGroups()
+	 * @uses \Environet\Sys\General\Db\UserQueries::savePermissions()
 	 */
 	public static function save(array $data, $id = null, string $primaryKey = 'id') {
 		if ($id) {
-			// update user
+			// Update user
 			if ($data['public_key'] !== "") {
-				// revoke the previous keys
-				(new Update())->table('public_keys')
-							  ->where('usersid = :userId')
-							  ->updateData([
-								  'revoked'    => true,
-								  'revoked_at' => date('Y-m-d H:i:s')
-							  ])
-							  ->addParameter(':userId', $id)
-							  ->run();
+				// Revoke the previous keys
+				(new Update())
+					->table('public_keys')
+					->where('usersid = :userId')
+					->updateData([
+						'revoked'    => true,
+						'revoked_at' => date('Y-m-d H:i:s')
+					])
+					->addParameter(':userId', $id)
+					->run();
 
-				// add new
-				(new Insert())->table('public_keys')
-							  ->addSingleData([
-								  'usersId'    => $id,
-								  'public_key' => $data['public_key'],
-							  ])
-							  ->run();
+				// Add new
+				(new Insert())
+					->table('public_keys')
+					->addSingleData([
+						'usersId'    => $id,
+						'public_key' => $data['public_key'],
+					])
+					->run();
 			}
-			// user data to update
+			// User data to update
 			$userUpdateData = [
 				'name'  => $data['name'],
 				'email' => $data['email']
 			];
 
-			// log user update event data
+			// Log user update event data
 			EventLogger::log(EventLogger::EVENT_TYPE_USER_UPDATE, array_merge($userUpdateData, [
 				'id' => $id
 			]));
 
 			if ($data['password'] !== "") {
-				// if new password is exists
+				// If new password is exists
 				$userUpdateData = array_merge($userUpdateData, [
 					'password' => password_hash($data['password'], PASSWORD_DEFAULT)
 				]);
 			}
 
-			// if data is valid, update user
-			(new Update())->table('users')
-						  ->where('id = :userId')
-						  ->updateData($userUpdateData)
-						  ->addParameter(':userId', $id)
-						  ->run();
+			// If data is valid, update user
+			(new Update())
+				->table('users')
+				->where('id = :userId')
+				->updateData($userUpdateData)
+				->addParameter(':userId', $id)
+				->run();
 
 			self::savePermissions($data['form_permissions'], $id);
 			self::saveGroups($data['form_groups'], $id);
 		} else {
-			// add new user
-			$insertId = (new Insert())->table('users')
-									  ->addSingleData([
-										  'name'     => $data['name'],
-										  'username' => $data['username'],
-										  'email'    => $data['email'],
-										  'password' => password_hash($data['password'], PASSWORD_DEFAULT),
-									  ])
-									  ->run();
-			// add new public_key
-			(new Insert())->table('public_keys')
-						  ->addSingleData([
-							  'usersId'    => $insertId,
-							  'public_key' => $data['public_key'],
-						  ])
-						  ->run();
+			// Add new user
+			$insertId = (new Insert())
+				->table('users')
+				->addSingleData([
+					'name'     => $data['name'],
+					'username' => $data['username'],
+					'email'    => $data['email'],
+					'password' => password_hash($data['password'], PASSWORD_DEFAULT),
+				])
+				->run();
+			// Add new public_key
+			(new Insert())
+				->table('public_keys')
+				->addSingleData([
+					'usersId'    => $insertId,
+					'public_key' => $data['public_key'],
+				])
+				->run();
 
-			// log user add event data
+			// Log user add event data
 			EventLogger::log(EventLogger::EVENT_TYPE_USER_ADD, [
 				'name'     => $data['name'],
 				'username' => $data['username'],
@@ -126,17 +138,19 @@ class UserQueries extends BaseQueries {
 
 
 	/**
-	 * Get all operators of user. It gets the directly attached operators, and merge with the inherited (by groups) operators.
-	 * A new static key will be attached to operator's data, it's the 'connection_type', which can be 'direct', 'group', and 'both'
+	 * Get all operators of the user.
+	 * It gets the directly attached operators, and merge with the inherited (by groups) operators.
+	 * A new static key will be attached to operator's data, it's the 'connection_type', which can be 'direct', 'group', and 'both'.
 	 *
 	 * @param int   $userId   Id of the user
 	 * @param array $groupIds Array of the user's group ids
 	 *
 	 * @return array Array of merged operators
 	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\Query\Select::run()
 	 */
 	public static function getMergedOperatorsOfUser(int $userId, array $groupIds = []) {
-		//Get direct operators, with ids as array keys
+		// Get direct operators, with ids as array keys
 		$operators = (new Select())
 			->select(['operator.*', '\'direct\' as connection_type'])
 			->from('operator')
@@ -146,7 +160,7 @@ class UserQueries extends BaseQueries {
 			->run(Query::KEY_BY_ID);
 
 		if ($groupIds) {
-			//Get inherited group operators with ids as array keys
+			// Get inherited group operators with ids as array keys
 			$groupOperators = (new Select())
 				->from('operator')
 				->select(['operator.*', '\'group\' as connection_type'])
@@ -154,8 +168,7 @@ class UserQueries extends BaseQueries {
 				->whereIn('operator_groups.groupsid', $groupIds, 'groupId')
 				->run(Query::KEY_BY_ID);
 
-			//Add inherited-only operators to the $operators array
-			//and change connection type for operators which either direct and group
+			// Add inherited-only operators to the $operators array and change connection type for operators which either direct and group
 			foreach ($groupOperators as $id => $groupOperator) {
 				if (isset($operators[$id])) {
 					$operators[$id]['connection_type'] = 'both';
@@ -165,7 +178,7 @@ class UserQueries extends BaseQueries {
 			}
 		}
 
-		//Return the array of operators
+		// Return the array of operators
 		return array_values($operators);
 	}
 
@@ -177,6 +190,7 @@ class UserQueries extends BaseQueries {
 	 *
 	 * @return array
 	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\Query\Select::run()
 	 */
 	public static function getUserPermissions(int $usedId): array {
 		$result = [];
@@ -212,6 +226,7 @@ class UserQueries extends BaseQueries {
 	 *
 	 * @return array
 	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\Query\Select::run()
 	 */
 	public static function getUserGroups(int $userId): array {
 		return (new Select())
@@ -230,6 +245,7 @@ class UserQueries extends BaseQueries {
 	 * @param $idRight
 	 *
 	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\BaseQueries::saveConnections()
 	 */
 	public static function savePermissions($values, $idRight) {
 		parent::saveConnections($values, "user_permissions", "permissionsid", "usersid", $idRight, true);
@@ -243,6 +259,7 @@ class UserQueries extends BaseQueries {
 	 * @param $idRight
 	 *
 	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\BaseQueries::saveConnections()
 	 */
 	public static function saveGroups($values, $idRight) {
 		parent::saveConnections($values, "users_groups", "groupsid", "usersid", $idRight, true);
@@ -258,6 +275,7 @@ class UserQueries extends BaseQueries {
 	 *
 	 * @throws QueryException
 	 * @throws MissingEventTypeException
+	 * @uses \Environet\Sys\General\Db\BaseQueries::delete()
 	 */
 	public static function delete(int $id, bool $soft = false, string $primaryKey = 'id') {
 		parent::delete($id, true);
@@ -266,34 +284,39 @@ class UserQueries extends BaseQueries {
 
 	/**
 	 * @inheritDoc
+	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\UserQueries::getUserGroups()
+	 * @uses \Environet\Sys\General\Db\UserQueries::getMergedOperatorsOfUser()
 	 */
 	public static function getById($id, string $primaryKey = 'id'): ?array {
 		$record = parent::getById($id, $primaryKey);
 
-		//Find groups of user
+		// Find groups of the user
 		$record['show_groups'] = UserQueries::getUserGroups($record['id']);
 
-		//Get direct, and inherited operators
+		// Get direct and inherited operators
 		$record['show_operators'] = UserQueries::getMergedOperatorsOfUser($record['id'], array_column($record['show_groups'], 'id'));
 
-		//Get list of public keys
+		// Get a list of public keys
 		$record['show_publicKeys'] = (new Select())
 			->from('public_keys')
 			->where('usersid = :userId')
 			->addParameter(':userId', $record['id'])
 			->run();
 
-		$record['form_permissions'] = (new Select())->select('permissionsid')
-													->from('user_permissions')
-													->where('usersid = :userId')
-													->addParameter(':userId', $record['id'])
-													->run(Query::FETCH_COLUMN);
+		$record['form_permissions'] = (new Select())
+			->select('permissionsid')
+			->from('user_permissions')
+			->where('usersid = :userId')
+			->addParameter(':userId', $record['id'])
+			->run(Query::FETCH_COLUMN);
 
-		$record['form_groups'] = (new Select())->select('groupsid')
-											   ->from('users_groups')
-											   ->where('usersid = :userId')
-											   ->addParameter(':userId', $record['id'])
-											   ->run(Query::FETCH_COLUMN);
+		$record['form_groups'] = (new Select())
+			->select('groupsid')
+			->from('users_groups')
+			->where('usersid = :userId')
+			->addParameter(':userId', $record['id'])
+			->run(Query::FETCH_COLUMN);
 
 		return $record;
 	}
@@ -302,7 +325,7 @@ class UserQueries extends BaseQueries {
 	/**
 	 * @inheritDoc
 	 */
-	public static function getDeleteEventType() : string {
+	public static function getDeleteEventType(): string {
 		return EventLogger::EVENT_TYPE_USER_DELETE;
 	}
 

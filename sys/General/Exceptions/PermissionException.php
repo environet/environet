@@ -6,11 +6,10 @@ namespace Environet\Sys\General\Exceptions;
 /**
  * Class PermissionException
  *
- * Exception wrapper for invalid permission related actions
+ * Exception wrapper for queried actions with invalid permissions.
  *
- * @package   Environet\Sys\General\Exceptions
- * @author    SRG Group <dev@srg.hu>
- * @copyright 2020 SRG Group Kft.
+ * @package Environet\Sys\General\Exceptions
+ * @author  SRG Group <dev@srg.hu>
  */
 class PermissionException extends \Exception {
 
