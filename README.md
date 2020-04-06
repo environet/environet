@@ -33,23 +33,52 @@ This document is the documentation of the Environet system.
 
 # Setup
 
-## Required software
-Docker engine - [https://docs.docker.com/install](https://docs.docker.com/install)  
-Docker compose - [https://docs.docker.com/compose](https://docs.docker.com/compose)  
+This guide assumes you are installing Environet in a Linux environment.
 
-## Source code
+## Install the Docker Engine and Docker Compose
 
-1. Clone the two git repositories needed to run the app:
 
-   * The Environet docker environment: [https://github.com/environet/environet-docker](https://github.com/environet/environet-docker)
-   * The Environet source code [https://github.com/environet/environet](https://github.com/environet/environet)
+### Docker Engine
+The docker documentation has lots of helpful information, along with distribution specific installation instructions. If you are new to Docker, we recommend reading the [overview](https://docs.docker.com/install/) first.  
+To see distribution specific installation instructions, navigate to Docker Engine > Linux > Your distribution in the [documentation](https://docs.docker.com/install/).
 
-2. Configure the environment
+Be sure to follow the [post installation steps](https://docs.docker.com/install/linux/linux-postinstall/) to allow using docker as a non-root user.
 
-   In the *environet-docker* folder, create a new .env file by copying .env.example.
+You can verify that Docker is installed correctly by running:  
+`$ docker run hello-world`  
+If should output a friendly message to the terminal.
 
-   - If the two repositories are not in the same folder, change the SRC_ROOT variable to the path of the *environet* repository (relative or absolute).
+### Docker Compose
+Setting up Compose is a simpler process, which is described in detail on [this page](https://docs.docker.com/compose/install/#install-compose-on-linux-systems).  
+It involves downloading the docker-compose binary from github and setting executable permissions on it.
 
+You can verify that Docker Compose is installed correctly by running:  
+`$ docker-compose --version`  
+It should output the currently installed version number.
+
+## Get the source
+
+You will need to have Git installed to be able to download the project source, and to receive updates later. It is easiest to install Git on Linux using the preferred package manager of your Linux distribution. See the [Git downloads page](https://git-scm.com/download/linux) for details.
+
+Checkout the Environet docker repository
+  - Navigate to the directory where you would like to install environet  
+  - Run `$ git clone git@github.com:environet/environet-docker.git`  
+    
+   By default, the files will be downloaded to a directory named `environet-docker`, you can specify a custom name by providing a third argument to the command, e.g.:  
+   `$ git clone git@github.com:environet/environet-docker.git my_directory`
+
+Change to the directory you checked the code out to, and you should be ready to proceed with the setup.  
+
+  If you are installing a data node, refer to the data node [setup instructions](#30_data_node)  
+
+  If you are installing a distribution node, refer to the distribution node [setup instructions](#21_setup)
+  
+## Getting updates and maintenance
+
+The `environet` cli script is a wrapper for some docker containers managed with docker compose. After first starting a *dist* or *data* node, these services will start automatically after a system reboot.  
+To stop and start them manually, you may run `./environet data up` or `./environet data down` (`./environet dist up` and `./environet dist down` in case of a distribution node).  
+
+To get the latest version, simply run `git pull` in the repository folder.
 
 <a name="20_distribution_node"></a>
 
@@ -110,13 +139,10 @@ The detailed documentation of this endpoint can found here: [Download API docume
 
 1. Install the environet project. Refer to [Setup](#11_setup).
 
-2. Start the distribution node services
-   `./environet dist up`
-
-3. Create a distribution node configuration
+2. Create a distribution node configuration
    `./environet dist install`
    
-4. Initialize database, and create admin user
+3. Initialize database, and create admin user
    `./environet dist init database`
 
 After going through these steps, the distribution node should be up and running. You can access the admin panel at YOUR_IP/admin.
@@ -353,7 +379,7 @@ The `signature` part is the base64 encoded openssl signature which was created w
 
 <a name="25_admin_user_manual"></a>
 
-﻿# Admin user manual
+# Admin user manual
 
 This document's goals to represents the different parts of the administration area to help to understand how it works. Help you to see through how works the specified relationships and how you can handle them.
 
@@ -795,45 +821,67 @@ Searchable: name, symbol
 # Data node
 
 ## Overview
-A *data node* is a configuration mode of Environet, which designed to be run at a data source with the purpose of gathering metering point measurements stored in some third party format, such as a plain text file, spreadsheet or web resource.  
-It transforms these data to a format compatible with the Environet *distribution node* API, and uploads the results to a distribution node on behalf of an API user.  
+A *data node* is designed to be run at a data source with the purpose of gathering metering point measurements stored in some third party format, such as a plain text file, spreadsheet or web resource.  
+
+It transforms these data to a format compatible with the Environet *distribution node* API, and uploads the results to a distribution node.  
+
 The gathering and uploading of data is accomplished by way of uploader plugin configurations, which can then be run by calling a script, typically by a cron job.
 
-
-## Setup
-
-1. Install the environet project. Refer to [Setup](#11_setup)
-
-2. Configure data directory
-   - If your data node will be reading data from a file or directory, configure the LOCAL_DATA_DIR variable with the path to the directory where the data will be found.
-
-3. Start the data node container
-
-   `./environet data up`
-
-4. Creating uploader plugin configurations
-
-   ##### Prerequisites
-
-   For an uploader configuration to work, the metering points and observable properties (for which the plugin will upload measurements) have to be configured beforehand on the Environet distribution node that the plugin will be uploading to.  
+Before a data node can start uploading measurements, the metering points and observable properties (for which the plugin will upload measurements) have to be configured beforehand on the Environet distribution node that the plugin will be uploading to.  
    
-   An API user with upload permissions and an SSL key will also need to be configured, to authenticate upload requests.  
-To generate an ssl key pair, you can run the command `./environet data tool keygen` 
-Private keys should be placed in the `conf/plugins/credentials` directory, which is where the keygen tool will place them, by default.
-    
-   ##### Plugin configuration command line tool
-   Run `./environet data plugin create` to start an interactive script, that will guide you through creating an uploader plugin configuration.  
-    
-   Generated configurations will be saved to the `/conf/plugins/configurations` folder, with the filename provided.
+An API user with will also need to be configured, to authenticate upload requests.  
 
-5. Running a configuration
+## Prepare distribution node to receive data
 
-   Run `./environet plugin run [configuration name]` to run an uploader plugin configuration. (If the upload needs to run regularly, you would have to set up a cron job to execute the command at regular intervals.)
+You can set the following up if you have access to the [distribution node admin panel](#25_admin_user_manual).
+
+**API user**  
+  
+  Configure a new or existing user with **public ssl key** for . Click [here](#ssl-key-pair-generation-tool) if you need help creating SSL keys.
+  Take note of the **username**, you are going to need it later - along with the **private key** - to configure your data node.
+
+**Observed properties**  
+  
+  Check that the distribution node has an *observed property* corresponding to each type of data to be uploaded.
+  Take note of the **symbol** value of these for later.
+
+**Monitoring points**
+  
+  Finally, define the monitoring points for which data will be uploaded.  
+  **You will have to link observed properties to each monitoring point as well.**
+
+## Setup steps
+
+Before configuring the data node, you need to install the Environet project. The steps to install dependencies and download the Environet source itself, are outlined in the [setup](#11_setup) section of this document.
+
+**Configure data directory**
+  
+If your data node will be reading data from a file or directory on the system where the node is running, you will have to configure the LOCAL_DATA_DIR environment variable with the path to the directory where the data will be found.  
+If the data node is going to access the measurements over a network connection, you can skip this step.
+
+- Create an `.env` file by copying `.env.example`
+- Uncomment the line containing LOCAL_DATA_DIR (by deleting the # character from the beginning of the line)
+- Enter the path to the data directory. For example:
+  On a system where the measurements are stored in csv files in the `/var/measurements` directory, the line would read:`LOCAL_DATA_DIR=/var/measurements`
+
+## Creating configurations
+    
+Run `./environet data plugin create` to start an interactive script, that will guide you through creating an uploader plugin configuration.  
+
+Generated configurations will be saved to the `/conf/plugins/configurations` folder, with the filename provided at the end of the process.  
+
+## Running a configuration
+
+Run `./environet plugin run [configuration name]` to run an uploader plugin configuration. (If you want to run regularly, you should set up a cron job to execute this command at regular intervals.)
+
+## SSL key pair generation tool
+To generate an ssl key pair, you can run the command `./environet data tool keygen`.  
+Private keys should be placed in the `conf/plugins/credentials` directory, which is where the keygen tool will place them, by default.  
 
 
 <a name="41_key_gen"></a>
 
-# SSL keypair generation guide
+# SSL key pair generation guide
 
 ## Windows
 It is recommended to use the following:

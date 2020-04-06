@@ -17,7 +17,9 @@ class DownloadException extends ApiException {
 
 
 	/**
-	 * UploadException constructor.
+	 * DownloadException constructor.
+	 *
+	 * Merges error codes and messages unique for this exception with {@see ApiException::$errors}.
 	 *
 	 * Merges error codes and messages unique for this exception with {@see ApiException::$errors}.
 	 *

@@ -11,9 +11,10 @@ use SimpleXMLElement;
 /**
  * Class CreateOutputXml
  *
+ * Create an XML file base on the WaterML schema, which will be served in the download API.
+ *
  * @package   Environet\Sys\Xml
  * @author    SRG Group <dev@srg.hu>
- * @copyright 2020 SRG Group Kft.
  */
 class CreateOutputXml {
 
@@ -32,25 +33,32 @@ class CreateOutputXml {
 
 
 	/**
+	 * Generate output XML.
+	 * Creates an instance of {@see OutputXmlData}, maps the input data to monitoring point - observation property combination values
+	 * and creates {@see OutputXmlObservationMember} instances based on them. Finally it attaches the members to the result xml and renders the whole tree.
+	 *
 	 * @param $data
 	 *
 	 * @return SimpleXMLElement
 	 * @throws Exception
+	 * @see OutputXmlData
+	 * @see OutputXmlObservationMember
 	 */
 	public function generateXml($data): SimpleXMLElement {
 		$result = new OutputXmlData();
 		$members = [];
 
-		//Group value rows by mpoint and property - these will be rendered as observation memebers
+		// Group value rows by mpoint and property - these will be rendered as observation members
 		foreach ($data as $valueRow) {
-			if (!isset($members[$valueRow['mpoint_id'].'_'.$valueRow['property_id']])) {
-				$members[$valueRow['mpoint_id'].'_'.$valueRow['property_id']] = [];
+			$memberKey = "{$valueRow['mpoint_id']}_{$valueRow['property_id']}";
+			if (!isset($members[$memberKey])) {
+				$members[$memberKey] = [];
 			}
-			$members[$valueRow['mpoint_id'].'_'.$valueRow['property_id']][] = $valueRow;
+			$members[$memberKey][] = $valueRow;
 		}
 
 		foreach ($members as $valueRows) {
-			//Create observation member, use the first valueRow for member data. All other rows will differ only in values and dates.
+			// Create observation member, use the first valueRow for member data. All other rows will differ only in values and dates.
 			$result->addObservationMember(new OutputXmlObservationMember(reset($valueRows), $valueRows));
 		}
 

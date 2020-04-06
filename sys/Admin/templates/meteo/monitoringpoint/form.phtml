@@ -29,7 +29,7 @@
 
         <div class="form-group">
             <label for="vertical_reference">Vertical reference</label>
-            <input type="number" name="vertical_reference" id="vertical_reference" class="form-control" value="<?=formFieldValue('vertical_reference', $record);?>" />
+            <input type="text" name="vertical_reference" id="vertical_reference" class="form-control" value="<?=formFieldValue('vertical_reference', $record);?>" />
         </div>
 
         <div class="form-group">
@@ -86,18 +86,17 @@
                 </select>
             </div>
         </fieldset>
-
-		<fieldset class="form-group">
-			<legend><?=__('Observed property(/ies)');?></legend>
-		    <?php $selectedProperties = array_filter(formFieldValue('observedProperties', $record) ?: []); ?>
-		    <?php for($i = 0; $i <= count($selectedProperties); $i++) { ?>
-				<div class="field">
-					<select name="observedProperties[<?=isset($selectedProperties[$i]) ? $selectedProperties[$i] : ''?>]">
-					    <?=selectOptions($observedProperties, $selectedProperties[$i] ?? null, ' - '.__('No property').' - ');?>
-					</select>
-				</div>
-		    <?php } ?>
-		</fieldset>
+        
+        <fieldset class="form-group">
+            <div class="field">
+                <legend><?=__('Observed properties');?></legend>
+                <select name="observedProperties[]" multiple>
+					<?php foreach ($observedProperties as $id => $symbol): ?>
+                        <option value="<?= $id; ?>" <?= in_array($id, $record['observedProperties']) ? 'selected' : '' ?>><?= $symbol; ?></option>
+					<?php endforeach; ?>
+                </select>
+            </div>
+        </fieldset>
 
         <div class="field">
             <input type="submit" class="btn btn-primary" value="Save"/>

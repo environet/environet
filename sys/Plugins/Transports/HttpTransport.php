@@ -3,6 +3,9 @@
 namespace Environet\Sys\Plugins\Transports;
 
 use Environet\Sys\Commands\Console;
+use Environet\Sys\General\HttpClient\Exceptions\HttpClientException;
+use Environet\Sys\General\HttpClient\HttpClient;
+use Environet\Sys\General\HttpClient\Request;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\TransportInterface;
 
@@ -37,8 +40,8 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 	 */
 	public static function create(Console $console): HttpTransport {
 		$console->writeLine('');
-		$console->writeLine("Configuring http transport");
-		$url = $console->ask("Enter url of data to be imported:", 200);
+		$console->writeLine("Configuring http transport", Console::COLOR_YELLOW);
+		$url = $console->ask("Enter the url of data to be imported e.g.: https://example.com/data.txt", 200);
 		$config = [
 			'url' => $url,
 		];
@@ -57,14 +60,10 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 
 	/**
 	 * @inheritDoc
+	 * @throws HttpClientException
 	 */
 	public function get(): array {
-		//@TODO make it with own HTTP Client
-		$cURLConnection = curl_init();
-		curl_setopt($cURLConnection, CURLOPT_URL, $this->url);
-		curl_setopt($cURLConnection, CURLOPT_RETURNTRANSFER, true);
-
-		return [curl_exec($cURLConnection)];
+		return [(new HttpClient())->sendRequest(new Request($this->url))->getBody()];
 	}
 
 
@@ -73,6 +72,14 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 	 */
 	public static function getName(): string {
 		return 'http transport';
+	}
+
+	
+	/**
+	 * @inheritDoc
+	 */
+	public static function getHelp(): string {
+		return 'For acquiring measurement data via an http request.';
 	}
 
 

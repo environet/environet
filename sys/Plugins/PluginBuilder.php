@@ -32,9 +32,21 @@ class PluginBuilder {
 	 */
 	public function __construct() {
 		$this->layers = [
-			new PluginLayer('transport', [HttpTransport::class, LocalFileTransport::class, LocalDirectoryTransport::class]),
-			new PluginLayer('parser', [JsonParser::class, CsvParser::class]),
-			new PluginLayer('apiClient', [ApiClient::class])
+			new PluginLayer(
+				'transport',
+				[HttpTransport::class, LocalFileTransport::class, LocalDirectoryTransport::class],
+				'Choose a transport layer implementation. This determines the mechanism by which the plugin will access the data.'
+			),
+			new PluginLayer(
+				'parser',
+				[JsonParser::class, CsvParser::class],
+				'Choose a parser layer implementation. It will be used to transform the data acquired through the transport into an API compatible XML format.'
+			),
+			new PluginLayer(
+				'apiClient',
+				[ApiClient::class],
+				''
+			)
 		];
 	}
 
@@ -51,6 +63,8 @@ class PluginBuilder {
 		$this->plugin = new Plugin();
 
 		foreach ($this->layers as $layer) {
+			$console->writeLine($layer->getHelp(), Console::COLOR_YELLOW);
+			$console->writeLine('');
 			$this->plugin->{$layer->getName()} = $layer->createConfiguration($console);
 		}
 

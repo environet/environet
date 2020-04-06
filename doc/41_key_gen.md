@@ -1,4 +1,4 @@
-# SSL keypair generation guide
+# SSL key pair generation guide
 
 ## Windows
 It is recommended to use the following:

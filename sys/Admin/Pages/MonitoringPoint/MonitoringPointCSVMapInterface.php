@@ -13,6 +13,7 @@ namespace Environet\Sys\Admin\Pages\MonitoringPoint;
  */
 interface MonitoringPointCSVMapInterface {
 
+
 	/**
 	 * Get the name of the related observed properties query class.
 	 *
@@ -22,11 +23,11 @@ interface MonitoringPointCSVMapInterface {
 
 
 	/**
-	 * Get the column number of the observed properties in the input CSV.
+	 * Get the column name of the observed properties in the input CSV.
 	 *
-	 * @return int
+	 * @return string
 	 */
-	public function getObservedPropertiesCsvColumn(): int;
+	public function getObservedPropertiesCsvColumn(): string;
 
 
 	/**
@@ -37,9 +38,4 @@ interface MonitoringPointCSVMapInterface {
 	public function getGlobalIdName(): string;
 
 
-	/**
-	 * Get the map of the input CSV columns.
-	 * @return array
-	 */
-	public function getCsvColumnMappings(): array;
 }

@@ -37,7 +37,8 @@ class PluginCreate extends BaseCommand {
 		$configuration = $pluginBuilder->serializeConfiguration();
 
 		while (true) {
-			$filename = $this->console->ask("Enter the filename where you want to save this configuration:");
+			$this->console->writeLine("Your configuration will be saved into '" . $configurationsPath . "'. Enter a filename you wish to save it as.");
+			$filename = $this->console->ask("Configuration name:");
 
 			if (file_exists($configurationsPath . $filename)) {
 				if (!$this->console->askYesNo("The configuration [$filename] already exists, do you want to overwrite it?", true)) {

@@ -27,8 +27,11 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 	 */
 	public static function create(Console $console): TransportInterface {
 		$console->writeLine('');
-		$console->writeLine('Configuring local directory transport');
-		$path = $console->ask('Enter path to the directory where the data is:', 200);
+		$console->writeLine('Configuring local directory transport', Console::COLOR_YELLOW);
+
+		$console->writeLine('Enter path to the directory where the data is. This should be a path relative to the LOCAL_DATA_DIR');
+		$console->write('Leave empty if the data files are located immediately under that directory.');
+		$path = $console->ask('', 200);
 		$config = [
 			'path' => $path,
 		];
@@ -60,16 +63,32 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 	 * @see Resource
 	 */
 	public function get(): array {
-		$resources = [];
-		foreach (glob("/meteringdata/{$this->path}/*") as $path) {
-			$resource = new Resource();
-			$pathParts = explode('/', $path);
-			$resource->name = end($pathParts);
-			$resource->contents = file_get_contents($path);
-			$resources[] = $resource;
+
+		$localFileDir = SRC_PATH . '/data/plugin_input_files/';
+		$localCopyPath = $localFileDir . $this->path;
+
+		if (!file_exists($localCopyPath)) {
+			mkdir($localCopyPath, 0755, true);
 		}
 
-		return $resources;
+		$dataFolderFiles = array_filter(glob("/meteringdata/{$this->path}/*"), 'is_file');
+
+		$newOrChangedFiles = [];
+		foreach ($dataFolderFiles as $filePath) {
+			$filePathArray = explode('/', $filePath);
+			$localCopyPath = $localFileDir . $this->path . '/' . end($filePathArray);
+
+			// If there is no local copy of the file, or it was changed later than the local copy
+			if (!file_exists($localCopyPath) || filemtime($localCopyPath) < filemtime($filePath)) {
+				file_put_contents($localCopyPath, file_get_contents($filePath));
+				$resource = new Resource();
+				$resource->name = end($filePathArray);
+				$resource->contents = file_get_contents($filePath);
+				$newOrChangedFiles[] = $resource;
+			}
+		}
+
+		return $newOrChangedFiles;
 	}
 
 
@@ -78,6 +97,14 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 	 */
 	public static function getName(): string {
 		return 'local directory transport';
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function getHelp(): string {
+		return 'Reads files from a directory. Useful for when measurements are stored in multiple files inside a directory';
 	}
 
 

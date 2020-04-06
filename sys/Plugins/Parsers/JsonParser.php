@@ -97,4 +97,12 @@ class JsonParser implements ParserInterface, BuilderLayerInterface {
 	}
 
 
+	/**
+	 * @inheritDoc
+	 */
+	public static function getHelp(): string {
+		return 'For parsing data in JSON format.';
+	}
+
+
 }

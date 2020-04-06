@@ -41,10 +41,17 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 * @inheritDoc
 	 */
 	public static function create(Console $console): ApiClient {
-		$console->writeLine("Configuring API client");
-		$apiAddress = $console->ask("Enter API host:", 200);
-		$apiUsername = $console->ask("Enter API username:", 200);
-		$privateKeyPath = $console->ask("Enter API private key path:", 200);
+		$console->writeLine("Configuring API client", Console::COLOR_YELLOW);
+
+		$console->writeLine("Enter the address of the distribution node", Console::COLOR_YELLOW);
+		$apiAddress = $console->askWithDefault('API host:', 'https://environet.environ.hu/', 200);
+
+		$console->writeLine("Enter a username to use for uploading the data", Console::COLOR_YELLOW);
+		$apiUsername = $console->ask("API username:", 200);
+
+		$console->writeLine("Enter the path to the private key to be used for authenticating requests to the distribution node. This should be a path relative to '/conf/plugins/credentials'.", Console::COLOR_YELLOW);
+		$console->writeLine("For example: If you placed your private key into /conf/plugins/credentials/privatekey.pem, you would enter 'privatekey.pem'", Console::COLOR_YELLOW);
+		$privateKeyPath = $console->ask("API private key path:", 200);
 
 		$config = [
 			'apiAddress'     => $apiAddress,
@@ -142,7 +149,7 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	private function generateSignatureHeader(SimpleXMLElement $xml, string $username): string {
 		$fullPath = SRC_PATH . "/conf/plugins/credentials/{$this->privateKeyPath}";
 		if (!file_exists($fullPath)) {
-			throw new Exception("Test private key at {$this->privateKeyPath} doesn't exist");
+			throw new Exception("Private key at {$this->privateKeyPath} doesn't exist");
 		}
 		$pkiLib = new PKI();
 		$signature = $pkiLib->generateSignature(md5($xml->asXML()), file_get_contents($fullPath));
@@ -155,7 +162,15 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 * @inheritDoc
 	 */
 	public static function getName(): string {
-		return 'MPointPropertyXmlInput generator';
+		return 'default api client';
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function getHelp(): string {
+		return '';
 	}
 
 

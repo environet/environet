@@ -33,6 +33,14 @@ interface BuilderLayerInterface {
 
 
 	/**
+	 * Get a description of the layer implementation
+	 *
+	 * @return string
+	 */
+	public static function getHelp(): string;
+
+
+	/**
 	 * Create an instance during plugin creation
 	 *
 	 * @param Console $console

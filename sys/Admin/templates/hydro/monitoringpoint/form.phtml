@@ -29,7 +29,7 @@
 
         <div class="form-group">
             <label for="vertical_reference">Vertical reference</label>
-            <input type="number" name="vertical_reference" id="vertical_reference" class="form-control" value="<?=formFieldValue('vertical_reference', $record);?>" />
+            <input type="text" name="vertical_reference" id="vertical_reference" class="form-control" value="<?=formFieldValue('vertical_reference', $record);?>" />
         </div>
 
         <div class="form-group">
@@ -119,7 +119,7 @@
 
         <fieldset class="form-group">
             <div class="field">
-                <legend><?=__('Observed properties)');?></legend>
+                <legend><?=__('Observed properties');?></legend>
                 <select name="observedProperties[]" multiple>
                     <?php foreach ($observedProperties as $id => $symbol): ?>
                         <option value="<?= $id; ?>" <?= in_array($id, $record['observedProperties']) ? 'selected' : '' ?>><?= $symbol; ?></option>
