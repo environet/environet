@@ -19,6 +19,13 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 */
 	protected $successAddMessage = 'Monitoring point successfully saved';
 
+	/**
+	 * Heading line of input CSV
+	 *
+	 * @var string[]
+	 */
+	private $headingLine;
+
 
 	/**
 	 * Get the observed property ids from the input string.
@@ -59,16 +66,19 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	protected function dataFromCsvLine(array $line): array {
 		$data = [];
 
-		foreach ($this->getCsvColumnMappings() as $name => $colNumber) {
+		foreach ($this->headingLine as $colNumber => $name) {
 			$data[$name] = $line[$colNumber];
 		}
 
-		if (isset($line[$this->getObservedPropertiesCsvColumn()])) {
-			$observedPropertyIds = $this->parseObservedPropertyIdsFromString($line[$this->getObservedPropertiesCsvColumn()]);
+		$observedPropertiesColNum = array_search($this->getObservedPropertiesCsvColumn(), $this->headingLine);
+		if ($observedPropertiesColNum !== false && isset($line[$observedPropertiesColNum])) {
+			$observedPropertyIds = $this->parseObservedPropertyIdsFromString($line[$observedPropertiesColNum]);
 			$data['observedProperties'] = $observedPropertyIds;
 		} else {
 			$data['observedProperties'] = [];
 		}
+
+		unset($data[$this->getObservedPropertiesCsvColumn()]);
 
 		return $data;
 	}
@@ -85,14 +95,16 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 */
 	public function csvUpload(): string {
 		if ($this->request->isPost()) {
-
 			$csvLines = array_map('str_getcsv', file($_FILES["csv"]['tmp_name']));
+			
+			$this->headingLine = array_shift($csvLines);
 
 			foreach ($csvLines as $lineNumber => $line) {
-				$data = $this->dataFromCsvLine($line);
-
-				$record = $this->queriesClass::getByColumn($this->getGlobalIdName(), $line[2]);
+				$csvId = $line[array_search($this->getGlobalIdName(), $this->headingLine)];
+				$record = $this->queriesClass::getByColumn($this->getGlobalIdName(), $csvId);
 				$recordId = $record ? $record['id'] : null;
+
+				$data = $this->dataFromCsvLine($line);
 
 				try {
 					$this->queriesClass::save($data, $recordId);
@@ -105,4 +117,6 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 
 		return $this->redirect($this->listPagePath);
 	}
+
+
 }

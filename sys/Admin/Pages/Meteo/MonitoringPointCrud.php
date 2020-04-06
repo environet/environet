@@ -55,8 +55,8 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	/**
 	 * @inheritDoc
 	 */
-	public function getObservedPropertiesCsvColumn(): int {
-		return 4;
+	public function getObservedPropertiesCsvColumn(): string {
+		return 'observed_properties';
 	}
 
 
@@ -65,19 +65,6 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 */
 	public function getGlobalIdName(): string {
 		return 'ncd_pst';
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getCsvColumnMappings(): array {
-		return [
-			'name'     => 0,
-			'eucd_pst' => 1,
-			'ncd_pst'  => 2,
-			'country'  => 3,
-		];
 	}
 
 
