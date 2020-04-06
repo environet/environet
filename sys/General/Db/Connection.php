@@ -58,7 +58,6 @@ class Connection {
 			if (!$this->pdo) {
 				throw new InvalidConfigurationException('Could not connect to database');
 			}
-			en_debug("Connected to the database successfully!");
 		} catch (PDOException $e) {
 			// Report error message
 			en_debug("SQL operation failed - " . $e->getMessage());
