@@ -7,8 +7,8 @@ namespace Environet\Sys\Xml\Model;
  *
  * Data model for error response xml
  *
- * @package Sys\Xml
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @package Environet\Sys\Xml\Model
+ * @author  SRG Group <dev@srg.hu>
  */
 class ErrorXmlData {
 
@@ -24,10 +24,13 @@ class ErrorXmlData {
 
 
 	/**
-	 * InputXmlData constructor.
+	 * ErrorXmlData constructor.
 	 *
 	 * @param int|null    $code
 	 * @param string|null $message
+	 *
+	 * @uses \Environet\Sys\Xml\Model\ErrorXmlData::setCode()
+	 * @uses \Environet\Sys\Xml\Model\ErrorXmlData::setMessage()
 	 */
 	public function __construct(int $code = null, string $message = null) {
 		if (!is_null($code)) {
@@ -74,7 +77,7 @@ class ErrorXmlData {
 
 	/**
 	 * Set error message
-	 * w
+	 *
 	 * @param string $message
 	 *
 	 * @return ErrorXmlData

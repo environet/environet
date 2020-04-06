@@ -10,9 +10,8 @@ use SimpleXMLElement;
  *
  * Common interface for classes capable of outputting XML data
  *
- * @package   Environet\Sys\Xml
- * @author    SRG Group <dev@srg.hu>
- * @copyright 2020 SRG Group Kft.
+ * @package Environet\Sys\Xml
+ * @author  SRG Group <dev@srg.hu>
  */
 interface XmlRenderable {
 

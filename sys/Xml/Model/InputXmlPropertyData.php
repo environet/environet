@@ -7,8 +7,8 @@ namespace Environet\Sys\Xml\Model;
  *
  * Data model for input xml's property element
  *
- * @package Sys\Xml
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @package Environet\Sys\Xml\Model
+ * @author  SRG Group <dev@srg.hu>
  */
 class InputXmlPropertyData {
 
@@ -30,6 +30,9 @@ class InputXmlPropertyData {
 	 *
 	 * @param string $propertySymbol
 	 * @param array  $values
+	 *
+	 * @uses \Environet\Sys\Xml\Model\InputXmlPropertyData::setPropertySymbol()
+	 * @uses \Environet\Sys\Xml\Model\InputXmlPropertyData::setValues()
 	 */
 	public function __construct(string $propertySymbol = null, array $values = null) {
 		if (!is_null($propertySymbol)) {
