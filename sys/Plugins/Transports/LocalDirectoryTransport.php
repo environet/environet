@@ -63,16 +63,32 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 	 * @see Resource
 	 */
 	public function get(): array {
-		$resources = [];
-		foreach (glob("/meteringdata/{$this->path}/*") as $path) {
-			$resource = new Resource();
-			$pathParts = explode('/', $path);
-			$resource->name = end($pathParts);
-			$resource->contents = file_get_contents($path);
-			$resources[] = $resource;
+
+		$localFileDir = SRC_PATH . '/data/plugin_input_files/';
+		$localCopyPath = $localFileDir . $this->path;
+
+		if (!file_exists($localCopyPath)) {
+			mkdir($localCopyPath, 0755, true);
 		}
 
-		return $resources;
+		$dataFolderFiles = array_filter(glob("/meteringdata/{$this->path}/*"), 'is_file');
+
+		$newOrChangedFiles = [];
+		foreach ($dataFolderFiles as $filePath) {
+			$filePathArray = explode('/', $filePath);
+			$localCopyPath = $localFileDir . $this->path . '/' . end($filePathArray);
+
+			// If there is no local copy of the file, or it was changed later than the local copy
+			if (!file_exists($localCopyPath) || filemtime($localCopyPath) < filemtime($filePath)) {
+				file_put_contents($localCopyPath, file_get_contents($filePath));
+				$resource = new Resource();
+				$resource->name = end($filePathArray);
+				$resource->contents = file_get_contents($filePath);
+				$newOrChangedFiles[] = $resource;
+			}
+		}
+
+		return $newOrChangedFiles;
 	}
 
 

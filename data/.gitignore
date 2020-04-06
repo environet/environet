@@ -1,2 +1,2 @@
-test_private_keys
-input_xmls
+*
+!.gitignore
