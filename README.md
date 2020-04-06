@@ -72,6 +72,13 @@ Change to the directory you checked the code out to, and you should be ready to 
   If you are installing a data node, refer to the data node [setup instructions](#30_data_node)  
 
   If you are installing a distribution node, refer to the distribution node [setup instructions](#21_setup)
+  
+## Getting updates and maintenance
+
+The `environet` cli script is a wrapper for some docker containers managed with docker compose. After first starting a *dist* or *data* node, these services will start automatically after a system reboot.  
+To stop and start them manually, you may run `./environet data up` or `./environet data down` (`./environet dist up` and `./environet dist down` in case of a distribution node).  
+
+To get the latest version, simply run `git pull` in the repository folder.
 
 <a name="20_distribution_node"></a>
 
@@ -132,13 +139,10 @@ The detailed documentation of this endpoint can found here: [Download API docume
 
 1. Install the environet project. Refer to [Setup](#11_setup).
 
-2. Start the distribution node services
-   `./environet dist up`
-
-3. Create a distribution node configuration
+2. Create a distribution node configuration
    `./environet dist install`
    
-4. Initialize database, and create admin user
+3. Initialize database, and create admin user
    `./environet dist init database`
 
 After going through these steps, the distribution node should be up and running. You can access the admin panel at YOUR_IP/admin.
@@ -914,6 +918,5 @@ After the installation you have to run these commands:
   
 **2.** Public key generation from private key:  
 `openssl rsa -in private.pem -out public.pem -outform PEM -pubout`
-  
 
 
