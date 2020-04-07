@@ -62,10 +62,12 @@ You will need to have Git installed to be able to download the project source, a
 
 Checkout the Environet docker repository
   - Navigate to the directory where you would like to install environet  
-  - Run `$ git clone git@github.com:environet/environet-docker.git`  
+  - Run `$ git clone git@github.com:environet/environet-docker.git --recurse-submodules`  
     
    By default, the files will be downloaded to a directory named `environet-docker`, you can specify a custom name by providing a third argument to the command, e.g.:  
-   `$ git clone git@github.com:environet/environet-docker.git my_directory`
+   `$ git clone git@github.com:environet/environet-docker.git my_directory --recurse-submodules`
+   
+   Note: If you cloned the repository without the `--recurse-submodules` flag, you need to run `git submodule init` and `git submodule update`, to get the src files checked out.
 
 Change to the directory you checked the code out to, and you should be ready to proceed with the setup.  
 
