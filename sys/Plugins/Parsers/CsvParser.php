@@ -202,7 +202,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	public static function create(Console $console): ParserInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring csv parser', Console::COLOR_YELLOW);
-		
+
 		$console->writeLine('Enter the csv delimiter character. E.g.: a comma in case of comma separated csv files', Console::COLOR_YELLOW);
 		$csvDelimiter = $console->ask('Csv delimiter:', 1);
 

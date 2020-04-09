@@ -21,8 +21,6 @@ class DownloadException extends ApiException {
 	 *
 	 * Merges error codes and messages unique for this exception with {@see ApiException::$errors}.
 	 *
-	 * Merges error codes and messages unique for this exception with {@see ApiException::$errors}.
-	 *
 	 * @param int   $code
 	 * @param array $errorMessages
 	 */

@@ -74,7 +74,7 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 		return 'http transport';
 	}
 
-	
+
 	/**
 	 * @inheritDoc
 	 */

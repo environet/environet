@@ -152,7 +152,7 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 			throw new Exception("Private key at {$this->privateKeyPath} doesn't exist");
 		}
 		$pkiLib = new PKI();
-		$signature = $pkiLib->generateSignature(md5($xml->asXML()), file_get_contents($fullPath));
+		$signature = $pkiLib->generateSignature($xml->asXML(), file_get_contents(SRC_PATH . '/conf/plugins/credentials/' . $this->privateKeyPath));
 
 		return $pkiLib->authHeaderWithSignature($signature, $username);
 	}
