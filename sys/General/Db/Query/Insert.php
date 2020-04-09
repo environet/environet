@@ -8,10 +8,10 @@ use Environet\Sys\General\Exceptions\QueryException;
 /**
  * Class Insert
  *
- * Query class for delete operations
+ * Query class for insert operations
  *
  * @package Environet\Sys\General\Db\Query
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class Insert extends Query {
 
@@ -40,42 +40,48 @@ class Insert extends Query {
 	 */
 	public function columns(array $columns): self {
 		$this->columns = array_values($columns);
+
 		return $this;
 	}
 
 
 	/**
 	 * Set the values with a multidimensional array.
-	 * It resets the property
+	 *
+	 * It resets the {@see Insert::$values} property.
 	 *
 	 * @param array $valueRows
 	 *
 	 * @return Insert
 	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\Query\Insert::addValueRow()
 	 */
 	public function setValueRows(array $valueRows): self {
 		$this->values = [];
 		foreach ($valueRows as $valueRow) {
 			$this->addValueRow($valueRow);
 		}
+
 		return $this;
 	}
 
 
 	/**
-	 * Add a single set of data to the values array. It represents a row in the database.
-	 * The count and the order must be the same as in the columns property
+	 * Add a single set of data to the values array.
 	 *
-	 * Values in the array must be PDO-parameters
+	 * It represents a row in the database. The count and the order must be the same as in the columns property.
+	 * Values in the array must be PDO-parameters.
 	 *
 	 * @param array $valueRow
 	 *
 	 * @return Insert
 	 * @throws QueryException
+	 * @uses \checkDbInputValues()
 	 */
 	public function addValueRow(array $valueRow): self {
 		checkDbInputValues($valueRow);
 		$this->values[] = array_values($valueRow);
+
 		return $this;
 	}
 
@@ -89,20 +95,24 @@ class Insert extends Query {
 	 *
 	 * @return $this
 	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\Query\Insert::setParameters()
+	 * @uses \Environet\Sys\General\Db\Query\Insert::columns()
+	 * @uses \Environet\Sys\General\Db\Query\Insert::addValueRow()
 	 */
 	public function addSingleData(array $data): self {
-		//Process data, convert it to PDO-compatible parameters and parameter names
+		// Process data, convert it to PDO-compatible parameters and parameter names
 		$parameters = [];
 		foreach ($data as $key => $value) {
-			$parameters[':'.$key] = $value;
+			$parameters[':' . $key] = $value;
 		}
 
-		//Set parameters
+		// Set parameters
 		$this->setParameters($parameters);
 
-		//Set columns and values
+		// Set columns and values
 		$this->columns(array_keys($data))
-			->addValueRow(array_keys($parameters));
+		     ->addValueRow(array_keys($parameters));
+
 		return $this;
 	}
 
@@ -112,6 +122,7 @@ class Insert extends Query {
 	 * It's invalid if no columns and values has been set, or if there are any count-mismatch
 	 *
 	 * @return bool
+	 * @see Query::validateQuery()
 	 */
 	protected function validateQuery(): bool {
 		$columnsCount = count($this->columns);
@@ -124,30 +135,33 @@ class Insert extends Query {
 				return false;
 			}
 		}
+
 		return parent::validateQuery();
 	}
 
 
 	/**
 	 * Build an insert operation query with columns and multiple values
+	 *
+	 * @return mixed|string
 	 */
 	public function buildQuery() {
-		//Build INSERT INTO table
-		$queryString = ['INSERT INTO'];
-		$queryString[] = $this->table;
+		// Build INSERT INTO table
+		$queryString = [
+			'INSERT INTO',
+			$this->table,
+			'(' . implode(', ', $this->columns) . ')', // Add column definition
+			'VALUES'
+		];
 
-		//Add column definition
-		$queryString[] = '('.implode(', ', $this->columns).')';
-
-		//Add multiple value rows
-		$queryString[] = 'VALUES';
+		// Add multiple value rows
 		$values = [];
 		foreach ($this->values as $valueRow) {
-			$values[] = '('.implode(', ', $valueRow).')';
+			$values[] = '(' . implode(', ', $valueRow) . ')';
 		}
 		$queryString[] = implode(',', $values);
 
-		return implode(' ', $queryString).';';
+		return implode(' ', $queryString) . ';';
 	}
 
 
@@ -158,11 +172,13 @@ class Insert extends Query {
 	 *
 	 * @return int|null
 	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\Query\Query::run()
 	 */
 	public function run($flags = null) {
-		//Extend
+		// Extend
 		$flags |= self::RETURN_ID;
 		$id = parent::run($flags);
+
 		return $id ? (int) $id : null;
 	}
 

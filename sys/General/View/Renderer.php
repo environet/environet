@@ -9,10 +9,10 @@ use Environet\Sys\General\Response;
 /**
  * Class Renderer
  *
- * A simple phtml-based view renderer with separated scope, and template management
+ * A simple phtml-based view renderer with separated scope, and template management.
  *
  * @package Environet\Sys\General\View
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class Renderer {
 
@@ -43,6 +43,9 @@ class Renderer {
 	 * @param array|null  $vars
 	 *
 	 * @throws RenderException
+	 * @uses \Environet\Sys\General\View\Renderer::setTemplate()
+	 * @uses \Environet\Sys\General\View\Renderer::setVars()
+	 * @uses \Environet\Sys\General\View\Renderer::addVar()
 	 */
 	public function __construct(string $template = null, array $vars = null) {
 		if (!is_null($template)) {
@@ -82,7 +85,8 @@ class Renderer {
 
 
 	/**
-	 * Resolve, and set the template path. If it's an absolute path, and the file exists, it will be set directly as a path.
+	 * Resolve, and set the template path.
+	 * If it's an absolute path, and the file exists, it will be set directly as a path.
 	 * It not, renderer will find the path under the root paths.
 	 *
 	 * @param string $template Absolute or root-relative path
@@ -94,13 +98,13 @@ class Renderer {
 		$foundTemplate = null;
 
 		if (file_exists($template)) {
-			//Absolute, existing path
+			// Absolute, existing path
 			$foundTemplate = $template;
 		} else {
-			//Relative, or not existing path
+			// Relative, or not existing path
 			$template = ltrim($template, '/');
 
-			//Check under each root paths
+			// Check under each root paths
 			foreach (self::$rootPaths as $rootPath) {
 				if (file_exists($rootPath . '/' . $template)) {
 					$foundTemplate = $rootPath . '/' . $template;
@@ -109,7 +113,7 @@ class Renderer {
 			}
 		}
 
-		//A valid template could not be found
+		// A valid template could not be found
 		if (!$foundTemplate) {
 			throw new RenderException('Template \'' . $template . '\'not found');
 		}
@@ -171,14 +175,14 @@ class Renderer {
 			throw new RenderException('Template not found');
 		}
 
-		//Echo the template to a bufffer
+		// Echo the template to a buffer
 		ob_start();
 		extract($this->vars);
 		include $this->template;
 		$contents = ob_get_contents();
 		ob_end_clean();
 
-		//Return the response with contents
+		// Return the response with contents
 		return new Response($contents);
 	}
 
@@ -188,6 +192,7 @@ class Renderer {
 	 *
 	 * @return Response
 	 * @throws RenderException
+	 * @uses \Environet\Sys\General\View\Renderer::render()
 	 */
 	public function __invoke(): Response {
 		return $this->render();

@@ -33,8 +33,8 @@ $zipPath = __DIR__.'/environet_doc.zip';
 if (file_exists($zipPath)) {
 	unlink($zipPath);
 }
-$zip = new ZipArchive;
-if ($zip->open($zipPath, ZipArchive::CREATE) === true) {
+$zip = new \ZipArchive;
+if ($zip->open($zipPath, \ZipArchive::CREATE) === true) {
 	$zip->addFile($output, 'doc.html');
 	$zip->addEmptyDir('resources');
 	foreach (scandir(__DIR__.'/resources') as $file) {

@@ -1,21 +1,30 @@
 <?php include __DIR__ . '../../../layouts/before_app.phtml'; ?>
 <div class="card">
     <h1>Meteo monitoring point<?= $record && $record['id'] ? '(id: ' . $record['id'] . ')': ''?></h1>
-    <form action="" method="POST">
+    <form action="" novalidate class="needs-validation" method="POST">
         <input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
         <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" name="name" id="name" class="form-control" value="<?=formFieldValue('name', $record);?>" />
+            <input type="text" name="name" id="name" class="form-control" required value="<?=formFieldValue('name', $record);?>" />
+            <div class="invalid-feedback">
+                Please provide a valid name!
+            </div>
         </div>
 
         <div class="form-group">
             <label for="eucd_pst">Eucd pst</label>
-            <input type="text" name="eucd_pst" id="eucd_pst" class="form-control" value="<?=formFieldValue('eucd_pst', $record);?>" />
+            <input type="text" name="eucd_pst" id="eucd_pst" class="form-control" required value="<?=formFieldValue('eucd_pst', $record);?>" />
+            <div class="invalid-feedback">
+                Please provide a valid Eucd pst value!
+            </div>
         </div>
 
         <div class="form-group">
             <label for="ncd_pst">Ncd pst</label>
-            <input type="text" name="ncd_pst" id="ncd_pst" class="form-control" value="<?=formFieldValue('ncd_pst', $record);?>" />
+            <input type="text" name="ncd_pst" id="ncd_pst" class="form-control" required value="<?=formFieldValue('ncd_pst', $record);?>" />
+            <div class="invalid-feedback">
+                Please provide a valid Ncd pst value!
+            </div>
         </div>
 
         <div class="form-group">
@@ -30,22 +39,22 @@
 
         <div class="form-group">
             <label for="lat">Lat</label>
-            <input type="text" name="lat" id="lat" class="form-control" value="<?=formFieldValue('lat', $record);?>" />
+            <input type="number" name="lat" id="lat" class="form-control" value="<?=formFieldValue('lat', $record);?>" />
         </div>
 
         <div class="form-group">
             <label for="long">Long</label>
-            <input type="text" name="long" id="long" class="form-control" value="<?=formFieldValue('long', $record);?>" />
+            <input type="number" name="long" id="long" class="form-control" value="<?=formFieldValue('long', $record);?>" />
         </div>
 
         <div class="form-group">
             <label for="z">Z</label>
-            <input type="text" name="z" id="z" class="form-control" value="<?=formFieldValue('z', $record);?>" />
+            <input type="number" name="z" id="z" class="form-control" value="<?=formFieldValue('z', $record);?>" />
         </div>
 
         <div class="form-group">
             <label for="altitude">Altitude</label>
-            <input type="text" name="altitude" id="altitude" class="form-control" value="<?=formFieldValue('altitude', $record);?>" />
+            <input type="number" name="altitude" id="altitude" class="form-control" value="<?=formFieldValue('altitude', $record);?>" />
         </div>
 
         <div class="form-group">
@@ -77,18 +86,17 @@
                 </select>
             </div>
         </fieldset>
-
-		<fieldset class="form-group">
-			<legend><?=__('Observed property(/ies)');?></legend>
-		    <?php $selectedProperties = array_filter(formFieldValue('observedProperties', $record) ?: []); ?>
-		    <?php for($i = 0; $i <= count($selectedProperties); $i++) { ?>
-				<div class="field">
-					<select name="observedProperties[<?=isset($selectedProperties[$i]) ? $selectedProperties[$i] : ''?>]">
-					    <?=selectOptions($observedProperties, $selectedProperties[$i] ?? null, ' - '.__('No property').' - ');?>
-					</select>
-				</div>
-		    <?php } ?>
-		</fieldset>
+        
+        <fieldset class="form-group">
+            <div class="field">
+                <legend><?=__('Observed properties');?></legend>
+                <select name="observedProperties[]" multiple>
+					<?php foreach ($observedProperties as $id => $symbol): ?>
+                        <option value="<?= $id; ?>" <?= in_array($id, $record['observedProperties']) ? 'selected' : '' ?>><?= $symbol; ?></option>
+					<?php endforeach; ?>
+                </select>
+            </div>
+        </fieldset>
 
         <div class="field">
             <input type="submit" class="btn btn-primary" value="Save"/>

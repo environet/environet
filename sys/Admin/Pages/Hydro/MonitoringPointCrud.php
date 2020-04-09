@@ -2,22 +2,23 @@
 
 namespace Environet\Sys\Admin\Pages\Hydro;
 
-use Environet\Sys\Admin\Pages\CrudPage;
 use Environet\Sys\General\Db\HydroMonitoringPointQueries;
 use Environet\Sys\General\Db\HydroObservedPropertyQueries;
 use Environet\Sys\General\Db\HydroStationClassificationQueries;
 use Environet\Sys\General\Db\OperatorQueries;
 use Environet\Sys\General\Db\RiverbankQueries;
 use Environet\Sys\General\Db\WaterbodyQueries;
-use Environet\Sys\General\Exceptions\HttpNotFoundException;
-use Environet\Sys\General\Exceptions\RenderException;
-use Environet\Sys\General\Response;
+use Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud as MonitoringPointCrudBase;
 
 /**
  * Class MonitoringPointCrud
+ *
+ * Handles CRUD operations for hydropoint monitoring points.
+ *
  * @package Environet\Sys\Admin\Pages\Hydro
+ * @author  SRG Group <dev@srg.hu>
  */
-class MonitoringPointCrud extends CrudPage {
+class MonitoringPointCrud extends MonitoringPointCrudBase {
 
 	/**
 	 * @inheritdoc
@@ -44,32 +45,28 @@ class MonitoringPointCrud extends CrudPage {
 	 */
 	protected $listPagePath = '/admin/hydro/monitoring-points';
 
-	/**
-	 * @inheritdoc
-	 */
-	protected $successAddMessage = 'Monitoring point successfully saved';
-
 
 	/**
-	 * List page action.
-	 *
-	 * @return Response
-	 * @throws RenderException
+	 * @inheritDoc
 	 */
-	public function list(): Response {
-		return $this->renderListPage();
+	public function getObservedPropertyQueriesClass(): string {
+		return HydroObservedPropertyQueries::class;
 	}
 
 
 	/**
-	 * Show page action.
-	 *
-	 * @return Response
-	 * @throws RenderException
-	 * @throws HttpNotFoundException
+	 * @inheritDoc
 	 */
-	public function show(): Response {
-		return $this->renderShowPage();
+	public function getObservedPropertiesCsvColumn(): string {
+		return 'observed_properties';
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getGlobalIdName(): string {
+		return 'ncd_wgst';
 	}
 
 
@@ -80,10 +77,10 @@ class MonitoringPointCrud extends CrudPage {
 	 */
 	protected function formContext(): array {
 		return [
-			'classifications' => HydroStationClassificationQueries::getOptionList('value'),
-			'operators' => OperatorQueries::getOptionList('name'),
-			'riverbanks' => RiverbankQueries::getOptionList('value'),
-			'waterbodyeuropean_river_code' => WaterbodyQueries::getOptionList('cname', 'european_river_code'),
+			'classifications'    => HydroStationClassificationQueries::getOptionList('value'),
+			'operators'          => OperatorQueries::getOptionList('name'),
+			'riverbanks'         => RiverbankQueries::getOptionList('value'),
+			'waterbodies'        => WaterbodyQueries::getOptionList('cname', 'european_river_code'),
 			'observedProperties' => HydroObservedPropertyQueries::getOptionList('symbol'),
 		];
 	}
@@ -100,33 +97,31 @@ class MonitoringPointCrud extends CrudPage {
 			$valid = false;
 		}
 
-		if (!$data['classification']) {
+		/*if (!$data['classification']) {
 			$this->addMessage(__('Classification is required'), self::MESSAGE_ERROR);
 			$valid = false;
-		}
+		}*/
 
-		if (!$data['operator']) {
+		/*if (!$data['operator']) {
 			$this->addMessage(__('Operator is required'), self::MESSAGE_ERROR);
 			$valid = false;
-		}
+		}*/
 
-		if (!$data['riverbank']) {
+		/*if (!$data['riverbank']) {
 			$this->addMessage(__('Riverbank is required'), self::MESSAGE_ERROR);
 			$valid = false;
-		}
+		}*/
 
-		if (!$data['waterbodyeuropean_river_code']) {
+		/*if (!$data['waterbody']) {
 			$this->addMessage(__('Waterbody is required'), self::MESSAGE_ERROR);
 			$valid = false;
-		}
+		}*/
 
-		if (!$data['observedProperties']) {
+		/*if (!$data['observedProperties']) {
 			$this->addMessage(__('Observed property is required'), self::MESSAGE_ERROR);
 			$valid = false;
-		}
+		}*/
 
 		return $valid;
 	}
-
-
 }

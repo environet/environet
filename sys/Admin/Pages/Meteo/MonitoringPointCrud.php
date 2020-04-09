@@ -2,20 +2,21 @@
 
 namespace Environet\Sys\Admin\Pages\Meteo;
 
-use Environet\Sys\Admin\Pages\CrudPage;
 use Environet\Sys\General\Db\MeteoMonitoringPointQueries;
 use Environet\Sys\General\Db\MeteoObservedPropertyQueries;
 use Environet\Sys\General\Db\MeteoStationClassificationQueries;
 use Environet\Sys\General\Db\OperatorQueries;
-use Environet\Sys\General\Exceptions\HttpNotFoundException;
-use Environet\Sys\General\Exceptions\RenderException;
-use Environet\Sys\General\Response;
+use Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud as MonitoringPointCrudBase;
 
 /**
  * Class MonitoringPointCrud
- * @package Environet\Sys\Admin\Pages\Hydro
+ *
+ * Handles CRUD operations for meteopoint monitoring points.
+ *
+ * @package Environet\Sys\Admin\Pages\Meteo
+ * @author  SRG Group <dev@srg.hu>
  */
-class MonitoringPointCrud extends CrudPage {
+class MonitoringPointCrud extends MonitoringPointCrudBase {
 
 	/**
 	 * @inheritdoc
@@ -42,32 +43,28 @@ class MonitoringPointCrud extends CrudPage {
 	 */
 	protected $listPagePath = '/admin/meteo/monitoring-points';
 
-	/**
-	 * @inheritdoc
-	 */
-	protected $successAddMessage = 'Monitoring point successfully saved';
-
 
 	/**
-	 * List page action.
-	 *
-	 * @return Response
-	 * @throws RenderException
+	 * @inheritDoc
 	 */
-	public function list(): Response {
-		return $this->renderListPage();
+	public function getObservedPropertyQueriesClass(): string {
+		return MeteoObservedPropertyQueries::class;
 	}
 
 
 	/**
-	 * Show page action.
-	 *
-	 * @return Response
-	 * @throws RenderException
-	 * @throws HttpNotFoundException
+	 * @inheritDoc
 	 */
-	public function show(): Response {
-		return $this->renderShowPage();
+	public function getObservedPropertiesCsvColumn(): string {
+		return 'observed_properties';
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getGlobalIdName(): string {
+		return 'ncd_pst';
 	}
 
 
@@ -78,8 +75,8 @@ class MonitoringPointCrud extends CrudPage {
 	 */
 	protected function formContext(): array {
 		return [
-			'classifications' => MeteoStationClassificationQueries::getOptionList('value'),
-			'operators' => OperatorQueries::getOptionList('name'),
+			'classifications'    => MeteoStationClassificationQueries::getOptionList('value'),
+			'operators'          => OperatorQueries::getOptionList('name'),
 			'observedProperties' => MeteoObservedPropertyQueries::getOptionList('symbol')
 		];
 	}
@@ -96,7 +93,7 @@ class MonitoringPointCrud extends CrudPage {
 			$valid = false;
 		}
 
-		if (!$data['classification']) {
+		/*if (!$data['classification']) {
 			$this->addMessage(__('Classification is required'), self::MESSAGE_ERROR);
 			$valid = false;
 		}
@@ -109,10 +106,8 @@ class MonitoringPointCrud extends CrudPage {
 		if (!$data['observedProperties']) {
 			$this->addMessage(__('Observed property is required'), self::MESSAGE_ERROR);
 			$valid = false;
-		}
+		}*/
 
 		return $valid;
 	}
-
-
 }

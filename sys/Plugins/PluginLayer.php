@@ -8,15 +8,22 @@ use Environet\Sys\Commands\Console;
 /**
  * Class PluginLayer
  *
+ * Wrapper class for a transport, parser or client layer to be created in a plugin.
+ *
  * @package Environet\Sys\Plugins
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class PluginLayer {
 
 	/**
-	 * @var string Name of layer
+	 * @var string Name of the layer
 	 */
 	private $name;
+
+	/**
+	 * @var string Help text to provide context for the choices, and to explain to the user what the layer is for.
+	 */
+	private $helpText = [];
 
 	/**
 	 * @var BuilderLayerInterface[] Layer alternatives
@@ -26,17 +33,22 @@ class PluginLayer {
 
 	/**
 	 * PluginLayer constructor.
+	 * Sets the name and the alternatives array.
 	 *
-	 * @param $name
-	 * @param $alternatives
+	 * @param string $name
+	 * @param string[] $alternatives
+	 * @param string $helpText
 	 */
-	public function __construct($name, $alternatives) {
+	public function __construct(string $name, array $alternatives, string $helpText) {
 		$this->name = $name;
 		$this->alternatives = $alternatives;
+		$this->helpText = $helpText;
 	}
 
 
 	/**
+	 * Get the layer's name.
+	 *
 	 * @return mixed
 	 */
 	public function getName() {
@@ -45,14 +57,27 @@ class PluginLayer {
 
 
 	/**
-	 * Create configuration during install command
+	 * Get the layer's name.
+	 *
+	 * @return mixed
+	 */
+	public function getHelp() {
+		return $this->helpText;
+	}
+
+
+	/**
+	 * Create configuration during install command.
 	 *
 	 * @param Console $console
 	 *
 	 * @return mixed
+	 * @uses \Environet\Sys\Plugins\PluginLayer::chooseAlternative()
+	 * @uses \Environet\Sys\Plugins\BuilderLayerInterface::create()
 	 */
 	public function createConfiguration(Console $console) {
 		$class = $this->chooseAlternative($console);
+
 		return $class::create($console);
 	}
 
@@ -66,15 +91,13 @@ class PluginLayer {
 	 */
 	private function chooseAlternative(Console $console) {
 		if (count($this->alternatives) > 1) {
-			$console->writeLine("Choose a $this->name implementation:");
-			$console->writeLine('');
 			foreach ($this->alternatives as $i => $alternative) {
-				$description = $alternative::getDescription();
 				$console->writeLine($i + 1 . ": " . $alternative::getName());
-				$console->writeLine($description);
+				$console->writeLine($alternative::getHelp());
 				$console->writeLine('');
 			}
-			$choice = $console->askOption();
+			$console->writeLine('');
+			$choice = $console->askOption("Enter a number corresponding to the $this->name implementation of your choice:");
 
 			return ($this->alternatives[(int) $choice - 1]);
 		}

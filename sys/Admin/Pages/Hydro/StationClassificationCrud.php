@@ -11,8 +11,10 @@ use Environet\Sys\General\Response;
 /**
  * Class StationClassificationCrud
  *
+ * Handles CRUD operations for hydropoint station classifications.
+ *
  * @package Environet\Sys\Admin\Pages\Hydro
- * @author  Mate Kovacs <mate.kovacs@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class StationClassificationCrud extends CrudPage {
 
@@ -45,29 +47,6 @@ class StationClassificationCrud extends CrudPage {
 	 * @inheritdoc
 	 */
 	protected $successAddMessage = 'Station classification successfully saved';
-
-
-	/**
-	 * List page action.
-	 *
-	 * @return Response
-	 * @throws RenderException
-	 */
-	public function list(): Response {
-		return $this->renderListPage();
-	}
-
-
-	/**
-	 * Show page action.
-	 *
-	 * @return Response
-	 * @throws RenderException
-	 * @throws HttpNotFoundException
-	 */
-	public function show(): Response {
-		return $this->renderShowPage();
-	}
 
 
 	/**

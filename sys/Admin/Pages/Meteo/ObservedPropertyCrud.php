@@ -11,8 +11,10 @@ use Environet\Sys\General\Response;
 /**
  * Class ObservedPropertyCrud
  *
+ * Handles CRUD operations for meteopoint observed properties.
+ *
  * @package Environet\Sys\Admin\Pages\Meteo
- * @author  Mate Kovacs <mate.kovacs@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class ObservedPropertyCrud extends CrudPage {
 
@@ -45,29 +47,6 @@ class ObservedPropertyCrud extends CrudPage {
 	 * @inheritdoc
 	 */
 	protected $successAddMessage = 'Observed property successfully saved';
-
-
-	/**
-	 * List page action.
-	 *
-	 * @return Response
-	 * @throws RenderException
-	 */
-	public function list(): Response {
-		return $this->renderListPage();
-	}
-
-
-	/**
-	 * Show page action.
-	 *
-	 * @return Response
-	 * @throws RenderException
-	 * @throws HttpNotFoundException
-	 */
-	public function show(): Response {
-		return $this->renderShowPage();
-	}
 
 
 	/**

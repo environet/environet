@@ -5,21 +5,20 @@ namespace Environet\Sys\Admin\Pages;
 
 use Environet\Sys\General\Exceptions\RenderException;
 use Environet\Sys\General\Response;
-use Environet\Sys\General\View\Renderer;
 
 /**
  * Class Dashboard
  *
- * Display dasboard page
+ * Displays the dashboard page
  *
  * @package Environet\Sys\Admin\Pages
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class Dashboard extends BasePage {
 
 
 	/**
-	 * Render dashboard page
+	 * Render the dashboard page
 	 *
 	 * @return Response
 	 * @throws RenderException

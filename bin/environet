@@ -28,13 +28,13 @@ if ($config->getTimezone()) {
 	date_default_timezone_set($config->getTimezone());
 }
 
-//! Load error handling library
-require_once SRC_PATH.'/sys/error.inc.php';
-
-$commandRouter = function(array $arguments): ?string {
+function commandRouter(array $arguments): ?string {
 	switch ($arguments[0] ?? null) {
 		case 'data':
 			switch ($arguments[1] ?? null) {
+				case 'tool':
+					array_shift($arguments);
+					return commandRouter($arguments);
 				case 'install':
 					return DataNodeInstall::class;
 				case 'plugin':
@@ -45,8 +45,12 @@ $commandRouter = function(array $arguments): ?string {
 							return PluginRun::class;
 					}
 			}
+			break;
 		case 'dist':
 			switch ($arguments[1] ?? null) {
+				case 'tool':
+					array_shift($arguments);
+					return commandRouter($arguments);
 				case 'install':
 					return DistNodeInstall::class;
 				case 'init':
@@ -55,6 +59,7 @@ $commandRouter = function(array $arguments): ?string {
 							return InitDb::class;
 					}
 			}
+			break;
 		case 'tool':
 			switch ($arguments[1] ?? null) {
 				case 'keygen':
@@ -64,15 +69,14 @@ $commandRouter = function(array $arguments): ?string {
 			}
 	}
 	return null;
-};
-
-
+}
 
 echo "\n";
+
 $console = new Console();
 try {
 
-	$commandClass = $commandRouter($arguments);
+	$commandClass = commandRouter($arguments);
 	if (!$commandClass) {
 		throw new CommandException('Command not found');
 	}
@@ -80,7 +84,7 @@ try {
 	$command = new $commandClass($console);
 
 	$exitCode = $command->run($arguments);
-} catch (CommandException $exception) {
+} catch (\Exception $exception) {
 	$console->writeLine($exception->getMessage(), Console::COLOR_RED);
 	$exitCode = 1;
 }

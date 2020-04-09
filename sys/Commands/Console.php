@@ -6,10 +6,10 @@ namespace Environet\Sys\Commands;
 /**
  * Class Console
  *
- * Console interactions (output and input)
+ * Wrapper class for console interactions (output and input)
  *
  * @package Environet\Sys\Commands
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class Console {
 
@@ -25,14 +25,14 @@ class Console {
 	const BGCOLOR_YELLOW = '43';
 
 	/**
-	 * @var false|resource
+	 * @var false|resource PHP standard input
 	 */
 	private $stdin;
 
 
 	/**
-	 * Create instance, and set standard STDIN
 	 * Console constructor.
+	 * Create instance, and set standard input
 	 */
 	public function __construct() {
 		$this->stdin = fopen('php://stdin', 'r');
@@ -40,7 +40,7 @@ class Console {
 
 
 	/**
-	 * Write to output, without line break
+	 * Write to output without a line break
 	 *
 	 * @param string      $string
 	 * @param string|null $color
@@ -54,7 +54,7 @@ class Console {
 
 
 	/**
-	 * Write a linebreakc
+	 * Write a linebreak
 	 */
 	public function writeLineBreak() {
 		echo "\n";
@@ -62,7 +62,7 @@ class Console {
 
 
 	/**
-	 * Write a line to the output with a line break
+	 * Write to output with a line break
 	 *
 	 * @param string      $string
 	 * @param string|null $color
@@ -75,7 +75,7 @@ class Console {
 
 
 	/**
-	 * Ask for an answer
+	 * Ask for an answer.
 	 *
 	 * @param string $string
 	 * @param int    $length
@@ -141,7 +141,7 @@ class Console {
 
 
 	/**
-	 * Ask for a numeric opion and get answer
+	 * Ask for a numeric option and get an answer
 	 *
 	 * @param string $string
 	 *
@@ -152,6 +152,36 @@ class Console {
 			$option = $this->ask($string);
 			if (!ctype_digit($option)) {
 				$this->writeLine("Enter a number!");
+				continue;
+			}
+			break;
+		}
+
+		return $option;
+	}
+
+
+	/**
+	 * Ask for a numeric option with options array and get an answer
+	 *
+	 * @param string $question
+	 * @param array  $options
+	 *
+	 * @return int
+	 */
+	public function askOptions(string $question, array $options): int {
+		$this->writeLine($question);
+		foreach ($options as $key => $option) {
+			$this->writeLine("$key: $option");
+		}
+		while (true) {
+			$option = $this->ask("Your choice:");
+			if (!ctype_digit($option)) {
+				$this->writeLine("Enter a number!");
+				continue;
+			}
+			if (!isset($options[$option])) {
+				$this->writeLine("Invalid option!");
 				continue;
 			}
 			break;
@@ -209,6 +239,8 @@ class Console {
 
 
 	/**
+	 * Get a color (and/or background color) format to display in the console.
+	 *
 	 * @param string|null $color
 	 * @param string|null $bgColor
 	 *

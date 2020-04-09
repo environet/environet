@@ -13,7 +13,7 @@ use Environet\Sys\Config;
  * Install data node, create local config file
  *
  * @package Environet\Sys\Commands\DataNode
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class Install extends BaseCommand {
 
@@ -26,7 +26,7 @@ class Install extends BaseCommand {
 	 * @return int
 	 */
 	public function run($arguments): int {
-		$configFilePath = SRC_PATH.'/conf/conf.local.ini';
+		$configFilePath = realpath(SRC_PATH.'/conf/conf.local.ini');
 
 		if (file_exists($configFilePath)) {
 			$continue = $this->console->askYesNo("Local configuration file already exists: $configFilePath. Do you want to overwrite it?", false);
@@ -73,7 +73,7 @@ class Install extends BaseCommand {
 		file_put_contents($configFilePath, $iniContent);
 
 		$this->console->writeLineBreak();
-		$this->console->writeLine("The configuration has been saved to " . realpath($configFilePath), Console::COLOR_GREEN);
+		$this->console->writeLine("The configuration has been saved to " . $configFilePath, Console::COLOR_GREEN);
 
 		return 0;
 	}

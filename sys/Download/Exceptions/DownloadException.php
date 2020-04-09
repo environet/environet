@@ -8,15 +8,18 @@ use Environet\Sys\General\Exceptions\ApiException;
 /**
  * Class DownloadException
  *
- * @package   Environet\Sys\Download\Exceptions
- * @author    SRG Group <dev@srg.hu>
- * @copyright 2020 SRG Group Kft.
+ * Common exception for download API errors.
+ *
+ * @package Environet\Sys\Download\Exceptions
+ * @author  SRG Group <dev@srg.hu>
  */
 class DownloadException extends ApiException {
 
 
 	/**
-	 * UploadException constructor.
+	 * DownloadException constructor.
+	 *
+	 * Merges error codes and messages unique for this exception with {@see ApiException::$errors}.
 	 *
 	 * @param int   $code
 	 * @param array $errorMessages

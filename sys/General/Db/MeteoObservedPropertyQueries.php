@@ -7,8 +7,10 @@ use Environet\Sys\General\EventLogger;
 /**
  * Class MeteoObservedPropertyQueries
  *
+ * Base queries adjusted for meteopoint observed properties
+ *
  * @package Environet\Sys\General\Db
- * @author  Mate Kovacs <mate.kovacs@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class MeteoObservedPropertyQueries extends BaseQueries {
 
@@ -25,15 +27,16 @@ class MeteoObservedPropertyQueries extends BaseQueries {
 		'meteo_observed_property.description'
 	];
 
+
 	/**
 	 * @inheritDoc
 	 */
 	public static function prepareData(array $data): array {
 		return [
-			'symbol'     => $data['symbol'] ?? null,
+			'symbol'      => $data['symbol'] ?? null,
 			'description' => $data['description'] ?? null,
-			'unit' => $data['unit'] ?? null,
-			'type' => 0,
+			'unit'        => $data['unit'] ?? null,
+			'type'        => 0,
 		];
 	}
 
@@ -41,7 +44,7 @@ class MeteoObservedPropertyQueries extends BaseQueries {
 	/**
 	 * @inheritDoc
 	 */
-	public static function getUpdateEventType() : string {
+	public static function getUpdateEventType(): string {
 		return EventLogger::EVENT_TYPE_METEO_OP_UPDATE;
 	}
 
@@ -49,7 +52,7 @@ class MeteoObservedPropertyQueries extends BaseQueries {
 	/**
 	 * @inheritDoc
 	 */
-	public static function getInsertEventType() : string {
+	public static function getInsertEventType(): string {
 		return EventLogger::EVENT_TYPE_METEO_OP_ADD;
 	}
 

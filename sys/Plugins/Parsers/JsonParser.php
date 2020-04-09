@@ -16,7 +16,7 @@ use Environet\Sys\Xml\Model\InputXmlPropertyData;
  * Parser layer for JSON files
  *
  * @package Environet\Sys\Plugins\Parsers
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class JsonParser implements ParserInterface, BuilderLayerInterface {
 
@@ -34,12 +34,16 @@ class JsonParser implements ParserInterface, BuilderLayerInterface {
 	/**
 	 * @inheritDoc
 	 * @throws CreateInputXmlException
+	 * @see CreateInputXml
+	 * @see InputXmlData
+	 * @see InputXmlPropertyData
 	 */
 	public function parse(string $data): array {
 
 		$parsed = json_decode($data, true);
 		$creator = new CreateInputXml();
 		$property = new InputXmlPropertyData($this->propertySymbol, $parsed);
+
 		return [$creator->generateXml(new InputXmlData($this->monitoringPointId, [$property]))];
 	}
 
@@ -49,9 +53,9 @@ class JsonParser implements ParserInterface, BuilderLayerInterface {
 	 */
 	public static function create(Console $console): ParserInterface {
 		$console->writeLine('');
-		$console->writeLine("Configuring json parser property");
-		$monitoringPointId = $console->ask("Enter monitoring point id:");
-		$propertySymbol = $console->ask("Enter property symbol:");
+		$console->writeLine('Configuring json parser property');
+		$monitoringPointId = $console->ask('Enter monitoring point id:');
+		$propertySymbol = $console->ask('Enter property symbol:');
 
 		$config = [
 			'monitoringPointId' => $monitoringPointId,
@@ -63,7 +67,7 @@ class JsonParser implements ParserInterface, BuilderLayerInterface {
 
 
 	/**
-	 * MPointPropertyXmlInputGenerator constructor.
+	 * JsonParser constructor.
 	 *
 	 * @param array $config
 	 */
@@ -90,6 +94,14 @@ class JsonParser implements ParserInterface, BuilderLayerInterface {
 	 */
 	public static function getName(): string {
 		return 'json parser';
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function getHelp(): string {
+		return 'For parsing data in JSON format.';
 	}
 
 

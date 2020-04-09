@@ -4,7 +4,12 @@
 
 	<div class="d-flex w-100">
 		<div class="mr-auto form-group">
-			<a href="/admin/hydro/monitoring-points/add" class="btn btn-primary" >Add monitoring point</a>
+            <div class="form-group">
+                <a href="/admin/hydro/monitoring-points/add" class="btn btn-primary" >Add monitoring point</a>
+            </div>
+			<?= includeTemplatePart('csvuploadbutton.phtml', [
+			        'uploadEndpoint' => '/admin/hydro/monitoring-points/csv-upload'
+            ]); ?>
 		</div>
 		<div class="form-group">
 			<form method="get">

@@ -28,5 +28,4 @@ switch ($opMode) {
 		break;
 }
 
-
 en_debug("CORE TASK NODE LOADED");

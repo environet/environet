@@ -16,8 +16,10 @@ use Environet\Sys\General\Response;
 /**
  * Class DataProviderCrud
  *
+ * Handles CRUD operations for data providers.
+ *
  * @package Environet\Sys\Admin\Pages\DataProvider
- * @author  Mate Kovacs <mate.kovacs@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class DataProviderCrud extends CrudPage {
 
@@ -53,7 +55,7 @@ class DataProviderCrud extends CrudPage {
 
 
 	/**
-	 * List page action.
+	 * List page action for data providers.
 	 *
 	 * @return Response
 	 * @throws RenderException
@@ -64,16 +66,16 @@ class DataProviderCrud extends CrudPage {
 
 			//Base query with joins and conditions
 			$directUserCountQuery = (new Select())->select('COUNT(*)')->from('operator_users')
-				->where('operator_users.operatorid = operator.id')->buildQuery();
+			                                      ->where('operator_users.operatorid = operator.id')->buildQuery();
 			$groupUserCountQuery = (new Select())->select('COUNT(*)')->from('operator_groups')
-				->join('users_groups', 'users_groups.groupsid = operator_groups.groupsid')
-				->where('operator_groups.operatorid = operator.id')->buildQuery();
+			                                     ->join('users_groups', 'users_groups.groupsid = operator_groups.groupsid')
+			                                     ->where('operator_groups.operatorid = operator.id')->buildQuery();
 			$groupCountQuery = (new Select())->select('COUNT(*)')->from('operator_groups')
-				->where('operator_groups.operatorid = operator.id')->buildQuery();
+			                                 ->where('operator_groups.operatorid = operator.id')->buildQuery();
 			$query = (new Select())
 				->select('operator.*')
-				->select('('.$directUserCountQuery.') + ('.$groupUserCountQuery.') as user_count')
-				->select('('.$groupCountQuery.') as group_count')
+				->select('(' . $directUserCountQuery . ') + (' . $groupUserCountQuery . ') as user_count')
+				->select('(' . $groupCountQuery . ') as group_count')
 				->from('operator');
 
 
@@ -110,7 +112,7 @@ class DataProviderCrud extends CrudPage {
 
 
 	/**
-	 * Show page action.
+	 * Show page action for data providers.
 	 *
 	 * @return Response
 	 * @throws RenderException
@@ -126,8 +128,8 @@ class DataProviderCrud extends CrudPage {
 	 */
 	protected function formContext(): array {
 		return [
-			'users'     => UserQueries::getOptionList(),
-			'groups'    => GroupQueries::getOptionList(),
+			'users'  => UserQueries::getOptionList(),
+			'groups' => GroupQueries::getOptionList(),
 		];
 	}
 
@@ -175,9 +177,9 @@ class DataProviderCrud extends CrudPage {
 				$valid = false;
 			} else {
 				$userWithEmail = (new Select())->select('COUNT(*)')->from('users')
-									->where('email = :email')
-									->addParameter(':email', $data['user_email'])
-									->run(Query::FETCH_COUNT);
+				                               ->where('email = :email')
+				                               ->addParameter(':email', $data['user_email'])
+				                               ->run(Query::FETCH_COUNT);
 				if ($userWithEmail > 0) {
 					$this->addMessage(__('User with this e-mail already exists'), self::MESSAGE_ERROR);
 					$valid = false;
@@ -190,9 +192,9 @@ class DataProviderCrud extends CrudPage {
 				$valid = false;
 			} else {
 				$userWithUsername = (new Select())->select('COUNT(*)')->from('users')
-										->where('username = :username')
-										->addParameter(':username', $data['user_username'])
-										->run(Query::FETCH_COUNT);
+				                                  ->where('username = :username')
+				                                  ->addParameter(':username', $data['user_username'])
+				                                  ->run(Query::FETCH_COUNT);
 				if ($userWithUsername > 0) {
 					$this->addMessage(__('User with this username already exists'), self::MESSAGE_ERROR);
 					$valid = false;

@@ -9,16 +9,24 @@ use Environet\Sys\Plugins\PluginBuilder;
 /**
  * Class PluginCreate
  *
+ * Creates a new plugin configuration
+ *
  * @package Environet\Sys\Commands\DataNode
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class PluginCreate extends BaseCommand {
 
 
 	/**
+	 * Run create plugin command.
+	 *
+	 * Creates and saves a configuration file under '/src/conf/plugins/configurations/'.
+	 *
 	 * @param $arguments
 	 *
 	 * @return int
+	 * @uses \Environet\Sys\Plugins\PluginBuilder::createConfiguration()
+	 * @uses \Environet\Sys\Plugins\PluginBuilder::serializeConfiguration()
 	 */
 	public function run($arguments): int {
 		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
@@ -29,7 +37,8 @@ class PluginCreate extends BaseCommand {
 		$configuration = $pluginBuilder->serializeConfiguration();
 
 		while (true) {
-			$filename = $this->console->ask("Enter the filename where you want to save this configuration:");
+			$this->console->writeLine("Your configuration will be saved into '" . $configurationsPath . "'. Enter a filename you wish to save it as.");
+			$filename = $this->console->ask("Configuration name:");
 
 			if (file_exists($configurationsPath . $filename)) {
 				if (!$this->console->askYesNo("The configuration [$filename] already exists, do you want to overwrite it?", true)) {

@@ -9,8 +9,10 @@ use Exception;
 /**
  * Class CommandException
  *
+ * General command line exception
+ *
  * @package Environet\Sys\Commands\Exceptions
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class CommandException extends Exception {
 

@@ -6,15 +6,19 @@ use Environet\Sys\General\Db\BaseQueries;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\HttpBadRequestException;
 use Environet\Sys\General\Exceptions\HttpNotFoundException;
+use Environet\Sys\General\Exceptions\MissingEventTypeException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\Exceptions\RenderException;
 use Environet\Sys\General\Response;
+use Exception;
 
 /**
  * Class CrudPage
  *
+ * Base class for admin area pages handling CRUD operations
+ *
  * @package Environet\Sys\Admin\Pages
- * @author  Mate Kovacs <mate.kovacs@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 abstract class CrudPage extends BasePage {
 
@@ -31,7 +35,7 @@ abstract class CrudPage extends BasePage {
 	protected $queriesClass;
 
 	/**
-	 * Sucess add message.
+	 * Success add message.
 	 * @var string
 	 */
 	protected $successAddMessage;
@@ -104,6 +108,17 @@ abstract class CrudPage extends BasePage {
 
 
 	/**
+	 * List page action.
+	 *
+	 * @return Response
+	 * @throws RenderException
+	 */
+	public function list(): Response {
+		return $this->renderListPage();
+	}
+
+
+	/**
 	 * Common function to render the list page.
 	 *
 	 * @return Response
@@ -128,6 +143,7 @@ abstract class CrudPage extends BasePage {
 	 * @throws HttpBadRequestException
 	 * @throws QueryException
 	 * @throws RenderException
+	 * @throws MissingEventTypeException
 	 */
 	protected function handleFormPost($id = null, $record = null): Response {
 		$postData = $this->request->getCleanData();
@@ -145,6 +161,7 @@ abstract class CrudPage extends BasePage {
 		//Data is valid, save it, add success message, and redirect to index page
 		$this->queriesClass::save($postData, $id);
 		$this->addMessage($this->successAddMessage, self::MESSAGE_SUCCESS);
+
 		return $this->redirect($this->listPagePath);
 	}
 
@@ -156,6 +173,7 @@ abstract class CrudPage extends BasePage {
 	 * @throws HttpBadRequestException
 	 * @throws QueryException
 	 * @throws RenderException
+	 * @throws MissingEventTypeException
 	 */
 	public function add(): Response {
 		if ($this->request->isPost()) {
@@ -174,6 +192,7 @@ abstract class CrudPage extends BasePage {
 	 * @throws HttpNotFoundException
 	 * @throws QueryException
 	 * @throws RenderException
+	 * @throws MissingEventTypeException
 	 */
 	public function edit(): Response {
 		$id = $this->getIdParam();
@@ -184,6 +203,18 @@ abstract class CrudPage extends BasePage {
 		}
 
 		return $this->renderForm($record);
+	}
+
+
+	/**
+	 * Common function to handle show method.
+	 *
+	 * @return Response
+	 * @throws HttpNotFoundException
+	 * @throws RenderException
+	 */
+	public function show(): Response {
+		return $this->renderShowPage();
 	}
 
 
@@ -204,14 +235,16 @@ abstract class CrudPage extends BasePage {
 
 	/**
 	 * @param $id
+	 *
 	 * @return array|null
 	 * @throws HttpNotFoundException
 	 */
 	private function getRecordById($id) {
 		$record = $this->queriesClass::getById($id);
 		if (is_null($record)) {
-			throw new HttpNotFoundException('Record with id: \'id\' could not be found');
+			throw new HttpNotFoundException('Record with id: ' . $id . ' could not be found');
 		}
+
 		return $record;
 	}
 
@@ -228,7 +261,7 @@ abstract class CrudPage extends BasePage {
 		try {
 			$this->queriesClass::delete($id);
 			$this->addMessage('The requested item has been deleted!', self::MESSAGE_SUCCESS);
-		} catch (\Exception $exception) {
+		} catch (Exception $exception) {
 			$this->addMessage($exception->getMessage(), self::MESSAGE_ERROR);
 		}
 
@@ -246,6 +279,7 @@ abstract class CrudPage extends BasePage {
 	 */
 	protected function renderForm(array $record = null): Response {
 		$context = array_merge(['record' => $record], $this->formContext());
+
 		return $this->render($this->formTemplate, $context);
 	}
 
@@ -261,7 +295,7 @@ abstract class CrudPage extends BasePage {
 
 
 	/**
-	 * Validate the  form's data, return a boolean response
+	 * Validate the form's data, return a boolean response
 	 *
 	 * @param array $data Form's data
 	 *

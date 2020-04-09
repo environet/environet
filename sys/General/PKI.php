@@ -7,10 +7,10 @@ use Environet\Sys\General\Exceptions\PKIException;
 /**
  * Class PKI
  *
- * Helper functions for Public Key Infrastructure
+ * Helper class for Public Key Infrastructure management.
  *
  * @package Environet\Sys\General
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 class PKI {
 
@@ -23,13 +23,14 @@ class PKI {
 	 *
 	 * @return string
 	 * @throws PKIException
+	 * @uses \openssl_sign()
 	 */
 	public function generateSignature(string $content, string $privateKey): string {
 		if (openssl_sign($content, $signature, $privateKey, OPENSSL_ALGO_SHA256)) {
-			//Signature created successfully
+			// Signature created successfully
 			return base64_encode($signature);
 		} else {
-			//Error while creating signature
+			// Error while creating signature
 			throw PKIException::openSSLError();
 		}
 	}

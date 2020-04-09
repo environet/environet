@@ -1,15 +1,4 @@
 <?php
-/**
- * File db.inc.php
- *
- * @author Levente Peres - VIZITERV Environ Kft.
- *
- * Database connection class
- *
- * Handles uplink to PgSQL
- *
- * @package Environet\Sys
- */
 
 namespace Environet\Sys\General\Db;
 
@@ -23,30 +12,33 @@ use PDOStatement;
 /**
  * Class Connection
  *
- * Attempts to establish link to the PgSQL database server as configured, then breaks it down upon
- * destruct.
+ * Attempts to establish link to the PgSQL database server as configured, then breaks it down upon destruct.
  *
- * @package Environet\Sys
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @package Environet\Sys\General\Db
+ * @author  SRG Group <dev@srg.hu>
  */
 class Connection {
 
 	/**
-	 * @var PDO The connection instance
+	 * @var PDO The connection instance.
 	 */
 	public $pdo = null;
 
 	/**
-	 * @var string The connection instance. It caches the instance, so it'll be created only once per request
+	 * @var string The connection instance. It caches the instance, so it'll be created only once per request.
 	 */
 	protected static $instance = null;
 
 
 	/**
 	 * Connection constructor.
+	 * Creates the database connection as well.
+	 *
+	 * @throws InvalidConfigurationException
+	 * @uses \Environet\Sys\General\Db\Connection::connect()
 	 */
 	public function __construct() {
-		//Create connection
+		// Create connection
 		$this->connect();
 	}
 
@@ -54,20 +46,21 @@ class Connection {
 	/**
 	 * Establishes PgSQL connection to the database, or report an error
 	 * @throws InvalidConfigurationException
+	 * @uses \Environet\Sys\Config::getSqlDsn()
+	 * @uses PDO
 	 */
 	public function connect() {
 		$dsn = Config::getInstance()->getSqlDsn();
 		try {
-			//! create a PostgreSQL database connection
+			// Create a PostgreSQL database connection
 			$this->pdo = new PDO($dsn);
 
 			if (!$this->pdo) {
 				throw new InvalidConfigurationException('Could not connect to database');
 			}
-			en_debug("Connected to the database successfully!");
 		} catch (PDOException $e) {
-			//! report error message
-			en_debug("SQL operation failed - ".$e->getMessage(), $e);
+			// Report error message
+			en_debug("SQL operation failed - " . $e->getMessage());
 			throw new InvalidConfigurationException('Could not connect to database');
 		}
 	}
@@ -82,25 +75,28 @@ class Connection {
 
 
 	/**
-	 * Get the instance from the static property, or create new connection if the property is null
+	 * Get the instance from the static property, or create new connection if the property is null.
 	 * @return string|static
+	 * @throws InvalidConfigurationException
 	 */
 	public static function getInstance() {
 		if (is_null(self::$instance)) {
 			self::$instance = new static();
 		}
+
 		return self::$instance;
 	}
 
 
 	/**
-	 * Run a query with PDO, and with parameters
+	 * Run a query on PDO with parameters
 	 *
 	 * @param string $queryString The raw SQL query string, optionally with parameters
-	 * @param array  $parameters Parameters to replace in query (key => value)
+	 * @param array  $parameters  Parameters to replace in query (key => value)
 	 *
 	 * @return PDOStatement
 	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\Connection::parsePDOType()
 	 */
 	public function runQuery(string $queryString, array $parameters): PDOStatement {
 		//Prepare the statement
@@ -110,7 +106,7 @@ class Connection {
 		foreach ($parameters as $variableName => &$value) {
 			//Prepend the : to the variable name, of not set yet
 			if (substr($variableName, 0, 1) !== ':') {
-				$variableName = ':'.$variableName;
+				$variableName = ':' . $variableName;
 			}
 
 			//Bind param with detected PDO type
@@ -123,7 +119,7 @@ class Connection {
 		}
 
 		//Error during query, throw an exception
-		throw new QueryException('SQL query error with code '.$statement->errorCode().': '.($statement->errorInfo()[2] ?? null));
+		throw new QueryException('SQL query error with code ' . $statement->errorCode() . ': ' . ($statement->errorInfo()[2] ?? null));
 	}
 
 

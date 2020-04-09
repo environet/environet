@@ -8,8 +8,10 @@ use Environet\Sys\Commands\Exceptions\CommandException;
 /**
  * Class BaseCommand
  *
+ * Base class for console commands.
+ *
  * @package Environet\Sys\Commands
- * @author  Ádám Bálint <adam.balint@srg.hu>
+ * @author  SRG Group <dev@srg.hu>
  */
 abstract class BaseCommand {
 
@@ -30,6 +32,8 @@ abstract class BaseCommand {
 
 
 	/**
+	 * Method stub to run commands with.
+	 *
 	 * @param array $arguments
 	 *
 	 * @return int
