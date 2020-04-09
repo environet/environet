@@ -1049,9 +1049,9 @@ It should output the currently installed version number.</p>
 <h2 id="get-the-source">Get the source</h2>
 <p>You will need to have Git installed to be able to download the project source, and to receive updates later. It is easiest to install Git on Linux using the preferred package manager of your Linux distribution. See the <a href="https://git-scm.com/download/linux">Git downloads page</a> for details.</p>
 <p>Checkout the Environet docker repository - Navigate to the directory where you would like to install environet<br />
-- Run <code>$ git clone git@github.com:environet/environet-docker.git --recurse-submodules</code></p>
+- Run <code>$ git clone https://github.com/environet/environet-docker.git --recurse-submodules</code></p>
 <p>By default, the files will be downloaded to a directory named <code>environet-docker</code>, you can specify a custom name by providing a third argument to the command, e.g.:<br />
-<code>$ git clone git@github.com:environet/environet-docker.git my_directory --recurse-submodules</code></p>
+<code>$ git clone https://github.com/environet/environet-docker.git my_directory --recurse-submodules</code></p>
 <p>Note: If you cloned the repository without the <code>--recurse-submodules</code> flag, you need to run <code>git submodule init</code> and <code>git submodule update</code>, to get the src files checked out.</p>
 <p>Change to the directory you checked the code out to, and you should be ready to proceed with the setup.</p>
 <p>If you are installing a data node, refer to the data node <a href="#30_data_node">setup instructions</a></p>
