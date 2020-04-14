@@ -64,7 +64,7 @@ class GroupQueries extends BaseQueries {
 				->addParameter(':groupId', $id)
 				->run();
 
-			self::savePermissions($data['group_permissions'], $id);
+			self::savePermissions($data['permissions'], $id);
 		} else {
 			// insert new record
 			$insertId = (new Insert())
@@ -77,7 +77,7 @@ class GroupQueries extends BaseQueries {
 			]));
 
 			// add permission relation to group
-			self::savePermissions($data['group_permissions'], $insertId);
+			self::savePermissions($data['permissions'], $insertId);
 		}
 	}
 

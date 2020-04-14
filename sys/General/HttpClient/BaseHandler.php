@@ -3,6 +3,7 @@
 
 namespace Environet\Sys\General\HttpClient;
 
+use Environet\Sys\General\Exceptions\PermissionException;
 use Environet\Sys\General\Identity;
 use Environet\Sys\General\Request;
 
@@ -51,9 +52,10 @@ abstract class BaseHandler implements RequestHandlerInterface {
 	/**
 	 * Base method for checking user and group permissions against the current action.
 	 *
-	 * @return mixed
+	 * @param array $requiredPermissions
+	 * @throws PermissionException
 	 */
-	abstract protected function authorizeRequest();
+	abstract protected function authorizeRequest(array $requiredPermissions);
 
 
 }

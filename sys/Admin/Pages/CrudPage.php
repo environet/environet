@@ -6,6 +6,7 @@ use Environet\Sys\General\Db\BaseQueries;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\HttpBadRequestException;
 use Environet\Sys\General\Exceptions\HttpNotFoundException;
+use Environet\Sys\General\Exceptions\InvalidConfigurationException;
 use Environet\Sys\General\Exceptions\MissingEventTypeException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\Exceptions\RenderException;
@@ -144,6 +145,7 @@ abstract class CrudPage extends BasePage {
 	 * @throws QueryException
 	 * @throws RenderException
 	 * @throws MissingEventTypeException
+	 * @throws InvalidConfigurationException
 	 */
 	protected function handleFormPost($id = null, $record = null): Response {
 		$postData = $this->request->getCleanData();
@@ -174,6 +176,7 @@ abstract class CrudPage extends BasePage {
 	 * @throws QueryException
 	 * @throws RenderException
 	 * @throws MissingEventTypeException
+	 * @throws InvalidConfigurationException
 	 */
 	public function add(): Response {
 		if ($this->request->isPost()) {
@@ -193,6 +196,7 @@ abstract class CrudPage extends BasePage {
 	 * @throws QueryException
 	 * @throws RenderException
 	 * @throws MissingEventTypeException
+	 * @throws InvalidConfigurationException
 	 */
 	public function edit(): Response {
 		$id = $this->getIdParam();

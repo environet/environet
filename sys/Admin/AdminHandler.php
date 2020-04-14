@@ -48,7 +48,7 @@ use Exception;
 class AdminHandler extends BaseHandler {
 
 	/** @inheritDoc */
-	const HANDLER_PERMISSION = 'admin.all';
+	const HANDLER_PERMISSION = 'admin.login';
 
 	/**
 	 * @var string Base path for templates
@@ -68,12 +68,12 @@ class AdminHandler extends BaseHandler {
 	 * @inheritDoc
 	 *
 	 * @return mixed|void
-	 * @throws PermissionException
 	 * @throws QueryException
 	 */
-	protected function authorizeRequest() {
-		if (!in_array(self::HANDLER_PERMISSION, $this->getIdentity()->getPermissions())) {
-			throw new PermissionException('You don\'t have the required permission for this.');
+	protected function authorizeRequest(array $requiredPermissions) {
+		$requiredPermissions = array_merge($requiredPermissions, [self::HANDLER_PERMISSION]);
+		if (!$this->getIdentity()->hasPermissions($requiredPermissions)) {
+			throw new PermissionException('You don\'t have the required permissions for this. (' . join(', ', $requiredPermissions) . ')');
 		}
 	}
 
@@ -115,6 +115,7 @@ class AdminHandler extends BaseHandler {
 			/** @var BasePage $routeHandlerClass */
 			$routeHandlerClass = $foundRoute[0];
 			$handlerMethodName = $foundRoute[1];
+			$requiredPermissions = isset($foundRoute[2]) ? $foundRoute[2] : [];
 
 
 			// Allow only login page without identity
@@ -122,7 +123,7 @@ class AdminHandler extends BaseHandler {
 				if (!$this->getIdentity()) {
 					return httpRedirect('/admin/login');
 				}
-				$this->authorizeRequest();
+				$this->authorizeRequest($requiredPermissions);
 			}
 
 			// Page found, create the handler, and call the handle function, and return it's response
@@ -165,63 +166,63 @@ class AdminHandler extends BaseHandler {
 		'^logout$' => [Logout::class, 'handle'],
 		'^$'       => [Dashboard::class, 'handle'],
 
-		'^users$'        => [UserCrud::class, 'list'],
-		'^users\/show$'  => [UserCrud::class, 'show'],
-		'^users\/add$'   => [UserCrud::class, 'add'],
-		'^users\/edit$'  => [UserCrud::class, 'edit'],
-		'^users\/delete' => [UserCrud::class, 'delete'],
+		'^users$'        => [UserCrud::class, 'list', ['admin.users.read']],
+		'^users\/show$'  => [UserCrud::class, 'show', ['admin.users.read']],
+		'^users\/add$'   => [UserCrud::class, 'add', ['admin.users.create']],
+		'^users\/edit$'  => [UserCrud::class, 'edit', ['admin.users.update']],
+		'^users\/delete' => [UserCrud::class, 'delete', ['admin.users.delete']],
 
-		'^groups$'        => [GroupCrud::class, 'list'],
-		'^groups\/edit$'  => [GroupCrud::class, 'edit'],
-		'^groups\/add'    => [GroupCrud::class, 'add'],
-		'^groups\/delete' => [GroupCrud::class, 'delete'],
+		'^groups$'        => [GroupCrud::class, 'list', ['admin.groups.read']],
+		'^groups\/edit$'  => [GroupCrud::class, 'edit', ['admin.groups.create']],
+		'^groups\/add'    => [GroupCrud::class, 'add', ['admin.groups.update']],
+		'^groups\/delete' => [GroupCrud::class, 'delete', ['admin.groups.delete']],
 
-		'^data-providers$'       => [DataProviderCrud::class, 'list'],
-		'^data-providers\/show$' => [DataProviderCrud::class, 'show'],
-		'^data-providers\/add$'  => [DataProviderCrud::class, 'add'],
-		'^data-providers\/edit$' => [DataProviderCrud::class, 'edit'],
+		'^data-providers$'       => [DataProviderCrud::class, 'list', ['admin.providers.read']],
+		'^data-providers\/show$' => [DataProviderCrud::class, 'show', ['admin.providers.read']],
+		'^data-providers\/add$'  => [DataProviderCrud::class, 'add', ['admin.providers.create']],
+		'^data-providers\/edit$' => [DataProviderCrud::class, 'edit', ['admin.providers.delete']],
 
-		'^hydro\/observed-properties$'       => [HydroObservedPropertyCrud::class, 'list'],
-		'^hydro\/observed-properties\/show$' => [HydroObservedPropertyCrud::class, 'show'],
-		'^hydro\/observed-properties\/add$'  => [HydroObservedPropertyCrud::class, 'add'],
-		'^hydro\/observed-properties\/edit$' => [HydroObservedPropertyCrud::class, 'edit'],
+		'^hydro\/observed-properties$'       => [HydroObservedPropertyCrud::class, 'list', ['admin.hydro.observedproperties.read']],
+		'^hydro\/observed-properties\/show$' => [HydroObservedPropertyCrud::class, 'show', ['admin.hydro.observedproperties.read']],
+		'^hydro\/observed-properties\/add$'  => [HydroObservedPropertyCrud::class, 'add', ['admin.hydro.observedproperties.create']],
+		'^hydro\/observed-properties\/edit$' => [HydroObservedPropertyCrud::class, 'edit', ['admin.hydro.observedproperties.update']],
 
-		'^hydro\/waterbodies$'       => [WaterbodyCrud::class, 'list'],
-		'^hydro\/waterbodies\/show$' => [WaterbodyCrud::class, 'show'],
-		'^hydro\/waterbodies\/add$'  => [WaterbodyCrud::class, 'add'],
-		'^hydro\/waterbodies\/edit$' => [WaterbodyCrud::class, 'edit'],
+		'^hydro\/waterbodies$'       => [WaterbodyCrud::class, 'list', ['admin.hydro.waterbodies.read']],
+		'^hydro\/waterbodies\/show$' => [WaterbodyCrud::class, 'show', ['admin.hydro.waterbodies.read']],
+		'^hydro\/waterbodies\/add$'  => [WaterbodyCrud::class, 'add', ['admin.hydro.waterbodies.create']],
+		'^hydro\/waterbodies\/edit$' => [WaterbodyCrud::class, 'edit', ['admin.hydro.waterbodies.update']],
 
-		'^hydro\/station-classifications$'       => [HydroStationClassificationCrud::class, 'list'],
-		'^hydro\/station-classifications\/show$' => [HydroStationClassificationCrud::class, 'show'],
-		'^hydro\/station-classifications\/add$'  => [HydroStationClassificationCrud::class, 'add'],
-		'^hydro\/station-classifications\/edit$' => [HydroStationClassificationCrud::class, 'edit'],
+		'^hydro\/station-classifications$'       => [HydroStationClassificationCrud::class, 'list', ['admin.hydro.classifications.read']],
+		'^hydro\/station-classifications\/show$' => [HydroStationClassificationCrud::class, 'show', ['admin.hydro.classifications.read']],
+		'^hydro\/station-classifications\/add$'  => [HydroStationClassificationCrud::class, 'add', ['admin.hydro.classifications.create']],
+		'^hydro\/station-classifications\/edit$' => [HydroStationClassificationCrud::class, 'edit', ['admin.hydro.classifications.update']],
 
-		'^hydro\/monitoring-points$'            => [HydroMonitoringPointCrud::class, 'list'],
-		'^hydro\/monitoring-points\/show$'      => [HydroMonitoringPointCrud::class, 'show'],
-		'^hydro\/monitoring-points\/add$'       => [HydroMonitoringPointCrud::class, 'add'],
-		'^hydro\/monitoring-points\/edit$'      => [HydroMonitoringPointCrud::class, 'edit'],
-		'^hydro\/monitoring-points\/csv-upload' => [HydroMonitoringPointCrud::class, 'csvUpload'],
+		'^hydro\/monitoring-points$'            => [HydroMonitoringPointCrud::class, 'list', ['admin.hydro.monitoringpoints.read']],
+		'^hydro\/monitoring-points\/show$'      => [HydroMonitoringPointCrud::class, 'show', ['admin.hydro.monitoringpoints.read']],
+		'^hydro\/monitoring-points\/add$'       => [HydroMonitoringPointCrud::class, 'add', ['admin.hydro.monitoringpoints.create']],
+		'^hydro\/monitoring-points\/edit$'      => [HydroMonitoringPointCrud::class, 'edit', ['admin.hydro.monitoringpoints.update']],
+		'^hydro\/monitoring-points\/csv-upload' => [HydroMonitoringPointCrud::class, 'csvUpload', ['admin.hydro.monitoringpoints.create', 'admin.hydro.monitoringpoints.update']],
 
-		'^meteo\/station-classifications$'       => [MeteoStationClassificationCrud::class, 'list'],
-		'^meteo\/station-classifications\/show$' => [MeteoStationClassificationCrud::class, 'show'],
-		'^meteo\/station-classifications\/add$'  => [MeteoStationClassificationCrud::class, 'add'],
-		'^meteo\/station-classifications\/edit$' => [MeteoStationClassificationCrud::class, 'edit'],
+		'^meteo\/station-classifications$'       => [MeteoStationClassificationCrud::class, 'list', ['admin.meteo.classifications.read']],
+		'^meteo\/station-classifications\/show$' => [MeteoStationClassificationCrud::class, 'show', ['admin.meteo.classifications.read']],
+		'^meteo\/station-classifications\/add$'  => [MeteoStationClassificationCrud::class, 'add', ['admin.meteo.classifications.create']],
+		'^meteo\/station-classifications\/edit$' => [MeteoStationClassificationCrud::class, 'edit', ['admin.meteo.classifications.update']],
 
-		'^meteo\/observed-properties$'       => [MeteoObservedPropertyCrud::class, 'list'],
-		'^meteo\/observed-properties\/show$' => [MeteoObservedPropertyCrud::class, 'show'],
-		'^meteo\/observed-properties\/add$'  => [MeteoObservedPropertyCrud::class, 'add'],
-		'^meteo\/observed-properties\/edit$' => [MeteoObservedPropertyCrud::class, 'edit'],
+		'^meteo\/observed-properties$'       => [MeteoObservedPropertyCrud::class, 'list', ['admin.meteo.observedproperties.read']],
+		'^meteo\/observed-properties\/show$' => [MeteoObservedPropertyCrud::class, 'show', ['admin.meteo.observedproperties.read']],
+		'^meteo\/observed-properties\/add$'  => [MeteoObservedPropertyCrud::class, 'add', ['admin.meteo.observedproperties.create']],
+		'^meteo\/observed-properties\/edit$' => [MeteoObservedPropertyCrud::class, 'edit', ['admin.meteo.observedproperties.update']],
 
-		'^meteo\/monitoring-points$'            => [MeteoMonitoringPointCrud::class, 'list'],
-		'^meteo\/monitoring-points\/show$'      => [MeteoMonitoringPointCrud::class, 'show'],
-		'^meteo\/monitoring-points\/add$'       => [MeteoMonitoringPointCrud::class, 'add'],
-		'^meteo\/monitoring-points\/edit$'      => [MeteoMonitoringPointCrud::class, 'edit'],
-		'^meteo\/monitoring-points\/csv-upload' => [MeteoMonitoringPointCrud::class, 'csvUpload'],
+		'^meteo\/monitoring-points$'            => [MeteoMonitoringPointCrud::class, 'list', ['admin.meteo.monitoringpoints.read']],
+		'^meteo\/monitoring-points\/show$'      => [MeteoMonitoringPointCrud::class, 'show', ['admin.meteo.monitoringpoints.read']],
+		'^meteo\/monitoring-points\/add$'       => [MeteoMonitoringPointCrud::class, 'add', ['admin.meteo.monitoringpoints.create']],
+		'^meteo\/monitoring-points\/edit$'      => [MeteoMonitoringPointCrud::class, 'edit', ['admin.meteo.monitoringpoints.update']],
+		'^meteo\/monitoring-points\/csv-upload' => [MeteoMonitoringPointCrud::class, 'csvUpload', ['admin.meteo.monitoringpoints.create', 'admin.meteo.monitoringpoints.update']],
 
-		'^hydro\/results$' => [HydroResultsCrud::class, 'list'],
-		'^meteo\/results$' => [MeteoResultsCrud::class, 'list'],
+		'^hydro\/results$' => [HydroResultsCrud::class, 'list', ['admin.hydro.results.read']],
+		'^meteo\/results$' => [MeteoResultsCrud::class, 'list', ['admin.meteo.results.read']],
 
-		'^upload-test$'   => [UploadTest::class, 'handle'],
-		'^download-test$' => [DownloadTest::class, 'handle'],
+		'^upload-test$'   => [UploadTest::class, 'handle', ['api.upload']],
+		'^download-test$' => [DownloadTest::class, 'handle', ['api.download']],
 	];
 }

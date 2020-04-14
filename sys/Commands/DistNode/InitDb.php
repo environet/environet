@@ -3,11 +3,8 @@
 
 namespace Environet\Sys\Commands\DistNode;
 
-use Environet\Sys\Commands\BaseCommand;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Commands\Exceptions\CommandException;
-use Environet\Sys\Config;
-use Environet\Sys\General\Db\Connection;
 use Environet\Sys\General\Db\Query\Insert;
 use Environet\Sys\General\Exceptions\QueryException;
 
@@ -19,7 +16,7 @@ use Environet\Sys\General\Exceptions\QueryException;
  * @package Environet\Sys\Commands\DistNode
  * @author  SRG Group <dev@srg.hu>
  */
-class InitDb extends BaseCommand {
+class InitDb extends DbCommand {
 
 
 	/**
@@ -175,42 +172,6 @@ class InitDb extends BaseCommand {
 		}
 
 		return $this->runSqlFile($dataP1th, $output);
-	}
-
-
-	/**
-	 * Run the content of an SQL file with psql CLI command
-	 *
-	 * Get's the database configuration from {@see Config}, issues exec commands.
-	 *
-	 * @param string $file   SQL file
-	 * @param array  $output Collect the output in this array
-	 *
-	 * @return int
-	 */
-	protected function runSqlFile(string $file, array &$output): int {
-		// Get database parameters
-		$config = Config::getInstance();
-		$host = $config->getDatabaseHost();
-		$user = $config->getDatabaseUser();
-		$pass = $config->getDatabasePass();
-		$db = $config->getDatabaseDatabase();
-		$port = $config->getDatabasePort();
-
-		$exitCode = 0;
-		// psql command will ask for password if we don't store it on a .pgpass file, so create this file temporarily
-		$passFile = '~/.pgpass';
-		exec("touch $passFile && chmod 600 $passFile &&  echo \"$host:$port:$db:$user:$pass\" > $passFile", $output, $exitCode);
-
-		if ($exitCode === 0) {
-			//Run psql import command
-			exec("psql --host=$host --username=$user --dbname=$db --port=$port < $file 2>&1", $output, $exitCode);
-		}
-
-		// Remove pgpass file
-		exec("rm $passFile");
-
-		return $exitCode;
 	}
 
 
