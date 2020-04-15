@@ -16,7 +16,7 @@
 
                     <select name="permissions[]" multiple>
 						<?php foreach ($permissions as $id => $permission): ?>
-                            <option value="<?= $id; ?>" <?= in_array($id, $record['permissions']) ? 'selected' : '' ?>><?= $permission; ?></option>
+                            <option value="<?= $id; ?>" <?= isset($record['permissions']) && in_array($id, $record['permissions']) ? 'selected' : '' ?>><?= $permission; ?></option>
 						<?php endforeach; ?>
                     </select>
                 </div>

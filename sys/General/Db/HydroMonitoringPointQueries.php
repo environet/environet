@@ -2,7 +2,6 @@
 
 namespace Environet\Sys\General\Db;
 
-use Environet\Sys\General\Db\Query\Delete;
 use Environet\Sys\General\Db\Query\Insert;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;

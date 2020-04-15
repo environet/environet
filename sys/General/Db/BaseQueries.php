@@ -56,8 +56,9 @@ class BaseQueries {
 			(new Delete())->table($connectionTable)->where($colRight . ' = :' . $colRight)->addParameter(':' . $colRight, $idRight)->run();
 		}
 
-		if(empty($ids))
+		if (empty($ids)) {
 			return;
+		}
 
 		// Create insert query for new connections
 		$insert = (new Insert())->table($connectionTable)->columns([$colLeft, $colRight]);

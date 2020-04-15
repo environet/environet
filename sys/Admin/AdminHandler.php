@@ -67,13 +67,14 @@ class AdminHandler extends BaseHandler {
 	/**
 	 * @inheritDoc
 	 *
-	 * @return mixed|void
 	 * @throws QueryException
 	 */
 	protected function authorizeRequest(array $requiredPermissions) {
 		$requiredPermissions = array_merge($requiredPermissions, [self::HANDLER_PERMISSION]);
 		if (!$this->getIdentity()->hasPermissions($requiredPermissions)) {
 			throw new PermissionException('You don\'t have the required permissions for this. (' . join(', ', $requiredPermissions) . ')');
+		} else {
+			$this->getIdentity()->setAuthorizedPermissions($requiredPermissions);
 		}
 	}
 
@@ -123,7 +124,17 @@ class AdminHandler extends BaseHandler {
 				if (!$this->getIdentity()) {
 					return httpRedirect('/admin/login');
 				}
-				$this->authorizeRequest($requiredPermissions);
+				try {
+					$this->authorizeRequest($requiredPermissions);
+				} catch (PermissionException $exception) {
+					// User doesn't have the "normal" permissions, check any alternative permissions
+					if (isset($foundRoute[3])) {
+						$alternativePermissions = $foundRoute[3];
+						$this->authorizeRequest($alternativePermissions);
+					} else {
+						throw $exception;
+					}
+				}
 			}
 
 			// Page found, create the handler, and call the handle function, and return it's response
@@ -173,14 +184,14 @@ class AdminHandler extends BaseHandler {
 		'^users\/delete' => [UserCrud::class, 'delete', ['admin.users.delete']],
 
 		'^groups$'        => [GroupCrud::class, 'list', ['admin.groups.read']],
-		'^groups\/edit$'  => [GroupCrud::class, 'edit', ['admin.groups.create']],
-		'^groups\/add'    => [GroupCrud::class, 'add', ['admin.groups.update']],
+		'^groups\/edit$'  => [GroupCrud::class, 'edit', ['admin.groups.update']],
+		'^groups\/add'    => [GroupCrud::class, 'add', ['admin.groups.create']],
 		'^groups\/delete' => [GroupCrud::class, 'delete', ['admin.groups.delete']],
 
-		'^data-providers$'       => [DataProviderCrud::class, 'list', ['admin.providers.read']],
-		'^data-providers\/show$' => [DataProviderCrud::class, 'show', ['admin.providers.read']],
+		'^data-providers$'       => [DataProviderCrud::class, 'list', ['admin.providers.read'], ['admin.providers.readown']],
+		'^data-providers\/show$' => [DataProviderCrud::class, 'show', ['admin.providers.read'], ['admin.providers.readown']],
 		'^data-providers\/add$'  => [DataProviderCrud::class, 'add', ['admin.providers.create']],
-		'^data-providers\/edit$' => [DataProviderCrud::class, 'edit', ['admin.providers.delete']],
+		'^data-providers\/edit$' => [DataProviderCrud::class, 'edit', ['admin.providers.delete'], ['admin.providers.updateown']],
 
 		'^hydro\/observed-properties$'       => [HydroObservedPropertyCrud::class, 'list', ['admin.hydro.observedproperties.read']],
 		'^hydro\/observed-properties\/show$' => [HydroObservedPropertyCrud::class, 'show', ['admin.hydro.observedproperties.read']],
@@ -197,11 +208,11 @@ class AdminHandler extends BaseHandler {
 		'^hydro\/station-classifications\/add$'  => [HydroStationClassificationCrud::class, 'add', ['admin.hydro.classifications.create']],
 		'^hydro\/station-classifications\/edit$' => [HydroStationClassificationCrud::class, 'edit', ['admin.hydro.classifications.update']],
 
-		'^hydro\/monitoring-points$'            => [HydroMonitoringPointCrud::class, 'list', ['admin.hydro.monitoringpoints.read']],
-		'^hydro\/monitoring-points\/show$'      => [HydroMonitoringPointCrud::class, 'show', ['admin.hydro.monitoringpoints.read']],
-		'^hydro\/monitoring-points\/add$'       => [HydroMonitoringPointCrud::class, 'add', ['admin.hydro.monitoringpoints.create']],
-		'^hydro\/monitoring-points\/edit$'      => [HydroMonitoringPointCrud::class, 'edit', ['admin.hydro.monitoringpoints.update']],
-		'^hydro\/monitoring-points\/csv-upload' => [HydroMonitoringPointCrud::class, 'csvUpload', ['admin.hydro.monitoringpoints.create', 'admin.hydro.monitoringpoints.update']],
+		'^hydro\/monitoring-points$'            => [HydroMonitoringPointCrud::class, 'list', ['admin.hydro.monitoringpoints.read'], ['admin.hydro.monitoringpoints.readown']],
+		'^hydro\/monitoring-points\/show$'      => [HydroMonitoringPointCrud::class, 'show', ['admin.hydro.monitoringpoints.read'], ['admin.hydro.monitoringpoints.readown']],
+		'^hydro\/monitoring-points\/add$'       => [HydroMonitoringPointCrud::class, 'add', ['admin.hydro.monitoringpoints.create'], ['admin.hydro.monitoringpoints.createown']],
+		'^hydro\/monitoring-points\/edit$'      => [HydroMonitoringPointCrud::class, 'edit', ['admin.hydro.monitoringpoints.update'], ['admin.hydro.monitoringpoints.updateown']],
+		'^hydro\/monitoring-points\/csv-upload' => [HydroMonitoringPointCrud::class, 'csvUpload', ['admin.hydro.monitoringpoints.create', 'admin.hydro.monitoringpoints.update'], ['admin.hydro.monitoringpoints.createown', 'admin.hydro.monitoringpoints.updateown']],
 
 		'^meteo\/station-classifications$'       => [MeteoStationClassificationCrud::class, 'list', ['admin.meteo.classifications.read']],
 		'^meteo\/station-classifications\/show$' => [MeteoStationClassificationCrud::class, 'show', ['admin.meteo.classifications.read']],
@@ -213,11 +224,11 @@ class AdminHandler extends BaseHandler {
 		'^meteo\/observed-properties\/add$'  => [MeteoObservedPropertyCrud::class, 'add', ['admin.meteo.observedproperties.create']],
 		'^meteo\/observed-properties\/edit$' => [MeteoObservedPropertyCrud::class, 'edit', ['admin.meteo.observedproperties.update']],
 
-		'^meteo\/monitoring-points$'            => [MeteoMonitoringPointCrud::class, 'list', ['admin.meteo.monitoringpoints.read']],
-		'^meteo\/monitoring-points\/show$'      => [MeteoMonitoringPointCrud::class, 'show', ['admin.meteo.monitoringpoints.read']],
-		'^meteo\/monitoring-points\/add$'       => [MeteoMonitoringPointCrud::class, 'add', ['admin.meteo.monitoringpoints.create']],
-		'^meteo\/monitoring-points\/edit$'      => [MeteoMonitoringPointCrud::class, 'edit', ['admin.meteo.monitoringpoints.update']],
-		'^meteo\/monitoring-points\/csv-upload' => [MeteoMonitoringPointCrud::class, 'csvUpload', ['admin.meteo.monitoringpoints.create', 'admin.meteo.monitoringpoints.update']],
+		'^meteo\/monitoring-points$'            => [MeteoMonitoringPointCrud::class, 'list', ['admin.meteo.monitoringpoints.read'], ['admin.meteo.monitoringpoints.readown']],
+		'^meteo\/monitoring-points\/show$'      => [MeteoMonitoringPointCrud::class, 'show', ['admin.meteo.monitoringpoints.read'], ['admin.meteo.monitoringpoints.readown']],
+		'^meteo\/monitoring-points\/add$'       => [MeteoMonitoringPointCrud::class, 'add', ['admin.meteo.monitoringpoints.create'], ['admin.meteo.monitoringpoints.createown']],
+		'^meteo\/monitoring-points\/edit$'      => [MeteoMonitoringPointCrud::class, 'edit', ['admin.meteo.monitoringpoints.update'], ['admin.meteo.monitoringpoints.updateown']],
+		'^meteo\/monitoring-points\/csv-upload' => [MeteoMonitoringPointCrud::class, 'csvUpload', ['admin.meteo.monitoringpoints.create', 'admin.meteo.monitoringpoints.update'], ['admin.meteo.monitoringpoints.createown', 'admin.meteo.monitoringpoints.updateown']],
 
 		'^hydro\/results$' => [HydroResultsCrud::class, 'list', ['admin.hydro.results.read']],
 		'^meteo\/results$' => [MeteoResultsCrud::class, 'list', ['admin.meteo.results.read']],

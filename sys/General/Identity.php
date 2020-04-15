@@ -33,9 +33,9 @@ class Identity {
 	private $publicKey;
 
 	/**
-	 * @var string Attached permission list from database
+	 * @var array Permissions this identity has been granted
 	 */
-	private $permissions = null;
+	private $authorizedPermissions = [];
 
 
 	/**
@@ -47,6 +47,16 @@ class Identity {
 	public function __construct(int $id, array $data) {
 		$this->id = $id;
 		$this->data = $data;
+	}
+
+
+	/**
+	 * Get identity id.
+	 *
+	 * @return int
+	 */
+	public function getId() {
+		return $this->id;
 	}
 
 
@@ -117,14 +127,14 @@ class Identity {
 	 * @uses \Environet\Sys\General\Db\UserQueries::getUserPermissions()
 	 */
 	public function getPermissions(): array {
-		if ($this->permissions === null) {
-			$this->permissions = UserQueries::getUserPermissions($this->id);
-		}
-
-		return $this->permissions;
+		return UserQueries::getUserPermissions($this->id);
 	}
 
 
+	/**
+	 * @return bool
+	 * @throws Exceptions\QueryException
+	 */
 	private function isSuperAdmin(): bool {
 		return in_array('admin.all', $this->getPermissions());
 	}
@@ -141,15 +151,31 @@ class Identity {
 		if ($this->isSuperAdmin()) {
 			return true;
 		}
+
 		return !array_diff($permissions, $this->getPermissions());
 	}
 
 
+	/**
+	 * @param array $permissions
+	 * @return bool
+	 * @throws Exceptions\QueryException
+	 */
 	public function hasPermissionsAnyOf(array $permissions): bool {
 		if ($this->isSuperAdmin()) {
 			return true;
 		}
 		return (bool) array_intersect($permissions, $this->getPermissions());
+	}
+
+
+	public function setAuthorizedPermissions(array $permissions) {
+		$this->authorizedPermissions = $permissions;
+	}
+
+
+	public function getAuthorizedPermissions(): array {
+		return $this->authorizedPermissions;
 	}
 
 
