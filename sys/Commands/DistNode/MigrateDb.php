@@ -33,13 +33,7 @@ class MigrateDb extends DbCommand {
 			return $exitCode;
 		}
 
-		$this->console->writeLine('Crud permissions created successfully', Console::COLOR_GREEN);
-
-		$exitCode = $this->addSubjectIdColumnToPermissionTables($output);
-		if ($exitCode > 0) {
-			echo implode("\n", $output);
-			return $exitCode;
-		}
+		echo implode("\n", $output);
 
 		$this->console->writeLine('Crud permissions created successfully', Console::COLOR_GREEN);
 
@@ -49,12 +43,6 @@ class MigrateDb extends DbCommand {
 
 	private function createCrudPermissions(array &$output): int {
 		$schemaPath = SRC_PATH . '/database/create_crud_permissions.sql';
-		return $this->runSqlFile($schemaPath, $output);
-	}
-
-
-	private function addSubjectIdColumnToPermissionTables(array &$output): int {
-		$schemaPath = SRC_PATH . '/database/add_subject_id_permissions.sql';
 		return $this->runSqlFile($schemaPath, $output);
 	}
 

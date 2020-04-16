@@ -55,6 +55,8 @@ class InitDb extends DbCommand {
 		}
 		$this->console->writeLine('Database content successfully imported', Console::COLOR_GREEN);
 
+		(new MigrateDb($this->console))->run([]);
+
 		/**
 		 * Ask for admin user parameters, and create this user
 		 */
