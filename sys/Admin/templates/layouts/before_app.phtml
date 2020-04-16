@@ -25,52 +25,98 @@
             <li class="">
                 <?= includeTemplatePart('menuitem.phtml', ['title' => 'Dashboard', 'route' => '/admin', 'icon' => 'home', 'matchExtra' => 0]) ?>
             </li>
-            <li>
-				<?= includeTemplatePart('menuitem.phtml', ['title' => 'Users', 'route' => '/admin/users', 'icon' => 'user', 'matchExtra' => 1]) ?>
-            </li>
-            <li>
-				<?= includeTemplatePart('menuitem.phtml', ['title' => 'Groups', 'route' => '/admin/groups', 'icon' => 'user-friends', 'matchExtra' => 1]) ?>
-            </li>
-            <li>
-				<?= includeTemplatePart('menuitem.phtml', ['title' => 'Data providers', 'route' => '/admin/data-providers', 'icon' => 'address-book', 'matchExtra' => 1]) ?>
-            </li>
-            <li class="sub-menu" data-id="hydroSubmenu" >
-				<?= includeTemplatePart('menuitem.phtml', ['title' => 'Hydro', 'route' => null, 'icon' => 'tint', 'matchExtra' => 0]) ?>
-                <ul class="sub">
-                    <li>
-						<?= includeTemplatePart('menuitem.phtml', ['title' => 'Monitoring points', 'route' => '/admin/hydro/monitoring-points', 'icon' => 'tachometer-alt', 'matchExtra' => 1]) ?>
-                    </li>
-                    <li>
-						<?= includeTemplatePart('menuitem.phtml', ['title' => 'Observed properties', 'route' => '/admin/hydro/observed-properties', 'icon' => 'eye', 'matchExtra' => 1]) ?>
-                    </li>
-                    <li>
-						<?= includeTemplatePart('menuitem.phtml', ['title' => 'Waterbodies', 'route' => '/admin/hydro/waterbodies', 'icon' => 'water', 'matchExtra' => 1]) ?>
-                    </li>
-                    <li>
-						<?= includeTemplatePart('menuitem.phtml', ['title' => 'Station classifications', 'route' => '/admin/hydro/station-classifications', 'icon' => 'certificate', 'matchExtra' => 1]) ?>
-                    </li>
-                    <li>
-						<?= includeTemplatePart('menuitem.phtml', ['title' => 'Results', 'route' => '/admin/hydro/results', 'icon' => 'chart-pie', 'matchExtra' => 1]) ?>
-                    </li>
-                </ul>
-            </li>
-            <li class="sub-menu" data-id="meteoSubmenu" >
-				<?= includeTemplatePart('menuitem.phtml', ['title' => 'Meteo', 'route' => null, 'icon' => 'cloud', 'matchExtra' => 1]) ?>
-                <ul class="sub">
-                    <li>
-						<?= includeTemplatePart('menuitem.phtml', ['title' => 'Monitoring points', 'route' => '/admin/meteo/monitoring-points', 'icon' => 'tachometer-alt', 'matchExtra' => 1]) ?>
-                    </li>
-                    <li>
-						<?= includeTemplatePart('menuitem.phtml', ['title' => 'Observed properties', 'route' => '/admin/meteo/observed-properties', 'icon' => 'eye', 'matchExtra' => 1]) ?>
-                    </li>
-                    <li>
-						<?= includeTemplatePart('menuitem.phtml', ['title' => 'Station classifications', 'route' => '/admin/meteo/station-classifications', 'icon' => 'certificate', 'matchExtra' => 1]) ?>
-                    </li>
-					<li>
-		                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Results', 'route' => '/admin/meteo/results', 'icon' => 'chart-pie', 'matchExtra' => 1]) ?>
-					</li>
-                </ul>
-            </li>
+
+            <?php if($request->getIdentity()->hasPermissions(['admin.users.read'])): ?>
+                <li>
+                    <?= includeTemplatePart('menuitem.phtml', ['title' => 'Users', 'route' => '/admin/users', 'icon' => 'user', 'matchExtra' => 1]) ?>
+                </li>
+			<?php endif; ?>
+
+            <?php if($request->getIdentity()->hasPermissions(['admin.groups.read'])): ?>
+                <li>
+                    <?= includeTemplatePart('menuitem.phtml', ['title' => 'Groups', 'route' => '/admin/groups', 'icon' => 'user-friends', 'matchExtra' => 1]) ?>
+                </li>
+            <?php endif; ?>
+
+            <?php if($request->getIdentity()->hasPermissions(['admin.providers.read']) || $request->getIdentity()->hasPermissions(['admin.providers.readown'])): ?>
+                <li>
+                    <?= includeTemplatePart('menuitem.phtml', ['title' => 'Data providers', 'route' => '/admin/data-providers', 'icon' => 'address-book', 'matchExtra' => 1]) ?>
+                </li>
+			<?php endif; ?>
+
+            <?php if($request->getIdentity()->hasPermissionsAnyOf([
+                    'admin.hydro.monitoringpoints.read',
+                    'admin.hydro.observedproperties.read',
+                    'admin.hydro.waterbodies.read',
+                    'admin.hydro.classifications.read',
+                    'admin.hydro.results.read',
+                    'admin.hydro.monitoringpoints.readown'
+            ])): ?>
+                <li class="sub-menu" data-id="hydroSubmenu" >
+                    <?= includeTemplatePart('menuitem.phtml', ['title' => 'Hydro', 'route' => null, 'icon' => 'tint', 'matchExtra' => 0]) ?>
+                    <ul class="sub">
+	                    <?php if($request->getIdentity()->hasPermissions(['admin.hydro.monitoringpoints.read']) || $request->getIdentity()->hasPermissions(['admin.hydro.monitoringpoints.readown'])): ?>
+                            <li>
+                                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Monitoring points', 'route' => '/admin/hydro/monitoring-points', 'icon' => 'tachometer-alt', 'matchExtra' => 1]) ?>
+                            </li>
+						<?php endif; ?>
+	                    <?php if($request->getIdentity()->hasPermissions(['admin.hydro.observedproperties.read'])): ?>
+                            <li>
+                                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Observed properties', 'route' => '/admin/hydro/observed-properties', 'icon' => 'eye', 'matchExtra' => 1]) ?>
+                            </li>
+						<?php endif; ?>
+	                    <?php if($request->getIdentity()->hasPermissions(['admin.hydro.waterbodies.read'])): ?>
+                            <li>
+                                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Waterbodies', 'route' => '/admin/hydro/waterbodies', 'icon' => 'water', 'matchExtra' => 1]) ?>
+                            </li>
+						<?php endif; ?>
+	                    <?php if($request->getIdentity()->hasPermissions(['admin.hydro.classifications.read'])): ?>
+                            <li>
+                                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Station classifications', 'route' => '/admin/hydro/station-classifications', 'icon' => 'certificate', 'matchExtra' => 1]) ?>
+                            </li>
+						<?php endif; ?>
+	                    <?php if($request->getIdentity()->hasPermissions(['admin.hydro.results.read'])): ?>
+                            <li>
+                                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Results', 'route' => '/admin/hydro/results', 'icon' => 'chart-pie', 'matchExtra' => 1]) ?>
+                            </li>
+						<?php endif; ?>
+                    </ul>
+                </li>
+			<?php endif; ?>
+
+            <?php if($request->getIdentity()->hasPermissionsAnyOf([
+                    'admin.meteo.monitoringpoints.read',
+                    'admin.meteo.observedproperties.read',
+                    'admin.meteo.classifications.read',
+                    'admin.meteo.results.read',
+				    'admin.meteo.monitoringpoints.readown'
+            ])): ?>
+                <li class="sub-menu" data-id="meteoSubmenu" >
+                    <?= includeTemplatePart('menuitem.phtml', ['title' => 'Meteo', 'route' => null, 'icon' => 'cloud', 'matchExtra' => 1]) ?>
+                    <ul class="sub">
+	                    <?php if($request->getIdentity()->hasPermissions(['admin.meteo.monitoringpoints.read']) || $request->getIdentity()->hasPermissions(['admin.meteo.monitoringpoints.readown'])): ?>
+                            <li>
+                                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Monitoring points', 'route' => '/admin/meteo/monitoring-points', 'icon' => 'tachometer-alt', 'matchExtra' => 1]) ?>
+                            </li>
+						<?php endif; ?>
+	                    <?php if($request->getIdentity()->hasPermissions(['admin.meteo.observedproperties.read'])): ?>
+                            <li>
+                                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Observed properties', 'route' => '/admin/meteo/observed-properties', 'icon' => 'eye', 'matchExtra' => 1]) ?>
+                            </li>
+						<?php endif; ?>
+	                    <?php if($request->getIdentity()->hasPermissions(['admin.meteo.classifications.read'])): ?>
+                            <li>
+                                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Station classifications', 'route' => '/admin/meteo/station-classifications', 'icon' => 'certificate', 'matchExtra' => 1]) ?>
+                            </li>
+						<?php endif; ?>
+	                    <?php if($request->getIdentity()->hasPermissions(['admin.meteo.results.read'])): ?>
+                            <li>
+                                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Results', 'route' => '/admin/meteo/results', 'icon' => 'chart-pie', 'matchExtra' => 1]) ?>
+                            </li>
+						<?php endif; ?>
+                    </ul>
+                </li>
+			<?php endif; ?>
         </ul>
         <!-- sidebar menu end-->
     </aside>
