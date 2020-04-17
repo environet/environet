@@ -1,0 +1,117 @@
+<?php
+
+namespace Environet\Sys\General\Db;
+
+use Environet\Sys\General\Db\Query\Insert;
+use Environet\Sys\General\Db\Query\Query;
+use Environet\Sys\General\Db\Query\Select;
+use Environet\Sys\General\Db\Query\Update;
+use Environet\Sys\General\EventLogger;
+use Environet\Sys\General\Exceptions\QueryException;
+
+/**
+ * Class DataAccessRuleQueries
+ *
+ * @package Environet\Sys\General\Db
+ * @author  SRG Group <dev@srg.hu>
+ */
+class MeasurementAccessRuleQueries extends BaseQueries {
+
+	/**
+	 * @inheritDoc
+	 */
+	public static $tableName = 'measurement_access_rules';
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function getById($id, string $primaryKey = 'id'): ?array {
+		$record = parent::getById($id, $primaryKey);
+
+		$record['groups'] = (new Select())
+			->select('group_id')
+			->from('group_measurement_access_rules')
+			->where('measurement_access_rule_id = :id')
+			->addParameter(':id', $id)
+			->run(Query::FETCH_COLUMN);
+
+		return $record;
+	}
+
+
+	public static function prepareData(array $data): array {
+		return [
+			'operator_id' => null,
+			'monitoringpoint_selector' => $data['monitoringpoint_selector'] ?? null,
+			'observed_property_selector' => $data['monitoringpoint_selector'] ?? null
+		];
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function save(array $data, $id = null, string $primaryKey = 'id') {
+		$dataToSave = static::prepareData($data);
+
+		if ($id) {
+			EventLogger::log(static::getUpdateEventType(), array_merge($dataToSave, [
+				'id' => $id
+			]));
+
+			(new Update())
+				->table(static::$tableName)
+				->updateData($dataToSave)
+				->where(static::$tableName . ".$primaryKey = :id")
+				->addParameter(':id', $id)
+				->run(Query::RETURN_BOOL);
+		} else {
+			$id = (new Insert())
+				->table(static::$tableName)
+				->addSingleData($dataToSave)
+				->run();
+
+			EventLogger::log(static::getInsertEventType(), array_merge($dataToSave, [
+				'id' => $id
+			]));
+		}
+
+		if (isset($data['groups'])) {
+			static::saveConnections(
+				$data['groups'],
+				'group_measurement_access_rules',
+				'group_id',
+				'measurement_access_rule_id',
+				$id,
+				true
+			);
+		}
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function getInsertEventType(): string {
+		return 'measurement_access_rule_add';
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function getDeleteEventType(): string {
+		return 'measurement_access_rule_delete';
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function getUpdateEventType(): string {
+		return 'measurement_access_rule_delete';
+	}
+
+
+}

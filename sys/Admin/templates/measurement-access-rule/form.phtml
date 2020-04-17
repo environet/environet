@@ -1,0 +1,37 @@
+<?php include __DIR__ . '../../layouts/before_app.phtml'; ?>
+
+	<div class="card">
+		<h1><?= __(($record && $record['id']) ? 'Edit rule (id: ' . $record['id'] . ')': 'Add rule'); ?></h1>
+		<form action="" method="POST">
+			<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
+
+			<div class="form-group">
+				<label for="monitoringpoint_selector">Monitoring point selector</label>
+				<input type="text" name="monitoringpoint_selector" id="monitoringpoint_selector" class="form-control"  value="<?=formFieldValue('monitoringpoint_selector', $record);?>" />
+			</div>
+
+            <div class="form-group">
+                <label for="observed_property_selector">Observed property selector</label>
+                <input type="text" name="observed_property_selector" id="observed_property_selector" class="form-control"  value="<?=formFieldValue('observed_property_selector', $record);?>" />
+            </div>
+
+
+            <fieldset class="form-group">
+                <div class="field">
+                    <legend><?=__('Groups');?></legend>
+                    <select name="groups[]" multiple>
+						<?php foreach ($groups as $id => $name): ?>
+                            <option value="<?= $id; ?>" <?= isset($record['groups']) && in_array($id, $record['groups']) ? 'selected' : '' ?>><?= $name; ?></option>
+						<?php endforeach; ?>
+                    </select>
+                </div>
+            </fieldset>
+
+
+            <div class="field">
+				<input type="submit" class="btn btn-primary" value="Save"/>
+			</div>
+		</form>
+	</div>
+
+<?php include __DIR__ . '../../layouts/after_app.phtml'; ?>

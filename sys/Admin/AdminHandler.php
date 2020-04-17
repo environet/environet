@@ -7,6 +7,7 @@ use Environet\Sys\Admin\Pages\Dashboard;
 use Environet\Sys\Admin\Pages\DataProvider\DataProviderCrud;
 use Environet\Sys\Admin\Pages\DownloadTest;
 use Environet\Sys\Admin\Pages\Group\GroupCrud;
+use Environet\Sys\Admin\Pages\MeasurementAccessRule\MeasurementAccessRuleCrud;
 use Environet\Sys\Admin\Pages\Hydro\ObservedProperty\ObservedPropertyCrud as HydroObservedPropertyCrud;
 use Environet\Sys\Admin\Pages\Hydro\ResultsCrud as HydroResultsCrud;
 use Environet\Sys\Admin\Pages\Meteo\ResultsCrud as MeteoResultsCrud;
@@ -176,6 +177,12 @@ class AdminHandler extends BaseHandler {
 		'^login$'  => [Login::class, 'handle'],
 		'^logout$' => [Logout::class, 'handle'],
 		'^$'       => [Dashboard::class, 'handle'],
+
+		'^measurement-access-rules$'       => [MeasurementAccessRuleCrud::class, 'list'],
+		'^measurement-access-rules\/show$' => [MeasurementAccessRuleCrud::class, 'show'],
+		'^measurement-access-rules\/add$'  => [MeasurementAccessRuleCrud::class, 'add'],
+		'^measurement-access-rules\/edit$' => [MeasurementAccessRuleCrud::class, 'edit'],
+		'^measurement-access-rules\/delete' => [MeasurementAccessRuleCrud::class, 'delete'],
 
 		'^users$'        => [UserCrud::class, 'list', ['admin.users.read']],
 		'^users\/show$'  => [UserCrud::class, 'show', ['admin.users.read']],
