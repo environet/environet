@@ -4,6 +4,7 @@
 namespace Environet\Sys\General\HttpClient;
 
 use Environet\Sys\General\HttpClient\Exceptions\HttpClientException;
+use Environet\Sys\General\HttpClient\Response;
 
 /**
  * Class HttpClient
