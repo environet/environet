@@ -117,6 +117,9 @@
                     </ul>
                 </li>
 			<?php endif; ?>
+            <li>
+				<?= includeTemplatePart('menuitem.phtml', ['title' => 'Measurement access rules', 'route' => '/admin/measurement-access-rules', 'icon' => 'database', 'matchExtra' => 1]) ?>
+            </li>
         </ul>
         <!-- sidebar menu end-->
     </aside>

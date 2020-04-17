@@ -49,10 +49,9 @@ class BaseQueries {
 	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
 	 */
 	public static function saveConnections($values, string $connectionTable, string $colLeft, string $colRight, int $idRight, bool $truncate = false) {
-		// Get user ids from posted data, filter it, and filter out duplicates
 		$ids = array_unique(array_filter($values ?? []));
 		if ($truncate) {
-			// Delete all connection first, all current connection will be re-created
+			// Delete all connections
 			(new Delete())->table($connectionTable)->where($colRight . ' = :' . $colRight)->addParameter(':' . $colRight, $idRight)->run();
 		}
 
