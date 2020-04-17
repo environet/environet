@@ -76,15 +76,17 @@ class UploadHandler extends ApiHandler {
 	/**
 	 * @inheritDoc
 	 *
+	 * @param array $requiredPermissions
+	 *
 	 * @return void
 	 * @throws ApiException
-	 * @throws PermissionException
 	 * @throws QueryException
 	 * @throws UploadException
 	 * @uses \Environet\Sys\General\HttpClient\ApiHandler::getIdentity()
 	 * @uses \Environet\Sys\General\Identity::getPermissions()
 	 */
-	protected function authorizeRequest(): void {
+	protected function authorizeRequest(array $requiredPermissions = []): void {
+		// TODO implement required permissions
 		if (!in_array(self::HANDLER_PERMISSION, $this->getIdentity()->getPermissions())) {
 			throw new UploadException(205);
 		}

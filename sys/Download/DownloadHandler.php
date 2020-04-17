@@ -134,13 +134,15 @@ class DownloadHandler extends ApiHandler {
 	/**
 	 * @inheritDoc
 	 *
+	 * @param array $requiredPermissions
+	 *
 	 * @return void
-	 * @throws PermissionException
-	 * @throws QueryException
-	 * @throws DownloadException
 	 * @throws ApiException
+	 * @throws DownloadException
+	 * @throws QueryException
 	 */
-	protected function authorizeRequest(): void {
+	protected function authorizeRequest(array $requiredPermissions = []): void {
+		// TODO implement required permissions
 		if (!in_array(self::HANDLER_PERMISSION, $this->getIdentity()->getPermissions())) {
 			throw new DownloadException(205);
 		}
