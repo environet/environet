@@ -8,6 +8,7 @@ use Environet\Sys\Commands\DataNode\PluginCreate;
 use Environet\Sys\Commands\DataNode\PluginRun;
 use Environet\Sys\Commands\DistNode\InitDb;
 use Environet\Sys\Commands\DistNode\Install as DistNodeInstall;
+use Environet\Sys\Commands\DistNode\MigrateDb;
 use Environet\Sys\Commands\Exceptions\CommandException;
 use Environet\Sys\Commands\Tools\GenerateKeys;
 use Environet\Sys\Commands\Tools\GenerateSignature;
@@ -58,6 +59,20 @@ function commandRouter(array $arguments): ?string {
 						case 'database':
 							return InitDb::class;
 					}
+					break;
+				case 'migrate':
+					switch ($arguments[2] ?? null) {
+						case 'database':
+							return MigrateDb::class;
+					}
+				case 'database':
+					switch ($arguments[2] ?? null) {
+						case 'init':
+							return InitDb::class;
+						case 'migrate':
+							return MigrateDb::class;
+					}
+					break;
 			}
 			break;
 		case 'tool':

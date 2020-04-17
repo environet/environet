@@ -8,6 +8,7 @@ use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\Query\Update;
 use Environet\Sys\General\EventLogger;
+use Environet\Sys\General\Exceptions\InvalidConfigurationException;
 use Environet\Sys\General\Exceptions\MissingEventTypeException;
 use Environet\Sys\General\Exceptions\QueryException;
 
@@ -55,8 +56,9 @@ class BaseQueries {
 			(new Delete())->table($connectionTable)->where($colRight . ' = :' . $colRight)->addParameter(':' . $colRight, $idRight)->run();
 		}
 
-		if(empty($ids))
+		if (empty($ids)) {
 			return;
+		}
 
 		// Create insert query for new connections
 		$insert = (new Insert())->table($connectionTable)->columns([$colLeft, $colRight]);
@@ -124,12 +126,13 @@ class BaseQueries {
 	 * Update or insert an item to specified table.
 	 * Logs the transaction regardless of updating or inserting.
 	 *
-	 * @param array  $data       Data to save.
-	 * @param mixed  $id         If the id is exist, update otherwise insert the new record.
+	 * @param array $data Data to save.
+	 * @param mixed $id If the id is exist, update otherwise insert the new record.
 	 * @param string $primaryKey The primary key of the specified table.
 	 *
 	 * @throws MissingEventTypeException
 	 * @throws QueryException
+	 * @throws InvalidConfigurationException
 	 * @uses \Environet\Sys\General\Db\BaseQueries::prepareData()
 	 * @uses \Environet\Sys\General\Db\BaseQueries::getUpdateEventType()
 	 * @uses \Environet\Sys\General\Db\BaseQueries::getInsertEventType()

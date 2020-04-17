@@ -122,7 +122,7 @@
                 <legend><?=__('Observed properties');?></legend>
                 <select name="observedProperties[]" multiple>
                     <?php foreach ($observedProperties as $id => $symbol): ?>
-                        <option value="<?= $id; ?>" <?= in_array($id, $record['observedProperties']) ? 'selected' : '' ?>><?= $symbol; ?></option>
+                        <option value="<?= $id; ?>" <?= isset($record['observedProperties']) && in_array($id, $record['observedProperties']) ? 'selected' : '' ?>><?= $symbol; ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>

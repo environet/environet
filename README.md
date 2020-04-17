@@ -80,7 +80,7 @@ Change to the directory you checked the code out to, and you should be ready to 
 The `environet` cli script is a wrapper for some docker containers managed with docker compose. After first starting a *dist* or *data* node, these services will start automatically after a system reboot.  
 To stop and start them manually, you may run `./environet data up` or `./environet data down` (`./environet dist up` and `./environet dist down` in case of a distribution node).  
 
-To get the latest version, simply run `git pull` in the repository folder.
+To get the latest version, simply run `git pull` in the repository folder.  
 
 <a name="20_distribution_node"></a>
 
@@ -137,9 +137,13 @@ The detailed documentation of this endpoint can found here: [Download API docume
    `./environet dist install`
    
 3. Initialize database, and create admin user
-   `./environet dist init database`
+   `./environet dist database init`
 
 After going through these steps, the distribution node should be up and running. You can access the admin panel at YOUR_IP/admin.
+
+# Updates
+
+After updating your deployment, you need to run `./environet dist database migrate`, to run any database migrations that might be included in the update.  
 
 <a name="22_database_structure"></a>
 

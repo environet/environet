@@ -167,19 +167,11 @@ class UserCrud extends CrudPage {
 					->run(Query::FETCH_FIRST);
 
 				if ($userEmailInDb > 0 && $user['email'] != $data['email']) {
-					$this->addMessage(__('This e-mail has already taken'), self::MESSAGE_ERROR);
+					$this->addMessage(__('This e-mail is already taken'), self::MESSAGE_ERROR);
 					$valid = false;
 				}
 			}
 		} else {
-
-			if (!isset($data['form_permissions']) || !isset($data['form_permissions'][0]) || empty($data['form_permissions'][0])) {
-				if (!isset($data['form_groups']) || !isset($data['form_groups'][0]) || empty($data['form_groups'][0])) {
-					$this->addMessage('The user permission or group field is required', self::MESSAGE_ERROR);
-					$valid = false;
-				}
-			}
-
 			if (!validate($data, 'email', REGEX_EMAIL, true)) {
 				$this->addMessage('The user\'s e-mail address is required and should be valid e-mail address', self::MESSAGE_ERROR);
 				$valid = false;

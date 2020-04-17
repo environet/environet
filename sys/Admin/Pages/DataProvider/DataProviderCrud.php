@@ -8,7 +8,6 @@ use Environet\Sys\General\Db\OperatorQueries;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\UserQueries;
-use Environet\Sys\General\Exceptions\HttpNotFoundException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\Exceptions\RenderException;
 use Environet\Sys\General\Response;
@@ -64,20 +63,25 @@ class DataProviderCrud extends CrudPage {
 		try {
 			$searchString = $this->request->getQueryParam('search');
 
-			//Base query with joins and conditions
+
 			$directUserCountQuery = (new Select())->select('COUNT(*)')->from('operator_users')
-			                                      ->where('operator_users.operatorid = operator.id')->buildQuery();
+												  ->where('operator_users.operatorid = operator.id')->buildQuery();
 			$groupUserCountQuery = (new Select())->select('COUNT(*)')->from('operator_groups')
-			                                     ->join('users_groups', 'users_groups.groupsid = operator_groups.groupsid')
-			                                     ->where('operator_groups.operatorid = operator.id')->buildQuery();
+												 ->join('users_groups', 'users_groups.groupsid = operator_groups.groupsid')
+												 ->where('operator_groups.operatorid = operator.id')->buildQuery();
 			$groupCountQuery = (new Select())->select('COUNT(*)')->from('operator_groups')
-			                                 ->where('operator_groups.operatorid = operator.id')->buildQuery();
+											 ->where('operator_groups.operatorid = operator.id')->buildQuery();
+
+
+
+			//Base query with joins and conditions
 			$query = (new Select())
 				->select('operator.*')
 				->select('(' . $directUserCountQuery . ') + (' . $groupUserCountQuery . ') as user_count')
 				->select('(' . $groupCountQuery . ') as group_count')
 				->from('operator');
 
+			$this->modifyListQuery($query);
 
 			if (!is_null($searchString)) {
 				$query->search(
@@ -112,14 +116,30 @@ class DataProviderCrud extends CrudPage {
 
 
 	/**
-	 * Show page action for data providers.
-	 *
-	 * @return Response
-	 * @throws RenderException
-	 * @throws HttpNotFoundException
+	 * @inheritDoc
+	 * @throws QueryException
 	 */
-	public function show(): Response {
-		return $this->renderShowPage();
+	protected function modifyListQuery(Select $query) {
+		if (in_array('admin.providers.readown', $this->request->getIdentity()->getAuthorizedPermissions())) {
+			// Get the ids of operators the user is part of
+
+			$operators = UserQueries::getOperatorsOfUser($this->request->getIdentity()->getId());
+			$query->whereIn('id', array_column($operators, 'id'), 'operatorId');
+		}
+	}
+
+
+	/**
+	 * Check if the currenty authenticated user belongs to an operator
+	 *
+	 * @param int $id Operator point id
+	 * @return bool
+	 * @throws QueryException
+	 */
+	private function userIsOperator(int $id): bool {
+		$operatorIds = array_column(UserQueries::getOperatorsOfUser($this->request->getIdentity()->getId()), 'id');
+
+		return in_array($id, $operatorIds);
 	}
 
 
@@ -141,7 +161,7 @@ class DataProviderCrud extends CrudPage {
 		$valid = true;
 
 		//Validate operator name - required, and pattern
-		if (!validate($data, 'name', REGEX_NAME, true)) {
+		if (!validate($data, 'name', REGEX_ALPHANUMERIC, true)) {
 			$this->addMessage(__('Operator name is empty, or format is invalid'), self::MESSAGE_ERROR);
 			$valid = false;
 		}
@@ -177,9 +197,9 @@ class DataProviderCrud extends CrudPage {
 				$valid = false;
 			} else {
 				$userWithEmail = (new Select())->select('COUNT(*)')->from('users')
-				                               ->where('email = :email')
-				                               ->addParameter(':email', $data['user_email'])
-				                               ->run(Query::FETCH_COUNT);
+											   ->where('email = :email')
+											   ->addParameter(':email', $data['user_email'])
+											   ->run(Query::FETCH_COUNT);
 				if ($userWithEmail > 0) {
 					$this->addMessage(__('User with this e-mail already exists'), self::MESSAGE_ERROR);
 					$valid = false;
@@ -192,9 +212,9 @@ class DataProviderCrud extends CrudPage {
 				$valid = false;
 			} else {
 				$userWithUsername = (new Select())->select('COUNT(*)')->from('users')
-				                                  ->where('username = :username')
-				                                  ->addParameter(':username', $data['user_username'])
-				                                  ->run(Query::FETCH_COUNT);
+												  ->where('username = :username')
+												  ->addParameter(':username', $data['user_username'])
+												  ->run(Query::FETCH_COUNT);
 				if ($userWithUsername > 0) {
 					$this->addMessage(__('User with this username already exists'), self::MESSAGE_ERROR);
 					$valid = false;
@@ -203,6 +223,30 @@ class DataProviderCrud extends CrudPage {
 		}
 
 		return $valid;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @throws QueryException
+	 */
+	protected function userCanView($id) {
+		if (in_array('admin.providers.readown', $this->request->getIdentity()->getAuthorizedPermissions())) {
+			return $this->userIsOperator($id);
+		}
+		return true;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @throws QueryException
+	 */
+	protected function userCanEdit($id) {
+		if (in_array('admin.providers.updateown', $this->request->getIdentity()->getAuthorizedPermissions())) {
+			return $this->userIsOperator($id);
+		}
+		return true;
 	}
 
 

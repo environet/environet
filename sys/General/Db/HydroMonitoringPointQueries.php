@@ -2,7 +2,6 @@
 
 namespace Environet\Sys\General\Db;
 
-use Environet\Sys\General\Db\Query\Delete;
 use Environet\Sys\General\Db\Query\Insert;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
@@ -102,9 +101,9 @@ class HydroMonitoringPointQueries extends BaseQueries {
 
 			// foreign keys
 			'station_classificationid'     => isset($data['classification']) ? $data['classification'] ?: null : null,
-			'operatorid'                   => isset($data['operator']) ? $data['classification'] ?: null : null,
-			'bankid'                       => isset($data['riverbank']) ? $data['classification'] ?: null : null,
-			'waterbodyeuropean_river_code' => isset($data['waterbody']) ? $data['classification'] ?: null : null,
+			'operatorid'                   => isset($data['operator']) ? $data['operator'] ?: null : null,
+			'bankid'                       => isset($data['riverbank']) ? $data['riverbank'] ?: null : null,
+			'waterbodyeuropean_river_code' => isset($data['waterbody']) ? $data['waterbody'] ?: null : null,
 
 			// hidden
 			'start_time'                   => '1999-09-09',
