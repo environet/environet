@@ -6,7 +6,9 @@ namespace Environet\Sys\General\Db\Selectors;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\QueryException;
+use Environet\Sys\General\Identity;
 use Exception;
+use http\Client\Curl\User;
 
 /**
  * Class ObservedPropertySelector
@@ -19,9 +21,9 @@ use Exception;
 class ObservedPropertySelector extends Selector {
 
 	/**
-	 * @var int
+	 * @var Identity|null
 	 */
-	private $operatorId;
+	private $operator;
 
 	/**
 	 * @var int
@@ -35,9 +37,11 @@ class ObservedPropertySelector extends Selector {
 	 * @param string $values
 	 * @param int    $operatorId
 	 * @param        $type
+	 *
+	 * @throws QueryException
 	 */
 	public function __construct(string $values, $type, int $operatorId = 0) {
-		$this->operatorId = $operatorId;
+		$this->operator = $operatorId ? $this->getOperatorIdentity($operatorId) : null;
 		$this->type = $type;
 
 		parent::__construct($values, self::SELECTOR_TYPE_INT);
@@ -54,7 +58,6 @@ class ObservedPropertySelector extends Selector {
 	 * @uses \Environet\Sys\General\Db\Query\Select
 	 */
 	public static function createWithMonitoringPoints($type, array $points): ObservedPropertySelector {
-		$ids = '';
 		if ($type === MPOINT_TYPE_HYDRO) {
 			$ids = (new Select())
 				->select('string_agg(hydro_observed_property.id::text, \',\')')
@@ -83,12 +86,19 @@ class ObservedPropertySelector extends Selector {
 	 * @uses \Environet\Sys\General\Db\Query\Select
 	 */
 	protected function getHydroPropertiesByOperator(): string {
+		if ($this->isOperatorAdmin()) {
+			return (new Select())
+				->select('string_agg(hydro_observed_property.id::text, \',\')')
+				->from('hydro_observed_property')
+				->run(Query::FETCH_FIRST);
+		}
+
 		return (new Select())
 			->select('string_agg(hydro_observed_property.id::text, \',\')')
 			->from('hydro_observed_property')
 			->join('hydropoint_observed_property', 'hydropoint_observed_property.observed_propertyid = hydro_observed_property.id')
 			->join('hydropoint', 'hydropoint.id = hydropoint_observed_property.mpointid')
-			->where("hydropoint.operatorid === {$this->operatorId}")
+			->where("hydropoint.operatorid === {$this->operator->getId()}")
 			->run(Query::FETCH_FIRST);
 	}
 
@@ -99,13 +109,57 @@ class ObservedPropertySelector extends Selector {
 	 * @uses \Environet\Sys\General\Db\Query\Select
 	 */
 	protected function getMeteoPropertiesByOperator(): string {
+		if ($this->isOperatorAdmin()) {
+			return (new Select())
+				->select('string_agg(meteo_observed_property.id::text, \',\')')
+				->from('meteo_observed_property')
+				->run(Query::FETCH_FIRST);
+		}
+
 		return (new Select())
 			->select('string_agg(meteo_observed_property.id::text, \',\')')
 			->from('meteo_observed_property')
 			->join('meteopoint_observed_property', 'meteopoint_observed_property.observed_propertyid = meteo_observed_property.id')
 			->join('meteopoint', 'meteopoint.id = meteopoint_observed_property.mpointid')
-			->where("meteopoint.operatorid === {$this->operatorId}")
+			->where("meteopoint.operatorid === {$this->operator->getId()}")
 			->run(Query::FETCH_FIRST);
+	}
+
+
+	/**
+	 * Checks if the provided values are permitted
+	 *
+	 * @param array $values
+	 *
+	 * @return array
+	 * @throws QueryException
+	 */
+	public static function checkAgainstSymbols($type, array $symbols, array $availableValues): array {
+		if ($type === MPOINT_TYPE_HYDRO) {
+			$requestedProps = (new Select())
+				->select('hydro_observed_property.id, hydro_observed_property.symbol')
+				->from('hydro_observed_property')
+				->whereIn('symbol', $symbols, 'symbolParam')
+				->run();
+		} else {
+			$requestedProps = (new Select())
+				->select('meteo_observed_property.id, meteo_observed_property.symbol')
+				->from('meteo_observed_property')
+				->whereIn('symbol', $symbols, 'symbolParam')
+				->run();
+		}
+
+		$result = [];
+		$unauthorized = array_diff(array_column($requestedProps, 'id'), $availableValues);
+		if (!empty($unauthorized)) {
+			foreach ($requestedProps as $prop) {
+				if (in_array($prop['id'], $unauthorized)) {
+					$result[] = $prop['symbol'];
+				}
+			}
+		}
+
+		return $result;
 	}
 
 
@@ -115,8 +169,8 @@ class ObservedPropertySelector extends Selector {
 	 */
 	public function unserialize($serialized) {
 		if ($serialized === '*') {
-			if (!$this->operatorId) {
-				throw new Exception('Missing operator ID!');
+			if (!$this->operator) {
+				throw new Exception('Missing operator!');
 			}
 
 			if ($this->type === MPOINT_TYPE_HYDRO) {

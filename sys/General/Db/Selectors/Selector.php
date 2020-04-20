@@ -3,6 +3,11 @@
 
 namespace Environet\Sys\General\Db\Selectors;
 
+use Environet\Sys\General\Db\Query\Query;
+use Environet\Sys\General\Db\Query\Select;
+use Environet\Sys\General\Exceptions\QueryException;
+use Environet\Sys\General\Identity;
+
 /**
  * Class Selector
  *
@@ -43,6 +48,42 @@ abstract class Selector {
 
 
 	/**
+	 * Find the user, and create a new Identity based on the operator id
+	 *
+	 * @param $operatorId
+	 *
+	 * @return Identity
+	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @see  Identity
+	 */
+	protected function getOperatorIdentity($operatorId): Identity {
+		$user = (new Select())
+			->select('users.*')
+			->from('users')
+			->join('operator_users', 'operator_users.usersid = users.id')
+			->where("operator_users.operatorid = $operatorId")
+			->limit(1)
+			->run(Query::FETCH_FIRST);
+
+		return new Identity($user['id'], $user);
+	}
+
+
+	/**
+	 * Determine if the currently stored identity is an admin.
+	 *
+	 * @return bool
+	 * @uses \Environet\Sys\General\Identity::hasPermissions()
+	 */
+	protected function isOperatorAdmin(): bool {
+		return $this->operator->hasPermissions([Identity::ADMIN_PERMISSION]);
+	}
+
+
+	/**
+	 * Serialize the selector data into a comma separated string.
+	 *
 	 * @return string
 	 */
 	public function serialize() {
@@ -51,6 +92,8 @@ abstract class Selector {
 
 
 	/**
+	 * Unserialize the selector data from a comma separated string.
+	 *
 	 * @param $serialized
 	 */
 	public function unserialize($serialized) {
@@ -76,6 +119,8 @@ abstract class Selector {
 
 
 	/**
+	 * Get selector values.
+	 *
 	 * @return array
 	 */
 	public function getValues(): array {
@@ -84,6 +129,9 @@ abstract class Selector {
 
 
 	/**
+	 * Add one value to the selector.
+	 * The value is filtered for uniqueness, it's not possible to add a value more than one time.
+	 *
 	 * @param $value
 	 *
 	 * @return Selector
@@ -109,6 +157,9 @@ abstract class Selector {
 
 
 	/**
+	 * Remove a value from the selector.
+	 * If the value isn't included, doesn't do anything.
+	 *
 	 * @param $value
 	 *
 	 * @return Selector
@@ -117,10 +168,14 @@ abstract class Selector {
 		if (($key = array_search($value, $this->values)) !== false) {
 			unset($this->values[$key]);
 		}
+
+		return $this;
 	}
 
 
 	/**
+	 * Overwrite all selector values with a new set.
+	 *
 	 * @param array $values
 	 *
 	 * @return Selector

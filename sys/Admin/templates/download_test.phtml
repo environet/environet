@@ -1,33 +1,69 @@
 <?php include 'layouts/before_app.phtml'; ?>
 
-	<?php if($response) {?>
+<?php if ($response) { ?>
 	<div>
 		Status: <?=$response->getStatusCode();?><br />
-		Body: <pre><?=$response->getBody();?></pre>
+		Body:
+		<pre><?=$response->getBody();?></pre>
 	</div>
-	<?php } ?>
+<?php } ?>
 
-	<?php if($error) {?>
+<?php if ($error) { ?>
 	<div>Error: <?=$error;?></div>
-	<?php } ?>
+<?php } ?>
 
 	<hr>
 
 	<form id="uploadTestForm" action="" method="POST">
-		<?php include __DIR__.'/parts/messages.phtml'; //Render flash messages?>
+		<?php include __DIR__ . '/parts/messages.phtml'; //Render flash messages?>
 		<h1><?=__('Test download with filters');?></h1>
 		<div class="form-group">
-			<label for="country"><?=__('Available countries');?>: </label>
-			<select name="country[]" id="country" multiple>
-				<?=selectOptions($countries, formFieldValue('country'));?>
-			</select>
+			<label><?=__('Type');?>:</label>
+			<input type="radio" name="type" id="hydro" value="hydro" checked onclick="switchType('hydro')"><label for="hydro"><?=__('Hydro')?></label>
+			<input type="radio" name="type" id="meteo" value="meteo" onclick="switchType('meteo')"><label for="meteo"><?=__('Meteo')?></label>
 		</div>
-		<div class="form-group">
-			<label for="symbol"><?=__('Available observed property symbols');?>: </label>
-			<select name="symbol[]" id="symbol" multiple>
-				<?=selectOptions($symbols, formFieldValue('symbol'));?>
-			</select>
+		<div id="hydro-options">
+			<div class="form-group">
+				<label for="hydro-country"><?=__('Available countries');?>: </label>
+				<select name="hydro-country[]" id="hydro-country" multiple>
+					<?=selectOptions($hydro['countries'], formFieldValue('hydro-country'));?>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="hydro-point"><?=__('Available monitoring points');?>: </label>
+				<select name="hydro-point[]" id="hydro-point" multiple>
+					<?=selectOptions($hydro['points'], formFieldValue('hydro-point'));?>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="hydro-symbol"><?=__('Available observed property symbols');?>: </label>
+				<select name="hydro-symbol[]" id="hydro-symbol" multiple>
+					<?=selectOptions($hydro['symbols'], formFieldValue('hydro-symbol'));?>
+				</select>
+			</div>
 		</div>
+		<div id="meteo-options" style="display: none">
+			<div class="form-group">
+				<label for="meteo-country"><?=__('Available countries');?>: </label>
+				<select name="meteo-country[]" id="meteo-country" multiple>
+					<?=selectOptions($meteo['countries'], formFieldValue('meteo-country'));?>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="meteo-point"><?=__('Available monitoring points');?>: </label>
+				<select name="meteo-point[]" id="meteo-point" multiple>
+					<?=selectOptions($meteo['points'], formFieldValue('meteo-point'));?>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="meteo-symbol"><?=__('Available observed property symbols');?>: </label>
+				<select name="meteo-symbol[]" id="meteo-symbol" multiple>
+					<?=selectOptions($meteo['symbols'], formFieldValue('meteo-symbol'));?>
+				</select>
+			</div>
+		</div>
+
+
 		<div class="form-group">
 			<label for="username"><?=__('User');?></label>
 			<select name="username" id="username">
@@ -42,8 +78,23 @@
 			<label for="end"><?=__('End time');?></label><br />
 			<input type="datetime-local" name="end" id="end">
 		</div>
-		<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
+		<input type="hidden" name="__csrf" value="<?=$csrf;?>" />
 		<input type="submit" class="btn btn-primary" value="Send">
 	</form>
+
+	<script type="text/javascript">
+			function switchType(type) {
+				var hydroDiv = document.getElementById('hydro-options'),
+					meteoDiv = document.getElementById('meteo-options');
+
+				if (type === 'hydro') {
+					hydroDiv.style.display = 'block';
+					meteoDiv.style.display = 'none';
+				} else if (type === 'meteo') {
+					hydroDiv.style.display = 'none';
+					meteoDiv.style.display = 'block';
+				}
+			}
+	</script>
 
 <?php include 'layouts/after_app.phtml'; ?>
