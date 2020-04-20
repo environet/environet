@@ -187,19 +187,21 @@ echo "GET " . $url . PHP_EOL;
 					$temp = tempnam(sys_get_temp_dir(), $ext);
 					copy($url, $temp);
 
-					$zip = new ZipArchive;
+					$zip = new \ZipArchive;
 					$zip->open($temp);
 					$found = false;
 					for ($i = 0; $i < $zip->numFiles; ++$i) {
 						$name = $zip->getNameIndex($i);
 						if (fnmatch($parts[1], $name)) {
-							$body = $zip->getFromName($name);
+							$data = $zip->getFromName($name);
 							$found = true;
 							break;
 						}
 					}
 					$zip->close();
-					if (!$found) $body = '';
+					if (!$found) $data = '';
+					$body = new \stdClass();
+					$body->contents = $data;
 					unlink($temp);
 				} else {
 					$body = (new HttpClient())->sendRequest(new Request($url))->getBody();
@@ -207,6 +209,7 @@ echo "GET " . $url . PHP_EOL;
 				array_push($result, $body);
 			}
 		}
+
 		return $result;
 	}
 
