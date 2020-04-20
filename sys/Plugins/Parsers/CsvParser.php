@@ -30,6 +30,11 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	private $csvDelimiter;
 
 	/**
+	 * @var int Number of lines of header to skip
+	 */
+	private $nHeaderSkip;
+
+	/**
 	 * @var mixed The monitoring point ID's column number
 	 */
 	private $mPointIdCol;
@@ -58,6 +63,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	public function __construct(array $config) {
 
 		$this->csvDelimiter = $config['csvDelimiter'];
+		$this->nHeaderSkip = $config['nHeaderSkip'];
 		$this->mPointIdCol = $config['mPointIdCol'];
 		$this->timeCol = $config['timeCol'];
 		$this->timeFormat = $config['timeFormat'];
@@ -97,7 +103,12 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 
 		$lines = explode("\n", $csv);
 
+		$lineCount = 0;
 		foreach ($lines as $line) {
+			++$lineCount;
+			if ($lineCount <= $this->nHeaderSkip) {
+				continue;
+			}
 			$resultLine = $this->parseResultLine($line);
 			if (empty($resultLine)) {
 				continue;
@@ -206,6 +217,9 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 		$console->writeLine('Enter the csv delimiter character. E.g.: a comma in case of comma separated csv files', Console::COLOR_YELLOW);
 		$csvDelimiter = $console->ask('Csv delimiter:', 1);
 
+		$console->writeLine('How many lines have to be skipped before data begins', Console::COLOR_YELLOW);
+		$nHeaderSkip = $console->ask('Number of Lines:', 1);
+
 		$console->writeLine('In what number column (from left) of the csv file is the identifier of the monitoring point?', Console::COLOR_YELLOW);
 		$mPointIdCol = $console->ask('Column number:', 3) - 1;
 
@@ -229,6 +243,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 
 		$config = [
 			'csvDelimiter' => $csvDelimiter,
+			'nHeaderSkip'  => $nHeaderSkip,
 			'mPointIdCol'  => $mPointIdCol,
 			'timeCol'      => $timeCol,
 			'timeFormat'   => $timeFormat,
@@ -260,6 +275,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	public function serializeConfiguration(): string {
 		$config = '';
 		$config .= 'csvDelimiter = "' . $this->csvDelimiter . "\"\n";
+		$config .= 'nHeaderSkip = ' . $this->nHeaderSkip . "\n";
 		$config .= 'mPointIdCol = ' . $this->mPointIdCol . "\n";
 		$config .= 'timeCol = ' . $this->timeCol . "\n";
 		$config .= 'timeFormat = ' . $this->timeFormat . "\n";
