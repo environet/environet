@@ -27,6 +27,16 @@
                 </div>
             </fieldset>
 
+            <fieldset class="form-group">
+                <div class="field">
+                    <legend><?=__('Operator');?></legend>
+                    <select name="operator">
+						<?php foreach ($operators as $id => $name): ?>
+                            <option value="<?= $id; ?>" <?= isset($record['operator']) && $record['operator'] == $id ? 'selected' : '' ?>><?= $name; ?></option>
+						<?php endforeach; ?>
+                    </select>
+                </div>
+            </fieldset>
 
             <div class="field">
 				<input type="submit" class="btn btn-primary" value="Save"/>

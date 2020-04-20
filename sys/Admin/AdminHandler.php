@@ -178,11 +178,11 @@ class AdminHandler extends BaseHandler {
 		'^logout$' => [Logout::class, 'handle'],
 		'^$'       => [Dashboard::class, 'handle'],
 
-		'^measurement-access-rules$'       => [MeasurementAccessRuleCrud::class, 'list'],
-		'^measurement-access-rules\/show$' => [MeasurementAccessRuleCrud::class, 'show'],
-		'^measurement-access-rules\/add$'  => [MeasurementAccessRuleCrud::class, 'add'],
-		'^measurement-access-rules\/edit$' => [MeasurementAccessRuleCrud::class, 'edit'],
-		'^measurement-access-rules\/delete' => [MeasurementAccessRuleCrud::class, 'delete'],
+		'^measurement-access-rules$'       => [MeasurementAccessRuleCrud::class, 'list', ['admin.measurementaccessrules.read'], ['admin.measurementaccessrules.readown']],
+		'^measurement-access-rules\/show$' => [MeasurementAccessRuleCrud::class, 'show', ['admin.measurementaccessrules.read'], ['admin.measurementaccessrules.readown']],
+		'^measurement-access-rules\/add$'  => [MeasurementAccessRuleCrud::class, 'add', ['admin.measurementaccessrules.create'], ['admin.measurementaccessrules.createown']],
+		'^measurement-access-rules\/edit$' => [MeasurementAccessRuleCrud::class, 'edit', ['admin.measurementaccessrules.update'], ['admin.measurementaccessrules.updateown']],
+		'^measurement-access-rules\/delete' => [MeasurementAccessRuleCrud::class, 'delete', ['admin.measurementaccessrules.delete'], ['admin.measurementaccessrules.deleteown']],
 
 		'^users$'        => [UserCrud::class, 'list', ['admin.users.read']],
 		'^users\/show$'  => [UserCrud::class, 'show', ['admin.users.read']],
@@ -198,7 +198,7 @@ class AdminHandler extends BaseHandler {
 		'^data-providers$'       => [DataProviderCrud::class, 'list', ['admin.providers.read'], ['admin.providers.readown']],
 		'^data-providers\/show$' => [DataProviderCrud::class, 'show', ['admin.providers.read'], ['admin.providers.readown']],
 		'^data-providers\/add$'  => [DataProviderCrud::class, 'add', ['admin.providers.create']],
-		'^data-providers\/edit$' => [DataProviderCrud::class, 'edit', ['admin.providers.delete'], ['admin.providers.updateown']],
+		'^data-providers\/edit$' => [DataProviderCrud::class, 'edit', ['admin.providers.update'], ['admin.providers.updateown']],
 
 		'^hydro\/observed-properties$'       => [HydroObservedPropertyCrud::class, 'list', ['admin.hydro.observedproperties.read']],
 		'^hydro\/observed-properties\/show$' => [HydroObservedPropertyCrud::class, 'show', ['admin.hydro.observedproperties.read']],

@@ -60,4 +60,9 @@ INSERT INTO "public"."permissions"("name") VALUES
 ('admin.meteo.results.read'),
 ('admin.meteo.results.create'),
 ('admin.meteo.results.update'),
-('admin.meteo.results.delete')
+('admin.meteo.results.delete'),
+
+('admin.measurementaccessrules.read'),
+('admin.measurementaccessrules.create'),
+('admin.measurementaccessrules.update'),
+('admin.measurementaccessrules.delete')
