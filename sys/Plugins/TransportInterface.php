@@ -19,7 +19,7 @@ interface TransportInterface {
 	 * @param array $variables associative array with array names and contents to resolve 
 	 * @return Resource[]
 	 */
-	public function get(array $variables): array;
+	public function get(): array;
 
 
 }
