@@ -167,7 +167,7 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 			foreach ($monitoringPoint["observed_properties"] as $observedProperty) {
 
 				// variable preparation
-				$variables = prepareVariables($monitoringPoint["NCD"], $observedProperty);
+				$variables = $this->prepareVariables($monitoringPoint["NCD"], $observedProperty);
 
 				// do variable substitution
 				$url = $this->url;
