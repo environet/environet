@@ -87,8 +87,8 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 
 		$config = [
 			'url' => $url,
-			'monitoringPointConversions' => $monitoringPointConversions;
-			'observedPropertyConversions' => $observedPropertyConversions;
+			'monitoringPointConversions' => $monitoringPointConversions,
+			'observedPropertyConversions' => $observedPropertyConversions,
 		];
 
 		return new self($config);
