@@ -45,9 +45,8 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 		}
 
 		if (in_array($this->readOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())) {
-			// Get the ids of operators the user is part of
+			// Get the ids of operators the user is part of, and filter the query accordingly
 			$operators = UserQueries::getOperatorsOfUser($this->request->getIdentity()->getId());
-			// Now we need to narrow the list
 			$query->whereIn('operatorid', array_column($operators, 'id'), 'operatorId');
 		}
 	}

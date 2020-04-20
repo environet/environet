@@ -7,7 +7,6 @@ use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\Query\Update;
 use Environet\Sys\General\EventLogger;
-use Environet\Sys\General\Exceptions\QueryException;
 
 /**
  * Class DataAccessRuleQueries
@@ -42,7 +41,7 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 
 	public static function prepareData(array $data): array {
 		return [
-			'operator_id' => null,
+			'operator_id' => $data['operator'] ?? null,
 			'monitoringpoint_selector' => $data['monitoringpoint_selector'] ?? null,
 			'observed_property_selector' => $data['monitoringpoint_selector'] ?? null
 		];
