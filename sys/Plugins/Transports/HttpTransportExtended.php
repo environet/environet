@@ -99,7 +99,7 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	 * @inheritDoc
 	 */
 	public function serializeConfiguration(): string {
-		return 'url = ' . $this->url . "\n";
+		return 'url = "' . $this->url . '"' . "\n";
 	}
 
 
