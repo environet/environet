@@ -3,7 +3,6 @@
 
 namespace Environet\Sys\Download;
 
-use Environet\Sys\Admin\AdminHandler;
 use Environet\Sys\Download\Exceptions\DownloadException;
 use Environet\Sys\General\Db\MonitoringPointQueries;
 use Environet\Sys\General\Db\Query\Query;
@@ -11,7 +10,6 @@ use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\Selectors\MonitoringPointSelector;
 use Environet\Sys\General\Db\Selectors\ObservedPropertySelector;
 use Environet\Sys\General\Exceptions\ApiException;
-use Environet\Sys\General\Exceptions\PermissionException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\HttpClient\ApiHandler;
 use Environet\Sys\General\Identity;
@@ -140,12 +138,13 @@ class DownloadHandler extends ApiHandler {
 	 * @param array $requiredPermissions
 	 *
 	 * @return void
+	 * @throws QueryException
+	 * @throws DownloadException
 	 * @throws ApiException
 	 * @throws DownloadException
 	 * @throws QueryException
 	 */
 	protected function authorizeRequest(array $requiredPermissions = []): void {
-		// TODO implement required permissions
 		if (!in_array(self::HANDLER_PERMISSION, $this->getIdentity()->getPermissions())) {
 			throw new DownloadException(205);
 		}

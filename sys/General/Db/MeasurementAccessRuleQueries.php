@@ -28,12 +28,15 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 	public static function getById($id, string $primaryKey = 'id'): ?array {
 		$record = parent::getById($id, $primaryKey);
 
-		$record['groups'] = (new Select())
-			->select('group_id')
+		$groupConnections = (new Select())
+			->select(['group_id', 'interval'])
 			->from('group_measurement_access_rules')
 			->where('measurement_access_rule_id = :id')
 			->addParameter(':id', $id)
-			->run(Query::FETCH_COLUMN);
+			->run();
+
+		$record['groups'] = array_column($groupConnections, 'group_id');
+		$record['interval'] = array_column($groupConnections, 'interval')[0];
 
 		return $record;
 	}
@@ -43,7 +46,7 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 		return [
 			'operator_id' => $data['operator'] ?? null,
 			'monitoringpoint_selector' => $data['monitoringpoint_selector'] ?? null,
-			'observed_property_selector' => $data['monitoringpoint_selector'] ?? null
+			'observed_property_selector' => $data['observed_property_selector'] ?? null,
 		];
 	}
 
@@ -76,6 +79,12 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 			]));
 		}
 
+		$years = $data['interval_years'] ?? '';
+		$months = $data['interval_months'] ?? '';
+		$days = $data['interval_days'] ?? '';
+
+		$interval = 'P' . ($years ? $years . 'Y' : '') . ($months ? $months . 'M' : '') . ($days ? $days . 'D' : '');
+
 		if (isset($data['groups'])) {
 			static::saveConnections(
 				$data['groups'],
@@ -83,7 +92,8 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 				'group_id',
 				'measurement_access_rule_id',
 				$id,
-				true
+				true,
+				['interval' => $interval]
 			);
 		}
 	}

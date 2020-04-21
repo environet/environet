@@ -10,9 +10,9 @@ create table if not exists measurement_access_rules
 
 create table group_measurement_access_rules
 (
-	id                         serial not null
+    id                         serial not null
 		constraint group_measurement_access_rules_pk primary key,
 	measurement_access_rule_id integer,
-	group_id                   integer,
-	interval                   date
+	group_id integer,
+	interval interval
 );
