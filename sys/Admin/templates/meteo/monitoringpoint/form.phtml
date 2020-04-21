@@ -39,22 +39,22 @@
 
         <div class="form-group">
             <label for="lat">Lat</label>
-            <input type="number" name="lat" id="lat" class="form-control" value="<?=formFieldValue('lat', $record);?>" />
+            <input type="number" name="lat" id="lat" step="0.000001" class="form-control" value="<?=formFieldValue('lat', $record);?>" />
         </div>
 
         <div class="form-group">
             <label for="long">Long</label>
-            <input type="number" name="long" id="long" class="form-control" value="<?=formFieldValue('long', $record);?>" />
+            <input type="number" name="long" id="long" step="0.000001" class="form-control" value="<?=formFieldValue('long', $record);?>" />
         </div>
 
         <div class="form-group">
             <label for="z">Z</label>
-            <input type="number" name="z" id="z" class="form-control" value="<?=formFieldValue('z', $record);?>" />
+            <input type="number" name="z" id="z" step="0.000001" class="form-control" value="<?=formFieldValue('z', $record);?>" />
         </div>
 
         <div class="form-group">
             <label for="altitude">Altitude</label>
-            <input type="number" name="altitude" id="altitude" class="form-control" value="<?=formFieldValue('altitude', $record);?>" />
+            <input type="number" name="altitude" id="altitude" step="0.000001" class="form-control" value="<?=formFieldValue('altitude', $record);?>" />
         </div>
 
         <div class="form-group">
@@ -65,6 +65,11 @@
         <div class="form-group">
             <label for="river_basin">River basin</label>
             <input type="text" name="river_basin" id="river_basin" class="form-control" value="<?=formFieldValue('river_basin', $record);?>" />
+        </div>
+
+        <div class="form-group">
+            <label for="start_time">Start time</label>
+            <input type="date" name="start_time" id="start_time" class="form-control" value="<?=date('Y-m-d', strtotime($record['start_time']))?>" />
         </div>
 
         <fieldset class="form-group">

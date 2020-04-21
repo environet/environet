@@ -65,7 +65,7 @@ class GroupCrud extends CrudPage {
 	 */
 	protected function validateData(array $data): bool {
 		$valid = true;
-		if (!validate($data, 'name', REGEX_NAME, true)) {
+		if (!validate($data, 'name', REGEX_ALPHANUMERIC, true)) {
 			$this->addMessage('The group\'s name is empty or its format is not valid', self::MESSAGE_ERROR);
 			$valid = false;
 		}

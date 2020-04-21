@@ -87,17 +87,18 @@ class HydroMonitoringPointQueries extends BaseQueries {
 			'country'                      => $data['country'],
 			'location'                     => $data['location'] ?? null,
 			'river_basin'                  => $data['river_basin'] ?? null,
+			'vertical_reference'           => $data['vertical_reference'] ?? null,
 
 			// numbers
-			'river_kilometer'              => isset($data['river_kilometer']) ? (int) $data['river_kilometer'] : null,
-			'catchment_area'               => isset($data['catchment_area']) ? (int) $data['catchment_area'] : null,
-			'gauge_zero'                   => isset($data['gauge_zero']) ? (int) $data['gauge_zero'] : null,
-			'long'                         => isset($data['long']) ? (int) $data['long'] : null,
-			'lat'                          => isset($data['lat']) ? (int) $data['lat'] : null,
-			'z'                            => isset($data['z']) ? (int) $data['z'] : null,
-			'maplat'                       => isset($data['lat']) ? (int) $data['lat'] : null,
-			'maplong'                      => isset($data['long']) ? (int) $data['long'] : null,
-			'vertical_reference'           => isset($data['vertical_reference']) ? (int) $data['vertical_reference'] : null,
+			'river_kilometer'              => isset($data['river_kilometer']) ? (float) $data['river_kilometer'] : null,
+			'catchment_area'               => isset($data['catchment_area']) ? (float) $data['catchment_area'] : null,
+			'gauge_zero'                   => isset($data['gauge_zero']) ? (float) $data['gauge_zero'] : null,
+			'long'                         => isset($data['long']) ? (float) $data['long'] : null,
+			'lat'                          => isset($data['lat']) ? (float) $data['lat'] : null,
+			'z'                            => isset($data['z']) ? (float) $data['z'] : null,
+			'maplat'                       => isset($data['maplat']) ? (float) $data['maplat'] : null,
+			'maplong'                      => isset($data['maplong']) ? (float) $data['maplong'] : null,
+
 
 			// foreign keys
 			'station_classificationid'     => isset($data['classification']) ? $data['classification'] ?: null : null,
@@ -105,9 +106,11 @@ class HydroMonitoringPointQueries extends BaseQueries {
 			'bankid'                       => isset($data['riverbank']) ? $data['riverbank'] ?: null : null,
 			'waterbodyeuropean_river_code' => isset($data['waterbody']) ? $data['waterbody'] ?: null : null,
 
+			// dates
+			'start_time'                   => $data['start_time'] ?? null,
+			'end_time'                     => $data['end_time'] ?? null,
+
 			// hidden
-			'start_time'                   => '1999-09-09',
-			'end_time'                     => '2060-09-09',
 			'utc_offset'                   => 0,
 		];
 	}
