@@ -8,7 +8,6 @@ use Environet\Sys\General\Db\MonitoringPointQueries;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\ApiException;
-use Environet\Sys\General\Exceptions\PermissionException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\HttpClient\ApiHandler;
 use Environet\Sys\General\Identity;
@@ -135,12 +134,11 @@ class DownloadHandler extends ApiHandler {
 	 * @inheritDoc
 	 *
 	 * @return void
-	 * @throws PermissionException
 	 * @throws QueryException
 	 * @throws DownloadException
 	 * @throws ApiException
 	 */
-	protected function authorizeRequest(): void {
+	protected function authorizeRequest(array $requiredPermissions = []): void {
 		if (!in_array(self::HANDLER_PERMISSION, $this->getIdentity()->getPermissions())) {
 			throw new DownloadException(205);
 		}

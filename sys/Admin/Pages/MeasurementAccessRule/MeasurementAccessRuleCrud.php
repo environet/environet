@@ -86,6 +86,7 @@ class MeasurementAccessRuleCrud extends CrudPage {
 
 	/**
 	 * @inheritDoc
+	 * @throws QueryException
 	 */
 	protected function formContext(): array {
 
@@ -94,6 +95,7 @@ class MeasurementAccessRuleCrud extends CrudPage {
 			'groups' => GroupQueries::getOptionList(),
 		];
 
+		// If the form is loaded for a user with limited permissions, the selectable options for the "operator" must be limited to the ones they have access to
 		if (in_array($this->createOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())
 			|| in_array($this->updateOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())) {
 			$operatorIds = UserQueries::getOperatorsOfUser($this->request->getIdentity()->getId());

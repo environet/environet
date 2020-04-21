@@ -69,8 +69,9 @@ class AdminHandler extends BaseHandler {
 	 * @inheritDoc
 	 *
 	 * @throws QueryException
+	 * @throws PermissionException
 	 */
-	protected function authorizeRequest(array $requiredPermissions) {
+	protected function authorizeRequest(array $requiredPermissions = []) {
 		$requiredPermissions = array_merge($requiredPermissions, [self::HANDLER_PERMISSION]);
 		if (!$this->getIdentity()->hasPermissions($requiredPermissions)) {
 			throw new PermissionException('You don\'t have the required permissions for this. (' . join(', ', $requiredPermissions) . ')');

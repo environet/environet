@@ -5,6 +5,17 @@
 		<form action="" method="POST">
 			<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
 
+            <fieldset class="form-group">
+                <div class="field">
+                    <legend><?=__('Operator');?></legend>
+                    <select name="operator">
+						<?php foreach ($operators as $id => $name): ?>
+                            <option value="<?= $id; ?>" <?= isset($record['operator']) && $record['operator'] == $id ? 'selected' : '' ?>><?= $name; ?></option>
+						<?php endforeach; ?>
+                    </select>
+                </div>
+            </fieldset>
+
 			<div class="form-group">
 				<label for="monitoringpoint_selector">Monitoring point selector</label>
 				<input type="text" name="monitoringpoint_selector" id="monitoringpoint_selector" class="form-control"  value="<?=formFieldValue('monitoringpoint_selector', $record);?>" />
@@ -14,7 +25,6 @@
                 <label for="observed_property_selector">Observed property selector</label>
                 <input type="text" name="observed_property_selector" id="observed_property_selector" class="form-control"  value="<?=formFieldValue('observed_property_selector', $record);?>" />
             </div>
-
 
             <fieldset class="form-group">
                 <div class="field">
@@ -28,16 +38,26 @@
             </fieldset>
 
             <fieldset class="form-group">
-                <div class="field">
-                    <legend><?=__('Operator');?></legend>
-                    <select name="operator">
-						<?php foreach ($operators as $id => $name): ?>
-                            <option value="<?= $id; ?>" <?= isset($record['operator']) && $record['operator'] == $id ? 'selected' : '' ?>><?= $name; ?></option>
-						<?php endforeach; ?>
-                    </select>
+                <h4>Time interval</h4>
+
+                <div class="form-group">
+                    <label for="interval_years">Years</label>
+                    <input type="number" name="interval_years" id="interval_years" class="form-control"
+						   value="<?=(!empty($_POST) && $_POST['interval_years']) ? $_POST['interval_years'] : (new DateInterval($record['interval']))->y ?>" />
+                </div>
+
+                <div class="form-group">
+                    <label for="interval_months">Months</label>
+                    <input type="number" name="interval_months" id="interval_months" class="form-control"
+                           value="<?=(!empty($_POST) && $_POST['interval_months']) ? $_POST['interval_months'] : (new DateInterval($record['interval']))->m ?>" />
+                </div>
+
+                <div class="form-group">
+                    <label for="interval_days">Days</label>
+                    <input type="number" name="interval_days" id="interval_days" class="form-control"
+						   value="<?=(!empty($_POST) && $_POST['interval_days']) ? $_POST['interval_days'] : (new DateInterval($record['interval']))->d ?>" />
                 </div>
             </fieldset>
-
             <div class="field">
 				<input type="submit" class="btn btn-primary" value="Save"/>
 			</div>

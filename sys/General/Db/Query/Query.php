@@ -160,6 +160,8 @@ class Query {
 			throw new QueryException('Invalid query properties');
 		}
 
+		$this->connection->runQuery("SET intervalstyle = 'iso_8601'", []);
+
 		$statement = $this->connection->runQuery($this->buildQuery(), $this->parameters);
 
 		if ($flags & self::RETURN_BOOL) {

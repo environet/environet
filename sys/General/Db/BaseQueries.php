@@ -37,18 +37,19 @@ class BaseQueries {
 	 * Save values in a connection table.
 	 * It needs an array of ids, and some configuration attributes. Deletes old connection values, and re-creates every connection.
 	 *
-	 * @param array  $values          Array of ids
-	 * @param string $connectionTable The connection table to fill with values
-	 * @param string $colLeft         Name of the column to where the ids from $values will be saved
-	 * @param string $colRight        Name of the column to where the $idRight saved
-	 * @param int    $idRight         A single id for the right side of the connection
-	 * @param bool   $truncate        If true, will delete existing connections first
+	 * @param array  $values           Array of ids
+	 * @param string $connectionTable  The connection table to fill with values
+	 * @param string $colLeft          Name of the column to where the ids from $values will be saved
+	 * @param string $colRight         Name of the column to where the $idRight saved
+	 * @param int    $idRight          A single id for the right side of the connection
+	 * @param bool   $truncate         If true, will delete existing connections first
+	 * @param array  $connectionValues Column name => value map of additional values to save to the connection table
 	 *
 	 * @throws QueryException
 	 * @uses \Environet\Sys\General\Db\Query\Delete::run()
 	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
 	 */
-	public static function saveConnections($values, string $connectionTable, string $colLeft, string $colRight, int $idRight, bool $truncate = false) {
+	public static function saveConnections($values, string $connectionTable, string $colLeft, string $colRight, int $idRight, bool $truncate = false, array $connectionValues = null) {
 		$ids = array_unique(array_filter($values ?? []));
 		if ($truncate) {
 			// Delete all connections
@@ -58,14 +59,33 @@ class BaseQueries {
 		if (empty($ids)) {
 			return;
 		}
+		$columns = [$colLeft, $colRight];
+
+		if ($connectionValues) {
+			$columns = array_merge([$colLeft, $colRight], array_keys($connectionValues));
+		}
 
 		// Create insert query for new connections
-		$insert = (new Insert())->table($connectionTable)->columns([$colLeft, $colRight]);
+		$insert = (new Insert())->table($connectionTable)->columns($columns);
 
 		$insert->addParameter(':rightId', $idRight);
+
+		if ($connectionValues) {
+			foreach ($connectionValues as $colName => $colValue) {
+				$insert->addParameter(':' . $colName, $colValue);
+			}
+		}
 		// Add values for all ids
 		foreach ($ids as $key => $id) {
-			$insert->addValueRow([":leftId$key", ":rightId"]);
+			$rowValues = [":leftId$key", ":rightId"];
+
+			if ($connectionValues) {
+				$rowValues = array_merge($rowValues, array_map(function ($key) {
+					return ':' . $key;
+				}, array_keys($connectionValues)));
+			}
+
+			$insert->addValueRow($rowValues);
 			$insert->addParameters([
 				":leftId$key" => (int) $id,
 			]);
