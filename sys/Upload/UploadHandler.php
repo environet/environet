@@ -76,6 +76,8 @@ class UploadHandler extends ApiHandler {
 	/**
 	 * @inheritDoc
 	 *
+	 * @param array $requiredPermissions
+	 *
 	 * @return void
 	 * @throws ApiException
 	 * @throws QueryException

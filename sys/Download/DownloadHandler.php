@@ -7,6 +7,8 @@ use Environet\Sys\Download\Exceptions\DownloadException;
 use Environet\Sys\General\Db\MonitoringPointQueries;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
+use Environet\Sys\General\Db\Selectors\MonitoringPointSelector;
+use Environet\Sys\General\Db\Selectors\ObservedPropertySelector;
 use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\HttpClient\ApiHandler;
@@ -133,10 +135,14 @@ class DownloadHandler extends ApiHandler {
 	/**
 	 * @inheritDoc
 	 *
+	 * @param array $requiredPermissions
+	 *
 	 * @return void
 	 * @throws QueryException
 	 * @throws DownloadException
 	 * @throws ApiException
+	 * @throws DownloadException
+	 * @throws QueryException
 	 */
 	protected function authorizeRequest(array $requiredPermissions = []): void {
 		if (!in_array(self::HANDLER_PERMISSION, $this->getIdentity()->getPermissions())) {
@@ -167,6 +173,75 @@ class DownloadHandler extends ApiHandler {
 		}
 
 		return [];
+	}
+
+
+	/**
+	 * @param array $params
+	 *
+	 * @return array
+	 * @throws ApiException
+	 * @throws DownloadException
+	 * @throws QueryException
+	 */
+	protected function processAccessRules(array $params): array {
+		$rules = (new Select())
+			->select(['mar.id, mar.operator_id, monitoringpoint_selector as points, observed_property_selector as props, gmar.interval'])
+			->from('users_groups')
+			->join('groups', 'groups.id = users_groups.groupsid')
+			->join('group_measurement_access_rules as gmar', 'gmar.group_id = groups.id')
+			->join('measurement_access_rules as mar', 'mar.id = gmar.measurement_access_rule_id')
+			->where("users_groups.usersid = {$this->getIdentity()->getId()}")
+			->run();
+
+
+		$errors = [];
+		$availablePoints = [];
+		$availableProps = [];
+		foreach ($rules as &$rule) {
+			$rule['points'] = new MonitoringPointSelector($rule['points'], $params['type'], $rule['operator_id']);
+			$rule['props'] = new ObservedPropertySelector($rule['props'], $params['type'], $rule['operator_id']);
+
+			$availablePoints = array_merge($availablePoints, $rule['points']->getValues());
+			$availableProps = array_merge($availableProps, $rule['props']->getValues());
+
+			// TODO TIME CONSTRAINT
+
+		}
+
+		if (!empty($params['points'])) {
+			$unauthorizedPoints = MonitoringPointSelector::checkAgainstEUCD($params['type'], $params['points'], $availablePoints);
+			if (!empty($unauthorizedPoints)) {
+				if (count($unauthorizedPoints) > 1) {
+					$errors['points'] = 'Monitoring points ' . implode(', ', $unauthorizedPoints) . ' are restricted!';
+				} else {
+					$errors['points'] = 'Monitoring point ' . implode(', ', $unauthorizedPoints) . ' is restricted!';
+				}
+			}
+		} else {
+			$params['points'] = $availablePoints;
+		}
+
+		if (!empty($params['symbols'])) {
+			$unauthorizedSymbols = ObservedPropertySelector::checkAgainstSymbols($params['type'], $params['symbols'], $availableProps);
+			if (!empty($unauthorizedSymbols)) {
+				if (count($unauthorizedSymbols) > 1) {
+					$errors['symbols'] = 'Observed property symbols ' . implode(', ', $unauthorizedSymbols) . ' are restricted!';
+				} else {
+					$errors['symbols'] = 'Observed property symbol ' . implode(', ', $unauthorizedSymbols) . ' is restricted!';
+				}
+			}
+		} else {
+			$params['smybols'] = $availableProps;
+		}
+
+
+		if (!empty($errors)) {
+			throw new DownloadException(401, $errors);
+		}
+
+
+		return $params;
 	}
 
 
@@ -230,11 +305,15 @@ class DownloadHandler extends ApiHandler {
 			$queryBuilder = MonitoringPointQueries::getBuilder();
 			$queryBuilder->setType($type);
 
+			// Prepare params with access restrictions
+			$params = [];
+
 			// Optional filters
 			$startTime = $this->request->getQueryParam('start', false);
 			if ($startTime) {
 				try {
-					$queryBuilder->setStartTime(new \DateTime(filter_var($startTime, FILTER_SANITIZE_STRING)));
+					$params['start'] = new \DateTime(filter_var($startTime, FILTER_SANITIZE_STRING));
+					$queryBuilder->setStartTime($params['start']);
 				} catch (Throwable $e) {
 					throw new DownloadException(304);
 				}
@@ -243,14 +322,32 @@ class DownloadHandler extends ApiHandler {
 			$endTime = $this->request->getQueryParam('end', false);
 			if ($endTime) {
 				try {
-					$queryBuilder->setEndTime(new \DateTime(filter_var($endTime, FILTER_SANITIZE_STRING)));
+					$params['end'] = new \DateTime(filter_var($endTime, FILTER_SANITIZE_STRING));
+					$queryBuilder->setEndTime($params['end']);
 				} catch (Throwable $e) {
 					throw new DownloadException(305);
 				}
 			}
 
+			$params['points'] = $this->parseArrayParam('point');
+			$params['symbols'] = $this->parseArrayParam('symbol');
+
+			// Permission check
+			if (!$identity->hasPermissions([Identity::ADMIN_PERMISSION])) {
+				$params['type'] = $type === 'hydro' ? MPOINT_TYPE_HYDRO : MPOINT_TYPE_METEO;
+				// Overwrites params with the allowed data for this user
+				$params = $this->processAccessRules($params);
+				$queryBuilder->setMonitoringPointsById($params['points']);
+				$queryBuilder->setObservedPropertiesById($params['symbols']);
+			} else {
+				$queryBuilder->setMonitoringPointsByEUCD(
+					$type === MonitoringPointQueries::TYPE_HYDRO ? MonitoringPointQueries::EUCD_POSTFIX_HYDRO : MonitoringPointQueries::EUCD_POSTFIX_METEO,
+					$params['points']
+				);
+				$queryBuilder->setObservedPropertiesBySymbol($params['symbols']);
+			}
+
 			$queryBuilder->setCountries($this->parseArrayParam('country'));
-			$queryBuilder->setObservedProperties($this->parseArrayParam('symbol'));
 
 			return (new Response((new CreateOutputXml())->generateXml($queryBuilder->getResults())->asXML()))->setHeaders(['Content-type: application/xml']);
 		} catch (DownloadException $e) {

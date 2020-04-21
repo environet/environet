@@ -20,6 +20,9 @@ class MonitoringPointQueries {
 	public const TYPE_HYDRO = 'hydro';
 	public const TYPE_METEO = 'meteo';
 
+	public const EUCD_POSTFIX_HYDRO = 'wgst';
+	public const EUCD_POSTFIX_METEO = 'pst';
+
 	/**
 	 * Query builder instance
 	 * @var MonitoringPointQueries
@@ -148,6 +151,64 @@ class MonitoringPointQueries {
 
 
 	/**
+	 * @param array $points
+	 *
+	 * @return MonitoringPointQueries
+	 */
+	public function setMonitoringPointsById($points = []): MonitoringPointQueries {
+		if (!is_array($points)) {
+			$points = [$points];
+		}
+
+		if (!empty($points)) {
+			$this->filterBy('property', 'whereIn', ['{type}point.id', $points, 'points']);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * @param string $eucdPostfix
+	 * @param array  $points
+	 *
+	 * @return MonitoringPointQueries
+	 */
+	public function setMonitoringPointsByEUCD(string $eucdPostfix, $points = []): MonitoringPointQueries {
+		if (!is_array($points)) {
+			$points = [$points];
+		}
+
+		if (!empty($points)) {
+			$this->filterBy('property', 'whereIn', ["{type}point.eucd_$eucdPostfix", $points, 'points']);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Set measurement property symbols.
+	 *
+	 * @param array $ids
+	 *
+	 * @return MonitoringPointQueries
+	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::filterBy()
+	 */
+	public function setObservedPropertiesById($ids = []): MonitoringPointQueries {
+		if (!is_array($ids)) {
+			$ids = [$ids];
+		}
+
+		if (!empty($ids)) {
+			$this->filterBy('property', 'whereIn', ['{type}_observed_property.id', $ids, 'ids']);
+		}
+
+		return $this;
+	}
+
+
+	/**
 	 * Set measurement property symbols.
 	 *
 	 * @param array $symbols
@@ -155,7 +216,7 @@ class MonitoringPointQueries {
 	 * @return MonitoringPointQueries
 	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::filterBy()
 	 */
-	public function setObservedProperties($symbols = []): MonitoringPointQueries {
+	public function setObservedPropertiesBySymbol($symbols = []): MonitoringPointQueries {
 		if (!is_array($symbols)) {
 			$symbols = [$symbols];
 		}

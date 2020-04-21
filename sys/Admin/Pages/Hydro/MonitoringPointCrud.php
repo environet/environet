@@ -96,7 +96,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	protected function validateData(array $data): bool {
 		$valid = true;
 
-		if (!validate($data, 'name', REGEX_NAME, true)) {
+		if (!validate($data, 'name', REGEX_ALPHANUMERIC, true)) {
 			$this->addMessage('Monitoring point name is empty, or format is invalid', self::MESSAGE_ERROR);
 			$valid = false;
 		}

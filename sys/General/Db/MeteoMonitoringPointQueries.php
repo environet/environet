@@ -131,23 +131,25 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 			'country'                       => $data['country'],
 			'location'                      => $data['location'] ?? null,
 			'river_basin'                   => $data['river_basin'] ?? null,
+			'vertical_reference'            => $data['vertical_reference'] ?? null,
 
 			// numbers
-			'long'                          => isset($data['long']) ? (int) $data['long'] : null,
-			'lat'                           => isset($data['lat']) ? (int) $data['lat'] : null,
-			'z'                             => isset($data['z']) ? (int) $data['z'] : null,
-			'maplat'                        => isset($data['maplat']) ? (int) $data['maplat'] : null,
-			'maplong'                       => isset($data['maplong']) ? (int) $data['maplong'] : null,
-			'altitude'                      => isset($data['altitude']) ? (int) $data['altitude'] : null,
-			'vertical_reference'            => isset($data['vertical_reference']) ? (int) $data['vertical_reference'] : null,
+			'long'                          => isset($data['long']) ? (float) $data['long'] : null,
+			'lat'                           => isset($data['lat']) ? (float) $data['lat'] : null,
+			'z'                             => isset($data['z']) ? (float) $data['z'] : null,
+			'maplat'                        => isset($data['maplat']) ? (float) $data['maplat'] : null,
+			'maplong'                       => isset($data['maplong']) ? (float) $data['maplong'] : null,
+			'altitude'                      => isset($data['altitude']) ? (float) $data['altitude'] : null,
 
 			// foreign keys
 			'meteostation_classificationid' => isset($data['classification']) ? $data['classification'] ?: null : null,
 			'operatorid'                    => isset($data['operator']) ? $data['operator'] ?: null : null,
 
+			// dates
+			'start_time'                   => $data['start_time'] ?? null,
+			'end_time'                     => $data['end_time'] ?? null,
+
 			// hidden
-			'start_time'                    => '1999-09-09',
-			'end_time'                      => '2060-09-09',
 			'utc_offset'                    => 0,
 
 		];
