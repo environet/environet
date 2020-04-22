@@ -37,7 +37,8 @@ class DownloadException extends ApiException {
 			305 => 'End time filter value is invalid',
 
 			//Process error
-			401 => 'Unauthorized request of monitoring point data!'
+			401 => 'Unauthorized request of monitoring point data!',
+			402 => 'Invalid date interval entry, please contact the administrators!'
 		];
 		parent::__construct($code, $errorMessages);
 	}

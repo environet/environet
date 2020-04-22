@@ -30,6 +30,11 @@ class MonitoringPointSelector extends Selector {
 	 */
 	private $type;
 
+	/**
+	 * @var array
+	 */
+	private $eucd;
+
 
 	/**
 	 * MonitoringPointSelector constructor.
@@ -43,8 +48,38 @@ class MonitoringPointSelector extends Selector {
 	public function __construct(string $values, $type, int $operatorId) {
 		$this->operator = $this->getOperatorIdentity($operatorId);
 		$this->type = $type;
+		$this->eucd = null;
 
 		parent::__construct($values, self::SELECTOR_TYPE_INT);
+	}
+
+
+	/**
+	 * Get EUCD values of the selected monitoring points
+	 *
+	 * @return array|string
+	 * @throws QueryException
+	 */
+	public function getEUCD(): array {
+		if ($this->eucd === null) {
+			if ($this->type === MPOINT_TYPE_HYDRO) {
+				$points = (new Select())
+					->select('id, eucd_wgst as eucd')
+					->from('hydropoint')
+					->whereIn('id', $this->values, 'eucdParam')
+					->run();
+			} else {
+				$points = (new Select())
+					->select('id, eucd_pst as eucd')
+					->from('meteopoint')
+					->whereIn('id', $this->values, 'eucdParam')
+					->run();
+			}
+
+			$this->eucd = !empty($points) ? array_column($points, 'eucd') : [];
+		}
+
+		return $this->eucd;
 	}
 
 

@@ -6,6 +6,7 @@ namespace Environet\Sys\General\Db;
 use DateTime;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\QueryException;
+use stdClass;
 
 /**
  * Class MonitoringPointQueries
@@ -50,6 +51,11 @@ class MonitoringPointQueries {
 	 */
 	protected $select;
 
+	/**
+	 * @var array
+	 */
+	private $subsets;
+
 
 	/**
 	 * MonitoringPointQueries constructor.
@@ -58,6 +64,7 @@ class MonitoringPointQueries {
 		$this->filters = [];
 		$this->select = new Select();
 		$this->type = null;
+		$this->subsets = [];
 	}
 
 
@@ -82,6 +89,21 @@ class MonitoringPointQueries {
 		$this->filters = [];
 		$this->select = new Select();
 		$this->type = null;
+	}
+
+
+	/**
+	 * Return all filters which should be applied to all subqueries as well.
+	 *
+	 * @return array
+	 */
+	protected function getGlobalFilters(): array {
+		$globalFilters = [];
+		if (isset($this->filters['country'])) {
+			$globalFilters['country'] = $this->filters['country'];
+		}
+
+		return $globalFilters;
 	}
 
 
@@ -151,6 +173,8 @@ class MonitoringPointQueries {
 
 
 	/**
+	 * Set monitoring points by ID.
+	 *
 	 * @param array $points
 	 *
 	 * @return MonitoringPointQueries
@@ -161,7 +185,7 @@ class MonitoringPointQueries {
 		}
 
 		if (!empty($points)) {
-			$this->filterBy('property', 'whereIn', ['{type}point.id', $points, 'points']);
+			$this->filterBy('mpoint', 'whereIn', ['{type}point.id', $points, 'points']);
 		}
 
 		return $this;
@@ -169,18 +193,19 @@ class MonitoringPointQueries {
 
 
 	/**
-	 * @param string $eucdPostfix
-	 * @param array  $points
+	 * Set monitoring points by EUCD identifier
+	 *
+	 * @param array $points
 	 *
 	 * @return MonitoringPointQueries
 	 */
-	public function setMonitoringPointsByEUCD(string $eucdPostfix, $points = []): MonitoringPointQueries {
+	public function setMonitoringPointsByEUCD($points = []): MonitoringPointQueries {
 		if (!is_array($points)) {
 			$points = [$points];
 		}
 
 		if (!empty($points)) {
-			$this->filterBy('property', 'whereIn', ["{type}point.eucd_$eucdPostfix", $points, 'points']);
+			$this->filterBy('mpoint', 'whereIn', ["{type}point.{eucd}", $points, 'points']);
 		}
 
 		return $this;
@@ -188,7 +213,7 @@ class MonitoringPointQueries {
 
 
 	/**
-	 * Set measurement property symbols.
+	 * Set measurement property symbols by ID.
 	 *
 	 * @param array $ids
 	 *
@@ -201,7 +226,7 @@ class MonitoringPointQueries {
 		}
 
 		if (!empty($ids)) {
-			$this->filterBy('property', 'whereIn', ['{type}_observed_property.id', $ids, 'ids']);
+			$this->filterBy('property', 'whereIn', ['{type}_observed_property.id', $ids, 'props']);
 		}
 
 		return $this;
@@ -222,10 +247,57 @@ class MonitoringPointQueries {
 		}
 
 		if (!empty($symbols)) {
-			$this->filterBy('property', 'whereIn', ['{type}_observed_property.symbol', $symbols, 'symbols']);
+			$this->filterBy('property', 'whereIn', ['{type}_observed_property.symbol', $symbols, 'props']);
 		}
 
 		return $this;
+	}
+
+
+	/**
+	 * Create queries with different restrictions to be queried in union.
+	 *
+	 * @param $sets
+	 *
+	 * @throws QueryException
+	 */
+	public function createSubsets($sets) {
+		$this->subsets = [];
+
+		foreach ($sets as $key => $set) {
+			if (!isset($set['points']) || !isset($set['props']) || !isset($set['start']) || !isset($set['end'])) {
+				throw new QueryException('Missing monitoring point subset params!');
+			}
+			if (!$set['start'] instanceof DateTime || !$set['end'] instanceof DateTime) {
+				throw new QueryException('Invalid monitoring point subset interval params!');
+			}
+
+			$subset = new stdClass();
+			$subset->filters = [];
+			$subset->select = new Select();
+			$this->subsets[$key] = $subset;
+
+			$this->filterSubsetBy($key, 'mpoint', 'whereIn', ['{type}point.{eucd}', $set['points'], "sub{$key}points"]);
+			$this->filterSubsetBy($key, 'property', 'whereIn', ['{type}_observed_property.symbol', $set['props'], "sub{$key}props"]);
+			$this->filterSubsetBy($key, 'start_time', 'where', ["{type}_result.time >= timestamp '{$set['start']->format('Y-m-d H:i:s.u')}'"]);
+			$this->filterSubsetBy($key, 'end_time', 'where', ["{type}_result.time <= timestamp '{$set['end']->format('Y-m-d H:i:s.u')}'"]);
+		}
+	}
+
+
+	/**
+	 * Add a pre-made filter to the main select or one of the subset selects
+	 *
+	 * @param stdClass $filter
+	 * @param string   $key
+	 * @param null     $subsetKey
+	 */
+	protected function addFilter(stdClass $filter, string $key, $subsetKey = null) {
+		if ($subsetKey === null) {
+			$this->filters[$key] = $filter;
+		} else {
+			$this->subsets[$subsetKey]->filters[$key] = $filter;
+		}
 	}
 
 
@@ -237,7 +309,7 @@ class MonitoringPointQueries {
 	 * @param array  $queryParams
 	 */
 	protected function filterBy(string $key, string $queryMethod, array $queryParams): void {
-		$filter = new \stdClass();
+		$filter = new stdClass();
 		$filter->method = $queryMethod;
 		$filter->params = $queryParams;
 		$this->filters[$key] = $filter;
@@ -245,31 +317,51 @@ class MonitoringPointQueries {
 
 
 	/**
-	 * Apply previously set filters to the query.
+	 * Store a filter for a subset.
+	 *
+	 * @param int|string $subsetKey
+	 * @param string     $key
+	 * @param string     $queryMethod
+	 * @param array      $queryParams
 	 */
-	protected function applyFilters() {
-		foreach ($this->filters as $filter) {
+	protected function filterSubsetBy($subsetKey, string $key, string $queryMethod, array $queryParams): void {
+		$filter = new stdClass();
+		$filter->method = $queryMethod;
+		$filter->params = $queryParams;
+		$this->subsets[$subsetKey]->filters[$key] = $filter;
+	}
+
+
+	/**
+	 * Apply previously set filters to the query.
+	 *
+	 * @param null $subsetKey
+	 */
+	protected function applyFilters($subsetKey = null) {
+		$filters = $subsetKey === null ? $this->filters : $this->subsets[$subsetKey]->filters;
+		$eucdReplacement = $this->type === self::TYPE_HYDRO ? self::EUCD_POSTFIX_HYDRO : self::EUCD_POSTFIX_METEO;
+
+		foreach ($filters as $filter) {
 			foreach ($filter->params as $key => $param) {
-				$filter->params[$key] = str_replace('{type}', $this->type, $param);
+				$filter->params[$key] = str_replace('{eucd}', "eucd_$eucdReplacement", str_replace('{type}', $this->type, $param));
 			}
-			$this->select->{$filter->method}(...$filter->params);
+			if ($subsetKey === null) {
+				$this->select->{$filter->method}(...$filter->params);
+			} else {
+				$this->subsets[$subsetKey]->select->{$filter->method}(...$filter->params);
+			}
 		}
 	}
 
 
 	/**
-	 * Compile and execute the query.
+	 * Build the main or one of the sub queries.
 	 *
-	 * @return array|int
-	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::applyFilters()
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @param Select $select
+	 *
+	 * @return Select
 	 */
-	public function getResults() {
-		if ($this->type === null) {
-			throw new QueryException('Missing measurement point type!');
-		}
-
+	protected function buildQuery(Select $select, bool $isSubset = false): Select {
 		// Sub-select for getting latest value by created at.
 		// There can be multiple values per 'time', for outputs we use the latest.
 		$subSelect = (new Select())
@@ -301,8 +393,8 @@ class MonitoringPointQueries {
 
 		// Group-by fields for nearly all columns
 		$groupBys = [
-			"{$this->type}point.id",
-			"{$this->type}_observed_property.id",
+			"mpoint_id",
+			"property_id",
 			"{$this->type}_time_series.phenomenon_time_begin",
 			"{$this->type}_time_series.phenomenon_time_end",
 			"{$this->type}point.lat",
@@ -329,21 +421,59 @@ class MonitoringPointQueries {
 			]);
 		}
 
-		$this->select
+		$select
 			->from("{$this->type}_result")
 			->join("{$this->type}_time_series", "{$this->type}_time_series.id = {$this->type}_result.time_seriesid")
 			->join("{$this->type}point", "{$this->type}point.id = {$this->type}_time_series.mpointid")
 			->join("{$this->type}_observed_property", "{$this->type}_observed_property.id = {$this->type}_time_series.observed_propertyid")
 			->where("{$this->type}_result.is_forecast = 'FALSE'")
-			->select($selectFields)
-			->orderBy('mpoint_id')
-			->orderBy('property_id');
+			->select($selectFields);
+
+		if (!$isSubset) {
+			$select->orderBy('mpoint_id')->orderBy('property_id');
+		}
 
 		// Add group-bys
 		foreach ($groupBys as $groupBy) {
-			$this->select->groupBy($groupBy);
+			$select->groupBy($groupBy);
 		}
 
+		return $select;
+	}
+
+
+	/**
+	 * Compile and execute the query.
+	 *
+	 * @return array|int
+	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::applyFilters()
+	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 */
+	public function getResults() {
+		if ($this->type === null) {
+			throw new QueryException('Missing measurement point type!');
+		}
+
+		if (!empty($this->subsets)) {
+			// Get filters which apply to all subsets
+			$globalFilters = $this->getGlobalFilters();
+			// Overwrite the main select (since it's empty if subsets are used)
+			$main = array_shift($this->subsets);
+			$this->select = $main->select;
+			$this->filters = array_merge($main->filters, $globalFilters);
+			foreach ($this->subsets as $key => &$subset) {
+				$subset->select = $this->buildQuery($subset->select, true);
+				foreach ($globalFilters as $filterKey => $globalFilter) {
+					$this->addFilter($globalFilter, $filterKey, $key);
+				}
+
+				$this->applyFilters($key);
+				$this->select->union($subset->select);
+			}
+		}
+
+		$this->select = $this->buildQuery($this->select);
 		$this->applyFilters();
 
 		return $this->select->run();

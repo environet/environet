@@ -30,6 +30,11 @@ class ObservedPropertySelector extends Selector {
 	 */
 	private $type;
 
+	/**
+	 * @var array
+	 */
+	private $symbols;
+
 
 	/**
 	 * ObservedPropertySelector constructor.
@@ -43,8 +48,39 @@ class ObservedPropertySelector extends Selector {
 	public function __construct(string $values, $type, int $operatorId = 0) {
 		$this->operator = $operatorId ? $this->getOperatorIdentity($operatorId) : null;
 		$this->type = $type;
+		$this->symbols = null;
 
 		parent::__construct($values, self::SELECTOR_TYPE_INT);
+	}
+
+
+	/**
+	 * Get the associated symbols of this selector
+	 *
+	 * @return array
+	 * @throws QueryException
+	 */
+	public function getSymbols(): array {
+		if ($this->symbols === null) {
+			if ($this->type === MPOINT_TYPE_HYDRO) {
+				$symbols = (new Select())
+					->select('id, symbol')
+					->from('hydro_observed_property')
+					->whereIn('id', $this->values, 'values')
+					->run();
+			} else {
+				$symbols = (new Select())
+					->select('id, symbol')
+					->from('meteo_observed_property')
+					->whereIn('id', $this->values, 'values')
+					->run();
+			}
+
+			$this->symbols = !empty($symbols) ? array_column($symbols, 'symbol') : [];
+		}
+
+
+		return $this->symbols;
 	}
 
 
