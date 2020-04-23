@@ -49,7 +49,19 @@ class HydroMonitoringPointQueries extends BaseQueries {
 			$query->whereIn('operatorid', $operatorIds, 'operatorId');
 		}
 
-		return $query->run();
+		$points = $query->run();
+
+		foreach ($points as $i => $point) {
+			$points[$i]['observed_properties'] = (new Select())
+				->from('hydro_observed_property hop')
+				->select('hop.symbol')
+				->join('hydropoint_observed_property hpop', 'hpop.observed_propertyid = hop.id', Query::JOIN_LEFT)
+				->where('hpop.mpointid = :hpopId')
+				->addParameter(':hpopId', $point['id'])
+				->run(Query::FETCH_COLUMN);
+		}
+
+		return $points;
 	}
 
 

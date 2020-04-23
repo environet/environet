@@ -49,7 +49,19 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 			$query->whereIn('operatorid', $operatorIds, 'operatorId');
 		}
 
-		return $query->run();
+		$points = $query->run();
+
+		foreach ($points as $i => $point) {
+			$points[$i]['observed_properties'] = (new Select())
+				->from('meteo_observed_property hop')
+				->select('hop.symbol')
+				->join('meteopoint_observed_property hpop', 'hpop.meteo_observed_propertyid = hop.id', Query::JOIN_LEFT)
+				->where('hpop.meteopointid = :hpopId')
+				->addParameter(':hpopId', $point['id'])
+				->run(Query::FETCH_COLUMN);
+		}
+
+		return $points;
 	}
 
 
