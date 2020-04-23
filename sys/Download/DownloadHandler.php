@@ -102,7 +102,6 @@ class DownloadHandler extends ApiHandler {
 	 *
 	 * @return array
 	 * @throws AccessRuleException
-	 * @throws ApiException
 	 * @throws DownloadException
 	 * @throws QueryException
 	 * @throws ApiException

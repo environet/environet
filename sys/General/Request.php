@@ -74,7 +74,7 @@ class Request {
 
 
 	/**
-	 * Check if route is an admin route (/admin prefix)
+	 * Check if route is an admin route
 	 *
 	 * @return bool
 	 */
@@ -84,7 +84,7 @@ class Request {
 
 
 	/**
-	 * Check if route is an upload route (/upload prefix)
+	 * Check if route is an upload route
 	 *
 	 * @return bool
 	 */
@@ -94,7 +94,7 @@ class Request {
 
 
 	/**
-	 * Check if route is an upload route (/upload prefix)
+	 * Check if route is a download route
 	 *
 	 * @return bool
 	 */
@@ -104,7 +104,7 @@ class Request {
 
 
 	/**
-	 * Check if route is an upload route (/upload prefix)
+	 * Check if route is a json api route
 	 *
 	 * @return bool
 	 */
