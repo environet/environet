@@ -29,6 +29,11 @@ class JsonApiHandler extends ApiHandler {
 	}
 
 
+	/**
+	 * Handle the incoming json api request.
+	 *
+	 * @return Response
+	 */
 	public function handleRequest(): Response {
 		try {
 			$this->authorizeRequest();
@@ -45,19 +50,19 @@ class JsonApiHandler extends ApiHandler {
 
 					$results['hydro'] = HydroMonitoringPointQueries::all($operatorIds);
 					$results['meteo'] = MeteoMonitoringPointQueries::all($operatorIds);
-					return $this->response(json_encode($results), 200);
+					return $this->jsonResponse(json_encode($results), 200);
 				default:
 					throw new HttpNotFoundException('API route not found');
 			}
 		} catch (HttpNotFoundException $e) {
-			return $this->response($e->getMessage(), 404);
+			return $this->jsonResponse($e->getMessage(), 404);
 		} catch (Exception $e) {
-			return $this->response($e->getMessage(), 500);
+			return $this->jsonResponse($e->getMessage(), 500);
 		}
 	}
 
 
-	protected function response($contents, $statusCode): Response {
+	private function jsonResponse($contents, $statusCode): Response {
 		return (new Response($contents))
 			->setStatusCode($statusCode)
 			->setHeaders(['Content-type: application/json']);

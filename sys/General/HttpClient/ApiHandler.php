@@ -24,7 +24,7 @@ abstract class ApiHandler extends BaseHandler {
 	protected $authHeaderParts = null;
 
 	/**
-	 * @var null|Identity The current downloader's identity
+	 * @var null|Identity The identity of the current request
 	 */
 	protected $identity = null;
 
@@ -173,11 +173,15 @@ abstract class ApiHandler extends BaseHandler {
 
 
 	/**
-	 * @inheritDoc
+	 * Authorize the incoming API request
 	 *
-	 * @return void
-	 * @throws QueryException
+	 * Does the following steps:
+	 * 1. Gets the user identity and the public key stored with it.
+	 * 2. Validates the signature parsed from the authorization header and validates it with the provided token from the request and the public key.
+	 *
+	 * @param array $requiredPermissions
 	 * @throws ApiException
+	 * @throws QueryException
 	 */
 	protected function authorizeRequest(array $requiredPermissions = []): void {
 		// Get the identity based on auth header
@@ -199,6 +203,11 @@ abstract class ApiHandler extends BaseHandler {
 	}
 
 
+	/**
+	 * Validate the request signature in the auth header, against the token query parameter
+	 *
+	 * @throws ApiException
+	 */
 	protected function validateSignature() {
 		$token = $this->request->getQueryParam('token', false);
 		if (!$token) {

@@ -165,15 +165,11 @@ class DownloadHandler extends ApiHandler {
 	 * Handle the incoming download request.
 	 *
 	 * Does the following steps:
-	 * 1. Gets the user identity via {@see DownloadHandler::getIdentity()} and the public key stored with it.
-	 * 2. Validates the signature parsed from the authorization header ({@see DownloadHandler::getAuthHeaderParts()}) and validates it with the provided token from the request and the public key.
-	 * 3. Fetches and validates the required parameter "type" of the monitoring points requested (hydro or meteo).
-	 * 4. Parses and applies optional filter parameters start, end, country and symbol.
-	 * 5. Queries the results and generates the output XML containing them.
+	 * 1. Fetches and validates the required parameter "type" of the monitoring points requested (hydro or meteo).
+	 * 2. Parses and applies optional filter parameters start, end, country and symbol.
+	 * 3. Queries the results and generates the output XML containing them.
 	 *
 	 * @return Response|mixed
-	 * @uses \Environet\Sys\Download\DownloadHandler::getIdentity()
-	 * @uses \Environet\Sys\Download\DownloadHandler::getAuthHeaderParts()
 	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::getBuilder()
 	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::getResults()
 	 * @uses \Environet\Sys\Xml\CreateOutputXml::generateXml()

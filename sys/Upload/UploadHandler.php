@@ -34,7 +34,7 @@ class UploadHandler extends ApiHandler {
 	/**
 	 * Handle the upload request.
 	 *
-	 * It checks the auth state (username is presented in header, and an existing user), verifies the signature, verifies the xml with XSD schema, and processes the input.
+	 * Validates xml input, and stores data into database.
 	 * If an error occurs, an ErrorResponse XML will be generated ({@see CreateErrorXml}).
 	 *
 	 * @return Response|mixed
@@ -89,6 +89,11 @@ class UploadHandler extends ApiHandler {
 	}
 
 
+	/**
+	 * Validate the request signature in the auth header, against the request body
+	 *
+	 * @throws ApiException
+	 */
 	protected function validateSignature() {
 		// Get the XML content, and verify the signature with user's public key
 		$content = file_get_contents('php://input');
