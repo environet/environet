@@ -26,11 +26,8 @@ class DownloadException extends ApiException {
 	 */
 	public function __construct(int $code = 101, array $errorMessages = []) {
 		$this->errors += [
-			//Auth errors
-			207 => 'Request token not found',
 
 			//Input error
-			301 => 'Signature is invalid',
 			302 => 'Observation point type is missing',
 			303 => 'Observation point type is invalid',
 			304 => 'Start time filter value is invalid',

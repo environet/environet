@@ -44,7 +44,6 @@ class Plugin {
 				$console->write('Uploading monitoring point data', Console::COLOR_YELLOW);
 				try {
 					$apiResponse = $this->apiClient->upload($xmlPayload);
-					$apiResponse->hasBody() && $console->writeLine($apiResponse->getBody());
 					$console->write("\r");
 					$console->writeLine('Monitoring point data upload successful  ', Console::COLOR_GREEN);
 					$successful ++;

@@ -35,6 +35,8 @@ class ApiException extends \Exception {
 		204 => 'Invalid Authorization header',
 		205 => 'Action not permitted',
 		206 => 'Public key for user not found',
+		207 => 'Request token not found',
+		208 => 'Request signature is not valid'
 	];
 
 	/**
@@ -58,7 +60,7 @@ class ApiException extends \Exception {
 		if (!empty($errorMessages)) {
 			$this->errorMessages = array_merge($this->errorMessages, $errorMessages);
 		}
-		parent::__construct(null, $code);
+		parent::__construct(join(', ', $this->errorMessages), $code);
 	}
 
 

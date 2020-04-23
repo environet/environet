@@ -36,6 +36,24 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 
 
 	/**
+	 * @param array $operatorIds
+	 * @return array
+	 * @throws QueryException
+	 */
+	public static function all(array $operatorIds = null) {
+		$query = (new Select())
+			->select(static::$tableName. '.*')
+			->from(static::$tableName);
+
+		if (!is_null($operatorIds)) {
+			$query->whereIn('operatorid', $operatorIds, 'operatorId');
+		}
+
+		return $query->run();
+	}
+
+
+	/**
 	 * @inheritDoc
 	 * @throws QueryException
 	 * @uses \Environet\Sys\General\Db\MeteoStationClassificationQueries::getById()
