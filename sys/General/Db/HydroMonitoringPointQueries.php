@@ -36,6 +36,36 @@ class HydroMonitoringPointQueries extends BaseQueries {
 
 
 	/**
+	 * @param array $operatorIds
+	 * @return array
+	 * @throws QueryException
+	 */
+	public static function all(array $operatorIds = null) {
+		$query = (new Select())
+			->select(static::$tableName. '.*')
+			->from(static::$tableName);
+
+		if (!is_null($operatorIds)) {
+			$query->whereIn('operatorid', $operatorIds, 'operatorId');
+		}
+
+		$points = $query->run();
+
+		foreach ($points as $i => $point) {
+			$points[$i]['observed_properties'] = (new Select())
+				->from('hydro_observed_property hop')
+				->select('hop.symbol')
+				->join('hydropoint_observed_property hpop', 'hpop.observed_propertyid = hop.id', Query::JOIN_LEFT)
+				->where('hpop.mpointid = :hpopId')
+				->addParameter(':hpopId', $point['id'])
+				->run(Query::FETCH_COLUMN);
+		}
+
+		return $points;
+	}
+
+
+	/**
 	 * @inheritDoc
 	 * @throws QueryException
 	 * @uses \Environet\Sys\General\Db\HydroStationClassificationQueries::getById()

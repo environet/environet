@@ -7,7 +7,6 @@ use DateInterval;
 use DateTime;
 use Environet\Sys\Download\Exceptions\DownloadException;
 use Environet\Sys\General\Db\MonitoringPointQueries;
-use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\Selectors\MonitoringPointSelector;
 use Environet\Sys\General\Db\Selectors\ObservedPropertySelector;
@@ -15,7 +14,6 @@ use Environet\Sys\General\Exceptions\AccessRuleException;
 use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\HttpClient\ApiHandler;
-use Environet\Sys\General\Identity;
 use Environet\Sys\General\Response;
 use Environet\Sys\Xml\CreateErrorXml;
 use Environet\Sys\Xml\CreateOutputXml;
@@ -37,145 +35,6 @@ class DownloadHandler extends ApiHandler {
 	 * @inheritDoc
 	 */
 	protected const HANDLER_PERMISSION = 'api.download';
-
-	/**
-	 * @var null|array The parsed authorization header
-	 */
-	protected $authHeaderParts = null;
-
-	/**
-	 * @var null|Identity The current downloader's identity
-	 */
-	protected $identity = null;
-
-
-	/**
-	 * Prepare and parse the Authorization header
-	 *
-	 * @return array
-	 * @throws DownloadException
-	 */
-	protected function getAuthHeaderParts(): array {
-		if ($this->authHeaderParts === null) {
-			// If the header isn't set, the request is invalid
-			if (!isset($_SERVER['HTTP_AUTHORIZATION'])) {
-				throw new DownloadException(201);
-			}
-
-			// Split the auth header to parts. For format see \Environet\Sys\General\PKI::authHeaderWithSignature
-			$this->authHeaderParts = $this->parseAuthHeader($_SERVER['HTTP_AUTHORIZATION']);
-
-			// If the parts aren't present, the request is invalid
-			if ($this->authHeaderParts === null) {
-				throw new DownloadException(204);
-			}
-		}
-
-		return $this->authHeaderParts;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 * @return Identity
-	 * @throws DownloadException
-	 * @throws ApiException
-	 */
-	protected function getIdentity(): Identity {
-		if ($this->identity === null) {
-			$username = $this->getAuthHeaderParts()['keyId'] ?? null;
-
-			if (!$username) {
-				// Username is empty
-				throw new DownloadException(202);
-			}
-
-			try {
-				// Find user in database
-				$user = (new Select())
-					->from('users')
-					->where('username = :username')
-					->addParameter('username', $username)
-					->run(Query::FETCH_FIRST);
-			} catch (QueryException $e) {
-				//Query error
-				throw DownloadException::serverError();
-			}
-
-			if (!$user) {
-				//User not found
-				throw new DownloadException(203);
-			}
-
-			try {
-				//Find public key for user
-				$publicKey = (new Select())
-					->from('public_keys')
-					->where('usersid = :userId')
-					->where('revoked = :revoked')
-					->setParameters([
-						'userId'  => $user['id'],
-						'revoked' => 0
-					])
-					->limit(1)
-					->run(Query::FETCH_FIRST);
-			} catch (QueryException $e) {
-				//Query error
-				throw DownloadException::serverError();
-			}
-
-			//Create and identity from user
-			$this->identity = Identity::createFromUser($user['id']);
-			if ($publicKey) {
-				//Set the public key
-				$this->identity->setPublicKey($publicKey['public_key']);
-			}
-		}
-
-		return $this->identity;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 *
-	 * @param array $requiredPermissions
-	 *
-	 * @return void
-	 * @throws QueryException
-	 * @throws DownloadException
-	 * @throws ApiException
-	 */
-	protected function authorizeRequest(array $requiredPermissions = []): void {
-		if (!in_array(self::HANDLER_PERMISSION, $this->getIdentity()->getPermissions())) {
-			throw new DownloadException(205);
-		}
-	}
-
-
-	/**
-	 * Fetch and sanitize a request query array parameter.
-	 *
-	 * @param string $key
-	 *
-	 * @return array
-	 */
-	protected function parseArrayParam(string $key) {
-		$params = $this->request->getQueryParam($key, []);
-		if ($params) {
-			if (!is_array($params)) {
-				$params = [$params];
-			}
-
-			foreach ($params as &$param) {
-				$param = filter_var($param, FILTER_SANITIZE_STRING);
-			}
-
-			return $params;
-		}
-
-		return [];
-	}
 
 
 	/**
@@ -243,9 +102,9 @@ class DownloadHandler extends ApiHandler {
 	 *
 	 * @return array
 	 * @throws AccessRuleException
-	 * @throws ApiException
 	 * @throws DownloadException
 	 * @throws QueryException
+	 * @throws ApiException
 	 */
 	protected function processAccessRules(array $params): array {
 		$rules = (new Select())
@@ -320,30 +179,7 @@ class DownloadHandler extends ApiHandler {
 	 */
 	public function handleRequest() {
 		try {
-			// Get the identity based on auth header
-			$identity = $this->getIdentity();
-
-			$publicKey = $identity->getPublicKey();
-			// Only users with public keys are allowed
-			if (!$publicKey) {
-				throw new DownloadException(206);
-			}
-
 			$this->authorizeRequest();
-
-			// Request signature check
-			$token = $this->request->getQueryParam('token', false);
-			if (!$token) {
-				throw new DownloadException(207);
-			}
-
-			$signature = base64_decode($this->getAuthHeaderParts()['signature'] ?? '');
-			$signatureValid = openssl_verify($token, $signature, $publicKey, OPENSSL_ALGO_SHA256);
-
-			if (!$signatureValid) {
-				// Signature is not valid
-				throw new DownloadException(301);
-			}
 
 			// Observation point type check
 			$type = $this->request->getQueryParam('type', false);
