@@ -14,6 +14,7 @@ use Environet\Sys\General\Exceptions\AccessRuleException;
 use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\HttpClient\ApiHandler;
+use Environet\Sys\General\Identity;
 use Environet\Sys\General\Response;
 use Environet\Sys\Xml\CreateErrorXml;
 use Environet\Sys\Xml\CreateOutputXml;
@@ -223,7 +224,7 @@ class DownloadHandler extends ApiHandler {
 			$params['symbols'] = $this->parseArrayParam('symbol');
 
 			// Permission check
-			if (!$identity->hasPermissions([Identity::ADMIN_PERMISSION])) {
+			if (!$this->getIdentity()->hasPermissions([Identity::ADMIN_PERMISSION])) {
 				$params['type'] = $type === 'hydro' ? MPOINT_TYPE_HYDRO : MPOINT_TYPE_METEO;
 				// Overwrites params with the allowed data for this user
 				try {
