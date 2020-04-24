@@ -1,15 +1,16 @@
 <?php
 
+
 namespace Environet\Sys\General\Exceptions;
 
 /**
- * Class MissingEventTypeException
+ * Class AccessRuleException
  *
- * Exception for missing event types.
+ * Exception for access rule violations.
  *
  * @package Environet\Sys\General\Exceptions
  * @author  SRG Group <dev@srg.hu>
  */
-class MissingEventTypeException extends \Exception {
+class AccessRuleException extends \Exception {
 
 }

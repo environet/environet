@@ -39,17 +39,17 @@
 
         <div class="form-group">
             <label for="lat">Lat</label>
-            <input type="number" name="lat" id="lat" class="form-control" value="<?=formFieldValue('lat', $record);?>" />
+            <input type="number" name="lat" id="lat" step="0.000001" class="form-control" value="<?=formFieldValue('lat', $record);?>" />
         </div>
 
         <div class="form-group">
             <label for="long">Long</label>
-            <input type="number" name="long" id="long" class="form-control" value="<?=formFieldValue('long', $record);?>" />
+            <input type="number" name="long" id="long" step="0.000001" class="form-control" value="<?=formFieldValue('long', $record);?>" />
         </div>
 
         <div class="form-group">
             <label for="z">Z</label>
-            <input type="number" name="z" id="z" class="form-control" value="<?=formFieldValue('z', $record);?>" />
+            <input type="number" name="z" id="z" step="0.000001" class="form-control" value="<?=formFieldValue('z', $record);?>" />
         </div>
 
         <div class="form-group">
@@ -59,22 +59,27 @@
 
         <div class="form-group">
             <label for="river_kilometer">River kilometer</label>
-            <input type="number" name="river_kilometer" id="river_kilometer" class="form-control" value="<?=formFieldValue('river_kilometer', $record);?>" />
+            <input type="number" name="river_kilometer" id="river_kilometer" step="0.000001"  class="form-control" value="<?=formFieldValue('river_kilometer', $record);?>" />
         </div>
 
         <div class="form-group">
             <label for="catchment_area">Catchment area</label>
-            <input type="number" name="catchment_area" id="catchment_area" class="form-control" value="<?=formFieldValue('catchment_area', $record);?>" />
+            <input type="number" name="catchment_area" id="catchment_area" step="0.000001"  class="form-control" value="<?=formFieldValue('catchment_area', $record);?>" />
         </div>
 
         <div class="form-group">
             <label for="gauge_zero">Gauge zero</label>
-            <input type="number" name="gauge_zero" id="gauge_zero" class="form-control" value="<?=formFieldValue('gauge_zero', $record);?>" />
+            <input type="number" name="gauge_zero" id="gauge_zero" step="0.000001"  class="form-control" value="<?=formFieldValue('gauge_zero', $record);?>" />
         </div>
 
         <div class="form-group">
             <label for="river_basin">River basin</label>
             <input type="text" name="river_basin" id="river_basin" class="form-control" value="<?=formFieldValue('river_basin', $record);?>" />
+        </div>
+
+        <div class="form-group">
+            <label for="start_time">Start time</label>
+            <input type="date" name="start_time" id="start_time" class="form-control" value="<?=date('Y-m-d', strtotime($record['start_time']))?>" />
         </div>
 
         <fieldset class="form-group">
@@ -122,7 +127,7 @@
                 <legend><?=__('Observed properties');?></legend>
                 <select name="observedProperties[]" multiple>
                     <?php foreach ($observedProperties as $id => $symbol): ?>
-                        <option value="<?= $id; ?>" <?= in_array($id, $record['observedProperties']) ? 'selected' : '' ?>><?= $symbol; ?></option>
+                        <option value="<?= $id; ?>" <?= isset($record['observedProperties']) && in_array($id, $record['observedProperties']) ? 'selected' : '' ?>><?= $symbol; ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>

@@ -6,7 +6,6 @@ namespace Environet\Sys\General;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\UserQueries;
-use Environet\Sys\General\Exceptions\PermissionException;
 
 /**
  * Class Identity
@@ -18,17 +17,12 @@ use Environet\Sys\General\Exceptions\PermissionException;
  */
 class Identity {
 
-	const TYPE_USER = 'user';
+	const ADMIN_PERMISSION = 'admin.all';
 
 	/**
 	 * @var int Id of the identity
 	 */
 	private $id;
-
-	/**
-	 * @var string Identity type (e.g user)
-	 */
-	private $type;
 
 	/**
 	 * @var array Identity data from database
@@ -41,22 +35,35 @@ class Identity {
 	private $publicKey;
 
 	/**
-	 * @var string Attached permission list from database
+	 * @var array The permissions of this identity
 	 */
-	private $permissions = null;
+	private $permissions;
+
+	/**
+	 * @var array Permissions this identity has been granted
+	 */
+	private $authorizedPermissions = [];
 
 
 	/**
 	 * Identity constructor.
 	 *
-	 * @param string $type
-	 * @param int    $id
-	 * @param array  $data
+	 * @param int   $id
+	 * @param array $data
 	 */
-	public function __construct(string $type, int $id, array $data) {
+	public function __construct(int $id, array $data) {
 		$this->id = $id;
 		$this->data = $data;
-		$this->type = $type;
+	}
+
+
+	/**
+	 * Get identity id.
+	 *
+	 * @return int
+	 */
+	public function getId() {
+		return $this->id;
 	}
 
 
@@ -88,7 +95,7 @@ class Identity {
 				->addParameter(':userId', $userId)
 				->run(Query::FETCH_FIRST);
 
-			return new static(self::TYPE_USER, $userId, $user);
+			return new static($userId, $user);
 		} catch (Exceptions\QueryException $e) {
 			// Error during sql query
 			return null;
@@ -124,19 +131,65 @@ class Identity {
 	 *
 	 * @return array
 	 * @throws Exceptions\QueryException
-	 * @throws PermissionException
 	 * @uses \Environet\Sys\General\Db\UserQueries::getUserPermissions()
 	 */
 	public function getPermissions(): array {
-		if ($this->type !== self::TYPE_USER) {
-			throw new PermissionException('Invalid identity type for permission check');
-		}
-
 		if ($this->permissions === null) {
 			$this->permissions = UserQueries::getUserPermissions($this->id);
 		}
 
 		return $this->permissions;
+	}
+
+
+	/**
+	 * @return bool
+	 * @throws Exceptions\QueryException
+	 */
+	private function isSuperAdmin(): bool {
+		return in_array(self::ADMIN_PERMISSION, $this->getPermissions());
+	}
+
+
+	/**
+	 * Checks the identity against a list of permissions
+	 *
+	 * @param array $permissions
+	 *
+	 * @return bool
+	 * @throws Exceptions\QueryException
+	 */
+	public function hasPermissions(array $permissions): bool {
+		if ($this->isSuperAdmin()) {
+			return true;
+		}
+
+		return !array_diff($permissions, $this->getPermissions());
+	}
+
+
+	/**
+	 * @param array $permissions
+	 *
+	 * @return bool
+	 * @throws Exceptions\QueryException
+	 */
+	public function hasPermissionsAnyOf(array $permissions): bool {
+		if ($this->isSuperAdmin()) {
+			return true;
+		}
+
+		return (bool) array_intersect($permissions, $this->getPermissions());
+	}
+
+
+	public function setAuthorizedPermissions(array $permissions) {
+		$this->authorizedPermissions = $permissions;
+	}
+
+
+	public function getAuthorizedPermissions(): array {
+		return $this->authorizedPermissions;
 	}
 
 

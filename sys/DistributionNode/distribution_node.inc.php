@@ -23,6 +23,7 @@
 
 use Environet\Sys\Admin\AdminHandler;
 use Environet\Sys\Download\DownloadHandler;
+use Environet\Sys\Api\JsonApiHandler;
 use Environet\Sys\Upload\UploadHandler;
 
 switch (true) {
@@ -36,6 +37,9 @@ switch (true) {
 		break;
 	case $request->isDownload():
 		echo (new DownloadHandler($request))->handleRequest();
+		break;
+	case $request->isJsonApi():
+		echo (new JsonApiHandler($request))->handleRequest();
 		break;
 }
 

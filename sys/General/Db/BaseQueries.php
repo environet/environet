@@ -8,6 +8,7 @@ use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\Query\Update;
 use Environet\Sys\General\EventLogger;
+use Environet\Sys\General\Exceptions\InvalidConfigurationException;
 use Environet\Sys\General\Exceptions\MissingEventTypeException;
 use Environet\Sys\General\Exceptions\QueryException;
 
@@ -36,35 +37,55 @@ class BaseQueries {
 	 * Save values in a connection table.
 	 * It needs an array of ids, and some configuration attributes. Deletes old connection values, and re-creates every connection.
 	 *
-	 * @param array  $values          Array of ids
-	 * @param string $connectionTable The connection table to fill with values
-	 * @param string $colLeft         Name of the column to where the ids from $values will be saved
-	 * @param string $colRight        Name of the column to where the $idRight saved
-	 * @param int    $idRight         A single id for the right side of the connection
-	 * @param bool   $truncate        If true, will delete existing connections first
+	 * @param array  $values           Array of ids
+	 * @param string $connectionTable  The connection table to fill with values
+	 * @param string $colLeft          Name of the column to where the ids from $values will be saved
+	 * @param string $colRight         Name of the column to where the $idRight saved
+	 * @param int    $idRight          A single id for the right side of the connection
+	 * @param bool   $truncate         If true, will delete existing connections first
+	 * @param array  $connectionValues Column name => value map of additional values to save to the connection table
 	 *
 	 * @throws QueryException
 	 * @uses \Environet\Sys\General\Db\Query\Delete::run()
 	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
 	 */
-	public static function saveConnections($values, string $connectionTable, string $colLeft, string $colRight, int $idRight, bool $truncate = false) {
-		// Get user ids from posted data, filter it, and filter out duplicates
+	public static function saveConnections($values, string $connectionTable, string $colLeft, string $colRight, int $idRight, bool $truncate = false, array $connectionValues = null) {
 		$ids = array_unique(array_filter($values ?? []));
 		if ($truncate) {
-			// Delete all connection first, all current connection will be re-created
+			// Delete all connections
 			(new Delete())->table($connectionTable)->where($colRight . ' = :' . $colRight)->addParameter(':' . $colRight, $idRight)->run();
 		}
 
-		if(empty($ids))
+		if (empty($ids)) {
 			return;
+		}
+		$columns = [$colLeft, $colRight];
+
+		if ($connectionValues) {
+			$columns = array_merge([$colLeft, $colRight], array_keys($connectionValues));
+		}
 
 		// Create insert query for new connections
-		$insert = (new Insert())->table($connectionTable)->columns([$colLeft, $colRight]);
+		$insert = (new Insert())->table($connectionTable)->columns($columns);
 
 		$insert->addParameter(':rightId', $idRight);
+
+		if ($connectionValues) {
+			foreach ($connectionValues as $colName => $colValue) {
+				$insert->addParameter(':' . $colName, $colValue);
+			}
+		}
 		// Add values for all ids
 		foreach ($ids as $key => $id) {
-			$insert->addValueRow([":leftId$key", ":rightId"]);
+			$rowValues = [":leftId$key", ":rightId"];
+
+			if ($connectionValues) {
+				$rowValues = array_merge($rowValues, array_map(function ($key) {
+					return ':' . $key;
+				}, array_keys($connectionValues)));
+			}
+
+			$insert->addValueRow($rowValues);
 			$insert->addParameters([
 				":leftId$key" => (int) $id,
 			]);
@@ -124,12 +145,13 @@ class BaseQueries {
 	 * Update or insert an item to specified table.
 	 * Logs the transaction regardless of updating or inserting.
 	 *
-	 * @param array  $data       Data to save.
-	 * @param mixed  $id         If the id is exist, update otherwise insert the new record.
+	 * @param array $data Data to save.
+	 * @param mixed $id If the id is exist, update otherwise insert the new record.
 	 * @param string $primaryKey The primary key of the specified table.
 	 *
 	 * @throws MissingEventTypeException
 	 * @throws QueryException
+	 * @throws InvalidConfigurationException
 	 * @uses \Environet\Sys\General\Db\BaseQueries::prepareData()
 	 * @uses \Environet\Sys\General\Db\BaseQueries::getUpdateEventType()
 	 * @uses \Environet\Sys\General\Db\BaseQueries::getInsertEventType()

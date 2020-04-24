@@ -45,6 +45,10 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 */
 	protected $listPagePath = '/admin/hydro/monitoring-points';
 
+	protected $readOwnPermissionName = 'admin.hydro.monitoringpoints.readown';
+
+	protected $updateOwnPermissionName = 'admin.hydro.monitoringpoints.updateown';
+
 
 	/**
 	 * @inheritDoc
@@ -92,36 +96,13 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	protected function validateData(array $data): bool {
 		$valid = true;
 
-		if (!validate($data, 'name', REGEX_NAME, true)) {
+		if (!validate($data, 'name', REGEX_ALPHANUMERIC, true)) {
 			$this->addMessage('Monitoring point name is empty, or format is invalid', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 
-		/*if (!$data['classification']) {
-			$this->addMessage(__('Classification is required'), self::MESSAGE_ERROR);
-			$valid = false;
-		}*/
-
-		/*if (!$data['operator']) {
-			$this->addMessage(__('Operator is required'), self::MESSAGE_ERROR);
-			$valid = false;
-		}*/
-
-		/*if (!$data['riverbank']) {
-			$this->addMessage(__('Riverbank is required'), self::MESSAGE_ERROR);
-			$valid = false;
-		}*/
-
-		/*if (!$data['waterbody']) {
-			$this->addMessage(__('Waterbody is required'), self::MESSAGE_ERROR);
-			$valid = false;
-		}*/
-
-		/*if (!$data['observedProperties']) {
-			$this->addMessage(__('Observed property is required'), self::MESSAGE_ERROR);
-			$valid = false;
-		}*/
-
 		return $valid;
 	}
+
+
 }

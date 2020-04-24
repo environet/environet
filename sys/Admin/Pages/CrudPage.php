@@ -6,7 +6,9 @@ use Environet\Sys\General\Db\BaseQueries;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\HttpBadRequestException;
 use Environet\Sys\General\Exceptions\HttpNotFoundException;
+use Environet\Sys\General\Exceptions\InvalidConfigurationException;
 use Environet\Sys\General\Exceptions\MissingEventTypeException;
+use Environet\Sys\General\Exceptions\PermissionException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\Exceptions\RenderException;
 use Environet\Sys\General\Response;
@@ -75,6 +77,8 @@ abstract class CrudPage extends BasePage {
 				->select($this->queriesClass::$tableName . '.*')
 				->from($this->queriesClass::$tableName);
 
+			$this->modifyListQuery($query);
+
 			if (!is_null($searchString)) {
 				$query->search(
 					explode(' ', urldecode($searchString)),
@@ -119,15 +123,20 @@ abstract class CrudPage extends BasePage {
 
 
 	/**
-	 * Common function to render the list page.
+	 * Common function to render the show page.
 	 *
 	 * @return Response
 	 * @throws RenderException
 	 * @throws HttpNotFoundException
+	 * @throws PermissionException
 	 */
 	protected function renderShowPage(): Response {
 		$id = $this->getIdParam();
 		$record = $this->getRecordById($id);
+
+		if (!$this->userCanView($id)) {
+			throw new PermissionException("You don't have permission to view record with id: '$id'");
+		}
 
 		return $this->render($this->showTemplate, compact('record'));
 	}
@@ -144,6 +153,7 @@ abstract class CrudPage extends BasePage {
 	 * @throws QueryException
 	 * @throws RenderException
 	 * @throws MissingEventTypeException
+	 * @throws InvalidConfigurationException
 	 */
 	protected function handleFormPost($id = null, $record = null): Response {
 		$postData = $this->request->getCleanData();
@@ -174,6 +184,7 @@ abstract class CrudPage extends BasePage {
 	 * @throws QueryException
 	 * @throws RenderException
 	 * @throws MissingEventTypeException
+	 * @throws InvalidConfigurationException
 	 */
 	public function add(): Response {
 		if ($this->request->isPost()) {
@@ -190,13 +201,19 @@ abstract class CrudPage extends BasePage {
 	 * @return Response
 	 * @throws HttpBadRequestException
 	 * @throws HttpNotFoundException
+	 * @throws InvalidConfigurationException
+	 * @throws MissingEventTypeException
+	 * @throws PermissionException
 	 * @throws QueryException
 	 * @throws RenderException
-	 * @throws MissingEventTypeException
 	 */
 	public function edit(): Response {
 		$id = $this->getIdParam();
 		$record = $this->getRecordById($id);
+
+		if (!$this->userCanEdit($id)) {
+			throw new PermissionException("You don't have permission to edit record with id: '$id'");
+		}
 
 		if ($this->request->isPost()) {
 			return $this->handleFormPost($id, $record);
@@ -212,6 +229,7 @@ abstract class CrudPage extends BasePage {
 	 * @return Response
 	 * @throws HttpNotFoundException
 	 * @throws RenderException
+	 * @throws PermissionException
 	 */
 	public function show(): Response {
 		return $this->renderShowPage();
@@ -219,10 +237,10 @@ abstract class CrudPage extends BasePage {
 
 
 	/**
-	 * @return mixed|null
+	 * @return string
 	 * @throws HttpNotFoundException
 	 */
-	private function getIdParam() {
+	protected function getIdParam(): string {
 		$id = $this->request->getQueryParam('id');
 		if (is_null($id)) {
 			// if id doesn't exist, return 404
@@ -239,7 +257,7 @@ abstract class CrudPage extends BasePage {
 	 * @return array|null
 	 * @throws HttpNotFoundException
 	 */
-	private function getRecordById($id) {
+	protected function getRecordById($id) {
 		$record = $this->queriesClass::getById($id);
 		if (is_null($record)) {
 			throw new HttpNotFoundException('Record with id: ' . $id . ' could not be found');
@@ -302,6 +320,35 @@ abstract class CrudPage extends BasePage {
 	 * @return bool Valid state
 	 */
 	protected function validateData(array $data): bool {
+		return true;
+	}
+
+
+	/**
+	 * Check if the currently authenticated user has permission to view a record with a given id
+	 *
+	 * @param mixed $id
+	 *
+	 * @return bool Has permission
+	 */
+	protected function userCanView($id) {
+		return true;
+	}
+
+
+	/**
+	* Check if user has permission to edit a record with a given id
+	*
+	* @param mixed $id
+	*
+	* @return bool Has permission
+	*/
+	protected function userCanEdit($id) {
+		return true;
+	}
+
+
+	protected function modifyListQuery(Select $query) {
 		return true;
 	}
 

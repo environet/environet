@@ -2,13 +2,8 @@
 
 namespace Environet\Sys\Upload;
 
-use Environet\Sys\General\Db\Query\Query;
-use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\ApiException;
-use Environet\Sys\General\Exceptions\PermissionException;
-use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\HttpClient\ApiHandler;
-use Environet\Sys\General\Identity;
 use Environet\Sys\General\Response;
 use Environet\Sys\Upload\Exceptions\UploadException;
 use Environet\Sys\Xml\CreateErrorXml;
@@ -35,66 +30,11 @@ class UploadHandler extends ApiHandler {
 	/** @inheritDoc */
 	protected const HANDLER_PERMISSION = 'api.upload';
 
-	/**
-	 * @var null|array The parsed authorization header
-	 */
-	protected $authHeaderParts = null;
-
-	/**
-	 * @var null|Identity The current uploader's identity
-	 */
-	protected $identity = null;
-
-
-	/**
-	 * Prepare and parse the Authorization header
-	 *
-	 * @return array
-	 * @throws UploadException
-	 * @uses \Environet\Sys\Upload\UploadHandler::parseAuthHeader()
-	 */
-	protected function getAuthHeaderParts(): array {
-		if ($this->authHeaderParts === null) {
-			// If the header isn't set, the request is invalid
-			if (!isset($_SERVER['HTTP_AUTHORIZATION'])) {
-				throw new UploadException(201);
-			}
-
-			// Split the auth header to parts. For format see \Environet\Sys\General\PKI::authHeaderWithSignature
-			$this->authHeaderParts = $this->parseAuthHeader($_SERVER['HTTP_AUTHORIZATION']);
-
-			// If the parts aren't present, the request is invalid
-			if ($this->authHeaderParts === null) {
-				throw new UploadException(204);
-			}
-		}
-
-		return $this->authHeaderParts;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 *
-	 * @return void
-	 * @throws ApiException
-	 * @throws PermissionException
-	 * @throws QueryException
-	 * @throws UploadException
-	 * @uses \Environet\Sys\General\HttpClient\ApiHandler::getIdentity()
-	 * @uses \Environet\Sys\General\Identity::getPermissions()
-	 */
-	protected function authorizeRequest(): void {
-		if (!in_array(self::HANDLER_PERMISSION, $this->getIdentity()->getPermissions())) {
-			throw new UploadException(205);
-		}
-	}
-
 
 	/**
 	 * Handle the upload request.
 	 *
-	 * It checks the auth state (username is presented in header, and an existing user), verifies the signature, verifies the xml with XSD schema, and processes the input.
+	 * Validates xml input, and stores data into database.
 	 * If an error occurs, an ErrorResponse XML will be generated ({@see CreateErrorXml}).
 	 *
 	 * @return Response|mixed
@@ -106,28 +46,9 @@ class UploadHandler extends ApiHandler {
 	 */
 	public function handleRequest() {
 		try {
-			// Get the identity based on auth header
-			$identity = $this->getIdentity();
-
-			// Only users with public keys are allowed
-			if (!$identity->getPublicKey()) {
-				throw new UploadException(206);
-			}
-
 			$this->authorizeRequest();
 
-			// Get the XML content, and verify the signature with user's public key
 			$content = file_get_contents('php://input');
-			$hash = md5($content);
-			$signature = base64_decode($this->getAuthHeaderParts()['signature'] ?? '');
-			$publicKey = $identity->getPublicKey();
-			$signatureValid = openssl_verify($hash, $signature, $publicKey, OPENSSL_ALGO_SHA256);
-
-			if (!$signatureValid) {
-				// Signature is not valid
-				throw new UploadException(301);
-			}
-
 			$this->storeInputData($content);
 
 			try {
@@ -169,6 +90,26 @@ class UploadHandler extends ApiHandler {
 
 
 	/**
+	 * Validate the request signature in the auth header, against the request body
+	 *
+	 * @throws ApiException
+	 */
+	protected function validateSignature() {
+		// Get the XML content, and verify the signature with user's public key
+		$content = file_get_contents('php://input');
+		$hash = md5($content);
+		$signature = base64_decode($this->getAuthHeaderParts()['signature'] ?? '');
+		$publicKey = $this->identity->getPublicKey();
+		$signatureValid = openssl_verify($hash, $signature, $publicKey, OPENSSL_ALGO_SHA256);
+
+		if (!$signatureValid) {
+			// Signature is not valid
+			throw new ApiException(208);
+		}
+	}
+
+
+	/**
 	 * Create input processor based on the mpoint type.
 	 *
 	 * @param SimpleXMLElement $xml  Parsed XML
@@ -198,71 +139,6 @@ class UploadHandler extends ApiHandler {
 			mkdir($dir, 0755, true);
 		}
 		file_put_contents($dir . '/' . time() . '.xml', $content);
-	}
-
-
-	/**
-	 * Find user based on auth header, and get the attached public key from database
-	 *
-	 * @return Identity
-	 * @throws UploadException
-	 * @throws ApiException
-	 * @uses \Environet\Sys\Upload\UploadHandler::getAuthHeaderParts()
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
-	 * @uses \Environet\Sys\General\Identity::createFromUser()
-	 */
-	protected function getIdentity(): Identity {
-		if ($this->identity === null) {
-			$username = $this->getAuthHeaderParts()['keyId'] ?? null;
-
-			if (!$username) {
-				// Username is empty
-				throw new UploadException(202);
-			}
-
-			try {
-				// Find user in database
-				$user = (new Select())
-					->from('users')
-					->where('username = :username')
-					->addParameter('username', $username)
-					->run(Query::FETCH_FIRST);
-			} catch (QueryException $e) {
-				// Query error
-				throw UploadException::serverError();
-			}
-
-			if (!$user) {
-				// User not found
-				throw new UploadException(203);
-			}
-
-			try {
-				// Find public key for user
-				$publicKey = (new Select())
-					->from('public_keys')
-					->where('usersid = :userId')
-					->where('revoked = :revoked')
-					->setParameters([
-						'userId'  => $user['id'],
-						'revoked' => 0
-					])
-					->limit(1)
-					->run(Query::FETCH_FIRST);
-			} catch (QueryException $e) {
-				// Query error
-				throw UploadException::serverError();
-			}
-
-			// Create and identity from user
-			$this->identity = Identity::createFromUser($user['id']);
-			if ($publicKey) {
-				// Set the public key
-				$this->identity->setPublicKey($publicKey['public_key']);
-			}
-		}
-
-		return $this->identity;
 	}
 
 

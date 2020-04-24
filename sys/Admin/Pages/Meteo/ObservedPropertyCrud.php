@@ -55,13 +55,8 @@ class ObservedPropertyCrud extends CrudPage {
 	protected function validateData(array $data): bool {
 		$valid = true;
 
-		if (!validate($data, 'symbol', REGEX_NAME, true)) {
+		if (!validate($data, 'symbol', REGEX_ALPHANUMERIC, true)) {
 			$this->addMessage('Observed property symbol is empty, or format is invalid', self::MESSAGE_ERROR);
-			$valid = false;
-		}
-
-		if (!validate($data, 'description', REGEX_NAME, true)) {
-			$this->addMessage('Observed property description is empty, or format is invalid', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 

@@ -47,4 +47,4 @@ Change to the directory you checked the code out to, and you should be ready to 
 The `environet` cli script is a wrapper for some docker containers managed with docker compose. After first starting a *dist* or *data* node, these services will start automatically after a system reboot.  
 To stop and start them manually, you may run `./environet data up` or `./environet data down` (`./environet dist up` and `./environet dist down` in case of a distribution node).  
 
-To get the latest version, simply run `git pull` in the repository folder.
+To get the latest version, simply run `git pull` in the repository folder.  

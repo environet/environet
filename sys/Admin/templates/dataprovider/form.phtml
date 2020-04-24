@@ -34,29 +34,29 @@
 		</fieldset>
 
 		<?php if ($record && $record['id']): ?>
-		<fieldset class="form-group">
-			<legend><?=__('Users');?></legend>
-			<?php $selectedUsers = array_filter(formFieldValue('form_users', $record) ?: []); ?>
-			<?php for($i = 0; $i <= count($selectedUsers); $i++) { ?>
-				<div class="field">
-					<select name="form_users[]">
-						<?=selectOptions($users, $selectedUsers[$i] ?? null, ' - '.__('No user').' - ');?>
-					</select>
-				</div>
-			<?php } ?>
-		</fieldset>
+            <fieldset class="form-group">
+                <legend><?=__('Users');?></legend>
+                <?php $selectedUsers = array_filter(formFieldValue('form_users', $record) ?: []); ?>
+                <?php for($i = 0; $i <= count($selectedUsers); $i++) { ?>
+                    <div class="field">
+                        <select name="form_users[]">
+                            <?=selectOptions($users, $selectedUsers[$i] ?? null, ' - '.__('No user').' - ');?>
+                        </select>
+                    </div>
+                <?php } ?>
+            </fieldset>
 
-		<fieldset class="form-group">
-			<legend><?=__('Groups');?></legend>
-			<?php $selectedGroups = array_filter(formFieldValue('form_groups', $record) ?: []); ?>
-			<?php for($i = 0; $i <= count($selectedGroups); $i++) { ?>
-				<div class="field">
-					<select name="form_groups[]">
-						<?=selectOptions($groups, $selectedGroups[$i] ?? null, ' - '.__('No group').' - ');?>
-					</select>
-				</div>
-			<?php } ?>
-		</fieldset>
+            <fieldset class="form-group">
+                <legend><?=__('Groups');?></legend>
+                <?php $selectedGroups = array_filter(formFieldValue('form_groups', $record) ?: []); ?>
+                <?php for($i = 0; $i <= count($selectedGroups); $i++) { ?>
+                    <div class="field">
+                        <select name="form_groups[]">
+                            <?=selectOptions($groups, $selectedGroups[$i] ?? null, ' - '.__('No group').' - ');?>
+                        </select>
+                    </div>
+                <?php } ?>
+            </fieldset>
 		<?php else: ?>
 			<fieldset>
 				<legend>User data</legend>
