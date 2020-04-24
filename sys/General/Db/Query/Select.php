@@ -106,6 +106,7 @@ class Select extends Query {
 	 */
 	public function union(Select $other) {
 		$this->unions[] = $other->buildQuery();
+		$this->setParameters(array_merge($this->getParameters(), $other->getParameters()));
 
 		return $this;
 	}
@@ -222,7 +223,7 @@ class Select extends Query {
 		}
 
 		// Add order by if has any
-		if (count($this->orders) > 0) {
+		if (count($this->orders) > 0 && count($this->unions) === 0) {
 			$queryString[] = 'ORDER BY ' . implode(', ', $this->orders);
 		}
 
@@ -237,7 +238,17 @@ class Select extends Query {
 		}
 
 		if (count($this->unions) > 0) {
-			$queryString[] = 'UNION ' . implode('UNION ', $this->unions);
+			$queryString[] = ')';
+			foreach ($this->unions as $union) {
+				$queryString[] = "UNION ($union)";
+			}
+
+			// Add order by again to apply the ordering to the unioned sets
+			if (count($this->orders) > 0) {
+				$queryString[] = 'ORDER BY ' . implode(', ', $this->orders);
+			}
+
+			return '(' . implode(' ', $queryString);
 		}
 
 		return implode(' ', $queryString);

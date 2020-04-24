@@ -36,6 +36,36 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 
 
 	/**
+	 * @param array $operatorIds
+	 * @return array
+	 * @throws QueryException
+	 */
+	public static function all(array $operatorIds = null) {
+		$query = (new Select())
+			->select(static::$tableName. '.*')
+			->from(static::$tableName);
+
+		if (!is_null($operatorIds)) {
+			$query->whereIn('operatorid', $operatorIds, 'operatorId');
+		}
+
+		$points = $query->run();
+
+		foreach ($points as $i => $point) {
+			$points[$i]['observed_properties'] = (new Select())
+				->from('meteo_observed_property hop')
+				->select('hop.symbol')
+				->join('meteopoint_observed_property hpop', 'hpop.meteo_observed_propertyid = hop.id', Query::JOIN_LEFT)
+				->where('hpop.meteopointid = :hpopId')
+				->addParameter(':hpopId', $point['id'])
+				->run(Query::FETCH_COLUMN);
+		}
+
+		return $points;
+	}
+
+
+	/**
 	 * @inheritDoc
 	 * @throws QueryException
 	 * @uses \Environet\Sys\General\Db\MeteoStationClassificationQueries::getById()

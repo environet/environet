@@ -117,6 +117,11 @@
                     </ul>
                 </li>
 			<?php endif; ?>
+            <?php if($request->getIdentity()->hasPermissions(['admin.measurementaccessrules.read']) || $request->getIdentity()->hasPermissions(['admin.measurementaccessrules.readown'])): ?>
+                <li>
+                    <?= includeTemplatePart('menuitem.phtml', ['title' => 'Measurement access rules', 'route' => '/admin/measurement-access-rules', 'icon' => 'database', 'matchExtra' => 1]) ?>
+                </li>
+			<?php endif; ?>
         </ul>
         <!-- sidebar menu end-->
     </aside>

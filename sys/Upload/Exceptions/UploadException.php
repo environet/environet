@@ -27,7 +27,6 @@ class UploadException extends ApiException {
 	public function __construct(int $code = 101, array $errorMessages = []) {
 		$this->errors += [
 			//Input error
-			301 => 'Signature is invalid',
 			302 => 'Xml syntax is invalid',
 			303 => 'Xml is invalid against schema',
 

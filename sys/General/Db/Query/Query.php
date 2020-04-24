@@ -83,6 +83,16 @@ class Query {
 
 
 	/**
+	 * Get parameter bindings
+	 *
+	 * @return array
+	 */
+	public function getParameters(): array {
+		return $this->parameters;
+	}
+
+
+	/**
 	 * Set multiple parameter bindings. It clear all previously attached data in parameters array
 	 *
 	 * @param array $parameters
@@ -159,6 +169,8 @@ class Query {
 		if (!$this->validateQuery()) {
 			throw new QueryException('Invalid query properties');
 		}
+
+		$this->connection->runQuery("SET intervalstyle = 'iso_8601'", []);
 
 		$statement = $this->connection->runQuery($this->buildQuery(), $this->parameters);
 

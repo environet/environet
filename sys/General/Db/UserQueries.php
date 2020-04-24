@@ -216,14 +216,20 @@ class UserQueries extends BaseQueries {
 		}
 
 		if (static::isDataProviderUser($userId)) {
-			$result[] = 'admin.providers.readown';
-			$result[] = 'admin.providers.updateown';
-			$result[] = 'admin.hydro.monitoringpoints.readown';
-			$result[] = 'admin.hydro.monitoringpoints.updateown';
-			$result[] = 'admin.hydro.monitoringpoints.createown';
-			$result[] = 'admin.meteo.monitoringpoints.readown';
-			$result[] = 'admin.meteo.monitoringpoints.updateown';
-			$result[] = 'admin.meteo.monitoringpoints.createown';
+			$result = array_merge($result, [
+				'admin.providers.readown',
+				'admin.providers.updateown',
+				'admin.hydro.monitoringpoints.readown',
+				'admin.hydro.monitoringpoints.updateown',
+				'admin.hydro.monitoringpoints.createown',
+				'admin.meteo.monitoringpoints.readown',
+				'admin.meteo.monitoringpoints.updateown',
+				'admin.meteo.monitoringpoints.createown',
+				'admin.measurementaccessrules.readown',
+				'admin.measurementaccessrules.createown',
+				'admin.measurementaccessrules.updateown',
+				'admin.measurementaccessrules.deleteown'
+			]);
 		}
 
 		return $result;

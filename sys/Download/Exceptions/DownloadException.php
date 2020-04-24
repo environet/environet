@@ -26,17 +26,16 @@ class DownloadException extends ApiException {
 	 */
 	public function __construct(int $code = 101, array $errorMessages = []) {
 		$this->errors += [
-			//Auth errors
-			207 => 'Request token not found',
 
 			//Input error
-			301 => 'Signature is invalid',
 			302 => 'Observation point type is missing',
 			303 => 'Observation point type is invalid',
 			304 => 'Start time filter value is invalid',
 			305 => 'End time filter value is invalid',
 
 			//Process error
+			401 => 'Unauthorized request of monitoring point data!',
+			402 => 'Invalid date interval entry, please contact the administrators!'
 		];
 		parent::__construct($code, $errorMessages);
 	}

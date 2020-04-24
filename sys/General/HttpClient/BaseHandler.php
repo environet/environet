@@ -53,9 +53,8 @@ abstract class BaseHandler implements RequestHandlerInterface {
 	 * Base method for checking user and group permissions against the current action.
 	 *
 	 * @param array $requiredPermissions
-	 * @throws PermissionException
 	 */
-	abstract protected function authorizeRequest(array $requiredPermissions);
+	abstract protected function authorizeRequest(array $requiredPermissions = []);
 
 
 }

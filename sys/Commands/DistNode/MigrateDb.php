@@ -37,12 +37,24 @@ class MigrateDb extends DbCommand {
 
 		$this->console->writeLine('Crud permissions created successfully', Console::COLOR_GREEN);
 
+		$exitCode = $this->createDataAclTables($output);
+		if ($exitCode > 0) {
+			echo implode("\n", $output);
+			return $exitCode;
+		}
+
 		return $exitCode;
 	}
 
 
 	private function createCrudPermissions(array &$output): int {
 		$schemaPath = SRC_PATH . '/database/create_crud_permissions.sql';
+		return $this->runSqlFile($schemaPath, $output);
+	}
+
+
+	private function createDataAclTables(array &$output): int {
+		$schemaPath = SRC_PATH . '/database/data_acl.sql';
 		return $this->runSqlFile($schemaPath, $output);
 	}
 

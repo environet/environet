@@ -17,6 +17,8 @@ use Environet\Sys\General\Db\UserQueries;
  */
 class Identity {
 
+	const ADMIN_PERMISSION = 'admin.all';
+
 	/**
 	 * @var int Id of the identity
 	 */
@@ -33,6 +35,11 @@ class Identity {
 	private $publicKey;
 
 	/**
+	 * @var array The permissions of this identity
+	 */
+	private $permissions;
+
+	/**
 	 * @var array Permissions this identity has been granted
 	 */
 	private $authorizedPermissions = [];
@@ -41,8 +48,8 @@ class Identity {
 	/**
 	 * Identity constructor.
 	 *
-	 * @param int    $id
-	 * @param array  $data
+	 * @param int   $id
+	 * @param array $data
 	 */
 	public function __construct(int $id, array $data) {
 		$this->id = $id;
@@ -127,7 +134,11 @@ class Identity {
 	 * @uses \Environet\Sys\General\Db\UserQueries::getUserPermissions()
 	 */
 	public function getPermissions(): array {
-		return UserQueries::getUserPermissions($this->id);
+		if ($this->permissions === null) {
+			$this->permissions = UserQueries::getUserPermissions($this->id);
+		}
+
+		return $this->permissions;
 	}
 
 
@@ -136,7 +147,7 @@ class Identity {
 	 * @throws Exceptions\QueryException
 	 */
 	private function isSuperAdmin(): bool {
-		return in_array('admin.all', $this->getPermissions());
+		return in_array(self::ADMIN_PERMISSION, $this->getPermissions());
 	}
 
 
@@ -144,6 +155,7 @@ class Identity {
 	 * Checks the identity against a list of permissions
 	 *
 	 * @param array $permissions
+	 *
 	 * @return bool
 	 * @throws Exceptions\QueryException
 	 */
@@ -158,6 +170,7 @@ class Identity {
 
 	/**
 	 * @param array $permissions
+	 *
 	 * @return bool
 	 * @throws Exceptions\QueryException
 	 */
@@ -165,6 +178,7 @@ class Identity {
 		if ($this->isSuperAdmin()) {
 			return true;
 		}
+
 		return (bool) array_intersect($permissions, $this->getPermissions());
 	}
 
