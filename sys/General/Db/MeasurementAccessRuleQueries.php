@@ -35,8 +35,11 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 			->addParameter(':id', $id)
 			->run();
 
-		$record['groups'] = array_column($groupConnections, 'group_id');
-		$record['interval'] = array_column($groupConnections, 'interval')[0];
+
+		if (count($groupConnections)) {
+			$record['groups'] = array_column($groupConnections, 'group_id');
+			$record['interval'] = array_column($groupConnections, 'interval')[0];
+		}
 
 		return $record;
 	}

@@ -43,19 +43,19 @@
                 <div class="form-group">
                     <label for="interval_years">Years</label>
                     <input type="number" name="interval_years" id="interval_years" class="form-control"
-						   value="<?=(!empty($_POST) && $_POST['interval_years']) ? $_POST['interval_years'] : (new DateInterval($record['interval']))->y ?>" />
+						   value="<?=(!empty($_POST) && $_POST['interval_years']) ? $_POST['interval_years'] : (isset($record['interval']) ? (new DateInterval($record['interval']))->y : '') ?>" />
                 </div>
 
                 <div class="form-group">
                     <label for="interval_months">Months</label>
                     <input type="number" name="interval_months" id="interval_months" class="form-control"
-                           value="<?=(!empty($_POST) && $_POST['interval_months']) ? $_POST['interval_months'] : (new DateInterval($record['interval']))->m ?>" />
+                           value="<?=(!empty($_POST) && $_POST['interval_months']) ? $_POST['interval_months'] : (isset($record['interval']) ? (new DateInterval($record['interval']))->m : '') ?>" />
                 </div>
 
                 <div class="form-group">
                     <label for="interval_days">Days</label>
                     <input type="number" name="interval_days" id="interval_days" class="form-control"
-						   value="<?=(!empty($_POST) && $_POST['interval_days']) ? $_POST['interval_days'] : (new DateInterval($record['interval']))->d ?>" />
+						   value="<?=(!empty($_POST) && $_POST['interval_days']) ? $_POST['interval_days'] : (isset($record['interval']) ? (new DateInterval($record['interval']))->d : '') ?>" />
                 </div>
             </fieldset>
             <div class="field">
