@@ -176,8 +176,8 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 			'operatorid'                    => isset($data['operator']) ? $data['operator'] ?: null : null,
 
 			// dates
-			'start_time'                   => $data['start_time'] ?? null,
-			'end_time'                     => $data['end_time'] ?? null,
+			'start_time'                   => !empty($data['start_time']) ? $data['start_time'] : null,
+			'end_time'                     => !empty($data['end_time']) ? $data['end_time'] : null,
 
 			// hidden
 			'utc_offset'                    => 0,
