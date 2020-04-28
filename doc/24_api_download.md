@@ -21,7 +21,6 @@
 | Header name | Content |
 | --- | --- |
 | Authorization | Signature (See below) |
-| Content-Type | application/xml |
 
 ### Signature header:
 
@@ -35,14 +34,14 @@ The `signature` part is the base64 encoded openssl signature which was created w
 ### Success
 * **Status code**: 200
 * **Content-type**: application/xml
-* **Body**: `empty`
-* **Description**: Upload was successful, the data has been successfully processed.
+* **Body**: XML: `wml2:Collection`
+* **Description**: Measurement data in WaterML2.0 comaptible XML format: http://www.opengis.net/waterml/2.0
 
 ### Invalid request
 * **Status code**: 400
 * **Content-type**: application/xml
 * **Body**: XML: `environet:ErrorResponse`
-* **Description**: The query request is invalid. The response is an xml which is valid agains environet' upload api schema: [environet.xsd](resources/environet.xsd)
+* **Description**: The query request is invalid. The response is an xml which is valid agains environet's api schema: [environet.xsd](resources/environet.xsd)
 * **Body example**:
 	 
 	```xml
@@ -74,7 +73,7 @@ The `signature` part is the base64 encoded openssl signature which was created w
 * **Status code**: 500
 * **Content-type**: application/xml
 * **Body**: XML: `environet:ErrorResponse`
-* **Description**: Unidentified error during request. The response is an xml which is valid agains environet' upload api schema: [environet.xsd](resources/environet.xsd)
+* **Description**: Unidentified error during request. The response is an xml which is valid agains environet's api schema: [environet.xsd](resources/environet.xsd)
 * **Body example**:
 	 
 	```xml

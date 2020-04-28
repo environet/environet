@@ -54,17 +54,6 @@ function commandRouter(array $arguments): ?string {
 					return commandRouter($arguments);
 				case 'install':
 					return DistNodeInstall::class;
-				case 'init':
-					switch ($arguments[2] ?? null) {
-						case 'database':
-							return InitDb::class;
-					}
-					break;
-				case 'migrate':
-					switch ($arguments[2] ?? null) {
-						case 'database':
-							return MigrateDb::class;
-					}
 				case 'database':
 					switch ($arguments[2] ?? null) {
 						case 'init':
