@@ -1011,7 +1011,30 @@
 <li><a href="#22_database_structure">Database structure</a></li>
 <li><a href="#23_api_upload">Upload API</a></li>
 <li><a href="#24_api_download">Download API</a></li>
-<li><a href="#25_admin_user_manual">Administration area</a></li>
+<li><a href="#25_0_admin_user_manual">Administration area</a>
+<ul>
+<li><a href="#25_1_admin_general">General</a></li>
+<li><a href="#25_2_auth">Auth pages</a></li>
+<li><a href="#25_3_dashboard">Dashboard</a></li>
+<li><a href="#25_4_users">Users</a></li>
+<li><a href="#25_5_groups">Groups</a></li>
+<li><a href="#25_6_data_providers">Data providers</a></li>
+<li><a href="#25_7_1_hydro">Hydro</a>
+<ul>
+<li><a href="#25_7_2_hydro_monitoring_point">Hydro monitoring points</a></li>
+<li><a href="#25_7_3_hydro_observed_properties">Hydro observed properties</a></li>
+<li><a href="#25_7_4_hydro_waterbody">Hydro waterbody</a></li>
+<li><a href="#25_7_5_hydro_station_classification">Hydro station classification</a></li>
+<li><a href="#25_7_6_hydro_results">Hydro results</a></li>
+</ul></li>
+<li><a href="#25_8_1_meteo">Meteo</a>
+<ul>
+<li><a href="#25_8_2_meteo_monitoring_point">Meteo monitoring points</a></li>
+<li><a href="#25_8_3_meteo_observed_properties">Meteo observed properties</a></li>
+<li><a href="#25_8_4_meteo_station_classification">Meteo station classification</a></li>
+<li><a href="#25_8_5_meteo_results">Meteo results</a></li>
+</ul></li>
+</ul></li>
 </ul></li>
 <li><a href="#30_data_node">Data node</a>
 <ul>
@@ -1063,7 +1086,7 @@ To stop and start them manually, you may run <code>./environet data up</code> or
 <p><a name="20_distribution_node"></a></p>
 <h1 id="distribution-node">Distribution node</h1>
 <h2 id="overview">Overview</h2>
-<p>A Distribution node, in it’s minimal form, is a service aspect that’s able to maintain the central database and service API requests. In the first phase the domain of the distribution node is: <a href="https://environet.environ.hu" class="uri">https://environet.environ.hu</a></p>
+<p>A Distribution node, in it’s minimal form, is a service aspect that’s able to maintain the central database and service API requests. In the first phase the domain of the distribution node is: <a href="https://environet.environ.hu">https://environet.environ.hu</a></p>
 <h2 id="central-database">Central database</h2>
 <p>The distribution node has a database backend. It contains: * Data and configuration of hydro and meteo points * Measurement data tables of these monitoring points * User and access (ACL) tables (users, groups, permissions) * System runtime data</p>
 <p>Schema of the database can be found here: <a href="#21_database_structure">Database structure</a></p>
@@ -1096,7 +1119,7 @@ The detailed documentation of this endpoint can found here: <a href="#23_api_dow
 </ul>
 <h2 id="schema-diagram">Schema diagram</h2>
 <figure>
-<img src="resources/model.jpg" alt="Schema diagram images" /><figcaption>Schema diagram images</figcaption>
+<img src="resources/model.jpg" alt="" /><figcaption>Schema diagram images</figcaption>
 </figure>
 <h2 id="schema-sql-structure">Schema sql structure</h2>
 <p><a href="resources/schema.sql">Link to sql file</a></p>
@@ -1128,7 +1151,7 @@ The detailed documentation of this endpoint can found here: <a href="#23_api_dow
 </tbody>
 </table>
 <h3 id="signature-header">Signature header:</h3>
-<p>The pattern of the header: <code>Signature keyId=&quot;[username]&quot;,algorithm=&quot;rsa-sha256&quot;,signature=&quot;[signature]&quot;</code></p>
+<p>The pattern of the header: <code>Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"</code></p>
 <p>The <code>keyId</code> is the username of the uploader user. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the from the body of the response, which is the XML data.</p>
 <hr />
 <h2 id="body">Body</h2>
@@ -1168,19 +1191,19 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </ul>
 <h3 id="invalid-request">Invalid request</h3>
 <ul>
-<li><strong>Status code</strong>: 400</li>
-<li><strong>Content-type</strong>: application/xml</li>
-<li><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></li>
-<li><strong>Description</strong>: Input or processing error during the upload process. The reponse in an error xml which is valid agains environet’ upload api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
+<li><p><strong>Status code</strong>: 400</p></li>
+<li><p><strong>Content-type</strong>: application/xml</p></li>
+<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
+<li><p><strong>Description</strong>: Input or processing error during the upload process. The reponse in an error xml which is valid agains environet’ upload api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></a>
-<a class="sourceLine" id="cb2-2" title="2"><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></a>
-<a class="sourceLine" id="cb2-3" title="3">    <span class="kw">&lt;environet:Error&gt;</span></a>
-<a class="sourceLine" id="cb2-4" title="4">        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span></a>
-<a class="sourceLine" id="cb2-5" title="5">        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></a>
-<a class="sourceLine" id="cb2-6" title="6">    <span class="kw">&lt;/environet:Error&gt;</span></a>
-<a class="sourceLine" id="cb2-7" title="7"><span class="kw">&lt;/environet:ErrorResponse&gt;</span></a></code></pre></div></li>
-<li><strong>Error codes</strong>
+<div class="sourceCode" id="cb2"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
+<li><p><strong>Error codes</strong></p>
 <ul>
 <li><code>101</code>: Unknown error</li>
 <li><code>102</code>: Server error</li>
@@ -1201,18 +1224,18 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </ul>
 <h3 id="server-error">Server error</h3>
 <ul>
-<li><strong>Status code</strong>: 500</li>
-<li><strong>Content-type</strong>: application/xml</li>
-<li><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></li>
-<li><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet’s upload api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
+<li><p><strong>Status code</strong>: 500</p></li>
+<li><p><strong>Content-type</strong>: application/xml</p></li>
+<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
+<li><p><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet’s upload api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></a>
-<a class="sourceLine" id="cb3-2" title="2"><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></a>
-<a class="sourceLine" id="cb3-3" title="3">    <span class="kw">&lt;environet:Error&gt;</span></a>
-<a class="sourceLine" id="cb3-4" title="4">        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span></a>
-<a class="sourceLine" id="cb3-5" title="5">        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></a>
-<a class="sourceLine" id="cb3-6" title="6">    <span class="kw">&lt;/environet:Error&gt;</span></a>
-<a class="sourceLine" id="cb3-7" title="7"><span class="kw">&lt;/environet:ErrorResponse&gt;</span></a></code></pre></div></li>
+<div class="sourceCode" id="cb3"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
 </ul>
 <p><a name="24_api_download"></a></p>
 <h1 id="download-api-documentation">Download API documentation</h1>
@@ -1244,38 +1267,34 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <td>Authorization</td>
 <td>Signature (See below)</td>
 </tr>
-<tr class="even">
-<td>Content-Type</td>
-<td>application/xml</td>
-</tr>
 </tbody>
 </table>
 <h3 id="signature-header-1">Signature header:</h3>
-<p>The pattern of the header: <code>Signature keyId=&quot;[username]&quot;,algorithm=&quot;rsa-sha256&quot;,signature=&quot;[signature]&quot;</code></p>
+<p>The pattern of the header: <code>Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"</code></p>
 <p>The <code>keyId</code> is the username of the user who wants to query data. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the token in the query parameters.</p>
 <h2 id="repsonses-1">Repsonses</h2>
 <h3 id="success-1">Success</h3>
 <ul>
 <li><strong>Status code</strong>: 200</li>
 <li><strong>Content-type</strong>: application/xml</li>
-<li><strong>Body</strong>: <code>empty</code></li>
-<li><strong>Description</strong>: Upload was successful, the data has been successfully processed.</li>
+<li><strong>Body</strong>: XML: <code>wml2:Collection</code></li>
+<li><strong>Description</strong>: Measurement data in WaterML2.0 comaptible XML format: http://www.opengis.net/waterml/2.0</li>
 </ul>
 <h3 id="invalid-request-1">Invalid request</h3>
 <ul>
-<li><strong>Status code</strong>: 400</li>
-<li><strong>Content-type</strong>: application/xml</li>
-<li><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></li>
-<li><strong>Description</strong>: The query request is invalid. The response is an xml which is valid agains environet’ upload api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
+<li><p><strong>Status code</strong>: 400</p></li>
+<li><p><strong>Content-type</strong>: application/xml</p></li>
+<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
+<li><p><strong>Description</strong>: The query request is invalid. The response is an xml which is valid agains environet’s api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></a>
-<a class="sourceLine" id="cb4-2" title="2"><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></a>
-<a class="sourceLine" id="cb4-3" title="3">    <span class="kw">&lt;environet:Error&gt;</span></a>
-<a class="sourceLine" id="cb4-4" title="4">        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span></a>
-<a class="sourceLine" id="cb4-5" title="5">        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></a>
-<a class="sourceLine" id="cb4-6" title="6">    <span class="kw">&lt;/environet:Error&gt;</span></a>
-<a class="sourceLine" id="cb4-7" title="7"><span class="kw">&lt;/environet:ErrorResponse&gt;</span></a></code></pre></div></li>
-<li><strong>Error codes</strong>
+<div class="sourceCode" id="cb4"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
+<li><p><strong>Error codes</strong></p>
 <ul>
 <li><code>101</code>: Unknown error</li>
 <li><code>102</code>: Server error</li>
@@ -1295,174 +1314,308 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </ul>
 <h3 id="server-error-1">Server error</h3>
 <ul>
-<li><strong>Status code</strong>: 500</li>
-<li><strong>Content-type</strong>: application/xml</li>
-<li><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></li>
-<li><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet’ upload api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
+<li><p><strong>Status code</strong>: 500</p></li>
+<li><p><strong>Content-type</strong>: application/xml</p></li>
+<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
+<li><p><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet’s api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></a>
-<a class="sourceLine" id="cb5-2" title="2"><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></a>
-<a class="sourceLine" id="cb5-3" title="3">    <span class="kw">&lt;environet:Error&gt;</span></a>
-<a class="sourceLine" id="cb5-4" title="4">        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span></a>
-<a class="sourceLine" id="cb5-5" title="5">        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></a>
-<a class="sourceLine" id="cb5-6" title="6">    <span class="kw">&lt;/environet:Error&gt;</span></a>
-<a class="sourceLine" id="cb5-7" title="7"><span class="kw">&lt;/environet:ErrorResponse&gt;</span></a></code></pre></div></li>
+<div class="sourceCode" id="cb5"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
 </ul>
-<p><a name="25_admin_user_manual"></a></p>
+<p><a name="24_api_monitoring_points"></a></p>
+<h1 id="monitoring-points-api-documentation">Monitoring points API documentation</h1>
+<h2 id="url-method-2">URL &amp; METHOD</h2>
+<ul>
+<li><strong>Method</strong>: <code>GET</code></li>
+<li><strong>URL</strong>: <code>https://domain.com/api/monitoring-points</code></li>
+</ul>
+<hr />
+<h2 id="query-parameters-1">Query parameters</h2>
+<ul>
+<li><strong>token</strong>: <code>required</code> A random string from which the signature is generated. This is required for authentication, the server verifies the signature in the <code>Authorization</code> header based on this token.</li>
+</ul>
+<h2 id="headers-2">Headers</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Header name</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Authorization</td>
+<td>Signature (See below)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="signature-header-2">Signature header:</h3>
+<p>The pattern of the header: <code>Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"</code></p>
+<p>The <code>keyId</code> is the username of the user who wants to query data. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the token in the query parameters.</p>
+<h2 id="repsonses-2">Repsonses</h2>
+<h3 id="success-2">Success</h3>
+<ul>
+<li><p><strong>Status code</strong>: 200</p></li>
+<li><p><strong>Content-type</strong>: application/json</p></li>
+<li><p><strong>Body</strong>: <code>JSON</code></p></li>
+<li><p><strong>Description</strong>: Request is OK, list the hydro and meteo points of user</p></li>
+<li><p><strong>Body example</strong>:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>    <span class="dt">&quot;hydro&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>        <span class="fu">{</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>            <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a>            <span class="dt">&quot;station_classificationid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a>            <span class="dt">&quot;operatorid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a>            <span class="dt">&quot;bankid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>            <span class="dt">&quot;waterbodyeuropean_river_code&quot;</span><span class="fu">:</span> <span class="st">&quot;waterbody&quot;</span><span class="fu">,</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a>            <span class="dt">&quot;eucd_wgst&quot;</span><span class="fu">:</span> <span class="st">&quot;ABC123&quot;</span><span class="fu">,</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a>            <span class="dt">&quot;ncd_wgst&quot;</span><span class="fu">:</span> <span class="st">&quot;ABC123&quot;</span><span class="fu">,</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a>            <span class="dt">&quot;vertical_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;Vertical reference&quot;</span><span class="fu">,</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a>            <span class="dt">&quot;long&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a>            <span class="dt">&quot;lat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a>            <span class="dt">&quot;z&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a>            <span class="dt">&quot;maplong&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a>            <span class="dt">&quot;maplat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-17"><a href="#cb6-17"></a>            <span class="dt">&quot;country&quot;</span><span class="fu">:</span> <span class="st">&quot;CountryCode&quot;</span><span class="fu">,</span></span>
+<span id="cb6-18"><a href="#cb6-18"></a>            <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;MPoint&quot;</span><span class="fu">,</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a>            <span class="dt">&quot;location&quot;</span><span class="fu">:</span> <span class="st">&quot;Location&quot;</span><span class="fu">,</span></span>
+<span id="cb6-20"><a href="#cb6-20"></a>            <span class="dt">&quot;river_kilometer&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-21"><a href="#cb6-21"></a>            <span class="dt">&quot;catchment_area&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-22"><a href="#cb6-22"></a>            <span class="dt">&quot;gauge_zero&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-23"><a href="#cb6-23"></a>            <span class="dt">&quot;start_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-01-01 00:00:00&quot;</span><span class="fu">,</span></span>
+<span id="cb6-24"><a href="#cb6-24"></a>            <span class="dt">&quot;end_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-05-01 00:00:00&quot;</span><span class="fu">,</span></span>
+<span id="cb6-25"><a href="#cb6-25"></a>            <span class="dt">&quot;utc_offset&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb6-26"><a href="#cb6-26"></a>            <span class="dt">&quot;river_basin&quot;</span><span class="fu">:</span> <span class="st">&quot;Basin&quot;</span><span class="fu">,</span></span>
+<span id="cb6-27"><a href="#cb6-27"></a>            <span class="dt">&quot;observed_properties&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-28"><a href="#cb6-28"></a>                <span class="st">&quot;hydro_property&quot;</span></span>
+<span id="cb6-29"><a href="#cb6-29"></a>            <span class="ot">]</span></span>
+<span id="cb6-30"><a href="#cb6-30"></a>        <span class="fu">}</span></span>
+<span id="cb6-31"><a href="#cb6-31"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb6-32"><a href="#cb6-32"></a>    <span class="dt">&quot;meteo&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-33"><a href="#cb6-33"></a>        <span class="fu">{</span></span>
+<span id="cb6-34"><a href="#cb6-34"></a>            <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb6-35"><a href="#cb6-35"></a>            <span class="dt">&quot;meteostation_classificationid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb6-36"><a href="#cb6-36"></a>            <span class="dt">&quot;operatorid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb6-37"><a href="#cb6-37"></a>            <span class="dt">&quot;eucd_pst&quot;</span><span class="fu">:</span> <span class="st">&quot;DEF456&quot;</span><span class="fu">,</span></span>
+<span id="cb6-38"><a href="#cb6-38"></a>            <span class="dt">&quot;ncd_pst&quot;</span><span class="fu">:</span> <span class="st">&quot;DEF456&quot;</span><span class="fu">,</span></span>
+<span id="cb6-39"><a href="#cb6-39"></a>            <span class="dt">&quot;vertical_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;Vertical reference&quot;</span><span class="fu">,</span></span>
+<span id="cb6-40"><a href="#cb6-40"></a>            <span class="dt">&quot;long&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-41"><a href="#cb6-41"></a>            <span class="dt">&quot;lat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-42"><a href="#cb6-42"></a>            <span class="dt">&quot;z&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-43"><a href="#cb6-43"></a>            <span class="dt">&quot;maplong&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-44"><a href="#cb6-44"></a>            <span class="dt">&quot;maplat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-45"><a href="#cb6-45"></a>            <span class="dt">&quot;country&quot;</span><span class="fu">:</span> <span class="st">&quot;CountryCode&quot;</span><span class="fu">,</span></span>
+<span id="cb6-46"><a href="#cb6-46"></a>            <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Name&quot;</span><span class="fu">,</span></span>
+<span id="cb6-47"><a href="#cb6-47"></a>            <span class="dt">&quot;location&quot;</span><span class="fu">:</span> <span class="st">&quot;Location&quot;</span><span class="fu">,</span></span>
+<span id="cb6-48"><a href="#cb6-48"></a>            <span class="dt">&quot;altitude&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-49"><a href="#cb6-49"></a>            <span class="dt">&quot;start_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-01-01 00:00:00&quot;</span><span class="fu">,</span></span>
+<span id="cb6-50"><a href="#cb6-50"></a>            <span class="dt">&quot;end_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-05-01 00:00:00&quot;</span><span class="fu">,</span></span>
+<span id="cb6-51"><a href="#cb6-51"></a>            <span class="dt">&quot;utc_offset&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb6-52"><a href="#cb6-52"></a>            <span class="dt">&quot;river_basin&quot;</span><span class="fu">:</span> <span class="st">&quot;Basin&quot;</span><span class="fu">,</span></span>
+<span id="cb6-53"><a href="#cb6-53"></a>            <span class="dt">&quot;observed_properties&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-54"><a href="#cb6-54"></a>                <span class="st">&quot;meteo_property&quot;</span></span>
+<span id="cb6-55"><a href="#cb6-55"></a>            <span class="ot">]</span></span>
+<span id="cb6-56"><a href="#cb6-56"></a>        <span class="fu">}</span></span>
+<span id="cb6-57"><a href="#cb6-57"></a>    <span class="ot">]</span></span>
+<span id="cb6-58"><a href="#cb6-58"></a><span class="fu">}</span></span></code></pre></div></li>
+</ul>
+<h3 id="invalid-request-2">Invalid request</h3>
+<ul>
+<li><p><strong>Status code</strong>: 400</p></li>
+<li><p><strong>Content-type</strong>: application/json</p></li>
+<li><p><strong>Body</strong>: <code>JSON</code></p></li>
+<li><p><strong>Description</strong>: The query request is invalid. The response is a json object with the error message, under error key.</p></li>
+<li><p><strong>Body example</strong>:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">{</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Error message&quot;</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="fu">}</span></span></code></pre></div></li>
+</ul>
+<h3 id="server-error-2">Server error</h3>
+<ul>
+<li><p><strong>Status code</strong>: 500</p></li>
+<li><p><strong>Content-type</strong>: application/json</p></li>
+<li><p><strong>Body</strong>: <code>JSON</code></p></li>
+<li><p><strong>Description</strong>: Unidentified error during request. The response is a json object with the error message, under error key.</p></li>
+<li><p><strong>Body example</strong>:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1"></a><span class="fu">{</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Error message&quot;</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="fu">}</span></span></code></pre></div></li>
+</ul>
+<p><a name="25_0_admin_user_manual"></a></p>
 <h1 id="admin-user-manual">Admin user manual</h1>
 <p>This document’s goals to represents the different parts of the administration area to help to understand how it works. Help you to see through how works the specified relationships and how you can handle them.</p>
-<h3 id="general-information">General information</h3>
+<p><a name="25_1_admin_general"></a></p>
+<h2 id="general-information">General information</h2>
 <p>Good to know, that on each list page, there are on the top right a search field. In the following each sections you can see a “searchable” part, where you can find in what kind of fields can the system search on the specified page.</p>
-<h3 id="login-page">Login page</h3>
-<p>You can reach this interface if you navigate your browser to the following path: - /admin/login</p>
+<p><a name="25_2_auth"></a></p>
+<h2 id="auth-pages">Auth pages</h2>
+<h4 id="login-page">Login page</h4>
+<p>Path: <code>/admin/login</code></p>
 <p>Here you have to type your credentials data to login into the administration area. If you have no login credentials yet, you have to gain access from your webmaster.</p>
-<h3 id="logout">Logout</h3>
+<h4 id="logout">Logout</h4>
 <p>You can logout if you click the exit icon on the top right of the page.</p>
-<p>Path: /admin/logout</p>
-<h3 id="dashboard">Dashboard</h3>
-<p>Path: /admin</p>
-<h3 id="users">Users</h3>
+<p>Path: <code>/admin/logout</code></p>
+<p><a name="25_3_dashboard"></a></p>
+<h2 id="dashboard">Dashboard</h2>
+<p>Path: <code>/admin</code></p>
+<p><a name="25_4_users"></a></p>
+<h2 id="users">Users</h2>
 <p>Here you can handle the users who has already added to the system.</p>
-<p>Path: /admin/users</p>
+<p>Path: <code>/admin/users</code></p>
 <p>Searchable: name, username, email</p>
 <p><strong>There are three types of user:</strong> - Distribution node - Client node - Users who can manage the system in the admin area</p>
 <p>All of them are listed in the users grid.</p>
 <p>Each user, except the user type users have to have public key attached to themselves, because of they are communicate on API channel and it necessary to their authentication.</p>
-<p><strong>New user</strong></p>
+<h4 id="new-user">New user</h4>
 <p>You can add new user if you click the “Add user” button on the top left of the users list page.</p>
-<p>Path: /admin/users/add</p>
+<p>Path: <code>/admin/users/add</code></p>
 <p>On the user’s creating page, you have to fill the following mandatory fields: - name - email - it must be unique - username - it must be unique - permission or group</p>
 <p>The public key field is necessary only if we want to create a client or distrubition node user. In other case if you would like to create a “system manager” user, you have to fill to password field instead of public key.</p>
 <p>If you wouldn’t like to assign a specified permission to the user, you must assign the user to a group, they will inherits the group’s permissions.</p>
-<p><strong>Updating user</strong></p>
+<h4 id="updating-user">Updating user</h4>
 <p>You can select a user to update if you click the “Pencil” icon at the end of the specific row.</p>
-<p>Path: /admin/users/edit?id=[user identifier]</p>
+<p>Path: <code>/admin/users/edit?id=[user identifier]</code></p>
 <p>You can update all user datas that you gave on the creating page except the username field.</p>
-<p><strong>User deleting</strong></p>
+<h4 id="user-deleting">User deleting</h4>
 <p>You can delete a user if you click the “Trash” icon at the end of the specific row. If you clicked, it shows a confirm window, where you have to approve the deleting. In fact the deleted user will never physically deleted, we have to keep its datas by security reasons.</p>
-<p>Path: /admin/users/delete?id=[user identifier]</p>
-<h3 id="groups">Groups</h3>
+<p>Path: <code>/admin/users/delete?id=[user identifier]</code></p>
+<p><a name="25_5_groups"></a></p>
+<h2 id="groups">Groups</h2>
 <p>Here you can handle the groups what has already added to the system.</p>
-<p>Path: /admin/groups</p>
+<p>Path: <code>/admin/groups</code></p>
 <p>Searchable: name</p>
-<p><strong>New group</strong></p>
+<h4 id="new-group">New group</h4>
 <p>You can add new group if you click the “Add group” button on the top left of the group list page.</p>
-<p>Path: /admin/groups/add</p>
+<p>Path: <code>/admin/groups/add</code></p>
 <p>On the group’s creating page you have to fill the name of the group and you have to assign permission to the specified group. On the creating page, you can assign only one permission, but later you have possibility to add more of it.</p>
-<p><strong>Updating group</strong></p>
+<h4 id="updating-group">Updating group</h4>
 <p>You can select a group to update if you click the “Pencil” icon at the end of the specific row.</p>
-<p>Path: /admin/groups/edit?id=[group identifier]</p>
+<p>Path: <code>/admin/groups/edit?id=[group identifier]</code></p>
 <p>Here you can change the name of the group and you can assign more permission to it.</p>
-<p><strong>Group deleting</strong></p>
+<h4 id="group-deleting">Group deleting</h4>
 <p>You can delete a group if you click the “Trash” icon at the end of the specific row. If you clicked, it shows a confirm window, where you have to approve the deleting. <strong>If any user or operator have already assigned to the specified group, the delete operation cannot be performed.</strong> First time you have to detach these relations and after that you can delete the group.</p>
-<p>Path: /admin/groups/delete?id=[group identifier]</p>
-<h3 id="data-providers">Data providers</h3>
+<p>Path: <code>/admin/groups/delete?id=[group identifier]</code></p>
+<p><a name="25_6_data_providers"></a></p>
+<h2 id="data-providers">Data providers</h2>
 <p>Here you can handle the data providers what has already added to the system.</p>
-<p>Path: /admin/data-providers</p>
+<p>Path: <code>/admin/data-providers</code></p>
 <p>Searchable: name, address, email</p>
-<p><strong>New data provider</strong></p>
+<h4 id="new-data-provider">New data provider</h4>
 <p>You can add new data provider if you click the “Add data provider” button on the top left of the data provider’s list page.</p>
-<p>Path: /admin/data-providers/add</p>
+<p>Path: <code>/admin/data-providers/add</code></p>
 <p>On the data providers creating page, you have to fill the following mandatory fields:</p>
 <p>Operator data - name - phone - e-mail - url</p>
 <p>User data - name - username - email</p>
 <p>The user data is necessary because of each operator has to be assigned to at least one user.</p>
-<p><strong>Updating data provider</strong></p>
+<h4 id="updating-data-provider">Updating data provider</h4>
 <p>You can select a data provider to update if you click the “Pencil” icon at the end of the specific row.</p>
-<p>Path: /admin/data-providers/edit?id=[data-provider identifier]</p>
+<p>Path: <code>/admin/data-providers/edit?id=[data-provider identifier]</code></p>
 <p>Here you can change all of operator’s data and you can assign more users or groups to the specific dataprovider.</p>
-<p><strong>Data provider show page</strong></p>
+<h4 id="data-provider-show-page">Data provider show page</h4>
 <p>You can select a data provider to show if you click the “Eye” icon at the end of the specific row.</p>
-<p>Path: /admin/data-providers/show?id=[data-provider identifier]</p>
+<p>Path: <code>/admin/data-providers/show?id=[data-provider identifier]</code></p>
 <p>Here you can see the stored data of the data providers and its relations to direction of users and groups.</p>
-<p><strong>Data provider deleting</strong></p>
+<h4 id="data-provider-deleting">Data provider deleting</h4>
 <p>You cannot delete any data provider.</p>
+<p><a name="25_7_1_hydro"></a></p>
 <h2 id="hydro">Hydro</h2>
+<p><a name="25_7_2_hydro_monitoring_point"></a></p>
 <h3 id="hydro-monitoring-point">Hydro monitoring point</h3>
 <p>Here you can handle the monitoring points what has already added to the system.</p>
-<p>Path: /admin/hydro/monitoring-points</p>
+<p>Path: <code>/admin/hydro/monitoring-points</code></p>
 <p>Searchable: european river code, country, name, location</p>
-<p><strong>New monitoring point</strong></p>
+<h4 id="new-monitoring-point">New monitoring point</h4>
 <p>You can add new monitoring point if you click the “Add monitoring point” button on the top left of the hydro monitoring point list page.</p>
-<p>Path: /admin/hydro/monitoring-points/add</p>
+<p>Path: <code>/admin/hydro/monitoring-points/add</code></p>
 <p>On the monitoring point creating page, you have to fill the following mandatory fields: - name - classification - operator - riverbank - waterbody - observed properties</p>
-<p><strong>Updating monitoring point</strong></p>
+<h4 id="updating-monitoring-point">Updating monitoring point</h4>
 <p>You can select a monitoring point to update if you click the “Pencil” icon at the end of the specific row.</p>
-<p>Path: /admin/hydro/monitoring-points/edit?id=[monitoring point identifier]</p>
+<p>Path: <code>/admin/hydro/monitoring-points/edit?id=[monitoring point identifier]</code></p>
 <p>Here you can change all of monitoring point’s data and you can assign more observed property to the specific monitoring point.</p>
-<p><strong>Monitoring point show page</strong></p>
+<h4 id="monitoring-point-show-page">Monitoring point show page</h4>
 <p>You can select a monitoring point to show if you click the “Eye” icon at the end of the specific row.</p>
-<p>Path: /admin/hydro/monitoring-points/show?id=[monitoring point identifier]</p>
+<p>Path: <code>/admin/hydro/monitoring-points/show?id=[monitoring point identifier]</code></p>
 <p>Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator, waterbody and observed property.</p>
-<p><strong>Monitoring point deleting</strong></p>
+<h4 id="monitoring-point-deleting">Monitoring point deleting</h4>
 <p>You cannot delete any monitoring point.</p>
+<p><a name="25_7_3_hydro_observed_properties"></a></p>
 <h3 id="hydro-observed-properties">Hydro observed properties</h3>
 <p>Here you can handle the observed properties what has already added to the system.</p>
 <p>An observed property describes, what kind of property can be measured by a monitoring point.</p>
-<p>Path: /admin/hydro/observed-properties</p>
+<p>Path: <code>/admin/hydro/observed-properties</code></p>
 <p>Searchable: symbol, description</p>
-<p><strong>New observed property</strong></p>
+<h4 id="new-observed-property">New observed property</h4>
 <p>You can add new observed property if you click the “Add observed property” button on the top left of the hydro observed property list page.</p>
-<p>Path: /admin/hydro/observed-properties/add</p>
+<p>Path: <code>/admin/hydro/observed-properties/add</code></p>
 <p>On the observed property creating page, you have to fill to following mandatory fields: - symbol - description</p>
-<p><strong>Updating observed property</strong></p>
+<h4 id="updating-observed-property">Updating observed property</h4>
 <p>You can select an observed property to update if you click the “Pencil” icon at the end of the specific row.</p>
-<p>Path: /admin/hydro/observed-properties/edit?id=[observed property identifier]</p>
+<p>Path: <code>/admin/hydro/observed-properties/edit?id=[observed property identifier]</code></p>
 <p>Here you can change all of observed property’s data.</p>
-<p><strong>Observed property show page</strong></p>
+<h4 id="observed-property-show-page">Observed property show page</h4>
 <p>You can select an observed property to show if you click the “Eye” icon at the end of the specific row.</p>
-<p>Path: /admin/hydro/observed-properties/show?id=[observed property identifier]</p>
+<p>Path: <code>/admin/hydro/observed-properties/show?id=[observed property identifier]</code></p>
 <p>Here you can see the stored data of an observed property.</p>
-<p><strong>Observed property deleting</strong></p>
+<h4 id="observed-property-deleting">Observed property deleting</h4>
 <p>You cannot delete any observed property.</p>
+<p><a name="25_7_4_hydro_waterbody"></a></p>
 <h3 id="waterbody">Waterbody</h3>
 <p>Here you can handle the waterbodies what has already added to the system.</p>
-<p>Path: /admin/hydro/waterbodies</p>
+<p>Path: <code>/admin/hydro/waterbodies</code></p>
 <p>Searchable: european river code</p>
-<p><strong>New waterbody</strong></p>
+<h4 id="new-waterbody">New waterbody</h4>
 <p>You can add new waterbody if you click the “Add waterbody” button on the top left of the waterbody list page.</p>
-<p>Path: /admin/hydro/waterbodies/add</p>
+<p>Path: <code>/admin/hydro/waterbodies/add</code></p>
 <p>On the waterbody’s creating page, you have to fill to following mandatory fields: - cname - european river code</p>
-<p><strong>Updating waterbody</strong></p>
+<h4 id="updating-waterbody">Updating waterbody</h4>
 <p>You can select a waterbody to update if you click the “Pencil” icon at the end of the specific row.</p>
-<p>Path: /admin/hydro/waterbodies/edit?id=[waterbody identifier]</p>
+<p>Path: <code>/admin/hydro/waterbodies/edit?id=[waterbody identifier]</code></p>
 <p>Here you can change the cname of the selected waterbody.</p>
-<p><strong>Waterbody show page</strong></p>
+<h4 id="waterbody-show-page">Waterbody show page</h4>
 <p>You can select a waterbody to show if you click the “Eye” icon at the end of the specific row.</p>
-<p>Path: /admin/hydro/waterbodies/show?id=[waterbody identifier]</p>
+<p>Path: <code>/admin/hydro/waterbodies/show?id=[waterbody identifier]</code></p>
 <p>Here you can see the stored data of a waterbody.</p>
-<p><strong>Waterbody deleting</strong></p>
+<h4 id="waterbody-deleting">Waterbody deleting</h4>
 <p>You cannot delete any waterbody.</p>
+<p><a name="25_7_5_hydro_station_classification"></a></p>
 <h3 id="station-classifications">Station classifications</h3>
 <p>Here you can handle the classifications of a specified station what has already added to the system.</p>
-<p>Path: /admin/hydro/station-classifications</p>
+<p>Path: <code>/admin/hydro/station-classifications</code></p>
 <p>Searchable: value</p>
-<p><strong>New classification</strong></p>
+<h4 id="new-classification">New classification</h4>
 <p>You can add new station classification if you click the “Add station classification” button on the top left of the classification’s list page.</p>
-<p>Path: /admin/hydro/station-classifications/add</p>
+<p>Path: <code>/admin/hydro/station-classifications/add</code></p>
 <p>On the classification’s creating page, you have to fill to following mandatory fields: - value</p>
-<p><strong>Updating classification</strong></p>
+<h4 id="updating-classification">Updating classification</h4>
 <p>You can select a station classification to update if you click the “Pencil” icon at the end of the specific row.</p>
-<p>Path: /admin/hydro/station-classifications/edit?id=[classification identifier]</p>
+<p>Path: <code>/admin/hydro/station-classifications/edit?id=[classification identifier]</code></p>
 <p>Here you can change the value of the selected station classification.</p>
-<p><strong>Classification show page</strong></p>
+<h4 id="classification-show-page">Classification show page</h4>
 <p>You can select a station classification to show if you click the “Eye” icon at the end of the specific row.</p>
-<p>Path: /admin/hydro/station-classifications/show?id=[classification identifier]</p>
+<p>Path: <code>/admin/hydro/station-classifications/show?id=[classification identifier]</code></p>
 <p>Here you can see the stored data of a station classification.</p>
-<p><strong>Classification deleting</strong></p>
+<h4 id="classification-deleting">Classification deleting</h4>
 <p>You cannot delete any classification.</p>
+<p><a name="25_7_6_hydro_results"></a></p>
 <h3 id="hydro-results">Hydro results</h3>
 <p>Here you can see the results of the different monitoring point, what has arrived via API.</p>
-<p>Path: /admin/hydro/results</p>
+<p>Path: <code>/admin/hydro/results</code></p>
 <p>Searchable: name, symbol</p>
+<p><a name="25_8_1_meteo"></a></p>
 <h2 id="meteo">Meteo</h2>
+<p><a name="25_8_2_meteo_monitoring_point"></a></p>
 <h3 id="meteo-monitoring-point">Meteo monitoring point</h3>
 <p>Here you can handle the monitoring points what has already added to the system.</p>
-<p>Path: /admin/meteo/monitoring-points</p>
+<p>Path: <code>/admin/meteo/monitoring-points</code></p>
 <p>Searchable: country, name, location</p>
-<p><strong>New monitoring point</strong></p>
+<h4 id="new-monitoring-point-1">New monitoring point</h4>
 <p>You can add new monitoring point if you click the “Add monitoring point” button on the top left of the meteo monitoring point list page.</p>
-<p>Path: /admin/meteo/monitoring-points/add</p>
+<p>Path: <code>/admin/meteo/monitoring-points/add</code></p>
 <p>On the monitoring point creating page, you have to fill the following mandatory fields:</p>
 <ul>
 <li>name</li>
@@ -1470,61 +1623,88 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <li>operator</li>
 <li>observed properties</li>
 </ul>
-<p><strong>Updating monitoring point</strong></p>
+<h4 id="updating-monitoring-point-1">Updating monitoring point</h4>
 <p>You can select a monitoring point to update if you click the “Pencil” icon at the end of the specific row.</p>
-<p>Path: /admin/meteo/monitoring-points/edit?id=[monitoring point identifier]</p>
+<p>Path: <code>/admin/meteo/monitoring-points/edit?id=[monitoring point identifier]</code></p>
 <p>Here you can change all of monitoring point’s data and you can assign more observed property to the specific monitoring point.</p>
-<p><strong>Monitoring point show page</strong></p>
+<h4 id="monitoring-point-show-page-1">Monitoring point show page</h4>
 <p>You can select a monitoring point to show if you click the “Eye” icon at the end of the specific row.</p>
-<p>Path: /admin/meteo/monitoring-points/show?id=[monitoring point identifier]</p>
+<p>Path: <code>/admin/meteo/monitoring-points/show?id=[monitoring point identifier]</code></p>
 <p>Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator and observed property.</p>
-<p><strong>Monitoring point deleting</strong></p>
+<h4 id="monitoring-point-deleting-1">Monitoring point deleting</h4>
 <p>You cannot delete any monitoring point.</p>
+<p><a name="25_8_3_meteo_observed_properties"></a></p>
 <h3 id="observed-properties">Observed properties</h3>
 <p>Here you can handle the observed properties what has already added to the system.</p>
 <p>An observed property describes, what kind of property can be measured by a monitoring point.</p>
-<p>Path: /admin/meteo/observed-properties</p>
+<p>Path: <code>/admin/meteo/observed-properties</code></p>
 <p>Searchable: symbol, description</p>
-<p><strong>New observed property</strong></p>
+<h4 id="new-observed-property-1">New observed property</h4>
 <p>You can add new observed property if you click the “Add observed property” button on the top left of the meteo observed property list page.</p>
-<p>Path: /admin/meteo/observed-properties/add</p>
+<p>Path: <code>/admin/meteo/observed-properties/add</code></p>
 <p>On the observed property creating page, you have to fill to following mandatory fields:</p>
 <ul>
 <li>symbol</li>
 <li>description</li>
 </ul>
-<p><strong>Updating observed property</strong></p>
+<h4 id="updating-observed-property-1">Updating observed property</h4>
 <p>You can select an observed property to update if you click the “Pencil” icon at the end of the specific row.</p>
-<p>Path: /admin/meteo/observed-properties/edit?id=[observed property identifier]</p>
+<p>Path: <code>/admin/meteo/observed-properties/edit?id=[observed property identifier]</code></p>
 <p>Here you can change all of observed property’s data.</p>
-<p><strong>Observed property show page</strong></p>
+<h4 id="observed-property-show-page-1">Observed property show page</h4>
 <p>You can select an observed property to show if you click the “Eye” icon at the end of the specific row.</p>
-<p>Path: /admin/meteo/observed-properties/show?id=[observed property identifier]</p>
+<p>Path: <code>/admin/meteo/observed-properties/show?id=[observed property identifier]</code></p>
 <p>Here you can see the stored data of an observed property.</p>
-<p><strong>Observed property deleting</strong></p>
+<h4 id="observed-property-deleting-1">Observed property deleting</h4>
 <p>You cannot delete any observed property.</p>
+<p><a name="25_8_4_meteo_station_classification"></a></p>
 <h3 id="station-classifications-1">Station classifications</h3>
 <p>Here you can handle the classifications of a specified station what has already added to the system.</p>
-<p>Path: /admin/meteo/station-classifications</p>
+<p>Path: <code>/admin/meteo/station-classifications</code></p>
 <p>Searchable: value</p>
-<p><strong>New classification</strong></p>
+<h4 id="new-classification-1">New classification</h4>
 <p>You can add new station classification if you click the “Add station classification” button on the top left of the classification’s list page.</p>
-<p>Path: /admin/meteo/station-classifications/add</p>
+<p>Path: <code>/admin/meteo/station-classifications/add</code></p>
 <p>On the classification’s creating page, you have to fill to following mandatory fields: - value</p>
-<p><strong>Updating classification</strong></p>
+<h4 id="updating-classification-1">Updating classification</h4>
 <p>You can select a station classification to update if you click the “Pencil” icon at the end of the specific row.</p>
-<p>Path: /admin/meteo/station-classifications/edit?id=[classification identifier]</p>
+<p>Path: <code>/admin/meteo/station-classifications/edit?id=[classification identifier]</code></p>
 <p>Here you can change the value of the selected station classification.</p>
-<p><strong>Classification show page</strong></p>
+<h4 id="classification-show-page-1">Classification show page</h4>
 <p>You can select a station classification to show if you click the “Eye” icon at the end of the specific row.</p>
-<p>Path: /admin/meteo/station-classifications/show?id=[classification identifier]</p>
+<p>Path: <code>/admin/meteo/station-classifications/show?id=[classification identifier]</code></p>
 <p>Here you can see the stored data of a station classification.</p>
-<p><strong>Classification deleting</strong></p>
+<h4 id="classification-deleting-1">Classification deleting</h4>
 <p>You cannot delete any classification.</p>
+<p><a name="25_8_5_meteo_results"></a></p>
 <h3 id="meteo-results">Meteo results</h3>
 <p>Here you can see the results of the different monitoring point, what has arrived via API.</p>
-<p>Path: /admin/meteo/results</p>
+<p>Path: <code>/admin/meteo/results</code></p>
 <p>Searchable: name, symbol</p>
+<p><a name="25_9_measurement_access_rules"></a></p>
+<h2 id="measurement-access-rules">Measurement access rules</h2>
+<h3 id="concept-of-the-rules">Concept of the rules</h3>
+<p>The access rules controls the time interval in which the data will be available for a user under the <a href="#24_api_download">download API</a> request.</p>
+<p>The rules have three required dimensions: * <strong>Monitoring point</strong> - the rule is for all data of the given monitoring point * <strong>Observed property</strong> - the rule is for all data of the observed property of the monitoring point * <strong>User groups</strong> - the rule will be applied if the requesting user is under these groups</p>
+<p>The rules has one additional optional dimension: * <strong>Operator</strong> - If an operator creates the rule, these property will be set automatically. An administrator can set is optionally. This property controls which rule will be visible under operator’s acces rule list, and important in case of wildcard (<em>) rules. If the operator parameter is set, the wildcard (</em>) will be applied only for points/properties under the given operator.</p>
+<p>If the rule matches for a <a href="#24_api_download">download API</a> request (so the <strong>user</strong> getting data for the <strong>monitoring point</strong> and the <strong>observed property</strong>), the user can retrieve data only in the given time period. This period’s end is the current date, and the start is controlled by the <code>years</code>, <code>months</code> and <code>days</code> paramter of the access rule.</p>
+<p>The monitoring point and the observed property can be a *, which will match all monitoring points (globally, or of an operator), or all properties.</p>
+<p>The rules will be “merged” before checking user’s access level.</p>
+<h4 id="rule-list">Rule list</h4>
+<p>On the list page all rules are visible, with the required and optional dimensions.</p>
+<p>Path: <code>/admin/measurement-access-rules</code></p>
+<h4 id="new-access-rule">New access rule</h4>
+<p>You can add new access rule if you click the “Add rule” button on the top left of the rules list page.</p>
+<p>Path: <code>/admin/measurements-access-rules/add</code></p>
+<p>On the rules’s creating page, you have to fill the following mandatory fields: - Monitoring point selector - The ID of the monitoring point, or * for all - Observed property selector - The ID (symbol) of the monitoring point, or * for all - Groups - Multiple user groups can be selected - At least one of the time interval fields: years, months, days</p>
+<p>Optionally you can select an operator, in this case wildcard (*) will be applied for items only under the give operator.</p>
+<h4 id="updating-access-rule">Updating access rule</h4>
+<p>You can select a rule to update if you click the “Pencil” icon at the end of the specific row.</p>
+<p>Path: <code>/admin/measurements-access-rules/edit?id=[rule identifier]</code></p>
+<p>You can update all rule datas that you gave on the creating page.</p>
+<h4 id="rule-deleting">Rule deleting</h4>
+<p>You can delete a rule if you click the “Trash” icon at the end of the specific row. If you clicked, it shows a confirm window, where you have to approve the deleting.</p>
+<p>Path: <code>/admin/measurements-access-rules/delete?id=[rule identifier]</code></p>
 <p><a name="30_data_node"></a></p>
 <h1 id="data-node">Data node</h1>
 <h2 id="overview-1">Overview</h2>
@@ -1564,7 +1744,7 @@ Private keys should be placed in the <code>conf/plugins/credentials</code> direc
 <h1 id="ssl-key-pair-generation-guide">SSL key pair generation guide</h1>
 <h2 id="windows">Windows</h2>
 <p>It is recommended to use the following:</p>
-<p><a href="https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip" class="uri">https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip</a></p>
+<p><a href="https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip">https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip</a></p>
 <p>Download and extract it to an optional place. In the package, you can find the executable file at the: <em>bin/openssl.exe</em></p>
 <p>If you open the exe, it will prompt a command window, wherein you have to type the following lines:</p>
 <p><strong>1.</strong> Private key generation:<br />
@@ -1573,10 +1753,10 @@ Private keys should be placed in the <code>conf/plugins/credentials</code> direc
 <code>rsa -in private.pem -out public.pem -outform PEM -pubout</code></p>
 <h2 id="linux">Linux</h2>
 <p>You have to download one from the following link:</p>
-<p><a href="https://www.openssl.org/source/" class="uri">https://www.openssl.org/source/</a></p>
+<p><a href="https://www.openssl.org/source/">https://www.openssl.org/source/</a></p>
 <p>After that you have to extract and install it.</p>
 <p>Here you can find a detailed description about the installation:</p>
-<p><a href="https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/" class="uri">https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/</a></p>
+<p><a href="https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/">https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/</a></p>
 <p>After the installation you have to run these commands:</p>
 <p><strong>1.</strong> Private key generation:<br />
 <code>openssl genrsa -out private.pem 2048</code></p>

@@ -12,7 +12,25 @@ This document is the documentation of the Environet system.
     * [Database structure](#22_database_structure)
     * [Upload API](#23_api_upload)
     * [Download API](#24_api_download)
-    * [Administration area](#25_admin_user_manual)
+    * [Administration area](#25_0_admin_user_manual)
+        * [General](#25_1_admin_general)
+        * [Auth pages](#25_2_auth)
+        * [Dashboard](#25_3_dashboard)
+        * [Users](#25_4_users)
+        * [Groups](#25_5_groups)
+        * [Data providers](#25_6_data_providers)
+        * [Hydro](#25_7_1_hydro)
+            * [Hydro monitoring points](#25_7_2_hydro_monitoring_point)
+            * [Hydro observed properties](#25_7_3_hydro_observed_properties)
+            * [Hydro waterbody](#25_7_4_hydro_waterbody)
+            * [Hydro station classification](#25_7_5_hydro_station_classification)
+            * [Hydro results](#25_7_6_hydro_results)
+        * [Meteo](#25_8_1_meteo)
+            * [Meteo monitoring points](#25_8_2_meteo_monitoring_point)
+            * [Meteo observed properties](#25_8_3_meteo_observed_properties)
+            * [Meteo station classification](#25_8_4_meteo_station_classification)
+            * [Meteo results](#25_8_5_meteo_results)
+        
 * [Data node](#30_data_node)
     * [Overview](#30_data_node)
     * [Setup](#30_data_node)
@@ -308,7 +326,6 @@ Sample input XML:
 | Header name | Content |
 | --- | --- |
 | Authorization | Signature (See below) |
-| Content-Type | application/xml |
 
 ### Signature header:
 
@@ -322,14 +339,14 @@ The `signature` part is the base64 encoded openssl signature which was created w
 ### Success
 * **Status code**: 200
 * **Content-type**: application/xml
-* **Body**: `empty`
-* **Description**: Upload was successful, the data has been successfully processed.
+* **Body**: XML: `wml2:Collection`
+* **Description**: Measurement data in WaterML2.0 comaptible XML format: http://www.opengis.net/waterml/2.0
 
 ### Invalid request
 * **Status code**: 400
 * **Content-type**: application/xml
 * **Body**: XML: `environet:ErrorResponse`
-* **Description**: The query request is invalid. The response is an xml which is valid agains environet' upload api schema: [environet.xsd](resources/environet.xsd)
+* **Description**: The query request is invalid. The response is an xml which is valid agains environet's api schema: [environet.xsd](resources/environet.xsd)
 * **Body example**:
 	 
 	```xml
@@ -361,7 +378,7 @@ The `signature` part is the base64 encoded openssl signature which was created w
 * **Status code**: 500
 * **Content-type**: application/xml
 * **Body**: XML: `environet:ErrorResponse`
-* **Description**: Unidentified error during request. The response is an xml which is valid agains environet' upload api schema: [environet.xsd](resources/environet.xsd)
+* **Description**: Unidentified error during request. The response is an xml which is valid agains environet's api schema: [environet.xsd](resources/environet.xsd)
 * **Body example**:
 	 
 	```xml
@@ -375,35 +392,180 @@ The `signature` part is the base64 encoded openssl signature which was created w
 	```
 
 
-<a name="25_admin_user_manual"></a>
+<a name="24_api_monitoring_points"></a>
+
+# Monitoring points API documentation
+
+## URL & METHOD
+
+* **Method**: `GET`
+* **URL**: `https://domain.com/api/monitoring-points`
+
+---
+
+## Query parameters
+
+* **token**: `required` A random string from which the signature is generated. This is required for authentication, the server verifies the signature in the `Authorization` header based on this token.
+
+## Headers
+
+| Header name | Content |
+| --- | --- |
+| Authorization | Signature (See below) |
+
+### Signature header:
+
+The pattern of the header: `Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"`
+
+The `keyId` is the username of the user who wants to query data.
+The `signature` part is the base64 encoded openssl signature which was created with the user's private key from the token in the query parameters.
+
+## Repsonses
+
+### Success
+* **Status code**: 200
+* **Content-type**: application/json
+* **Body**: `JSON`
+* **Description**: Request is OK, list the hydro and meteo points of user
+* **Body example**:
+
+    ```json
+    {
+        "hydro": [
+            {
+                "id": 1,
+                "station_classificationid": 1,
+                "operatorid": 1,
+                "bankid": 1,
+                "waterbodyeuropean_river_code": "waterbody",
+                "eucd_wgst": "ABC123",
+                "ncd_wgst": "ABC123",
+                "vertical_reference": "Vertical reference",
+                "long": "1.0000000000",
+                "lat": "1.0000000000",
+                "z": "1.0000000000",
+                "maplong": "1.0000000000",
+                "maplat": "1.0000000000",
+                "country": "CountryCode",
+                "name": "MPoint",
+                "location": "Location",
+                "river_kilometer": "1.0000000000",
+                "catchment_area": "1.0000000000",
+                "gauge_zero": "1.0000000000",
+                "start_time": "2020-01-01 00:00:00",
+                "end_time": "2020-05-01 00:00:00",
+                "utc_offset": 0,
+                "river_basin": "Basin",
+                "observed_properties": [
+                    "hydro_property"
+                ]
+            }
+        ],
+        "meteo": [
+            {
+                "id": 1,
+                "meteostation_classificationid": 1,
+                "operatorid": 1,
+                "eucd_pst": "DEF456",
+                "ncd_pst": "DEF456",
+                "vertical_reference": "Vertical reference",
+                "long": "1.0000000000",
+                "lat": "1.0000000000",
+                "z": "1.0000000000",
+                "maplong": "1.0000000000",
+                "maplat": "1.0000000000",
+                "country": "CountryCode",
+                "name": "Name",
+                "location": "Location",
+                "altitude": "1.0000000000",
+                "start_time": "2020-01-01 00:00:00",
+                "end_time": "2020-05-01 00:00:00",
+                "utc_offset": 0,
+                "river_basin": "Basin",
+                "observed_properties": [
+                    "meteo_property"
+                ]
+            }
+        ]
+    }
+	```
+
+### Invalid request
+* **Status code**: 400
+* **Content-type**: application/json
+* **Body**: `JSON`
+* **Description**: The query request is invalid. The response is a json object with the error message, under error key.
+* **Body example**:
+	 
+	```json
+    {
+     "error": "Error message"
+    }
+	```
+
+### Server error
+* **Status code**: 500
+* **Content-type**: application/json
+* **Body**: `JSON`
+* **Description**: Unidentified error during request. The response is a json object with the error message, under error key.
+* **Body example**:
+	 
+	```json
+	{
+     "error": "Error message"
+    }
+	```
+
+
+<a name="25_0_admin_user_manual"></a>
 
 # Admin user manual
 
 This document's goals to represents the different parts of the administration area to help to understand how it works. Help you to see through how works the specified relationships and how you can handle them.
 
-### General information
+
+
+
+
+
+
+
+
+
+<a name="25_1_admin_general"></a>
+
+## General information
 Good to know, that on each list page, there are on the top right a search field. In the following each sections you can see a "searchable" part, where you can find in what kind of fields can the system search on the specified page.
 
-### Login page
 
-You can reach this interface if you navigate your browser to the following path:
-- /admin/login
+<a name="25_2_auth"></a>
+
+## Auth pages
+
+#### Login page
+
+Path: `/admin/login`
 
 Here you have to type your credentials data to login into the administration area. 
 If you have no login credentials yet, you have to gain access from your webmaster.
 
-### Logout
+#### Logout
 You can logout if you click the exit icon on the top right of the page.
 
-Path: /admin/logout
+Path: `/admin/logout`
 
-### Dashboard
-Path: /admin
+<a name="25_3_dashboard"></a>
 
-### Users
+## Dashboard
+
+Path: `/admin`
+
+<a name="25_4_users"></a>
+
+## Users
 Here you can handle the users who has already added to the system.
 
-Path: /admin/users
+Path: `/admin/users`
 
 Searchable: name, username, email
 
@@ -416,11 +578,11 @@ All of them are listed in the users grid.
 
 Each user, except the user type users have to have public key attached to themselves, because of they are communicate on API channel and it necessary to their authentication.
 
-**New user**
+#### New user
 
 You can add new user if you click the "Add user" button on the top left of the users list page.
 
-Path: /admin/users/add
+Path: `/admin/users/add`
 
 On the user's creating page, you have to fill the following mandatory fields:
 - name
@@ -433,62 +595,66 @@ The public key field is necessary only if we want to create a client or distrubi
 If you wouldn't like to assign a specified permission to the user, you must assign the user to a group, they will inherits the group's permissions.
 
 
-**Updating user**
+#### Updating user
 
 You can select a user to update if you click the "Pencil" icon at the end of the specific row.
 
-Path: /admin/users/edit?id=[user identifier]
+Path: `/admin/users/edit?id=[user identifier]`
 
 You can update all user datas that you gave on the creating page except the username field. 
 
-**User deleting**
+#### User deleting
 
 You can delete a user if you click the "Trash" icon at the end of the specific row. If you clicked, it shows a confirm window, where you have to approve the deleting. In fact the deleted user will never physically deleted, we have to keep its datas by security reasons.
 
-Path: /admin/users/delete?id=[user identifier]
+Path: `/admin/users/delete?id=[user identifier]`
 
-### Groups
+<a name="25_5_groups"></a>
+
+## Groups
 Here you can handle the groups what has already added to the  system.
 
-Path: /admin/groups
+Path: `/admin/groups`
 
 Searchable: name
 
-**New group**
+#### New group
 
 You can add new group if you click the "Add group" button on the top left of the group list page.
 
-Path: /admin/groups/add
+Path: `/admin/groups/add`
 
 On the group's creating page you have to fill the name of the group and you have to assign permission to the specified group. On the creating page, you can assign only one permission, but later you have possibility to add more of it.
 
-**Updating group**
+#### Updating group
 
 You can select a group to update if you click the "Pencil" icon at the end of the specific row.
 
-Path: /admin/groups/edit?id=[group identifier]
+Path: `/admin/groups/edit?id=[group identifier]`
 
 Here you can change the name of the group and you can assign more permission to it.
 
-**Group deleting**
+#### Group deleting
 
 You can delete a group if you click the "Trash" icon at the end of the specific row. If you clicked, it shows a confirm window, where you have to approve the deleting. **If any user or operator have already assigned to the specified group, the delete operation cannot be performed.**
 First time you have to detach these relations and after that you can delete the group.
 
-Path: /admin/groups/delete?id=[group identifier]
+Path: `/admin/groups/delete?id=[group identifier]`
 
-### Data providers
+<a name="25_6_data_providers"></a>
+
+## Data providers
 Here you can handle the data providers what has already added to the  system.
 
-Path: /admin/data-providers
+Path: `/admin/data-providers`
 
 Searchable: name, address, email
 
-**New data provider**
+#### New data provider
 
 You can add new data provider if you click the "Add data provider" button on the top left of the data provider's list page.
 
-Path: /admin/data-providers/add
+Path: `/admin/data-providers/add`
 
 On the data providers creating page, you have to fill the following mandatory fields:
 
@@ -505,40 +671,44 @@ User data
 
 The user data is necessary because of each operator has to be assigned to at least one user.
 
-**Updating data provider**
+#### Updating data provider
 
 You can select a data provider to update if you click the "Pencil" icon at the end of the specific row.
 
-Path: /admin/data-providers/edit?id=[data-provider identifier]
+Path: `/admin/data-providers/edit?id=[data-provider identifier]`
 
 Here you can change all of operator's data and you can assign  more users or groups to the specific dataprovider.
 
-**Data provider show page**
+#### Data provider show page
 
 You can select a data provider to show if you click the "Eye" icon at the end of the specific row.
 
-Path: /admin/data-providers/show?id=[data-provider identifier]
+Path: `/admin/data-providers/show?id=[data-provider identifier]`
 
 Here you can see the stored data of the data providers and its relations to direction of users and groups.
 
-**Data provider deleting**
+#### Data provider deleting
 
 You cannot delete any data provider.
 
+<a name="25_7_1_hydro"></a>
+
 ## Hydro
+
+<a name="25_7_2_hydro_monitoring_point"></a>
 
 ### Hydro monitoring point
 Here you can handle the monitoring points what has already added to the system.
 
-Path: /admin/hydro/monitoring-points
+Path: `/admin/hydro/monitoring-points`
 
 Searchable: european river code, country, name, location
 
-**New monitoring point**
+#### New monitoring point
 
 You can add new monitoring point if you click the "Add monitoring point" button on the top left of the hydro monitoring point list page.
 
-Path: /admin/hydro/monitoring-points/add
+Path: `/admin/hydro/monitoring-points/add`
 
 On the monitoring point creating page, you have to fill the following mandatory fields:
 - name
@@ -548,159 +718,171 @@ On the monitoring point creating page, you have to fill the following mandatory 
 - waterbody
 - observed properties
 
-**Updating monitoring point**
+#### Updating monitoring point
 
 You can select a monitoring point to update if you click the "Pencil" icon at the end of the specific row.
 
-Path: /admin/hydro/monitoring-points/edit?id=[monitoring point identifier]
+Path: `/admin/hydro/monitoring-points/edit?id=[monitoring point identifier]`
 
 Here you can change all of monitoring point's data and you can assign more observed property to the specific monitoring point.
 
-**Monitoring point show page**
+#### Monitoring point show page
 
 You can select a monitoring point to show if you click the "Eye" icon at the end of the specific row.
 
-Path: /admin/hydro/monitoring-points/show?id=[monitoring point identifier]
+Path: `/admin/hydro/monitoring-points/show?id=[monitoring point identifier]`
 
 Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator, waterbody and observed property.
 
-**Monitoring point deleting**
+#### Monitoring point deleting
 
 You cannot delete any monitoring point.
+
+<a name="25_7_3_hydro_observed_properties"></a>
 
 ### Hydro observed properties
 Here you can handle the observed properties what has already added to the system.
 
 An observed property describes, what kind of property can be measured by a monitoring point.
 
-Path: /admin/hydro/observed-properties
+Path: `/admin/hydro/observed-properties`
 
 Searchable: symbol, description
 
-**New observed property**
+#### New observed property
 
 You can add new observed property if you click the "Add observed property" button on the top left of the hydro observed property list page.
 
-Path: /admin/hydro/observed-properties/add
+Path: `/admin/hydro/observed-properties/add`
 
 On the observed property creating page, you have to fill to following mandatory fields:
 - symbol
 - description
 
-**Updating observed property**
+#### Updating observed property
 
 You can select an observed property to update if you click the "Pencil" icon at the end of the specific row.
 
-Path: /admin/hydro/observed-properties/edit?id=[observed property identifier]
+Path: `/admin/hydro/observed-properties/edit?id=[observed property identifier]`
 
 Here you can change all of observed property's data.
 
-**Observed property show page**
+#### Observed property show page
 
 You can select an observed property to show if you click the "Eye" icon at the end of the specific row.
 
-Path: /admin/hydro/observed-properties/show?id=[observed property identifier]
+Path: `/admin/hydro/observed-properties/show?id=[observed property identifier]`
 
 Here you can see the stored data of an observed property.
 
-**Observed property deleting**
+#### Observed property deleting
 
 You cannot delete any observed property.
+
+<a name="25_7_4_hydro_waterbody"></a>
 
 ### Waterbody
 Here you can handle the waterbodies what has already added to the system.
 
-Path: /admin/hydro/waterbodies
+Path: `/admin/hydro/waterbodies`
 
 Searchable: european river code
 
-**New waterbody**
+#### New waterbody
 
 You can add new waterbody if you click the "Add waterbody" button on the top left of the waterbody list page.
 
-Path: /admin/hydro/waterbodies/add
+Path: `/admin/hydro/waterbodies/add`
 
 On the waterbody's creating page, you have to fill to following mandatory fields:
 - cname
 - european river code
 
-**Updating waterbody**
+#### Updating waterbody
 
 You can select a waterbody to update if you click the "Pencil" icon at the end of the specific row.
 
-Path: /admin/hydro/waterbodies/edit?id=[waterbody identifier]
+Path: `/admin/hydro/waterbodies/edit?id=[waterbody identifier]`
 
 Here you can change the cname of the selected waterbody.
 
-**Waterbody show page**
+#### Waterbody show page
 
 You can select a waterbody to show if you click the "Eye" icon at the end of the specific row.
 
-Path: /admin/hydro/waterbodies/show?id=[waterbody identifier]
+Path: `/admin/hydro/waterbodies/show?id=[waterbody identifier]`
 
 Here you can see the stored data of a waterbody.
 
-**Waterbody deleting**
+#### Waterbody deleting
 
 You cannot delete any waterbody.
+
+<a name="25_7_5_hydro_station_classification"></a>
 
 ### Station classifications
 Here you can handle the classifications of a specified station what has already added to the system.
 
-Path: /admin/hydro/station-classifications
+Path: `/admin/hydro/station-classifications`
 
 Searchable: value
 
-**New classification**
+#### New classification
 
 You can add new station classification if you click the "Add station classification" button on the top left of the classification's list page.
 
-Path: /admin/hydro/station-classifications/add
+Path: `/admin/hydro/station-classifications/add`
 
 On the classification's creating page, you have to fill to following mandatory fields:
 - value
 
-**Updating classification**
+#### Updating classification
 
 You can select a station classification to update if you click the "Pencil" icon at the end of the specific row.
 
-Path: /admin/hydro/station-classifications/edit?id=[classification identifier]
+Path: `/admin/hydro/station-classifications/edit?id=[classification identifier]`
 
 Here you can change the value of the selected station classification.
 
-**Classification show page**
+#### Classification show page
 
 You can select a station classification to show if you click the "Eye" icon at the end of the specific row.
 
-Path: /admin/hydro/station-classifications/show?id=[classification identifier]
+Path: `/admin/hydro/station-classifications/show?id=[classification identifier]`
 
 Here you can see the stored data of a station classification.
 
-**Classification deleting**
+#### Classification deleting
 
 You cannot delete any classification.
+
+<a name="25_7_6_hydro_results"></a>
 
 ### Hydro results
 Here you can see the results of the different monitoring point, what has arrived via API.
 
-Path: /admin/hydro/results
+Path: `/admin/hydro/results`
 
 Searchable: name, symbol
 
+<a name="25_8_1_meteo"></a>
 
 ## Meteo
+
+<a name="25_8_2_meteo_monitoring_point"></a>
+
 ### Meteo monitoring point
 Here you can handle the monitoring points what has already added to the system.
 
-Path: /admin/meteo/monitoring-points
+Path: `/admin/meteo/monitoring-points`
 
 Searchable: country, name, location
 
-**New monitoring point**
+#### New monitoring point
 
 You can add new monitoring point if you click the "Add monitoring point" button on the top left of the meteo monitoring point list page.
 
-Path: /admin/meteo/monitoring-points/add
+Path: `/admin/meteo/monitoring-points/add`
 
 On the monitoring point creating page, you have to fill the following mandatory fields:
 
@@ -710,109 +892,174 @@ On the monitoring point creating page, you have to fill the following mandatory 
 - observed properties
 
 
-**Updating monitoring point**
+#### Updating monitoring point
 
 You can select a monitoring point to update if you click the "Pencil" icon at the end of the specific row.
 
-Path: /admin/meteo/monitoring-points/edit?id=[monitoring point identifier]
+Path: `/admin/meteo/monitoring-points/edit?id=[monitoring point identifier]`
 
 Here you can change all of monitoring point's data and you can assign more observed property to the specific monitoring point.
 
-**Monitoring point show page**
+#### Monitoring point show page
 
 You can select a monitoring point to show if you click the "Eye" icon at the end of the specific row.
 
-Path: /admin/meteo/monitoring-points/show?id=[monitoring point identifier]
+Path: `/admin/meteo/monitoring-points/show?id=[monitoring point identifier]`
 
 Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator and observed property.
 
-**Monitoring point deleting**
+#### Monitoring point deleting
 
 You cannot delete any monitoring point.
+
+<a name="25_8_3_meteo_observed_properties"></a>
 
 ### Observed properties
 Here you can handle the observed properties what has already added to the system.
 
 An observed property describes, what kind of property can be measured by a monitoring point.
 
-Path: /admin/meteo/observed-properties
+Path: `/admin/meteo/observed-properties`
 
 Searchable: symbol, description
 
-**New observed property**
+#### New observed property
 
 You can add new observed property if you click the "Add observed property" button on the top left of the meteo observed property list page.
 
-Path: /admin/meteo/observed-properties/add
+Path: `/admin/meteo/observed-properties/add`
 
 On the observed property creating page, you have to fill to following mandatory fields:
 
 - symbol
 - description
 
-**Updating observed property**
+#### Updating observed property
 
 You can select an observed property to update if you click the "Pencil" icon at the end of the specific row.
 
-Path: /admin/meteo/observed-properties/edit?id=[observed property identifier]
+Path: `/admin/meteo/observed-properties/edit?id=[observed property identifier]`
 
 Here you can change all of observed property's data.
 
-**Observed property show page**
+#### Observed property show page
 
 You can select an observed property to show if you click the "Eye" icon at the end of the specific row.
 
-Path: /admin/meteo/observed-properties/show?id=[observed property identifier]
+Path: `/admin/meteo/observed-properties/show?id=[observed property identifier]`
 
 Here you can see the stored data of an observed property.
 
-**Observed property deleting**
+#### Observed property deleting
 
 You cannot delete any observed property.
+
+<a name="25_8_4_meteo_station_classification"></a>
 
 ### Station classifications
 Here you can handle the classifications of a specified station what has already added to the system.
 
-Path: /admin/meteo/station-classifications
+Path: `/admin/meteo/station-classifications`
 
 Searchable: value
 
-**New classification**
+#### New classification
 
 You can add new station classification if you click the "Add station classification" button on the top left of the classification's list page.
 
-Path: /admin/meteo/station-classifications/add
+Path: `/admin/meteo/station-classifications/add`
 
 On the classification's creating page, you have to fill to following mandatory fields:
 - value
 
-**Updating classification**
+#### Updating classification
 
 You can select a station classification to update if you click the "Pencil" icon at the end of the specific row.
 
-Path: /admin/meteo/station-classifications/edit?id=[classification identifier]
+Path: `/admin/meteo/station-classifications/edit?id=[classification identifier]`
 
 Here you can change the value of the selected station classification.
 
-**Classification show page**
+#### Classification show page
 
 You can select a station classification to show if you click the "Eye" icon at the end of the specific row.
 
-Path: /admin/meteo/station-classifications/show?id=[classification identifier]
+Path: `/admin/meteo/station-classifications/show?id=[classification identifier]`
 
 Here you can see the stored data of a station classification.
 
-**Classification deleting**
+#### Classification deleting
 
 You cannot delete any classification.
+
+<a name="25_8_5_meteo_results"></a>
 
 ### Meteo results
 Here you can see the results of the different monitoring point, what has arrived via API.
 
-Path: /admin/meteo/results
+Path: `/admin/meteo/results`
 
 Searchable: name, symbol
 
+<a name="25_9_measurement_access_rules"></a>
+
+## Measurement access rules
+
+
+### Concept of the rules
+
+The access rules controls the time interval in which the data will be available for a user under the [download API](#24_api_download) request. 
+
+The rules have three required dimensions: 
+* **Monitoring point** - the rule is for all data of the given monitoring point 
+* **Observed property** - the rule is for all data of the observed property of the monitoring point
+* **User groups** - the rule will be applied if the requesting user is under these groups
+
+The rules has one additional optional dimension:
+* **Operator** - If an operator creates the rule, these property will be set automatically. An administrator can set is optionally. 
+This property controls which rule will be visible under operator's acces rule list, and important in case of wildcard (*) rules. 
+If the operator parameter is set, the wildcard (*) will be applied only for points/properties under the given operator.
+
+If the rule matches for a [download API](#24_api_download) request (so the __user__ getting data for the __monitoring point__ and the __observed property__), the user can retrieve data only in the given time period.
+This period's end is the current date, and the start is controlled by the `years`, `months` and `days` paramter of the access rule.
+
+The monitoring point and the observed property can be a *, which will match all monitoring points (globally, or of an operator), or all properties. 
+
+The rules will be "merged" before checking user's access level.
+
+#### Rule list
+
+On the list page all rules are visible, with the required and optional dimensions.
+
+Path: `/admin/measurement-access-rules`
+
+#### New access rule
+
+You can add new access rule if you click the "Add rule" button on the top left of the rules list page.
+
+Path: `/admin/measurements-access-rules/add`
+
+On the rules's creating page, you have to fill the following mandatory fields:
+- Monitoring point selector - The ID of the monitoring point, or * for all
+- Observed property selector - The ID (symbol) of the monitoring point, or * for all
+- Groups - Multiple user groups can be selected
+- At least one of the time interval fields: years, months, days
+
+Optionally you can select an operator, in this case wildcard (*) will be applied for items only under the give operator.
+
+#### Updating access rule
+
+You can select a rule to update if you click the "Pencil" icon at the end of the specific row.
+
+Path: `/admin/measurements-access-rules/edit?id=[rule identifier]`
+
+You can update all rule datas that you gave on the creating page. 
+
+#### Rule deleting
+
+You can delete a rule if you click the "Trash" icon at the end of the specific row. If you clicked, it shows a confirm window, where you have to approve the deleting.
+
+Path: `/admin/measurements-access-rules/delete?id=[rule identifier]`
 
 <a name="30_data_node"></a>
 
