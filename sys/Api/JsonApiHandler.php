@@ -6,6 +6,7 @@ namespace Environet\Sys\Api;
 use Environet\Sys\General\Db\HydroMonitoringPointQueries;
 use Environet\Sys\General\Db\MeteoMonitoringPointQueries;
 use Environet\Sys\General\Db\UserQueries;
+use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\Exceptions\HttpNotFoundException;
 use Environet\Sys\General\HttpClient\ApiHandler;
 use Environet\Sys\General\Response;
@@ -21,7 +22,9 @@ use Exception;
  */
 class JsonApiHandler extends ApiHandler {
 
-
+	/**
+	 * @return string
+	 */
 	private function requestPath(): string {
 		$parts = $this->request->getPathParts();
 		array_shift($parts);
@@ -55,13 +58,21 @@ class JsonApiHandler extends ApiHandler {
 					throw new HttpNotFoundException('API route not found');
 			}
 		} catch (HttpNotFoundException $e) {
-			return $this->jsonResponse($e->getMessage(), 404);
+			return $this->jsonResponse(json_encode(['error' => $e->getMessage()]), 404);
+		} catch (ApiException $e) {
+			return $this->jsonResponse(json_encode(['error' => $e->getMessage()]), 400);
 		} catch (Exception $e) {
-			return $this->jsonResponse($e->getMessage(), 500);
+			return $this->jsonResponse(json_encode(['error' => $e->getMessage()]), 500);
 		}
 	}
 
 
+	/**
+	 * @param $contents
+	 * @param $statusCode
+	 *
+	 * @return Response
+	 */
 	private function jsonResponse($contents, $statusCode): Response {
 		return (new Response($contents))
 			->setStatusCode($statusCode)
