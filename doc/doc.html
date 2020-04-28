@@ -1011,6 +1011,7 @@
 <li><a href="#22_database_structure">Database structure</a></li>
 <li><a href="#23_api_upload">Upload API</a></li>
 <li><a href="#24_api_download">Download API</a></li>
+<li><a href="#24_api_monitoring_points">Monitoring point API</a></li>
 <li><a href="#25_0_admin_user_manual">Administration area</a>
 <ul>
 <li><a href="#25_1_admin_general">General</a></li>
@@ -1042,6 +1043,7 @@
 <li><a href="#30_data_node">Setup</a></li>
 </ul></li>
 <li><a href="#41_key_gen">SSL keypair generation guide</a></li>
+<li><a href="#51_tools">Other Environet tools</a></li>
 </ul>
 <p><a name="10_system_requirements"></a></p>
 <h1 id="system-requirements">System requirements</h1>
@@ -1762,6 +1764,17 @@ Private keys should be placed in the <code>conf/plugins/credentials</code> direc
 <code>openssl genrsa -out private.pem 2048</code></p>
 <p><strong>2.</strong> Public key generation from private key:<br />
 <code>openssl rsa -in private.pem -out public.pem -outform PEM -pubout</code></p>
+<p><a name="51_tools"></a></p>
+<h1 id="other-environet-tools">Other Environet tools</h1>
+<p>Useful CLI tools which are available through the ‘./environet’ wrapper script.</p>
+<h3 id="generating-keypair">Generating keypair</h3>
+<p>Command: <code>./environet dist|data tool keygen</code></p>
+<p>Description: With this command you gen generate a openssl keypair with an interactive process. The command will ask for: * Destination folder of the key files * Prefix for the key file names</p>
+<p>Based on these data a keypair will be generated, and stored in the destination folder.</p>
+<h3 id="sign-content">Sign content</h3>
+<p>Command: <code>./environet dist|data tool sign</code></p>
+<p>Description: With this command you gen sign a content (a string, or a file) with a private key. The command will ask for: * Relative path of private key file * How do you want to enter the content (file, or pasted string) * The file path (in case of ‘file’ mode) or the raw string (in case of ‘pasted string’ mode) * Generate md5 hash before sigining, or not</p>
+<p>Based on the input data a base64 encoded signature will be generated, which can be used in the Authorization header of any api request.</p>
 
 
 </body>

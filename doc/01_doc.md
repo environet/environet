@@ -34,3 +34,4 @@ This document is the documentation of the Environet system.
     * [Overview](30_data_node.md)
     * [Setup](30_data_node.md)
 * [SSL keypair generation guide](41_key_gen.md)
+* [Other Environet tools](51_tools.md)
