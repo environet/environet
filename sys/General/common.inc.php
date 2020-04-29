@@ -54,6 +54,18 @@ function NCSRandStr($length = 20) {
 
 
 /**
+ * Gete select options for property type
+ * @return string[]
+ */
+function observedPropertyTypeOptions() {
+	return [
+		PROPERTY_TYPE_REALTIME => 'Real time data',
+		PROPERTY_TYPE_PROCESSED => 'Processed data'
+	];
+}
+
+
+/**
  * Check if all values are defined as variable. The system support queries only with PDO-parameters
  *
  * @param string|array $values
