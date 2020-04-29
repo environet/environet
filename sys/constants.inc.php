@@ -9,6 +9,8 @@ defined('EN_OP_MODE_CLIENT') || define('EN_OP_MODE_CLIENT', 3);
 defined('MPOINT_TYPE_HYDRO') || define('MPOINT_TYPE_HYDRO', 1);
 defined('MPOINT_TYPE_METEO') || define('MPOINT_TYPE_METEO', 2);
 
+defined('SYS_USERNAME') || define('SYS_USERNAME', '__SYS__');
+
 //! Array static - Specify the comma separated names of the uploader classes / modules to be loaded and used
 defined('EN_MOD_UPLOADERS') || define('EN_MOD_UPLOADERS', [
 	\Environet\Plugins\Upload\Test\UploadTest::class
