@@ -228,7 +228,9 @@ class UserQueries extends BaseQueries {
 				'admin.measurementaccessrules.readown',
 				'admin.measurementaccessrules.createown',
 				'admin.measurementaccessrules.updateown',
-				'admin.measurementaccessrules.deleteown'
+				'admin.measurementaccessrules.deleteown',
+				'admin.missingData.uploadown',
+
 			]);
 		}
 

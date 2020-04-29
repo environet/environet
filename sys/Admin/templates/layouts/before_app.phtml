@@ -122,6 +122,11 @@
                     <?= includeTemplatePart('menuitem.phtml', ['title' => 'Measurement access rules', 'route' => '/admin/measurement-access-rules', 'icon' => 'database', 'matchExtra' => 1]) ?>
                 </li>
 			<?php endif; ?>
+            <?php if($request->getIdentity()->hasPermissions(['admin.missingData.upload']) || $request->getIdentity()->hasPermissions(['admin.missingData.uploadown'])): ?>
+                <li>
+                    <?=includeTemplatePart('menuitem.phtml', ['title' => 'Upload missing data', 'route' => '/admin/missing-data', 'icon' => 'upload', 'matchExtra' => 1]) ?>
+                </li>
+			<?php endif; ?>
         </ul>
         <!-- sidebar menu end-->
     </aside>
