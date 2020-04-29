@@ -230,6 +230,7 @@ class UserQueries extends BaseQueries {
 				'admin.measurementaccessrules.updateown',
 				'admin.measurementaccessrules.deleteown',
 				'admin.missingData.uploadown',
+				'admin.processedData.uploadown',
 
 			]);
 		}

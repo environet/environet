@@ -8,14 +8,14 @@ use Environet\Sys\General\Exceptions\RenderException;
 use Environet\Sys\General\Response;
 
 /**
- * Class MissingData
+ * Class ProcessedData
  *
- * Admin page for uploading missing data. It accepts multiple csv files, process it, and send the the upload api endpoint.
+ * Admin page for uploading processed data. It accepts multiple csv files, process it, and send the the upload api endpoint.
  *
  * @package Environet\Sys\Admin\Pages\UploadData
  * @author  SRG Group <dev@srg.hu>
  */
-class MissingData extends AbstractUploadDataPage {
+class ProcessedData extends AbstractUploadDataPage {
 
 
 	/**
@@ -38,7 +38,7 @@ class MissingData extends AbstractUploadDataPage {
 		$maxSize = ini_get('post_max_size');
 
 		// Render the form
-		return $this->render('/missing_data.phtml', compact('maxFiles', 'maxSize'));
+		return $this->render('/processed_data.phtml', compact('maxFiles', 'maxSize'));
 	}
 
 
@@ -46,7 +46,7 @@ class MissingData extends AbstractUploadDataPage {
 	 * @inheritDoc
 	 */
 	protected function getFileDir(): string {
-		return SRC_PATH . '/data/missing_data_csv';
+		return SRC_PATH . '/data/processed_data_csv';
 	}
 
 
@@ -62,7 +62,7 @@ class MissingData extends AbstractUploadDataPage {
 	 * @inheritDoc
 	 */
 	protected function getUploadAllPermission(): string {
-		return 'admin.missingData.upload';
+		return 'admin.processedData.upload';
 	}
 
 

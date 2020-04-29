@@ -122,4 +122,24 @@ class MigrateDb extends DbCommand {
 	}
 
 
+	/**
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function createUploadPermissions(array &$output): int {
+		//Check if a permission is already added
+		$count = $this->connection->runQuery(
+			'SELECT COUNT(*) FROM public.permissions WHERE name = :uploadPermission',
+			['uploadPermission' => 'admin.missingData.upload']
+		)->fetch(PDO::FETCH_COLUMN);
+		if ($count) {
+			return -1;
+		}
+		$schemaPath = SRC_PATH . '/database/create_upload_permissions.sql';
+		return $this->runSqlFile($schemaPath, $output);
+	}
+
+
 }

@@ -127,6 +127,11 @@
                     <?=includeTemplatePart('menuitem.phtml', ['title' => 'Upload missing data', 'route' => '/admin/missing-data', 'icon' => 'upload', 'matchExtra' => 1]) ?>
                 </li>
 			<?php endif; ?>
+            <?php if($request->getIdentity()->hasPermissions(['admin.processedData.upload']) || $request->getIdentity()->hasPermissions(['admin.processedData.uploadown'])): ?>
+                <li>
+                    <?=includeTemplatePart('menuitem.phtml', ['title' => 'Upload processed data', 'route' => '/admin/processed-data', 'icon' => 'upload', 'matchExtra' => 1]) ?>
+                </li>
+			<?php endif; ?>
         </ul>
         <!-- sidebar menu end-->
     </aside>

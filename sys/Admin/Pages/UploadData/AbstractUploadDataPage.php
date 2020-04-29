@@ -54,13 +54,11 @@ abstract class AbstractUploadDataPage extends BasePage {
 
 
 	/**
-	 * Map the CSV file, parse monitoring point id, and values for multiple properties.
+	 * Get permission of upload-to-all functionality
 	 *
-	 * @param resource $fileHandle File handle of csv file
-	 *
-	 * @return array Array of processed data. First item must be the monitoring point id, second is the property data, grouped by property symbol
+	 * @return string
 	 */
-	abstract protected function mapCsv($fileHandle): array;
+	abstract protected function getUploadAllPermission(): string;
 
 
 	/**
@@ -230,25 +228,27 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 */
 	protected function getMonitoringPoint($mPointId, array $operatorIds) {
 		//Find hydro point
-		$hydro = (new Select())
+		$hydroSelect = (new Select())
 			->select(HydroMonitoringPointQueries::$tableName . '.*')
 			->from(HydroMonitoringPointQueries::$tableName)
 			->where(HydroMonitoringPointQueries::$tableName . '.ncd_wgst = :id')
-			->addParameter('id', $mPointId)
-			->whereIn(HydroMonitoringPointQueries::$tableName . '.operatorid', $operatorIds, 'opid')
-			->run(Query::FETCH_FIRST);
-		if ($hydro) {
+			->addParameter('id', $mPointId);
+		if (!$this->request->getIdentity()->hasPermissions([$this->getUploadAllPermission()])) {
+			$hydroSelect->whereIn(HydroMonitoringPointQueries::$tableName . '.operatorid', $operatorIds, 'opid');
+		}
+		if (($hydro = $hydroSelect->run(Query::FETCH_FIRST))) {
 			return $hydro;
 		}
 		//Find meteo point
-		$meteo = (new Select())
+		$meteoSelect = (new Select())
 			->select(MeteoMonitoringPointQueries::$tableName . '.*')
 			->from(MeteoMonitoringPointQueries::$tableName)
 			->where(MeteoMonitoringPointQueries::$tableName . '.ncd_pst = :id')
-			->addParameter('id', $mPointId)
-			->whereIn(MeteoMonitoringPointQueries::$tableName . '.operatorid', $operatorIds, 'opid')
-			->run(Query::FETCH_FIRST);
-		if ($meteo) {
+			->addParameter('id', $mPointId);
+		if (!$this->request->getIdentity()->hasPermissions([$this->getUploadAllPermission()])) {
+			$meteoSelect->whereIn(MeteoMonitoringPointQueries::$tableName . '.operatorid', $operatorIds, 'opid');
+		}
+		if (($meteo = $meteoSelect->run(Query::FETCH_FIRST))) {
 			return $meteo;
 		}
 	}
@@ -288,6 +288,47 @@ abstract class AbstractUploadDataPage extends BasePage {
 		$signature = $pkiLib->generateSignature(md5($xml), file_get_contents($privateKeyFile));
 
 		return $pkiLib->authHeaderWithSignature($signature, $username);
+	}
+
+
+	/**
+	 * Map the CSV file, parse monitoring point id, and values for multiple properties.
+	 *
+	 * @param resource $fileHandle File handle of csv file
+	 *
+	 * @return array Array of processed data. First item must be the monitoring point id, second is the property data, grouped by property symbol
+	 */
+	protected function mapCsv($fileHandle): array {
+		$mpointId = null;
+		$properties = [];
+		$propertiesData = [];
+		$rowIndex = 0;
+		while (($row = fgetcsv($fileHandle, 10000)) !== false) {
+			$rowIndex ++;
+			if ($rowIndex === 1 && !empty($row[1])) {
+				//Get mpoint id from first row
+				$mpointId = $row[1];
+			}
+			if ($rowIndex === 2) {
+				//Get properties from row 2. First column will be the date, it's not a property
+				$properties = array_slice($row, 1, null, true);
+				$propertiesData = array_fill_keys($properties, []);
+			}
+			if ($rowIndex > 2) {
+				//Data rows with dates and values for each property
+				foreach ($properties as $propertyKey => $property) {
+					if (!(!empty($row[0]) && ($dateTime = date_create($row[0])))) {
+						continue;
+					}
+					$propertiesData[$property][] = [
+						'time'  => $dateTime->format('c'),
+						'value' => $row[$propertyKey] ? floatval($row[$propertyKey]) : null
+					];
+				}
+			}
+		}
+
+		return [$mpointId, $propertiesData];
 	}
 
 
