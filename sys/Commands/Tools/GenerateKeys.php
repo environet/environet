@@ -5,6 +5,8 @@ namespace Environet\Sys\Commands\Tools;
 
 use Environet\Sys\Commands\BaseCommand;
 use Environet\Sys\Commands\Console;
+use Environet\Sys\General\PKI;
+use Exception;
 
 /**
  * Class GenerateKeys
@@ -68,18 +70,10 @@ class GenerateKeys extends BaseCommand {
 			exit(0);
 		}
 
-		// Generate key pair
-		$result = openssl_pkey_new([
-			'digest_alg'       => 'sha256',
-			'private_key_bits' => 2048,
-			'private_key_type' => OPENSSL_KEYTYPE_RSA,
-		]);
-		openssl_pkey_export($result, $privateKey);
-		$publicKey = openssl_pkey_get_details($result)['key'] ?? null;
-
-		// Check if generated successfully
-		if (!($publicKey && $privateKey)) {
-			$this->console->writeLine('Couldn\'t generate key pair.', Console::COLOR_RED);
+		try {
+			[$publicKey, $privateKey] = (new PKI())->generateKeyPair();
+		} catch (Exception $e) {
+			$this->console->writeLine($e->getMessage(), Console::COLOR_RED);
 			exit(1);
 		}
 
