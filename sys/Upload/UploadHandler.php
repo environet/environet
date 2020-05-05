@@ -11,6 +11,7 @@ use Environet\Sys\Xml\Exceptions\InputXmlProcessException;
 use Environet\Sys\Xml\Exceptions\SchemaInvalidException;
 use Environet\Sys\Xml\InputProcessor\AbstractInputXmlProcessor;
 use Environet\Sys\Xml\InputProcessor\HydroInputXmlProcessor;
+use Environet\Sys\Xml\InputProcessor\MeteoInputXmlProcessor;
 use Environet\Sys\Xml\Model\ErrorXmlData;
 use Environet\Sys\Xml\SchemaValidator;
 use Exception;
@@ -72,7 +73,7 @@ class UploadHandler extends ApiHandler {
 
 			try {
 				// Input is valid syntactically and semantically valid, process it
-				$this->createInputProcessor($parsedXml, MPOINT_TYPE_HYDRO)->process();
+				$this->createInputProcessor($parsedXml)->process();
 			} catch (InputXmlProcessException $e) {
 				// There are some invalid values in XML
 				throw new UploadException(401);
@@ -110,20 +111,20 @@ class UploadHandler extends ApiHandler {
 
 
 	/**
-	 * Create input processor based on the mpoint type.
+	 * Create input processor based on the mpoint type. Type is detected with finding it in the type's database table
 	 *
 	 * @param SimpleXMLElement $xml  Parsed XML
-	 * @param int              $type Type of upload request
 	 *
 	 * @return AbstractInputXmlProcessor
 	 * @see HydroInputXmlProcessor
+	 * @see MeteoInputXmlProcessor
 	 */
-	protected function createInputProcessor(SimpleXMLElement $xml, int $type): AbstractInputXmlProcessor {
-		switch ($type) {
-			case MPOINT_TYPE_HYDRO:
-				return new HydroInputXmlProcessor($xml);
-			case MPOINT_TYPE_METEO:
-				return new HydroInputXmlProcessor($xml); // TODO meteo input processor?
+	protected function createInputProcessor(SimpleXMLElement $xml): AbstractInputXmlProcessor {
+		if (($hydroProcessor = new HydroInputXmlProcessor($xml))->isValidType()) {
+			return $hydroProcessor;
+		}
+		if (($meteoProcessor = new MeteoInputXmlProcessor($xml))->isValidType()) {
+			return $meteoProcessor;
 		}
 	}
 

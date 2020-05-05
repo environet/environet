@@ -18,6 +18,15 @@
             <input type="text" name="description" id="description" class="form-control"  value="<?=formFieldValue('description', $record);?>" />
         </div>
 
+		<fieldset class="form-group">
+			<legend>Type</legend>
+			<div class="field">
+				<select name="type">
+					<?=selectOptions(observedPropertyTypeOptions(), formFieldValue('type', $record));?>
+				</select>
+			</div>
+		</fieldset>
+
         <div class="field">
             <input type="submit" class="btn btn-primary" value="Save"/>
         </div>

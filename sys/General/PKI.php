@@ -3,6 +3,7 @@
 namespace Environet\Sys\General;
 
 use Environet\Sys\General\Exceptions\PKIException;
+use Exception;
 
 /**
  * Class PKI
@@ -47,6 +48,30 @@ class PKI {
 	 */
 	public function authHeaderWithSignature(string $signature, string $username): string {
 		return "Signature keyId=\"$username\",algorithm=\"rsa-sha256\",signature=\"$signature\"";
+	}
+
+
+	/**
+	 * Generate openssl keypair, and return it as strings
+	 *
+	 * @throws Exception
+	 */
+	public function generateKeyPair(): array {
+		// Generate key pair
+		$result = openssl_pkey_new([
+			'digest_alg'       => 'sha256',
+			'private_key_bits' => 2048,
+			'private_key_type' => OPENSSL_KEYTYPE_RSA,
+		]);
+		openssl_pkey_export($result, $privateKey);
+		$publicKey = openssl_pkey_get_details($result)['key'] ?? null;
+
+		// Check if generated successfully
+		if (!($publicKey && $privateKey)) {
+			throw new Exception('Couldn\'t generate key pair.');
+		}
+
+		return [$publicKey, $privateKey];
 	}
 
 

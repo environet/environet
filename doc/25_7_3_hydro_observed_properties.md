@@ -16,6 +16,7 @@ Path: `/admin/hydro/observed-properties/add`
 On the observed property creating page, you have to fill to following mandatory fields:
 - symbol
 - description
+- type - Processed, or real time data - default is real time
 
 #### Updating observed property
 

@@ -42,8 +42,8 @@ abstract class DbCommand extends BaseCommand {
 		exec("touch $passFile && chmod 600 $passFile &&  echo \"$host:$port:$db:$user:$pass\" > $passFile", $output, $exitCode);
 
 		if ($exitCode === 0) {
-			//Run psql import command
-			exec("psql --host=$host --username=$user --dbname=$db --port=$port < $file 2>&1", $output, $exitCode);
+			//Run psql import command, set ON_ERROR_STOP for valid exit codes
+			exec("psql --host=$host --username=$user --dbname=$db --port=$port -v \"ON_ERROR_STOP=1\" < $file 2>&1", $output, $exitCode);
 		}
 
 		// Remove pgpass file

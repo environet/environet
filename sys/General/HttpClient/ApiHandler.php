@@ -7,6 +7,7 @@ use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\Identity;
+use Environet\Sys\General\SysIdentity;
 
 /**
  * Class ApiHandler
@@ -125,47 +126,53 @@ abstract class ApiHandler extends BaseHandler {
 				throw new ApiException(202);
 			}
 
-			try {
-				// Find user in database
-				$user = (new Select())
-					->from('users')
-					->where('username = :username')
-					->addParameter('username', $username)
-					->run(Query::FETCH_FIRST);
-			} catch (QueryException $e) {
-				// Query error
-				throw ApiException::serverError();
-			}
+			if ($username === SYS_USERNAME && gethostbyname('dist_php') === $_SERVER['REMOTE_ADDR']) {
+				//If user name is the sys username, and the request is called from the php container (so localhost) use the SysIdentity
+				$this->identity = new SysIdentity();
+			} else {
+				//Get identity from auth header, it will be a standard user
+				try {
+					// Find user in database
+					$user = (new Select())
+						->from('users')
+						->where('username = :username')
+						->addParameter('username', $username)
+						->run(Query::FETCH_FIRST);
+				} catch (QueryException $e) {
+					// Query error
+					throw ApiException::serverError();
+				}
 
-			if (!$user) {
-				// User not found
-				throw new ApiException(203);
-			}
+				if (!$user) {
+					// User not found
+					throw new ApiException(203);
+				}
 
-			try {
-				// Find public key for user
-				$publicKey = (new Select())
-					->from('public_keys')
-					->where('usersid = :userId')
-					->where('revoked = :revoked')
-					->setParameters([
-						'userId'  => $user['id'],
-						'revoked' => 0
-					])
-					->limit(1)
-					->run(Query::FETCH_FIRST);
-			} catch (QueryException $e) {
-				// Query error
-				throw ApiException::serverError();
-			}
+				try {
+					// Find public key for user
+					$publicKey = (new Select())
+						->from('public_keys')
+						->where('usersid = :userId')
+						->where('revoked = :revoked')
+						->setParameters([
+							'userId'  => $user['id'],
+							'revoked' => 0
+						])
+						->limit(1)
+						->run(Query::FETCH_FIRST);
+				} catch (QueryException $e) {
+					// Query error
+					throw ApiException::serverError();
+				}
 
-			// Create and identity from user
-			$this->identity = Identity::createFromUser($user['id']);
+				// Create and identity from user
+				$this->identity = Identity::createFromUser($user['id']);
+				if ($publicKey) {
+					// Set the public key
+					$this->identity->setPublicKey($publicKey['public_key']);
+				}
+			}
 			$this->request->setIdentity($this->identity);
-			if ($publicKey) {
-				// Set the public key
-				$this->identity->setPublicKey($publicKey['public_key']);
-			}
 		}
 
 		return $this->identity;

@@ -22,27 +22,27 @@ class Identity {
 	/**
 	 * @var int Id of the identity
 	 */
-	private $id;
+	protected $id;
 
 	/**
 	 * @var array Identity data from database
 	 */
-	private $data;
+	protected $data;
 
 	/**
 	 * @var string Attached public key of identity
 	 */
-	private $publicKey;
+	protected $publicKey;
 
 	/**
 	 * @var array The permissions of this identity
 	 */
-	private $permissions;
+	protected $permissions;
 
 	/**
 	 * @var array Permissions this identity has been granted
 	 */
-	private $authorizedPermissions = [];
+	protected $authorizedPermissions = [];
 
 
 	/**
@@ -146,7 +146,7 @@ class Identity {
 	 * @return bool
 	 * @throws Exceptions\QueryException
 	 */
-	private function isSuperAdmin(): bool {
+	protected function isSuperAdmin(): bool {
 		return in_array(self::ADMIN_PERMISSION, $this->getPermissions());
 	}
 
