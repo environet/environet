@@ -70,13 +70,8 @@ class UploadHandler extends ApiHandler {
 				throw UploadException::serverError();
 			}
 
-			try {
-				// Input is valid syntactically and semantically valid, process it
-				$this->createInputProcessor($parsedXml, MPOINT_TYPE_HYDRO)->process();
-			} catch (InputXmlProcessException $e) {
-				// There are some invalid values in XML
-				throw new UploadException(401);
-			}
+			// Input is valid syntactically and semantically valid, process it
+			$this->createInputProcessor($parsedXml, MPOINT_TYPE_HYDRO)->process();
 		} catch (UploadException $e) {
 			return (new Response((new CreateErrorXml())->generateXml($e->getErrorXmlData())->asXML()))
 				->setStatusCode(400)
