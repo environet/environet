@@ -84,7 +84,6 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	 */
 	public function parse(string $data): array {
 		$dataArray = $this->mPointDataArrayFromCSV($data);
-
 		return $this->meteringPointInputXmlsFromArray($dataArray);
 	}
 
@@ -187,7 +186,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	 * @return array
 	 */
 	private function parseResultLine($line): array {
-		$values = explode($this->csvDelimiter, $line);
+		$values = array_map('trim', explode($this->csvDelimiter, $line));
 		if (!array_key_exists($this->timeCol, $values)) {
 			return [];
 		}

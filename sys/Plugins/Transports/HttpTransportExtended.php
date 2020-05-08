@@ -12,7 +12,7 @@ use Environet\Sys\Plugins\TransportInterface;
 /**
  * Class HttpTransportExtended
  *
- * Transport layer for http connections. Generalizes URL to also contain variables in square brackets, 
+ * Transport layer for http connections. Generalizes URL to also contain variables in square brackets,
  * and files in a zip file separated by a pipe symbol. It also supports wildcards * and ? for file names in
  * zip files.
  *
@@ -48,7 +48,7 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		// TODO: Make this configurable
 		$this->monitoringPointConversions = [
 			"MPID1" => "#####",
-			"MPID2" => "#", 
+			"MPID2" => "#",
 		];
 
 		$this->observedPropertyConversions = [
@@ -108,18 +108,24 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	 *
 	 * @param string $NCD national code of monitoring point for which variable preparation should be done
 	 * @param string $observedProperty internal name of observed property for which variable preparation should be done
+	 * @return array
 	 */
 	public function prepareVariables(string $NCD, string $observedProperty) : array {
 		// variable preparation
 		$variables = [];
 
-		foreach($this->monitoringPointConversions as $key => $value) {
+		foreach ($this->monitoringPointConversions as $key => $value) {
 			preg_match_all("/#+/", $value, $matches, PREG_OFFSET_CAPTURE);
-			if (sizeof($matches) <= 0) continue;
+			if (count($matches) <= 0) {
+				continue;
+			}
 			$s = $value;
-			foreach($matches[0] as $match) {
-				if (strlen($match[0]) > 1) $nr = str_pad($NCD, strlen($match[0]), "0", STR_PAD_LEFT);
-				else $nr = $NCD;
+			foreach ($matches[0] as $match) {
+				if (strlen($match[0]) > 1) {
+					$nr = str_pad($NCD, strlen($match[0]), "0", STR_PAD_LEFT);
+				} else {
+					$nr = $NCD;
+				}
 				$s = substr_replace($s, $nr, $match[1], strlen($match[0]));
 			}
 			$variables += [ $key => $s ];
@@ -141,37 +147,35 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		// Query distribution node to get list of monitoring points and observed properties
 		// As API call not yet available, use hard coded list for DWD
 		$monitoringPoints = [
-			[ 
+			[
 				"NCD" => "87",							// national code of monitoring point
 				"end_time" => "20300101T00:00:00Z",		// time at which monitoring point goes out of order
 				/* ... */								// rest of fields from database
 				"observed_properties" => [				// list of observed properties measured at this monitoring point from table monitoring_point_observed_property
 					"P_total_hourly",					// precipitation summed over an hour [mm]
 				],
-			], 
-			[ 
+			],
+			[
 				"NCD" => "91",							// national code of monitoring point
 				"end_time" => "20300101T00:00:00Z",		// time at which monitoring point goes out of order
-				/* ... */								// rest of fields from database
 				"observed_properties" => [				// list of observed properties measured at this monitoring point from table monitoring_point_observed_property
 					"P_total_hourly",					// precipitation summed over an hour [mm]
 					"ta",								// current air temperature [°C]
 				],
-			], 
+			],
 		];
 
 		$result = [];
 
 		// Loop over list of monitoring points and observables
-		foreach($monitoringPoints as $monitoringPoint) {
+		foreach ($monitoringPoints as $monitoringPoint) {
 			foreach ($monitoringPoint["observed_properties"] as $observedProperty) {
-
 				// variable preparation
 				$variables = $this->prepareVariables($monitoringPoint["NCD"], $observedProperty);
 
 				// do variable substitution
 				$url = $this->url;
-				foreach($variables as $key => $value) {
+				foreach ($variables as $key => $value) {
 					$url = str_replace('[' . $key . ']', $value, $url);
 				}
 
@@ -179,9 +183,9 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 				$parts = explode('|', $url);
 				$url = $parts[0];
 
-echo "GET " . $url . PHP_EOL;
+				echo "GET " . $url . PHP_EOL;
 
-				if (sizeof($parts) > 1) {
+				if (count($parts) > 1) {
 					// contains pipe symbol, decode zip
 					$ext = pathinfo($url, PATHINFO_EXTENSION);
 					$temp = tempnam(sys_get_temp_dir(), $ext);
@@ -190,6 +194,7 @@ echo "GET " . $url . PHP_EOL;
 					$zip = new \ZipArchive;
 					$zip->open($temp);
 					$found = false;
+					$data = '';
 					for ($i = 0; $i < $zip->numFiles; ++$i) {
 						$name = $zip->getNameIndex($i);
 						if (fnmatch($parts[1], $name)) {
@@ -199,7 +204,6 @@ echo "GET " . $url . PHP_EOL;
 						}
 					}
 					$zip->close();
-					if (!$found) $data = '';
 					$body = new \stdClass();
 					$body->contents = $data;
 					unlink($temp);
