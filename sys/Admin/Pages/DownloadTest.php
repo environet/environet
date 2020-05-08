@@ -30,22 +30,90 @@ class DownloadTest extends BasePage {
 	/**
 	 * @var array Array of countries
 	 */
-	private $countries;
+	protected $countries;
+
+	/**
+	 * @var array Array of monitoring points
+	 */
+	protected $points;
 
 	/**
 	 * @var array Observation property symbols
 	 */
-	private $symbols;
+	protected $symbols;
 
 	/**
 	 * @var array Available users
 	 */
-	private $users;
+	protected $users;
 
 	/**
 	 * @var string Token for testing purposes
 	 */
-	private $token = 'test_request';
+	protected $token = 'test_request';
+
+
+	/**
+	 * Get the available countries and EUCD identifiers per monitoring point types.
+	 *
+	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\Query\Select
+	 */
+	protected function fetchCountriesAndEUCD() {
+		$this->countries = ['hydro' => [], 'meteo' => []];
+		$this->points = ['hydro' => [], 'meteo' => []];
+		$countries = (new Select())
+			->from('hydropoint')
+			->select('country, eucd_wgst')
+			->run();
+
+		foreach ($countries as $country) {
+			$this->countries['hydro'][$country['country']] = $country['country'];
+			$this->points['hydro'][$country['eucd_wgst']] = $country['eucd_wgst'];
+		}
+		$this->countries['hydro'] = array_unique($this->countries['hydro']);
+
+		$countries = (new Select())
+			->from('meteopoint')
+			->select('country, eucd_pst')
+			->run();
+
+		foreach ($countries as $country) {
+			$this->countries['meteo'][$country['country']] = $country['country'];
+			$this->points['meteo'][$country['eucd_pst']] = $country['eucd_pst'];
+		}
+		$this->countries['meteo'] = array_unique($this->countries['meteo']);
+	}
+
+
+	/**
+	 * Get the available observed property symbols per monitoring point types.
+	 *
+	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\Query\Select
+	 */
+	protected function fetchSymbols() {
+		$this->symbols = ['hydro' => [], 'meteo' => []];
+		$symbols = (new Select())
+			->from('hydro_observed_property')
+			->select('symbol')
+			->groupBy('symbol')
+			->run();
+
+		foreach ($symbols as $symbol) {
+			$this->symbols['hydro'][$symbol['symbol']] = $symbol['symbol'];
+		}
+
+		$symbols = (new Select())
+			->from('meteo_observed_property')
+			->select('symbol')
+			->groupBy('symbol')
+			->run();
+
+		foreach ($symbols as $symbol) {
+			$this->symbols['meteo'][$symbol['symbol']] = $symbol['symbol'];
+		}
+	}
 
 
 	/**
@@ -61,41 +129,11 @@ class DownloadTest extends BasePage {
 	 * @uses \Environet\Sys\Admin\Pages\DownloadTest::sendData()
 	 */
 	public function handle(): ?Response {
-		// Get available countries
-		$this->countries = [];
-		$countries = (new Select())
-			->from('hydropoint')
-			->select('country')
-			->groupBy('country')
-			->union(
-				(new Select())
-					->from('meteopoint')
-					->select('country')
-					->groupBy('country')
-			)
-			->run();
-
-		foreach ($countries as $country) {
-			$this->countries[$country['country']] = $country['country'];
-		}
+		// Get available countries and monitoring point identifiers
+		$this->fetchCountriesAndEUCD();
 
 		// Get observation property symbols (names)
-		$this->symbols = [];
-		$symbols = (new Select())
-			->from('hydro_observed_property')
-			->select('symbol')
-			->groupBy('symbol')
-			->union(
-				(new Select())
-					->from('meteo_observed_property')
-					->select('symbol')
-					->groupBy('symbol')
-			)
-			->run();
-
-		foreach ($symbols as $symbol) {
-			$this->symbols[$symbol['symbol']] = $symbol['symbol'];
-		}
+		$this->fetchSymbols();
 
 		// Create observed property options
 		$this->users = (new Select())->from('users')->run();
@@ -108,6 +146,11 @@ class DownloadTest extends BasePage {
 				// CSRF error
 				throw new HttpBadRequestException();
 			}
+
+			if (!$_POST['type']) {
+				throw new HttpBadRequestException('Invalid type');
+			}
+
 			try {
 				// Send the data with a http client, and store the response body in a variable
 				$response = $this->sendData();
@@ -119,11 +162,19 @@ class DownloadTest extends BasePage {
 
 		// Render the form
 		return $this->render('/download_test.phtml', [
-			'countries' => $this->countries,
-			'symbols'   => $this->symbols,
-			'users'     => $this->users,
-			'response'  => $response,
-			'error'     => $error
+			'hydro'    => [
+				'countries' => $this->countries['hydro'],
+				'points'    => $this->points['hydro'],
+				'symbols'   => $this->symbols['hydro'],
+			],
+			'meteo'    => [
+				'countries' => $this->countries['meteo'],
+				'points'    => $this->points['meteo'],
+				'symbols'   => $this->symbols['meteo'],
+			],
+			'users'    => $this->users,
+			'response' => $response,
+			'error'    => $error
 		]);
 	}
 
@@ -138,18 +189,28 @@ class DownloadTest extends BasePage {
 	 * @uses \Environet\Sys\General\HttpClient\HttpClient::sendRequest()
 	 */
 	protected function sendData() {
-		$countries = $_POST['country'] ?? false;
-		$symbols = $_POST['symbol'] ?? false;
+		$type = $_POST['type'];
+		$countries = $_POST["$type-country"] ?? false;
+		$points = $_POST["$type-point"] ?? false;
+		$symbols = $_POST["$type-symbol"] ?? false;
 		$username = $_POST['username'] ?? null;
 		$start = $_POST['start'] ?? false;
 		$end = $_POST['end'] ?? false;
-		$params = '';
+		$params = "&type=$type";
 
 		if ($countries) {
 			if (is_array($countries)) {
 				$params .= '&country[]=' . implode('&country[]=', $countries);
 			} else {
 				$params .= "&country[]={$countries}";
+			}
+		}
+
+		if ($points) {
+			if (is_array($points)) {
+				$params .= '&point[]=' . implode('&point[]=', $points);
+			} else {
+				$params .= "&point[]={$points}";
 			}
 		}
 
@@ -166,7 +227,7 @@ class DownloadTest extends BasePage {
 		}
 
 		if ($end) {
-			$params .= '&start=' . urlencode((new DateTime($end))->format('c'));
+			$params .= '&end=' . urlencode((new DateTime($end))->format('c'));
 		}
 
 		$apiHost = Config::getInstance()->getDatanodeDistHost();
@@ -212,7 +273,7 @@ class DownloadTest extends BasePage {
 		}
 
 		$pkiLib = new PKI();
-		$signature = $pkiLib->generateSignature($this->token, file_get_contents($privateKeyFile));
+		$signature = $pkiLib->generateSignature(md5($this->token), file_get_contents($privateKeyFile));
 
 		return $pkiLib->authHeaderWithSignature($signature, $username);
 	}

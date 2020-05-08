@@ -1,0 +1,58 @@
+<?php include __DIR__ . '../../layouts/before_app.phtml'; ?>
+
+<div class="card">
+
+	<div class="d-flex w-100">
+		<div class="mr-auto form-group">
+			<a href="/admin/measurement-access-rules/add" class="btn btn-primary" >Add rule</a>
+		</div>
+	</div>
+
+	<table class="table table-striped table-bordered">
+		<thead>
+		<tr>
+			<th><?=sortableColumn('Operator', 'id');?></th>
+            <th><?=sortableColumn('Monitoring points', 'monitoringpoint_selector');?></th>
+            <th><?=sortableColumn('Observed properties', 'observed_property_selector');?></th>
+			<th>Actions</th>
+		</tr>
+		</thead>
+		<tbody>
+            <?php
+				if (count($records) > 0):
+					foreach ($records as $record):
+			?>
+					<tr>
+						<td><?=$record['operator_id'] ?? null;?></td>
+                        <td><?=$record['monitoringpoint_selector'] ?? null;?></td>
+                        <td><?=$record['observed_property_selector'] ?? null;?></td>
+						<td style="width:120px" class="actions">
+							<a href="/admin/measurement-access-rules/edit?id=<?=$record['id'];?>"><i class="fas fa-edit"></i></a>
+							<a href="/admin/measurement-access-rules/delete?id=<?=$record['id'];?>" onclick="return confirm('Are you sure to delete?')"><i class="fas fa-trash text-danger"></i></a>
+						</td>
+					</tr>
+			<?php
+					endforeach;
+				else:
+			?>
+					<tr>
+						<td colspan="4">
+							There is no record to show.
+						</td>
+					</tr>
+			<?
+				endif;
+            ?>
+		</tbody>
+		<tfoot>
+		<tr>
+			<td colspan="6">
+				<div class="paginator">
+					<?php include __DIR__.'/../parts/paginator.phtml';?>
+				</div>
+			</td>
+		</tr>
+		</tfoot>
+	</table>
+</div>
+<?php include __DIR__ . '../../layouts/after_app.phtml'; ?>

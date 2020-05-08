@@ -55,7 +55,7 @@ class StationClassificationCrud extends CrudPage {
 	protected function validateData(array $data): bool {
 		$valid = true;
 
-		if (!validate($data, 'value', REGEX_NAME, true)) {
+		if (!validate($data, 'value', REGEX_ALPHANUMERIC, true)) {
 			$this->addMessage('Station classification value is empty, or format is invalid', self::MESSAGE_ERROR);
 			$valid = false;
 		}

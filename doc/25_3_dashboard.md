@@ -1,0 +1,3 @@
+## Dashboard
+
+Path: `/admin`

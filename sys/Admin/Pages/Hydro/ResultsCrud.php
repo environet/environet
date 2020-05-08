@@ -33,19 +33,19 @@ class ResultsCrud extends CrudPage {
 
 			//Base query with joins and conditions
 			$query = (new Select())->from('hydro_result hr')
-			                       ->join('hydro_time_series hts', 'hts.id = hr.time_seriesid', Query::JOIN_LEFT)
-			                       ->join('hydropoint hp', 'hp.id = hts.mpointid', Query::JOIN_LEFT)
-			                       ->join('hydro_observed_property hop', 'hop.id = hts.observed_propertyid', Query::JOIN_LEFT)
-			                       ->orderBy('hr.time', Query::DIR_DESC)
-			                       ->select([
-				                       'hp.name',
-				                       'hop.symbol',
-				                       'hr.value',
-				                       'hr.time',
-				                       'hts.phenomenon_time_begin',
-				                       'hts.phenomenon_time_end',
-				                       'hts.result_time',
-			                       ]);
+								   ->join('hydro_time_series hts', 'hts.id = hr.time_seriesid', Query::JOIN_LEFT)
+								   ->join('hydropoint hp', 'hp.id = hts.mpointid', Query::JOIN_LEFT)
+								   ->join('hydro_observed_property hop', 'hop.id = hts.observed_propertyid', Query::JOIN_LEFT)
+								   ->orderBy('hr.time', Query::DIR_DESC)
+								   ->select([
+									   'hp.name',
+									   'hop.symbol',
+									   'hr.value',
+									   'hr.time',
+									   'hts.phenomenon_time_begin',
+									   'hts.phenomenon_time_end',
+									   'hts.result_time',
+								   ]);
 
 			if (!is_null($searchString)) {
 				$query->search(

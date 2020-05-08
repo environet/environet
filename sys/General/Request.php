@@ -24,6 +24,7 @@ class Request {
 	const PREFIX_ADMIN    = 'admin';
 	const PREFIX_UPLOAD   = 'upload';
 	const PREFIX_DOWNLOAD = 'download';
+	const PREFIX_JSONAPI = 'api';
 
 	/**
 	 * Request URI path
@@ -73,7 +74,7 @@ class Request {
 
 
 	/**
-	 * Check if route is an admin route (/admin prefix)
+	 * Check if route is an admin route
 	 *
 	 * @return bool
 	 */
@@ -83,7 +84,7 @@ class Request {
 
 
 	/**
-	 * Check if route is an upload route (/upload prefix)
+	 * Check if route is an upload route
 	 *
 	 * @return bool
 	 */
@@ -93,12 +94,22 @@ class Request {
 
 
 	/**
-	 * Check if route is an upload route (/upload prefix)
+	 * Check if route is a download route
 	 *
 	 * @return bool
 	 */
 	public function isDownload() {
 		return !empty($this->pathParts[0]) && $this->pathParts[0] === self::PREFIX_DOWNLOAD;
+	}
+
+
+	/**
+	 * Check if route is a json api route
+	 *
+	 * @return bool
+	 */
+	public function isJsonApi() {
+		return !empty($this->pathParts[0]) && $this->pathParts[0] === self::PREFIX_JSONAPI;
 	}
 
 

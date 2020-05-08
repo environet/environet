@@ -186,13 +186,13 @@ class UserQueries extends BaseQueries {
 	/**
 	 * Get user permissions (both individually set and group inherited ones)
 	 *
-	 * @param int $usedId
+	 * @param int $userId
 	 *
 	 * @return array
 	 * @throws QueryException
 	 * @uses \Environet\Sys\General\Db\Query\Select::run()
 	 */
-	public static function getUserPermissions(int $usedId): array {
+	public static function getUserPermissions(int $userId): array {
 		$result = [];
 		$rows = (new Select())
 			->select('permissions.name as permission')
@@ -200,14 +200,14 @@ class UserQueries extends BaseQueries {
 			->join('group_permissions gp', 'permissions.id = gp.permissionsid')
 			->join('users_groups ug', 'gp.groupsid = ug.groupsid')
 			->join('users u', 'ug.usersid = u.id')
-			->where("u.id = {$usedId}")
+			->where("u.id = {$userId}")
 			->union(
 				(new Select())
 					->select('permissions.name as permission')
 					->from('permissions')
 					->join('user_permissions up', 'permissions.id = up.permissionsid')
 					->join('users u2', 'up.usersid = u2.id')
-					->where("u2.id = {$usedId}")
+					->where("u2.id = {$userId}")
 			)
 			->run();
 
@@ -215,7 +215,48 @@ class UserQueries extends BaseQueries {
 			$result[] = $row['permission'];
 		}
 
+		if (static::isDataProviderUser($userId)) {
+			$result = array_merge($result, [
+				'admin.providers.readown',
+				'admin.providers.updateown',
+				'admin.hydro.monitoringpoints.readown',
+				'admin.hydro.monitoringpoints.updateown',
+				'admin.hydro.monitoringpoints.createown',
+				'admin.meteo.monitoringpoints.readown',
+				'admin.meteo.monitoringpoints.updateown',
+				'admin.meteo.monitoringpoints.createown',
+				'admin.measurementaccessrules.readown',
+				'admin.measurementaccessrules.createown',
+				'admin.measurementaccessrules.updateown',
+				'admin.measurementaccessrules.deleteown'
+			]);
+		}
+
 		return $result;
+	}
+
+
+	/**
+	 * Check if a user of a given id belongs to any operators
+	 * @param int $userId Id of user
+	 *
+	 * @return bool
+	 * @throws QueryException
+	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 */
+	public static function isDataProviderUser(int $userId): bool {
+		return count(static::getOperatorsOfUser($userId));
+	}
+
+
+	/**
+	 * @param int $userId
+	 * @return array
+	 * @throws QueryException
+	 */
+	public static function getOperatorsOfUser(int $userId) {
+		$groups = static::getUserGroups($userId);
+		return static::getMergedOperatorsOfUser($userId, array_column($groups, 'id'));
 	}
 
 

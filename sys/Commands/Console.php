@@ -162,7 +162,7 @@ class Console {
 
 
 	/**
-	 * Ask for a numeric opion with options array and get answer
+	 * Ask for a numeric option with options array and get an answer
 	 *
 	 * @param string $question
 	 * @param array  $options
@@ -186,6 +186,7 @@ class Console {
 			}
 			break;
 		}
+
 		return $option;
 	}
 

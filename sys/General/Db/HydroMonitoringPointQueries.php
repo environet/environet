@@ -2,7 +2,6 @@
 
 namespace Environet\Sys\General\Db;
 
-use Environet\Sys\General\Db\Query\Delete;
 use Environet\Sys\General\Db\Query\Insert;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
@@ -34,6 +33,36 @@ class HydroMonitoringPointQueries extends BaseQueries {
 		'hydropoint.name',
 		'hydropoint.location',
 	];
+
+
+	/**
+	 * @param array $operatorIds
+	 * @return array
+	 * @throws QueryException
+	 */
+	public static function all(array $operatorIds = null) {
+		$query = (new Select())
+			->select(static::$tableName. '.*')
+			->from(static::$tableName);
+
+		if (!is_null($operatorIds)) {
+			$query->whereIn('operatorid', $operatorIds, 'operatorId');
+		}
+
+		$points = $query->run();
+
+		foreach ($points as $i => $point) {
+			$points[$i]['observed_properties'] = (new Select())
+				->from('hydro_observed_property hop')
+				->select('hop.symbol')
+				->join('hydropoint_observed_property hpop', 'hpop.observed_propertyid = hop.id', Query::JOIN_LEFT)
+				->where('hpop.mpointid = :hpopId')
+				->addParameter(':hpopId', $point['id'])
+				->run(Query::FETCH_COLUMN);
+		}
+
+		return $points;
+	}
 
 
 	/**
@@ -88,27 +117,30 @@ class HydroMonitoringPointQueries extends BaseQueries {
 			'country'                      => $data['country'],
 			'location'                     => $data['location'] ?? null,
 			'river_basin'                  => $data['river_basin'] ?? null,
+			'vertical_reference'           => $data['vertical_reference'] ?? null,
 
 			// numbers
-			'river_kilometer'              => isset($data['river_kilometer']) ? (int) $data['river_kilometer'] : null,
-			'catchment_area'               => isset($data['catchment_area']) ? (int) $data['catchment_area'] : null,
-			'gauge_zero'                   => isset($data['gauge_zero']) ? (int) $data['gauge_zero'] : null,
-			'long'                         => isset($data['long']) ? (int) $data['long'] : null,
-			'lat'                          => isset($data['lat']) ? (int) $data['lat'] : null,
-			'z'                            => isset($data['z']) ? (int) $data['z'] : null,
-			'maplat'                       => isset($data['lat']) ? (int) $data['lat'] : null,
-			'maplong'                      => isset($data['long']) ? (int) $data['long'] : null,
-			'vertical_reference'           => isset($data['vertical_reference']) ? (int) $data['vertical_reference'] : null,
+			'river_kilometer'              => isset($data['river_kilometer']) ? (float) $data['river_kilometer'] : null,
+			'catchment_area'               => isset($data['catchment_area']) ? (float) $data['catchment_area'] : null,
+			'gauge_zero'                   => isset($data['gauge_zero']) ? (float) $data['gauge_zero'] : null,
+			'long'                         => isset($data['long']) ? (float) $data['long'] : null,
+			'lat'                          => isset($data['lat']) ? (float) $data['lat'] : null,
+			'z'                            => isset($data['z']) ? (float) $data['z'] : null,
+			'maplat'                       => isset($data['maplat']) ? (float) $data['maplat'] : null,
+			'maplong'                      => isset($data['maplong']) ? (float) $data['maplong'] : null,
+
 
 			// foreign keys
 			'station_classificationid'     => isset($data['classification']) ? $data['classification'] ?: null : null,
-			'operatorid'                   => isset($data['operator']) ? $data['classification'] ?: null : null,
-			'bankid'                       => isset($data['riverbank']) ? $data['classification'] ?: null : null,
-			'waterbodyeuropean_river_code' => isset($data['waterbody']) ? $data['classification'] ?: null : null,
+			'operatorid'                   => isset($data['operator']) ? $data['operator'] ?: null : null,
+			'bankid'                       => isset($data['riverbank']) ? $data['riverbank'] ?: null : null,
+			'waterbodyeuropean_river_code' => isset($data['waterbody']) ? $data['waterbody'] ?: null : null,
+
+			// dates
+			'start_time'                   => !empty($data['start_time']) ? $data['start_time'] : null,
+			'end_time'                     => !empty($data['end_time']) ? $data['end_time'] : null,
 
 			// hidden
-			'start_time'                   => '1999-09-09',
-			'end_time'                     => '2060-09-09',
 			'utc_offset'                   => 0,
 		];
 	}

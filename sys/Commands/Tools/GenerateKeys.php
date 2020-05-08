@@ -42,7 +42,7 @@ class GenerateKeys extends BaseCommand {
 			mkdir($keyLocation, 0755, true);
 		}
 
-		$prefix = $prefix ? "_$prefix" : '';
+		$prefix = $prefix ? "$prefix_" : '';
 
 		$privateFileName = "{$prefix}private.pem";
 		$publicFileName = "{$prefix}public.pem";

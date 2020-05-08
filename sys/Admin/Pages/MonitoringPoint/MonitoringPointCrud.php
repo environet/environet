@@ -3,6 +3,9 @@
 namespace Environet\Sys\Admin\Pages\MonitoringPoint;
 
 use Environet\Sys\Admin\Pages\CrudPage;
+use Environet\Sys\General\Db\Query\Select;
+use Environet\Sys\General\Db\UserQueries;
+use Environet\Sys\General\Exceptions\QueryException;
 
 /**
  * Class MonitoringPointCrud
@@ -25,6 +28,69 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 * @var string[]
 	 */
 	private $headingLine;
+
+	protected $readOwnPermissionName;
+
+	protected $updateOwnPermissionName;
+
+
+	/**
+	 * @param Select $query
+	 * @return bool|void
+	 * @throws QueryException
+	 */
+	protected function modifyListQuery(Select $query) {
+		if (!$this->readOwnPermissionName) {
+			throw new \Exception('Read own permission not set');
+		}
+
+		if (in_array($this->readOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())) {
+			// Get the ids of operators the user is part of, and filter the query accordingly
+			$operators = UserQueries::getOperatorsOfUser($this->request->getIdentity()->getId());
+			$query->whereIn('operatorid', array_column($operators, 'id'), 'operatorId');
+		}
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @throws QueryException
+	 */
+	protected function userCanView($id) {
+		if (in_array($this->readOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())) {
+			return $this->userIsOperatorOfMonitoringPoint($id);
+		}
+		return true;
+	}
+
+
+	/**
+	 * @param int $id Monitoring point id
+	 * @return bool
+	 * @throws QueryException
+	 */
+	private function userIsOperatorOfMonitoringPoint(int $id): bool {
+		$operatorIds = array_column(UserQueries::getOperatorsOfUser($this->request->getIdentity()->getId()), 'id');
+		$query = (new Select())
+			->select($this->queriesClass::$tableName . '.id')
+			->from($this->queriesClass::$tableName)
+			->whereIn('operatorid', $operatorIds, 'operatorId');
+		$ids = array_column($query->run(), 'id');
+
+		return in_array($id, $ids);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @throws QueryException
+	 */
+	protected function userCanEdit($id) {
+		if (in_array($this->updateOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())) {
+			return $this->userIsOperatorOfMonitoringPoint($id);
+		}
+		return true;
+	}
 
 
 	/**
