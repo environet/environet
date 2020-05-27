@@ -187,7 +187,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 		];
 
 		foreach ($this->properties as $property) {
-			$data[$property['symbol']] = $values[$property['column']];
+			$data[$property['symbol']] = $values[$property['column'] - 1];
 		}
 
 
