@@ -145,10 +145,10 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	public function get(): array {
 
 		// Query distribution node to get list of monitoring points and observed properties
-		ApiClient apiClient;
-		$sMonitoringPoints = apiClient.requestMonitoringPoints();
+		$apiClient = new ApiClient;
+		$sMonitoringPoints = $apiClient->requestMonitoringPoints();
 		var_dump($sMonitoringPoints);
-		
+
 		// As API call not yet available, use hard coded list for DWD
 		$monitoringPoints = [
 			[
