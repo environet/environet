@@ -38,12 +38,16 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	private $observedPropertyConversions;
 
 
+	private $config;
+
 	/**
 	 * HttpTransportExtended constructor.
 	 *
 	 * @param array $config
 	 */
 	public function __construct(array $config) {
+		$this->config = $config;
+
 		$this->url = $config['url'];
 
 		// TODO: Make this configurable
@@ -145,7 +149,7 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	public function get(): array {
 
 		// Query distribution node to get list of monitoring points and observed properties
-		$apiClient = new ApiClient;
+		$apiClient = new ApiClient($this->config);
 		$sMonitoringPoints = $apiClient->requestMonitoringPoints();
 		var_dump($sMonitoringPoints);
 
