@@ -52,7 +52,7 @@ Generated configurations will be saved to the `/conf/plugins/configurations` fol
 
 ## Running a configuration
 
-Run `./environet plugin run [configuration name]` to run an uploader plugin configuration. (If you want to run regularly, you should set up a cron job to execute this command at regular intervals.)
+Run `./environet data plugin run [configuration name]` to run an uploader plugin configuration. (If you want to run regularly, you should set up a cron job to execute this command at regular intervals.)
 
 ## SSL key pair generation tool
 To generate an ssl key pair, you can run the command `./environet data tool keygen`.  
