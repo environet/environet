@@ -8,6 +8,7 @@ use Environet\Sys\General\HttpClient\HttpClient;
 use Environet\Sys\General\HttpClient\Request;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\TransportInterface;
+use Environet\Sys\Plugins\ApiClient;
 
 /**
  * Class HttpTransportExtended
@@ -137,7 +138,6 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		return $variables;
 	}
 
-
 	/**
 	 * @inheritDoc
 	 * @throws HttpClientException
@@ -145,6 +145,10 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	public function get(): array {
 
 		// Query distribution node to get list of monitoring points and observed properties
+		ApiClient apiClient;
+		$sMonitoringPoints = apiClient.requestMonitoringPoints();
+		var_dump($sMonitoringPoints);
+		
 		// As API call not yet available, use hard coded list for DWD
 		$monitoringPoints = [
 			[
