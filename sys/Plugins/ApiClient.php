@@ -112,30 +112,6 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	}
 
 
-	public function requestMonitoringPoints() : string {
-		$token =  random_bytes(128);
-
-		// Create a request
-		$request = new Request(
-			sprintf(
-				"%s/api/monitoring-points?token=%s",
-				rtrim($this->apiAddress, '/'),
-				md5($token)
-			)
-		);
-		$request->setMethod('GET');
-
-		//$request->addHeader('Accept', 'application/json');
-		// Add generated auth header with signature
-		$request->addHeader('Authorization', $this->generateSignatureHeaderFromToken($token, $this->apiUsername));
-		// Send request
-		$client = new HttpClient();
-
-		$response = $client->sendRequest($request);	
-
-		return $response;
-	}
-
 	/**
 	 * Create a request with an XML payload.
 	 *
@@ -155,30 +131,6 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 		$request->addHeader('Authorization', $this->generateSignatureHeader($payload, $this->apiUsername));
 
 		return $request;
-	}
-
-
-	/**
-	 * Generate authorization header information.
-	 * The signature is built from the token and the given user's private key.
-	 *
-	 * @param string           $token
-	 * @param string           $username
-	 *
-	 * @return string
-	 * @throws Exception
-	 * @uses \Environet\Sys\General\PKI::generateSignature()
-	 * @uses \Environet\Sys\General\PKI::authHeaderWithSignature()
-	 */
-	private function generateSignatureHeaderFromToken(string $token, string $username): string {
-		$fullPath = SRC_PATH . "/conf/plugins/credentials/{$this->privateKeyPath}";
-		if (!file_exists($fullPath)) {
-			throw new Exception("Private key at {$this->privateKeyPath} doesn't exist");
-		}
-		$pkiLib = new PKI();
-		$signature = $pkiLib->generateSignature(md5($token), file_get_contents(SRC_PATH . '/conf/plugins/credentials/' . $this->privateKeyPath));
-
-		return $pkiLib->authHeaderWithSignature($signature, $username);
 	}
 
 

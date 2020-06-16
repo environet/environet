@@ -18,7 +18,7 @@ use Environet\Sys\Plugins\ApiClient;
  * zip files.
  *
  * @package Environet\Sys\Plugins\Transports
- * @author  SRG Group <dev@srg.hu>, <meyer@stasa.de>
+ * @author  SRG Group <dev@srg.hu>, STASA <info@stasa.de>
  */
 class HttpTransportExtended implements TransportInterface, BuilderLayerInterface {
 
@@ -26,6 +26,11 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	 * @var string URL of the data source
 	 */
 	private $url;
+
+	/**
+	 * @var string Mode of operation as workaround while initialization file is not implemented: "DWD" or "LfU"
+	 */
+	private $mode;
 
 	/**
 	 * @var list of monitoring point's conversions to variables
@@ -37,8 +42,20 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	 */
 	private $observedPropertyConversions;
 
+	/**
+	 * @var string Address of distribution node
+	 */
+	private $apiAddress;
 
-	private $config;
+	/**
+	 * @var string Username for upload process
+	 */
+	private $apiUsername;
+
+	/**
+	 * @var string Path to private key file
+	 */
+	private $privateKeyPath;
 
 	/**
 	 * HttpTransportExtended constructor.
@@ -46,17 +63,19 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	 * @param array $config
 	 */
 	public function __construct(array $config) {
-		$this->config = $config;
-
 		$this->url = $config['url'];
+		$this->mode = $config['mode'];
+		$this->apiAddress = $config['apiAddress'];			// FIXME: Empty
+		$this->apiUsername = $config['apiUsername'];		// FIXME: Empty
+		$this->privateKeyPath = $config['privateKeyPath'];	// FIXME: Empty
 
 		// TODO: Make this configurable
-		$this->monitoringPointConversions = [
+		$monitoringPointConversionsDWD = [
 			"MPID1" => "#####",
 			"MPID2" => "#",
 		];
 
-		$this->observedPropertyConversions = [
+		$observedPropertyConversionsDWD = [
 			// precipitation summed over an hour [°C]
 			"P_total_hourly" => [
 				"OBS1" => "RR",
@@ -76,6 +95,34 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 				"INT3" => "stundenwerte",
 			],
 		];
+
+		$monitoringPointConversionsLfU = [
+			"MPID" => "#",
+		];
+
+		$observedPropertyConversionsLfU = [
+			// current water level [cm]
+			"h" => [
+				"OBS" => "W",
+			],
+			// current river discharge [m³/s]
+			"Q" => [
+				"OBS" => "Q",
+			],
+			// current water temperature [°C]
+			"tw" => [
+				"OBS" => "WT",
+			],
+		];
+
+		if ($this->mode == "DWD") {
+			$this->monitoringPointConversions = $monitoringPointConversionsDWD;
+			$this->observedPropertyConversions = $observedPropertyConversionsDWD;
+		}
+		else {
+			$this->monitoringPointConversions = $monitoringPointConversionsLfU;
+			$this->observedPropertyConversions = $observedPropertyConversionsLfU;
+		}
 	}
 
 
@@ -86,12 +133,14 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		$console->writeLine('');
 		$console->writeLine("Configuring extended http transport", Console::COLOR_YELLOW);
 		$url = $console->ask("Enter the url of data to be imported e.g.: https://example.com/data_[VARIABLE1].zip|file_in_zip_[VARIABLE2].txt", 200);
+		$mode = $console->ask("Enter mode of operation [preliminary] (DWD/LfU)", 10);
 
 		// TODO: Extend configuration: Add excel file for assignments, add excel file for formats
 		// TODO: Parse files and store in $config
 
 		$config = [
 			'url' => $url,
+			'mode' => $mode,
 			'monitoringPointConversions' => $monitoringPointConversions,
 			'observedPropertyConversions' => $observedPropertyConversions,
 		];
@@ -104,7 +153,8 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	 * @inheritDoc
 	 */
 	public function serializeConfiguration(): string {
-		return 'url = "' . $this->url . '"' . "\n";
+		return 'url = "' . $this->url . '"' . "\n"
+			. 'mode = "' . $this->mode . '"' . "\n";
 	}
 
 
@@ -142,6 +192,55 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		return $variables;
 	}
 
+	public function requestMonitoringPoints() : string {
+		$token =  random_bytes(128);
+
+		// Create a request
+		$request = new Request(
+			sprintf(
+				"%s/api/monitoring-points?token=%s",
+				rtrim($this->apiAddress, '/'),
+				md5($token)
+			)
+		);
+		$request->setMethod('GET');
+
+		//$request->addHeader('Accept', 'application/json');
+		// Add generated auth header with signature
+		$request->addHeader('Authorization', $this->generateSignatureHeaderFromToken($token, $this->apiUsername));
+		// Send request
+		$client = new HttpClient();
+
+		$response = $client->sendRequest($request);	
+
+		return $response;
+	}
+
+
+	/**
+	 * Generate authorization header information.
+	 * The signature is built from the token and the given user's private key.
+	 *
+	 * @param string           $token
+	 * @param string           $username
+	 *
+	 * @return string
+	 * @throws Exception
+	 * @uses \Environet\Sys\General\PKI::generateSignature()
+	 * @uses \Environet\Sys\General\PKI::authHeaderWithSignature()
+	 */
+	private function generateSignatureHeaderFromToken(string $token, string $username): string {
+		$fullPath = SRC_PATH . "/conf/plugins/credentials/{$this->privateKeyPath}";
+		if (!file_exists($fullPath)) {
+			throw new Exception("Private key at {$this->privateKeyPath} doesn't exist");
+		}
+		$pkiLib = new PKI();
+		$signature = $pkiLib->generateSignature(md5($token), file_get_contents(SRC_PATH . '/conf/plugins/credentials/' . $this->privateKeyPath));
+
+		return $pkiLib->authHeaderWithSignature($signature, $username);
+	}
+
+
 	/**
 	 * @inheritDoc
 	 * @throws HttpClientException
@@ -149,12 +248,11 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	public function get(): array {
 
 		// Query distribution node to get list of monitoring points and observed properties
-		$apiClient = new ApiClient($this->config);
-		$sMonitoringPoints = $apiClient->requestMonitoringPoints();
-		var_dump($sMonitoringPoints);
+		//$sMonitoringPoints = $this->requestMonitoringPoints();
+		//var_dump($sMonitoringPoints);
 
-		// As API call not yet available, use hard coded list for DWD
-		$monitoringPoints = [
+		// As API call not yet available, use hard coded list for DWD Germany
+		$monitoringPointsDWD = [
 			[
 				"NCD" => "87",							// national code of monitoring point
 				"end_time" => "20300101T00:00:00Z",		// time at which monitoring point goes out of order
@@ -166,12 +264,42 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 			[
 				"NCD" => "91",							// national code of monitoring point
 				"end_time" => "20300101T00:00:00Z",		// time at which monitoring point goes out of order
+				/* ... */								// rest of fields from database
 				"observed_properties" => [				// list of observed properties measured at this monitoring point from table monitoring_point_observed_property
 					"P_total_hourly",					// precipitation summed over an hour [mm]
 					"ta",								// current air temperature [°C]
 				],
 			],
 		];
+
+		// As API call not yet available, use hard coded list for LfU Germany
+		$monitoringPointsLfU = [
+			[
+				"NCD" => "10026301",					// national code of monitoring point
+				"end_time" => "20300101T00:00:00Z",		// time at which monitoring point goes out of order
+				/* ... */								// rest of fields from database
+				"observed_properties" => [				// list of observed properties measured at this monitoring point from table monitoring_point_observed_property
+					"h",								// current water level [cm]
+					"Q",								// current river discharge [m³/s]
+					"tw",								// current water temperature [°C]
+				],
+			],
+			[
+				"NCD" => "10032009",					// national code of monitoring point
+				"end_time" => "20300101T00:00:00Z",		// time at which monitoring point goes out of order
+				/* ... */								// rest of fields from database
+				"observed_properties" => [				// list of observed properties measured at this monitoring point from table monitoring_point_observed_property
+					"h",								// current water level [cm]
+					"Q",								// current river discharge [m³/s]
+				],
+			],
+		];
+
+		if ($this->mode == "DWD") {
+			$monitoringPoints = $monitoringPointsDWD;
+		} else {
+			$monitoringPoints = $monitoringPointsLfU;
+		}
 
 		$result = [];
 
