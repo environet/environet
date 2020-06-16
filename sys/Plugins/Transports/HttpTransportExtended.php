@@ -43,31 +43,20 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	private $observedPropertyConversions;
 
 	/**
-	 * @var string Address of distribution node
+	 * @var array Configuration of plugin
 	 */
-	private $apiAddress;
-
-	/**
-	 * @var string Username for upload process
-	 */
-	private $apiUsername;
-
-	/**
-	 * @var string Path to private key file
-	 */
-	private $privateKeyPath;
+	private $pluginConfig;
 
 	/**
 	 * HttpTransportExtended constructor.
 	 *
 	 * @param array $config
+	 * @param array $pluginConfig
 	 */
-	public function __construct(array $config) {
+	public function __construct(array $config, array $pluginConfig) {
 		$this->url = $config['url'];
 		$this->mode = $config['mode'];
-		$this->apiAddress = $config['apiAddress'];			// FIXME: Empty
-		$this->apiUsername = $config['apiUsername'];		// FIXME: Empty
-		$this->privateKeyPath = $config['privateKeyPath'];	// FIXME: Empty
+		$this->pluginConfig = $pluginConfig;
 
 		// TODO: Make this configurable
 		$monitoringPointConversionsDWD = [
@@ -325,8 +314,9 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 					// contains pipe symbol, decode zip
 					$ext = pathinfo($url, PATHINFO_EXTENSION);
 					$temp = tempnam(sys_get_temp_dir(), $ext);
+					
 					copy($url, $temp);
-
+					
 					$zip = new \ZipArchive;
 					$zip->open($temp);
 					$found = false;
