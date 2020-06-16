@@ -42,6 +42,7 @@ class Plugin {
 			$console->writeLine('');
 			foreach ($xmls as $xmlPayload) {
 				$console->write('Uploading monitoring point data', Console::COLOR_YELLOW);
+				//$console->write($xmlPayload->asXML(), Console::COLOR_YELLOW);
 				try {
 					$apiResponse = $this->apiClient->upload($xmlPayload);
 					$console->write("\r");

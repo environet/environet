@@ -33,6 +33,11 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	private $mode;
 
 	/**
+	 * @var ApiClient Class for calling REST API
+	 */
+	private $apiClient;
+
+	/**
 	 * @var list of monitoring point's conversions to variables
 	 */
 	private $monitoringPointConversions;
@@ -43,11 +48,6 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	private $observedPropertyConversions;
 
 	/**
-	 * @var array Configuration of plugin
-	 */
-	private $pluginConfig;
-
-	/**
 	 * HttpTransportExtended constructor.
 	 *
 	 * @param array $config
@@ -56,7 +56,7 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	public function __construct(array $config, array $pluginConfig) {
 		$this->url = $config['url'];
 		$this->mode = $config['mode'];
-		$this->pluginConfig = $pluginConfig;
+		$this->apiClient = new ApiClient($pluginConfig['apiClient']);
 
 		// TODO: Make this configurable
 		$monitoringPointConversionsDWD = [
@@ -181,54 +181,6 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		return $variables;
 	}
 
-	public function requestMonitoringPoints() : string {
-		$token =  random_bytes(128);
-
-		// Create a request
-		$request = new Request(
-			sprintf(
-				"%s/api/monitoring-points?token=%s",
-				rtrim($this->apiAddress, '/'),
-				md5($token)
-			)
-		);
-		$request->setMethod('GET');
-
-		//$request->addHeader('Accept', 'application/json');
-		// Add generated auth header with signature
-		$request->addHeader('Authorization', $this->generateSignatureHeaderFromToken($token, $this->apiUsername));
-		// Send request
-		$client = new HttpClient();
-
-		$response = $client->sendRequest($request);	
-
-		return $response;
-	}
-
-
-	/**
-	 * Generate authorization header information.
-	 * The signature is built from the token and the given user's private key.
-	 *
-	 * @param string           $token
-	 * @param string           $username
-	 *
-	 * @return string
-	 * @throws Exception
-	 * @uses \Environet\Sys\General\PKI::generateSignature()
-	 * @uses \Environet\Sys\General\PKI::authHeaderWithSignature()
-	 */
-	private function generateSignatureHeaderFromToken(string $token, string $username): string {
-		$fullPath = SRC_PATH . "/conf/plugins/credentials/{$this->privateKeyPath}";
-		if (!file_exists($fullPath)) {
-			throw new Exception("Private key at {$this->privateKeyPath} doesn't exist");
-		}
-		$pkiLib = new PKI();
-		$signature = $pkiLib->generateSignature(md5($token), file_get_contents(SRC_PATH . '/conf/plugins/credentials/' . $this->privateKeyPath));
-
-		return $pkiLib->authHeaderWithSignature($signature, $username);
-	}
-
 
 	/**
 	 * @inheritDoc
@@ -237,15 +189,26 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	public function get(): array {
 
 		// Query distribution node to get list of monitoring points and observed properties
-		//$sMonitoringPoints = $this->requestMonitoringPoints();
+		$sMonitoringPoints = $this->apiClient->requestMonitoringPoints();
 		//var_dump($sMonitoringPoints);
 
+		$monitoringPoints = [];
+		foreach ($sMonitoringPoints['hydro'] as $item) {
+			$item["NCD"] = $item["ncd_wgst"];
+			array_push($monitoringPoints, $item);
+		}
+		foreach ($sMonitoringPoints['meteo'] as $item) {
+			$item["NCD"] = $item["ncd_pst"];
+			array_push($monitoringPoints, $item);
+		}
+
+		//var_dump($monitoringPoints);
+		/*
 		// As API call not yet available, use hard coded list for DWD Germany
 		$monitoringPointsDWD = [
 			[
 				"NCD" => "87",							// national code of monitoring point
 				"end_time" => "20300101T00:00:00Z",		// time at which monitoring point goes out of order
-				/* ... */								// rest of fields from database
 				"observed_properties" => [				// list of observed properties measured at this monitoring point from table monitoring_point_observed_property
 					"P_total_hourly",					// precipitation summed over an hour [mm]
 				],
@@ -253,7 +216,6 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 			[
 				"NCD" => "91",							// national code of monitoring point
 				"end_time" => "20300101T00:00:00Z",		// time at which monitoring point goes out of order
-				/* ... */								// rest of fields from database
 				"observed_properties" => [				// list of observed properties measured at this monitoring point from table monitoring_point_observed_property
 					"P_total_hourly",					// precipitation summed over an hour [mm]
 					"ta",								// current air temperature [°C]
@@ -266,7 +228,6 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 			[
 				"NCD" => "10026301",					// national code of monitoring point
 				"end_time" => "20300101T00:00:00Z",		// time at which monitoring point goes out of order
-				/* ... */								// rest of fields from database
 				"observed_properties" => [				// list of observed properties measured at this monitoring point from table monitoring_point_observed_property
 					"h",								// current water level [cm]
 					"Q",								// current river discharge [m³/s]
@@ -276,7 +237,6 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 			[
 				"NCD" => "10032009",					// national code of monitoring point
 				"end_time" => "20300101T00:00:00Z",		// time at which monitoring point goes out of order
-				/* ... */								// rest of fields from database
 				"observed_properties" => [				// list of observed properties measured at this monitoring point from table monitoring_point_observed_property
 					"h",								// current water level [cm]
 					"Q",								// current river discharge [m³/s]
@@ -289,6 +249,8 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		} else {
 			$monitoringPoints = $monitoringPointsLfU;
 		}
+
+		*/
 
 		$result = [];
 
