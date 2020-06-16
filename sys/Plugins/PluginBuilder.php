@@ -85,7 +85,7 @@ class PluginBuilder {
 		$this->plugin = new Plugin();
 
 		foreach ($this->layers as $layer) {
-			$this->plugin->{$layer->getName()} = new $config[$layer->getName()]['className']($config[$layer->getName()]);
+			$this->plugin->{$layer->getName()} = new $config[$layer->getName()]['className']($config[$layer->getName()], $config);
 		}
 
 		return $this->plugin;

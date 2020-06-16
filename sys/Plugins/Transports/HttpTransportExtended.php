@@ -35,14 +35,15 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	 * @var list of observed properties' conversions to variables
 	 */
 	private $observedPropertyConversions;
-
-
+	
+	
 	/**
 	 * HttpTransportExtended constructor.
 	 *
 	 * @param array $config
+	 * @param array $pluginConfig
 	 */
-	public function __construct(array $config) {
+	public function __construct(array $config, array $pluginConfig) {
 		$this->url = $config['url'];
 
 		// TODO: Make this configurable
@@ -189,8 +190,9 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 					// contains pipe symbol, decode zip
 					$ext = pathinfo($url, PATHINFO_EXTENSION);
 					$temp = tempnam(sys_get_temp_dir(), $ext);
+					
 					copy($url, $temp);
-
+					
 					$zip = new \ZipArchive;
 					$zip->open($temp);
 					$found = false;
