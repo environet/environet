@@ -51,8 +51,8 @@ class Plugin {
 					$console->write("\r");
 					$console->writeLine('Upload failed, response:                ', Console::COLOR_RED);
 					$console->writeLine($e->getMessage(), Console::COLOR_RED);
-					$console->writeLine('Request xml:');
-					$console->writeLine($xmlPayload->asXML());
+					// $console->writeLine('Request xml:');
+					// $console->writeLine($xmlPayload->asXML());
 					$failed ++;
 				}
 			}

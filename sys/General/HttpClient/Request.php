@@ -49,7 +49,7 @@ class Request {
 	 */
 	public function __construct(string $uri, string $method = null) {
 		$this->uri = $uri;
-		if (!is_null($this->method)) {
+		if (!is_null($method)) {
 			$this->method = $method;
 		}
 	}
