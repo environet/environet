@@ -235,7 +235,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 		do {
 			$properties[] = self::serializePropertyConfiguration([
 				'symbol' => $console->ask("Property symbol:", 30),
-				'column' => $console->ask("Column number:", 3)
+				'column' => $console->ask("Column number:", 3) - 1
 			]);
 		} while ($console->askYesNo('Do you want to add more properties?'));
 
