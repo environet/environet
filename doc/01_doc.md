@@ -29,6 +29,8 @@ This document is the documentation of the Environet system.
             * [Meteo observed properties](25_8_3_meteo_observed_properties.md)
             * [Meteo station classification](25_8_4_meteo_station_classification.md)
             * [Meteo results](25_8_5_meteo_results.md)
+        * [Measurement access rules](25_9_measurement_access_rules.md)
+        * [Upload missing/processed data](25_10_upload_data.md)
         
 * [Data node](30_data_node.md)
     * [Overview](30_data_node.md)

@@ -86,6 +86,24 @@ abstract class AbstractInputXmlProcessor {
 
 
 	/**
+	 * Check if mpoint found under this type (hydro or meteo)
+	 *
+	 * @return bool
+	 */
+	public function isValidType(): bool {
+		try {
+			// Find monitoring point id in xml
+			$monitoringPointId = (string) $this->xml->xpath('/environet:UploadData/environet:MonitoringPointId[1]')[0] ?? null;
+
+			// Find monitoring point in database
+			return !!($mPoint = $this->findMonitoringPoint($monitoringPointId));
+		} catch (Exception $e) {
+			return false;
+		}
+	}
+
+
+	/**
 	 * Process the validated xml, and save the time series data in database
 	 * Does the following steps:
 	 * 1. Creates an UTC-time from the current timestamp.

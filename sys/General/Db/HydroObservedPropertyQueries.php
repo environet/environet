@@ -36,7 +36,7 @@ class HydroObservedPropertyQueries extends BaseQueries {
 			'symbol'      => $data['symbol'] ?? null,
 			'description' => $data['description'] ?? null,
 			'unit'        => $data['unit'] ?? null,
-			'type'        => 0,
+			'type'        => $data['type'] ?? PROPERTY_TYPE_REALTIME,
 		];
 	}
 
