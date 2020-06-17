@@ -100,6 +100,11 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 			$this->addMessage('Monitoring point name is empty, or format is invalid', self::MESSAGE_ERROR);
 			$valid = false;
 		}
+		
+		if (!empty($data['country']) && strlen($data['country']) > 2) {
+			$this->addMessage('County field expects a two letter country code', self::MESSAGE_ERROR);
+			$valid = false;
+		}
 
 		return $valid;
 	}
