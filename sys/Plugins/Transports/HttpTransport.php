@@ -41,7 +41,7 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 	public static function create(Console $console): HttpTransport {
 		$console->writeLine('');
 		$console->writeLine("Configuring http transport", Console::COLOR_YELLOW);
-		$url = $console->ask("Enter the url of data to be imported e.g.: https://example.com/data.txt", 200);
+		$url = $console->ask("Enter the url of data to be imported e.g.: https://example.com/data.txt");
 		$config = [
 			'url' => $url,
 		];

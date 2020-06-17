@@ -125,6 +125,9 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 			}
 
 			foreach ($this->properties as $property) {
+				if(empty($resultLine[$property['symbol']]))
+					continue;
+				
 				$resultArray[$resultLine['mPointId']][$property['symbol']] = array_merge(
 					$resultArray[$resultLine['mPointId']][$property['symbol']],
 					[
@@ -214,19 +217,19 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 		$console->writeLine('Configuring csv parser', Console::COLOR_YELLOW);
 
 		$console->writeLine('Enter the csv delimiter character. E.g.: a comma in case of comma separated csv files', Console::COLOR_YELLOW);
-		$csvDelimiter = $console->ask('Csv delimiter:', 1);
+		$csvDelimiter = $console->ask('Csv delimiter:');
 
 		$console->writeLine('How many lines have to be skipped before data begins', Console::COLOR_YELLOW);
-		$nHeaderSkip = $console->ask('Number of Lines:', 1);
+		$nHeaderSkip = $console->ask('Number of Lines:');
 
 		$console->writeLine('In what number column (from left) of the csv file is the identifier of the monitoring point?', Console::COLOR_YELLOW);
-		$mPointIdCol = $console->ask('Column number:', 3) - 1;
+		$mPointIdCol = $console->ask('Column number:') - 1;
 
 		$console->writeLine('In what number column (from left) of the csv file is the time of measurement?', Console::COLOR_YELLOW);
-		$timeCol = $console->ask('Column number:', 3) - 1;
+		$timeCol = $console->ask('Column number:') - 1;
 
 		$console->writeLine('In what format is the time represented in the file?', Console::COLOR_YELLOW);
-		$timeFormat = $console->ask('Time format (for example, the format \'Y-m-d H:i:s\' corresponds to dates such as: 2020-03-15 10:15:00, while \'Y.m.d. H:i\' would match 2020.03.15. 10:15):', 20);
+		$timeFormat = $console->ask('Time format (for example, the format \'Y-m-d H:i:s\' corresponds to dates such as: 2020-03-15 10:15:00, while \'Y.m.d. H:i\' would match 2020.03.15. 10:15):');
 
 		$console->writeLine('Configuring observed properties', Console::COLOR_YELLOW);
 		$console->writeLine('For each observed property that can be found in the csv file, enter the symbol (that it used on the distribution node) first, and then the column number where the values are located.', Console::COLOR_YELLOW);
@@ -234,8 +237,8 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 		$properties = [];
 		do {
 			$properties[] = self::serializePropertyConfiguration([
-				'symbol' => $console->ask("Property symbol:", 30),
-				'column' => $console->ask("Column number:", 3) - 1
+				'symbol' => $console->ask("Property symbol:"),
+				'column' => $console->ask("Column number:") - 1
 			]);
 		} while ($console->askYesNo('Do you want to add more properties?'));
 

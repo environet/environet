@@ -32,6 +32,11 @@ class Plugin {
 	public function run(Console $console) {
 		$console->writeLine('Running plugin', '36');
 		$resources = $this->transport->get();
+		
+		if(count($resources) < 1) {
+			$console->writeLine('Nothing to upload', Console::COLOR_YELLOW);
+			return;
+		}
 
 		$successful = 0;
 		$failed = 0;

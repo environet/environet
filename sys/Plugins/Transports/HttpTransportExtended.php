@@ -80,7 +80,7 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	public static function create(Console $console): HttpTransportExtended {
 		$console->writeLine('');
 		$console->writeLine("Configuring extended http transport", Console::COLOR_YELLOW);
-		$url = $console->ask("Enter the url of data to be imported e.g.: https://example.com/data_[VARIABLE1].zip|file_in_zip_[VARIABLE2].txt", 200);
+		$url = $console->ask("Enter the url of data to be imported e.g.: https://example.com/data_[VARIABLE1].zip|file_in_zip_[VARIABLE2].txt");
 
 		// TODO: Extend configuration: Add excel file for assignments, add excel file for formats
 		// TODO: Parse files and store in $config
