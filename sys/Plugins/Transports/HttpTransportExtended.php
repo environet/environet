@@ -53,10 +53,14 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	 * @param array $config
 	 * @param array $pluginConfig
 	 */
-	public function __construct(array $config, array $pluginConfig) {
+	public function __construct(array $config, array $pluginConfig = []) {
 		$this->url = $config['url'];
 		$this->mode = $config['mode'];
-		$this->apiClient = new ApiClient($pluginConfig['apiClient']);
+		if (sizeof($pluginConfig)>0) {
+			$this->apiClient = new ApiClient($pluginConfig['apiClient']);
+		} else {
+			$this->apiClient = NULL;
+		}
 
 		// TODO: Make this configurable
 		$monitoringPointConversionsDWD = [
@@ -296,7 +300,8 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 					$body->contents = $data;
 					unlink($temp);
 				} else {
-					$body = (new HttpClient())->sendRequest(new Request($url))->getBody();
+					$body = new \stdClass();
+					$body->contents = (new HttpClient())->sendRequest(new Request($url))->getBody();
 				}
 				array_push($result, $body);
 			}
