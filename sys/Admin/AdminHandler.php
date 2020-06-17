@@ -7,6 +7,7 @@ use Environet\Sys\Admin\Pages\Dashboard;
 use Environet\Sys\Admin\Pages\DataProvider\DataProviderCrud;
 use Environet\Sys\Admin\Pages\DownloadTest;
 use Environet\Sys\Admin\Pages\Group\GroupCrud;
+use Environet\Sys\Admin\Pages\Hydro\RiverbankCrud;
 use Environet\Sys\Admin\Pages\MeasurementAccessRule\MeasurementAccessRuleCrud;
 use Environet\Sys\Admin\Pages\Hydro\ObservedProperty\ObservedPropertyCrud as HydroObservedPropertyCrud;
 use Environet\Sys\Admin\Pages\Hydro\ResultsCrud as HydroResultsCrud;
@@ -207,37 +208,50 @@ class AdminHandler extends BaseHandler {
 		'^hydro\/observed-properties\/show$' => [HydroObservedPropertyCrud::class, 'show', ['admin.hydro.observedproperties.read']],
 		'^hydro\/observed-properties\/add$'  => [HydroObservedPropertyCrud::class, 'add', ['admin.hydro.observedproperties.create']],
 		'^hydro\/observed-properties\/edit$' => [HydroObservedPropertyCrud::class, 'edit', ['admin.hydro.observedproperties.update']],
+		'^hydro\/observed-properties\/delete' => [HydroObservedPropertyCrud::class, 'delete', ['admin.hydro.observedproperties.delete']],
 
 		'^hydro\/waterbodies$'       => [WaterbodyCrud::class, 'list', ['admin.hydro.waterbodies.read']],
 		'^hydro\/waterbodies\/show$' => [WaterbodyCrud::class, 'show', ['admin.hydro.waterbodies.read']],
 		'^hydro\/waterbodies\/add$'  => [WaterbodyCrud::class, 'add', ['admin.hydro.waterbodies.create']],
 		'^hydro\/waterbodies\/edit$' => [WaterbodyCrud::class, 'edit', ['admin.hydro.waterbodies.update']],
+		'^hydro\/waterbodies\/delete' => [WaterbodyCrud::class, 'delete', ['admin.hydro.waterbodies.delete']],
+
+		'^hydro\/riverbanks$'       => [RiverbankCrud::class, 'list', ['admin.hydro.riverbanks.read']],
+		'^hydro\/riverbanks\/show$' => [RiverbankCrud::class, 'show', ['admin.hydro.riverbanks.read']],
+		'^hydro\/riverbanks\/add$'  => [RiverbankCrud::class, 'add', ['admin.hydro.riverbanks.create']],
+		'^hydro\/riverbanks\/edit$' => [RiverbankCrud::class, 'edit', ['admin.hydro.riverbanks.update']],
+		'^hydro\/riverbanks\/delete' => [RiverbankCrud::class, 'delete', ['admin.hydro.riverbanks.delete']],
 
 		'^hydro\/station-classifications$'       => [HydroStationClassificationCrud::class, 'list', ['admin.hydro.classifications.read']],
 		'^hydro\/station-classifications\/show$' => [HydroStationClassificationCrud::class, 'show', ['admin.hydro.classifications.read']],
 		'^hydro\/station-classifications\/add$'  => [HydroStationClassificationCrud::class, 'add', ['admin.hydro.classifications.create']],
 		'^hydro\/station-classifications\/edit$' => [HydroStationClassificationCrud::class, 'edit', ['admin.hydro.classifications.update']],
+		'^hydro\/station-classifications\/delete$' => [HydroStationClassificationCrud::class, 'delete', ['admin.hydro.classifications.delete']],
 
 		'^hydro\/monitoring-points$'            => [HydroMonitoringPointCrud::class, 'list', ['admin.hydro.monitoringpoints.read'], ['admin.hydro.monitoringpoints.readown']],
 		'^hydro\/monitoring-points\/show$'      => [HydroMonitoringPointCrud::class, 'show', ['admin.hydro.monitoringpoints.read'], ['admin.hydro.monitoringpoints.readown']],
 		'^hydro\/monitoring-points\/add$'       => [HydroMonitoringPointCrud::class, 'add', ['admin.hydro.monitoringpoints.create'], ['admin.hydro.monitoringpoints.createown']],
 		'^hydro\/monitoring-points\/edit$'      => [HydroMonitoringPointCrud::class, 'edit', ['admin.hydro.monitoringpoints.update'], ['admin.hydro.monitoringpoints.updateown']],
+		'^hydro\/monitoring-points\/delete'      => [HydroMonitoringPointCrud::class, 'delete', ['admin.hydro.monitoringpoints.delete'], ['admin.hydro.monitoringpoints.deleteown']],
 		'^hydro\/monitoring-points\/csv-upload' => [HydroMonitoringPointCrud::class, 'csvUpload', ['admin.hydro.monitoringpoints.create', 'admin.hydro.monitoringpoints.update'], ['admin.hydro.monitoringpoints.createown', 'admin.hydro.monitoringpoints.updateown']],
 
 		'^meteo\/station-classifications$'       => [MeteoStationClassificationCrud::class, 'list', ['admin.meteo.classifications.read']],
 		'^meteo\/station-classifications\/show$' => [MeteoStationClassificationCrud::class, 'show', ['admin.meteo.classifications.read']],
 		'^meteo\/station-classifications\/add$'  => [MeteoStationClassificationCrud::class, 'add', ['admin.meteo.classifications.create']],
 		'^meteo\/station-classifications\/edit$' => [MeteoStationClassificationCrud::class, 'edit', ['admin.meteo.classifications.update']],
+		'^meteo\/station-classifications\/delete$' => [MeteoStationClassificationCrud::class, 'delete', ['admin.meteo.classifications.delete']],
 
 		'^meteo\/observed-properties$'       => [MeteoObservedPropertyCrud::class, 'list', ['admin.meteo.observedproperties.read']],
 		'^meteo\/observed-properties\/show$' => [MeteoObservedPropertyCrud::class, 'show', ['admin.meteo.observedproperties.read']],
 		'^meteo\/observed-properties\/add$'  => [MeteoObservedPropertyCrud::class, 'add', ['admin.meteo.observedproperties.create']],
 		'^meteo\/observed-properties\/edit$' => [MeteoObservedPropertyCrud::class, 'edit', ['admin.meteo.observedproperties.update']],
+		'^meteo\/observed-properties\/delete' => [MeteoObservedPropertyCrud::class, 'delete', ['admin.meteo.observedproperties.delete']],
 
 		'^meteo\/monitoring-points$'            => [MeteoMonitoringPointCrud::class, 'list', ['admin.meteo.monitoringpoints.read'], ['admin.meteo.monitoringpoints.readown']],
 		'^meteo\/monitoring-points\/show$'      => [MeteoMonitoringPointCrud::class, 'show', ['admin.meteo.monitoringpoints.read'], ['admin.meteo.monitoringpoints.readown']],
 		'^meteo\/monitoring-points\/add$'       => [MeteoMonitoringPointCrud::class, 'add', ['admin.meteo.monitoringpoints.create'], ['admin.meteo.monitoringpoints.createown']],
 		'^meteo\/monitoring-points\/edit$'      => [MeteoMonitoringPointCrud::class, 'edit', ['admin.meteo.monitoringpoints.update'], ['admin.meteo.monitoringpoints.updateown']],
+		'^meteo\/monitoring-points\/delete'      => [MeteoMonitoringPointCrud::class, 'delete', ['admin.meteo.monitoringpoints.delete'], ['admin.meteo.monitoringpoints.deleteown']],
 		'^meteo\/monitoring-points\/csv-upload' => [MeteoMonitoringPointCrud::class, 'csvUpload', ['admin.meteo.monitoringpoints.create', 'admin.meteo.monitoringpoints.update'], ['admin.meteo.monitoringpoints.createown', 'admin.meteo.monitoringpoints.updateown']],
 
 		'^hydro\/results$' => [HydroResultsCrud::class, 'list', ['admin.hydro.results.read']],
