@@ -1,5 +1,9 @@
 <?php
 
+// TODOS:
+// - Get units from XML if available
+// - Get observable property symbold from XML if available
+
 namespace Environet\Sys\Plugins\Parsers;
 
 use DateTime;
@@ -40,10 +44,14 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 	private $observedPropertyFormats;
 
 	/**
-	 * @var array Tag hierarchy that forms a group of data belonging together
+	 * @var array Tag hierarchy that forms a group of data belonging together (Monitoring point + Measurements)
 	 */
 	private $commonHierarchy;
 
+	/**
+	 * @var array Tag hierarchy that forms a sub-group of data belonging together (Date + Measured Value), relative to $commonHierarchy
+	 */
+	private $commonMeasurementHierarchy;
 
 	/**
 	 * XMLParser constructor.
@@ -55,8 +63,12 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		$this->mode = $config['mode'];
 
 		$commonHierarchyLfU = [
-			"<hnd-daten>",
-			"<messtelle>",
+			"hnd-daten",
+			"messstelle",
+		];
+
+		$commonMeasurementHierarchyLfU = [
+					"messwert",
 		];
 
 		$formatsLfU = [
@@ -64,54 +76,90 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 				"Parameter" => "Monitoring Point",
 				"Value" => "MPID",
 				"Tag Hierarchy" => [
-					"<nummer>",
+					"hnd-daten",
+					"messstelle",
+					"nummer",
 				],
 			],
 			[ 
 				"Parameter" => "Year",
 				"Value" => "Y",
 				"Tag Hierarchy" => [
-					"<messwert>",
-					"<datum>",
-					"<jahr>",
+					"hnd-daten",
+					"messstelle",
+					"messwert",
+					"datum",
+					"jahr",
 				],
 			],
 			[ 
 				"Parameter" => "Month",
 				"Value" => "m",
 				"Tag Hierarchy" => [
-					"<messwert>",
-					"<datum>",
-					"<monat>",
+					"hnd-daten",
+					"messstelle",
+					"messwert",
+					"datum",
+					"monat",
 				],
 			],
 			[ 
 				"Parameter" => "Day",
 				"Value" => "d",
 				"Tag Hierarchy" => [
-					"<messwert>",
-					"<datum>",
-					"<tag>",
+					"hnd-daten",
+					"messstelle",
+					"messwert",
+					"datum",
+					"tag",
 				],
 			],
 			[ 
 				"Parameter" => "Hour",
 				"Value" => "H",
 				"Tag Hierarchy" => [
-					"<messwert>",
-					"<datum>",
-					"<stunde>",
+					"hnd-daten",
+					"messstelle",
+					"messwert",
+					"datum",
+					"stunde",
 				],
 			],
 			[ 
 				"Parameter" => "Minute",
 				"Value" => "i",
 				"Tag Hierarchy" => [
-					"<messwert>",
-					"<datum>",
-					"<minute>",
+					"hnd-daten",
+					"messstelle",
+					"messwert",
+					"datum",
+					"minute",
 				],
 			],
+			[
+				"Parameter" => "ObservableProperyValue",
+				"Value" => "h",   // Symbol
+				"Unit" => "cm",
+				"Tag Hierarchy" => [
+					"hnd-daten",
+					"messstelle",
+					"messwert",
+					"wert",
+				],
+			],
+			[
+				"Parameter" => "ObservableProperyValue",
+				"Value" => "Q",   // Symbol
+				"Unit" => "m3/s",
+				"Tag Hierarchy" => [
+					"hnd-daten",
+					"messstelle",
+					"messwert",
+					"wert",
+				],
+			],
+			// Parameter => ObservablePropertySymbol if symbol is coded in XML
+			// Parameter => ObservablePropertyUnit if unit is coded in XML
 		];
 
 		$observedPropertyFormatsLfU = [
@@ -119,8 +167,10 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 				"Symbol" => "h",
 				"Unit" => "cm",
 				"Tag Hierarchy Value" => [
-					"<messwert>",
-					"<wert>",
+					"hnd-daten",
+					"messstelle",
+					"messwert",
+					"wert",
 				],
 				"Tag Hierarchy Unit" => [],
 			],
@@ -128,8 +178,10 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 				"Symbol" => "Q",
 				"Unit" => "m3/s",
 				"Tag Hierarchy Value" => [
-					"<messwert>",
-					"<wert>",
+					"hnd-daten",
+					"messstelle",
+					"messwert",
+					"wert",
 				],
 				"Tag Hierarchy Unit" => [],
 			],
@@ -138,18 +190,221 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 
 		if (true) {
 			$this->commonHierarchy = $commonHierarchyLfU;
+			$this->commonMeasurementHierarchy = $commonMeasurementHierarchyLfU;
 			$this->formats = $formatsLfU;
 			$this->observedPropertyFormats = $observedPropertyFormatsLfU;
 		}
 
 	}
 
+	private function getAndStripOneCommonElement(array &$formats) : string {
+		if (sizeof($formats) == 0) return "";
+		if (sizeof($formats) == 1 && sizeof($formats[0]["Tag Hierarchy"] == 0)) return "";
+		if (sizeof($formats) == 1 && sizeof($formats[0]["Tag Hierarchy"] > 0))	return array_shift($formats[0]["Tag Hierarchy"]);
+		$difference = false;
+		for ($i = 1; $i < sizeof($formats); ++$i) {
+			if (sizeof($formats[$i]["Tag Hierarchy"]) == 0 || sizeof($formats[$i-1]["Tag Hierarchy"]) == 0 || 
+				$formats[$i]["Tag Hierarchy"][0] != $formats[$i-1]["Tag Hierarchy"][0]) {
+				$difference = true;
+			}
+		}
+		if ($difference) return "";
+		$result = $formats[0]["Tag Hierarchy"][0];
+		for ($i = 0; $i < sizeof($formats); ++$i) {
+			array_shift($formats[$i]["Tag Hierarchy"]);
+		}
+		return $result;
+	}
+
+	private function diveIntoHierarchy(SimpleXMLElement $xml, array $formats, array $resolved, int $hierarchyCounter) : array {
+		echo "-----------------------------------------\r\n";
+		echo "diveIntoHierary called.\r\n";
+		ob_start();
+		var_dump($xml);
+		echo "xml: " . ob_get_clean() . "\r\n";
+		ob_start();
+		var_dump($formats);
+		echo "formats: " . ob_get_clean() . "\r\n";
+		ob_start();
+		var_dump($resolved);
+		echo "resolved: " . ob_get_clean(). "\r\n";
+		echo "hierarchyCounter: " . $hierarchyCounter . "\r\n";
+
+//$tmp2 = $xml->xpath("messstelle");
+//$tmp = $tmp2[0]->xpath("nummer");
+//ob_start();
+//var_dump($tmp);
+//echo "XXX: " . ob_get_clean(). "\r\n";
+
+		if ($hierarchyCounter>10) {
+			throw new Exception("XML hierarchy deeper than 10");
+		}
+
+		if (sizeof($formats) == 0) {
+			echo "Error condition 1: Call, but all information already resolved.";
+			return [];
+		}
+		
+		// get groups of common hierarchy
+		$commonElements = [];
+		do {
+			$common = $this->getAndStripOneCommonElement($formats);
+			if ($common != "") array_push($commonElements, $common);
+		} while ($common != "");
+		$xpathCommonElements = implode('/', $commonElements);
+
+		// Finish condition 1: No common elements, but unresolved information
+		if ($xpathCommonElements == "/") {
+			echo "Error condition 1: Missing information";
+			//throw new Exception("Unresolved information: " . $out);
+			return [];
+		}
+
+		// get groups
+		$flatList = [];
+		$groups = $xml->xpath($xpathCommonElements);
+		echo "xpathCommonElements: " . $xpathCommonElements . "\r\n";
+		echo "Number of groups: " . sizeof($groups) . "\r\n";
+
+		if ($groups == null) {
+			throw new Exception("Given elements do not exist in file: " . $xpathCommonElements);
+		}
+
+		foreach ($groups as $group) {
+			ob_start();
+			var_dump($group);
+			echo "group: " . ob_get_clean() . "\r\n";
+			// count elements and resolve those which are unique
+			$nResolved = 0;
+			$groupResolved = $resolved;
+			$formatsNew = [];
+			foreach ($formats as $format) {
+				echo "format.Parameter: " . $format["Parameter"] . "\r\n";
+				$xpath = implode('/', $format["Tag Hierarchy"]);
+				echo "xpath: " . $xpath . "\r\n";
+				$subXml = $group->xpath($xpath);
+				ob_start();
+				var_dump($subXml);
+				echo "subXml: " . ob_get_clean() . "\r\n";
+				if ($subXml == null) {
+					throw new Exception("Given elements do not exist in file: " . $xpath);
+				}
+				if (sizeof($subXml) == 0) {
+					// do nothing
+					echo "do nothing.\r\n";
+				}
+				else if (sizeof($subXml) == 1) {
+					$item = [];
+					$item["Type"] = $format["Parameter"];
+					$item["Value"] = $subXml[0]->__toString();
+					$item["Format"] = $format["Value"];
+					$item["Unit"] = $format["Unit"];
+					array_push($groupResolved, $item);
+					++$nResolved;
+					echo "resolved ".$item["Type"].", value=".$item["Value"]."\r\n";
+				} else {
+					array_push($formatsNew, $format);
+					echo "not yet resolved.\r\n";
+				}
+			}
+
+			if (sizeof($formatsNew) > 1) {
+				// do recursion 
+				echo "do recursion\r\n";
+				$flatList = array_merge($flatList, $this->diveIntoHierarchy($group, $formatsNew, $groupResolved, $hierarchyCounter+1));
+			} else {
+				// Finish condition 3: Success
+				// all information available. Return flat list entry from resolved
+				echo "all resolved.\r\n";
+				array_push($flatList, $groupResolved);
+			}
+		}	// group
+
+		return $flatList;
+	}
+
+	private function getParameter(array $list, string $parameterName, string $parameterValue) : array {
+		$result = [];
+		foreach($list as $elem) {
+			if (array_key_exists($parameterName, $elem) && $elem[$parameterName] == $parameterValue) {
+				$result = $elem;
+				break;
+			}
+		}
+		return $result;
+	}
 
 	/**
 	 * @inheritDoc
 	 * @throws CreateInputXmlException
 	 */
-	public function parse(string $xmldata): array {
+	public function parse(string $data): array {
+		
+		//echo $data;
+
+		$data = <<<XML
+<hnd-daten>
+<messstelle>
+<nummer>10032009</nummer>
+	<messwert>
+		<datum>
+			<jahr>2020</jahr>
+			<monat>06</monat>
+			<tag>17</tag>
+			<stunde>00</stunde>
+			<minute>00</minute>
+		</datum>
+		<wert>197</wert>
+	</messwert>
+	<messwert>
+		<datum>
+			<jahr>2020</jahr>
+			<monat>06</monat>
+			<tag>17</tag>
+			<stunde>23</stunde>
+			<minute>45</minute>
+		</datum>
+		<wert>234</wert>
+	</messwert>
+</messstelle>
+<messstelle>
+<nummer>10032010</nummer>
+	<messwert>
+		<datum>
+			<jahr>2020</jahr>
+			<monat>06</monat>
+			<tag>17</tag>
+			<stunde>00</stunde>
+			<minute>00</minute>
+		</datum>
+		<wert>19,7</wert>
+	</messwert>
+	<messwert>
+		<datum>
+			<jahr>2020</jahr>
+			<monat>06</monat>
+			<tag>17</tag>
+			<stunde>23</stunde>
+			<minute>45</minute>
+		</datum>
+		<wert>23,4</wert>
+	</messwert>
+</messstelle>
+</hnd-daten>
+XML;
+		$xml = new SimpleXMLElement($data);
+
+		// strip top-level element from formats
+		$topLevel = $this->getAndStripOneCommonElement($this->formats);
+		if ($topLevel == "") {
+			throw new Exception("XML definition does not have a top-level element");
+		}
+
+		$flatList = $this->diveIntoHierarchy($xml, $this->formats, [], 0);
+
+		ob_start();
+		var_dump($flatList);
+		echo "flatList: " . ob_get_clean() . "\r\n";
 		//$dataArray = $this->mPointDataArrayFromCSV($data);
 		//return $this->meteringPointInputXmlsFromArray($dataArray);
 		return [];
