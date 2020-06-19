@@ -44,24 +44,10 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 	private $separatorDecimals;
 
 	/**
-	 * @var array General format specifications
+	 * @var array Format specifications, where to find which information in xml file
 	 */
 	private $formats;
 
-	/**
-	 * @var array Format specifications per observable property
-	 */
-	private $observedPropertyFormats;
-
-	/**
-	 * @var array Tag hierarchy that forms a group of data belonging together (Monitoring point + Measurements)
-	 */
-	private $commonHierarchy;
-
-	/**
-	 * @var array Tag hierarchy that forms a sub-group of data belonging together (Date + Measured Value), relative to $commonHierarchy
-	 */
-	private $commonMeasurementHierarchy;
 
 	/**
 	 * XMLParser constructor.
@@ -73,15 +59,6 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		$this->mode = $config['mode'];
 		$this->separatorThousands = $config['separatorThousands'];
 		$this->separatorDecimals = $config['separatorDecimals'];
-
-		$commonHierarchyLfU = [
-			"hnd-daten",
-			"messstelle",
-		];
-
-		$commonMeasurementHierarchyLfU = [
-					"messwert",
-		];
 
 		$formatsLfU = [
 			[ 
@@ -174,37 +151,8 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 			// Parameter => ObservablePropertyUnit if unit is coded in XML
 		];
 
-		$observedPropertyFormatsLfU = [
-			[ 
-				"Symbol" => "h",
-				"Unit" => "cm",
-				"Tag Hierarchy Value" => [
-					"hnd-daten",
-					"messstelle",
-					"messwert",
-					"wert",
-				],
-				"Tag Hierarchy Unit" => [],
-			],
-			[ 
-				"Symbol" => "Q",
-				"Unit" => "m3/s",
-				"Tag Hierarchy Value" => [
-					"hnd-daten",
-					"messstelle",
-					"messwert",
-					"wert",
-				],
-				"Tag Hierarchy Unit" => [],
-			],
-
-		];
-
 		if (true) {
-			$this->commonHierarchy = $commonHierarchyLfU;
-			$this->commonMeasurementHierarchy = $commonMeasurementHierarchyLfU;
 			$this->formats = $formatsLfU;
-			$this->observedPropertyFormats = $observedPropertyFormatsLfU;
 		}
 
 	}
