@@ -82,7 +82,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::mPointDataArrayFromCSV()
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::meteringPointInputXmlsFromArray()
 	 */
-	public function parse(string $data): array {
+	public function parse(string $data, array $meta = null): array {
 		$dataArray = $this->mPointDataArrayFromCSV($data);
 		return $this->meteringPointInputXmlsFromArray($dataArray);
 	}

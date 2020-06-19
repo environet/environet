@@ -34,6 +34,16 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 	private $mode;
 
 	/**
+	 * @var string Separator to group thousands in values. May be ""
+	 */
+	private $separatorThousands;
+
+	/**
+	 * @var string Separator for decimals.
+	 */
+	private $separatorDecimals;
+
+	/**
 	 * @var array General format specifications
 	 */
 	private $formats;
@@ -61,6 +71,8 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 	public function __construct(array $config) {
 
 		$this->mode = $config['mode'];
+		$this->separatorThousands = $config['separatorThousands'];
+		$this->separatorDecimals = $config['separatorDecimals'];
 
 		$commonHierarchyLfU = [
 			"hnd-daten",
@@ -137,7 +149,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 				],
 			],
 			[
-				"Parameter" => "ObservableProperyValue",
+				"Parameter" => "ObservablePropertyValue",
 				"Value" => "h",   // Symbol
 				"Unit" => "cm",
 				"Tag Hierarchy" => [
@@ -148,7 +160,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 				],
 			],
 			[
-				"Parameter" => "ObservableProperyValue",
+				"Parameter" => "ObservablePropertyValue",
 				"Value" => "Q",   // Symbol
 				"Unit" => "m3/s",
 				"Tag Hierarchy" => [
@@ -217,6 +229,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 	}
 
 	private function diveIntoHierarchy(SimpleXMLElement $xml, array $formats, array $resolved, int $hierarchyCounter) : array {
+		/*
 		echo "-----------------------------------------\r\n";
 		echo "diveIntoHierary called.\r\n";
 		ob_start();
@@ -229,15 +242,10 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		var_dump($resolved);
 		echo "resolved: " . ob_get_clean(). "\r\n";
 		echo "hierarchyCounter: " . $hierarchyCounter . "\r\n";
-
-//$tmp2 = $xml->xpath("messstelle");
-//$tmp = $tmp2[0]->xpath("nummer");
-//ob_start();
-//var_dump($tmp);
-//echo "XXX: " . ob_get_clean(). "\r\n";
+		*/
 
 		if ($hierarchyCounter>10) {
-			throw new Exception("XML hierarchy deeper than 10");
+			throw new \Exception("XML hierarchy deeper than 10");
 		}
 
 		if (sizeof($formats) == 0) {
@@ -263,35 +271,35 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		// get groups
 		$flatList = [];
 		$groups = $xml->xpath($xpathCommonElements);
-		echo "xpathCommonElements: " . $xpathCommonElements . "\r\n";
-		echo "Number of groups: " . sizeof($groups) . "\r\n";
+		//echo "xpathCommonElements: " . $xpathCommonElements . "\r\n";
+		//echo "Number of groups: " . sizeof($groups) . "\r\n";
 
 		if ($groups == null) {
-			throw new Exception("Given elements do not exist in file: " . $xpathCommonElements);
+			throw new \Exception("Given elements do not exist in file: " . $xpathCommonElements);
 		}
 
 		foreach ($groups as $group) {
-			ob_start();
-			var_dump($group);
-			echo "group: " . ob_get_clean() . "\r\n";
+			//ob_start();
+			//var_dump($group);
+			//echo "group: " . ob_get_clean() . "\r\n";
 			// count elements and resolve those which are unique
 			$nResolved = 0;
 			$groupResolved = $resolved;
 			$formatsNew = [];
 			foreach ($formats as $format) {
-				echo "format.Parameter: " . $format["Parameter"] . "\r\n";
+				//echo "format.Parameter: " . $format["Parameter"] . "\r\n";
 				$xpath = implode('/', $format["Tag Hierarchy"]);
-				echo "xpath: " . $xpath . "\r\n";
+				//echo "xpath: " . $xpath . "\r\n";
 				$subXml = $group->xpath($xpath);
-				ob_start();
-				var_dump($subXml);
-				echo "subXml: " . ob_get_clean() . "\r\n";
+				//ob_start();
+				//var_dump($subXml);
+				//echo "subXml: " . ob_get_clean() . "\r\n";
 				if ($subXml == null) {
-					throw new Exception("Given elements do not exist in file: " . $xpath);
+					throw new \Exception("Given elements do not exist in file: " . $xpath);
 				}
 				if (sizeof($subXml) == 0) {
 					// do nothing
-					echo "do nothing.\r\n";
+					//echo "do nothing.\r\n";
 				}
 				else if (sizeof($subXml) == 1) {
 					$item = [];
@@ -301,21 +309,21 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 					$item["Unit"] = $format["Unit"];
 					array_push($groupResolved, $item);
 					++$nResolved;
-					echo "resolved ".$item["Type"].", value=".$item["Value"]."\r\n";
+					//echo "resolved ".$item["Type"].", value=".$item["Value"]."\r\n";
 				} else {
 					array_push($formatsNew, $format);
-					echo "not yet resolved.\r\n";
+					//echo "not yet resolved.\r\n";
 				}
 			}
 
 			if (sizeof($formatsNew) > 1) {
 				// do recursion 
-				echo "do recursion\r\n";
+				//echo "do recursion\r\n";
 				$flatList = array_merge($flatList, $this->diveIntoHierarchy($group, $formatsNew, $groupResolved, $hierarchyCounter+1));
 			} else {
 				// Finish condition 3: Success
 				// all information available. Return flat list entry from resolved
-				echo "all resolved.\r\n";
+				//echo "all resolved.\r\n";
 				array_push($flatList, $groupResolved);
 			}
 		}	// group
@@ -334,11 +342,142 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		return $result;
 	}
 
+	private function delete(array &$list, string $parameterName, string $parameterValue)
+	{
+		$toDelete = [];
+		foreach($list as $key => $elem) {
+			if (array_key_exists($parameterName, $elem) && $elem[$parameterName] == $parameterValue) {
+				array_push($toDelete, $key);
+			}
+		}
+		foreach($toDelete as $key) {
+			\array_splice($list, $key, 1);
+		}
+	}
+
+	private function exists(array $list, string $parameter, string $value) : bool {
+		$exists = false;
+		foreach($list as $element) {
+			if ($element[$parameter] == $value) {
+				$exists = true;
+				break;
+			}
+		}
+		return $exists;
+	}
+
+	private function assembleDate(array &$entry) {
+		$DateTime = $this->getParameter($entry, "Type", "DateTime");
+		$Date = $this->getParameter($entry, "Type", "Date");
+		$Time = $this->getParameter($entry, "Type", "Time");
+		$Year = $this->getParameter($entry, "Type", "Year");
+		$Month = $this->getParameter($entry, "Type", "Month");
+		$Day = $this->getParameter($entry, "Type", "Day");
+		$Hour = $this->getParameter($entry, "Type", "Hour");
+		$Minute = $this->getParameter($entry, "Type", "Minute");
+
+		/*
+		$DateTime = [
+			"Type" => "DateTime",
+			"Value" => "19.6.2020 12:34",
+			"Format" => "d.m.Y H:i",
+			"Unit" => null
+		];
+		
+		$Date = [
+			"Type" => "Date",
+			"Value" => "19.6.2020",
+			"Format" => "d.m.Y",
+			"Unit" => null
+		];
+
+		$Time = [
+			"Type" => "Time",
+			"Value" => "15:39",
+			"Format" => "H:i",
+			"Unit" => null
+		];
+		*/
+
+		$result = [
+			"Type" => "DateTime",
+			"Value" => "",
+			"Format" => self::API_TIME_FORMAT_STRING,
+			"Unit" => null
+		];
+
+		if ($Year && $Month && $Day && $Hour && $Minute) 
+		{
+			$t = mktime(strval($Hour["Value"]), strval($Minute["Value"]), 0, 
+				strval($Month["Value"]), strval($Day["Value"]), strval($Year["Value"]));
+			$result["Value"] = date(self::API_TIME_FORMAT_STRING, $t);
+			$this->delete($entry, "Type", "Year");
+			$this->delete($entry, "Type", "Month");
+			$this->delete($entry, "Type", "Day");
+			$this->delete($entry, "Type", "Hour");
+			$this->delete($entry, "Type", "Minute");
+		} 
+		else if ($Date && $Time) 
+		{
+			$date = DateTime::createFromFormat($Date["Format"].' '.$Time["Format"], $Date["Value"].' '.$Time["Value"]);
+			if (!$date) {
+				throw new \Exception("Invalid date or time format");
+			}
+			$result["Value"] = $date->format(self::API_TIME_FORMAT_STRING);
+			$this->delete($entry, "Type", "Date");
+			$this->delete($entry, "Type", "Time");
+		} 
+		else if ($DateTime) 
+		{
+			$date = DateTime::createFromFormat($DateTime["Format"], $DateTime["Value"]);
+			if (!$date) {
+				throw new \Exception("Invalid datetime format");
+			}
+			$result["Value"] = $date->format(self::API_TIME_FORMAT_STRING);
+			$this->delete($entry, "Type", "DateTime");
+		} else {
+			throw new \Exception("Incomplete date");
+		}
+		array_push($entry, $result);
+	}
+
+	private function assembleDates(array &$flatList) {
+		foreach($flatList as &$entry) {
+			$this->assembleDate($entry);
+		}
+	}
+
+	// remove thousands separator, change decimal separator, add entry for unit if not available
+	private function convertValue(array &$entry) {
+		$unit = $this->getParameter($entry, "Type", "ObservablePropertyUnit");
+		foreach($entry as &$v) {
+			if ($v["Type"] == "ObservablePropertyValue") {
+				if ($this->separatorThousands != "") $v["Value"] = str_replace($this->separatorThousands, "", $v["Value"]);
+				if ($this->separatorDecimals != "." && $this->separatorDecimals != "") $v["Value"] = str_replace($this->separatorDecimals, ".", $v["Value"]);
+				if (!$unit) {
+					$elem = [
+						"Type" => "ObservablePropertyUnit",
+						"Value" => $v["Unit"],
+						"Format" => null,
+						"Unit" => null,
+					];
+					array_push($entry, $elem);
+				}
+			}
+		}
+	}
+
+	private function convertValues(array &$flatList) {
+		foreach($flatList as &$entry) {
+			$this->convertValue($entry);
+		}
+	}
+
 	/**
 	 * @inheritDoc
 	 * @throws CreateInputXmlException
 	 */
-	public function parse(string $data): array {
+	public function parse(string $data, array $meta = null): array {
 		
 		//echo $data;
 
@@ -397,17 +536,101 @@ XML;
 		// strip top-level element from formats
 		$topLevel = $this->getAndStripOneCommonElement($this->formats);
 		if ($topLevel == "") {
-			throw new Exception("XML definition does not have a top-level element");
+			throw new \Exception("XML definition does not have a top-level element");
 		}
 
 		$flatList = $this->diveIntoHierarchy($xml, $this->formats, [], 0);
 
-		ob_start();
-		var_dump($flatList);
-		echo "flatList: " . ob_get_clean() . "\r\n";
-		//$dataArray = $this->mPointDataArrayFromCSV($data);
-		//return $this->meteringPointInputXmlsFromArray($dataArray);
-		return [];
+		$this->assembleDates($flatList);
+
+		// Add missing information in file from API-Call (Monitoring Point or Observable Property symbol)
+		if (sizeof($flatList) > 0 && $meta) {
+			$mp = $this->getParameter($flatList[0], "Type", "Monitoring Point");
+			if (!$mp) {
+				$elem = [
+					"Type" => "Monitoring Point",
+					"Value" => $meta["Monitoring Point"],
+					"Format" => null,
+					"Unit" => null,
+				];
+				$this->addToEach($flatList, $elem);
+			}
+			$obs = $this->getParameter($flatList[0], "Type", "ObservablePropertySymbol");
+			if (!$obs) {
+				$elem = [
+					"Type" => "ObservablePropertySymbol",
+					"Value" => $meta["ObservablePropertySymbol"],
+					"Format" => null,
+					"Unit" => null,
+				];
+				foreach($flatList as &$entry) {
+					// First delete all occurrences of ObservablePropertyValue with wrong symbol
+					$toDelete = [];
+					foreach($entry as $key => $e) {
+						if ($e["Type"] == "ObservablePropertyValue" &&
+						    $e["Format"] != $elem["Value"]) {
+							array_push($toDelete, $key);
+						}
+					}
+					foreach($toDelete as $key) {
+						\array_splice($entry, $key, 1);
+					}
+					//$this->delete($entry, "Format", $elem["Format"]);
+					// then add ObservablePropertySymbol
+					array_push($entry, $elem);
+				}
+			}
+		}
+
+		$this->convertValues($flatList);
+
+		//ob_start();
+		//var_dump($flatList);
+		//echo "flatList: " . ob_get_clean() . "\r\n";
+
+		$resultArray = [];
+		$properties = [];
+		foreach($flatList as $line) {
+			$mp = $this->getParameter($line, "Type", "Monitoring Point")["Value"];
+
+			if (!array_key_exists($mp, $resultArray)) {
+				$resultArray[$mp] = [];
+			}
+
+			$obs = $this->getParameter($line, "Type", "ObservablePropertySymbol")["Value"];
+
+			if (!array_key_exists($obs, $resultArray[$mp])) {
+				$resultArray[$mp][$obs] = [];
+			}
+
+			$time = $this->getParameter($line, "Type", "DateTime")["Value"];
+			$value = strval($this->getParameter($line, "Type", "ObservablePropertyValue")["Value"]);
+			$unit = $this->getParameter($line, "Type", "ObservablePropertyUnit")["Value"];
+
+			$resultArray[$mp][$obs] = array_merge($resultArray[$mp][$obs],
+				[
+					[
+						'time' => $time,
+						'value' => $value,
+						//'unit' => $unit,
+					]
+				]
+			);
+
+		}	
+
+//ini_set('xdebug.var_display_max_depth', '10');
+//ini_set('xdebug.var_display_max_children', '256');
+//ini_set('xdebug.var_display_max_data', '1024');
+
+		//ob_start();
+		//var_dump($resultArray);
+		//echo "resultArray: " . ob_get_clean() . "\r\n";
+
+		//$tmp = $this->meteringPointInputXmlsFromArray($resultArray);
+		//var_dump($tmp);
+
+		return $this->meteringPointInputXmlsFromArray($resultArray);
 	}
 
 
@@ -537,9 +760,13 @@ XML;
 		$console->writeLine('Configuring XML parser', Console::COLOR_YELLOW);
 
 		$mode = $console->ask("Enter mode of operation [preliminary] (LfU)", 10);
+		$separatorThousands = $console->ask('Separator for groups of thousands in values. May be empty. Example: , for 12,040.01 cm');
+		$separatorDecimals = $console->ask('Separator for decianls. Example: . for 142.3 cm');
 
 		$config = [
 			'mode' => $mode,
+			'separatorThousands' => $separatorThousands,
+			'separatorDecimals' => $separatorDecimals,
 		];
 
 		return new self($config);
@@ -552,6 +779,8 @@ XML;
 	public function serializeConfiguration(): string {
 		$config = '';
 		$config .= 'mode = "' . $this->mode . "\"\n";
+		$config .= 'separatorThousands = "' . $this->separatorThousands . "\"\n";
+		$config .= 'separatorDecimals = "' . $this->separatorDecimals . "\"\n";
 
 		return $config;
 	}

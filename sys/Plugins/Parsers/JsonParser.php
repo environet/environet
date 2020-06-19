@@ -38,7 +38,7 @@ class JsonParser implements ParserInterface, BuilderLayerInterface {
 	 * @see InputXmlData
 	 * @see InputXmlPropertyData
 	 */
-	public function parse(string $data): array {
+	public function parse(string $data, array $meta = null): array {
 
 		$parsed = json_decode($data, true);
 		$creator = new CreateInputXml();

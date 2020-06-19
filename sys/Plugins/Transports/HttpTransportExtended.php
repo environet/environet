@@ -199,10 +199,12 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		$monitoringPoints = [];
 		foreach ($sMonitoringPoints['hydro'] as $item) {
 			$item["NCD"] = $item["ncd_wgst"];
+			$item["EUCD"] = $item["eucd_wgst"];
 			array_push($monitoringPoints, $item);
 		}
 		foreach ($sMonitoringPoints['meteo'] as $item) {
 			$item["NCD"] = $item["ncd_pst"];
+			$item["EUCD"] = $item["eucd_pst"];
 			array_push($monitoringPoints, $item);
 		}
 
@@ -303,6 +305,10 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 					$body = new \stdClass();
 					$body->contents = (new HttpClient())->sendRequest(new Request($url))->getBody();
 				}
+				$body->meta = [
+					"Monitoring Point" => $monitoringPoint["NCD"], 
+					"ObservablePropertySymbol" => $observedProperty,
+				];
 				array_push($result, $body);
 			}
 		}

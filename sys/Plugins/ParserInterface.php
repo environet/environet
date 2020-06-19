@@ -23,7 +23,7 @@ interface ParserInterface {
 	 *
 	 * @return SimpleXMLElement[]
 	 */
-	public function parse(string $data): array;
+	public function parse(string $data, array $meta = null): array;
 
 
 }
