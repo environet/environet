@@ -340,73 +340,10 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 	 */
 	public function parse(string $data): array {
 		
-		//echo $data;
+		echo "Size of XML-Data=" . strlen($data) . " bytes.\r\n";
+		echo "Data:\r\n";
+		echo $data;
 
-		$data = <<<XML
-<hnd-daten>
-<messstelle>
-<nummer>10032009</nummer>
-	<messwert>
-		<datum>
-			<jahr>2020</jahr>
-			<monat>06</monat>
-			<tag>17</tag>
-			<stunde>00</stunde>
-			<minute>00</minute>
-		</datum>
-		<wert>197</wert>
-	</messwert>
-	<messwert>
-		<datum>
-			<jahr>2020</jahr>
-			<monat>06</monat>
-			<tag>17</tag>
-			<stunde>23</stunde>
-			<minute>45</minute>
-		</datum>
-		<wert>234</wert>
-	</messwert>
-</messstelle>
-<messstelle>
-<nummer>10032010</nummer>
-	<messwert>
-		<datum>
-			<jahr>2020</jahr>
-			<monat>06</monat>
-			<tag>17</tag>
-			<stunde>00</stunde>
-			<minute>00</minute>
-		</datum>
-		<wert>19,7</wert>
-	</messwert>
-	<messwert>
-		<datum>
-			<jahr>2020</jahr>
-			<monat>06</monat>
-			<tag>17</tag>
-			<stunde>23</stunde>
-			<minute>45</minute>
-		</datum>
-		<wert>23,4</wert>
-	</messwert>
-</messstelle>
-</hnd-daten>
-XML;
-		$xml = new SimpleXMLElement($data);
-
-		// strip top-level element from formats
-		$topLevel = $this->getAndStripOneCommonElement($this->formats);
-		if ($topLevel == "") {
-			throw new Exception("XML definition does not have a top-level element");
-		}
-
-		$flatList = $this->diveIntoHierarchy($xml, $this->formats, [], 0);
-
-		ob_start();
-		var_dump($flatList);
-		echo "flatList: " . ob_get_clean() . "\r\n";
-		//$dataArray = $this->mPointDataArrayFromCSV($data);
-		//return $this->meteringPointInputXmlsFromArray($dataArray);
 		return [];
 	}
 
