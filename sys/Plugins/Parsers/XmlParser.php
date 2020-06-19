@@ -262,7 +262,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		$xpathCommonElements = implode('/', $commonElements);
 
 		// Finish condition 1: No common elements, but unresolved information
-		if ($xpathCommonElements == "/") {
+		if ($xpathCommonElements == "") {
 			echo "Error condition 1: Missing information";
 			//throw new Exception("Unresolved information: " . $out);
 			return [];
@@ -533,13 +533,15 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 XML;
 		$xml = new SimpleXMLElement($data);
 
+		$formats = $this->formats;
+
 		// strip top-level element from formats
-		$topLevel = $this->getAndStripOneCommonElement($this->formats);
+		$topLevel = $this->getAndStripOneCommonElement($formats);
 		if ($topLevel == "") {
 			throw new \Exception("XML definition does not have a top-level element");
 		}
 
-		$flatList = $this->diveIntoHierarchy($xml, $this->formats, [], 0);
+		$flatList = $this->diveIntoHierarchy($xml, $formats, [], 0);
 
 		$this->assembleDates($flatList);
 
