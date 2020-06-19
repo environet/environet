@@ -20,19 +20,35 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 	 * @var string
 	 */
 	private $path;
-
-
+	
+	private static function getDataDirDisplay(): string {
+		return (substr(getenv('LOCAL_DATA_DIR'), 0, 1) == '/' ? '' : '[Environet docker directory]/') . getenv('LOCAL_DATA_DIR');
+	}
+	
 	/**
 	 * @inheritDoc
 	 */
 	public static function create(Console $console): TransportInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring local file transport', Console::COLOR_YELLOW);
-
-		$console->writeLine('Enter path to the file to be imported. This should be relative to the LOCAL_DATA_DIR');
-		$console->write('Leave empty if the data file is located immediately under that directory.');
-
-		$path = $console->ask('', 200);
+		
+		$console->writeLine('Enter path to the file to be imported. This should be relative to ' . self::getDataDirDisplay());
+		
+		$path = $console->ask('');
+		
+		while(empty($path)) {
+			$console->writeLine('Not a valid file path', Console::COLOR_RED);
+			$console->writeLine('Enter path to the file to be imported. This should be relative to ' . self::getDataDirDisplay());
+			$path = $console->ask('');
+		}
+		
+		if(!file_exists('/meteringdata/' . $path)) {
+			$console->writeLine('The file ' . self::getDataDirDisplay() . '/' . $path . 'does not exist. You can create this file later and continue with the plugin configuration.', Console::COLOR_RED);
+			if (!$console->askYesNo("Do you want to continue?", false)) {
+				exit;
+			}
+		}
+		
 		$config = [
 			'path' => $path,
 		];
@@ -66,6 +82,12 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 	public function get(): array {
 		$resource = new Resource();
 		$resource->name = $this->path;
+		
+		if (!file_exists('/meteringdata/' . $this->path)) {
+			Console::getInstance()->writeLine('The file at' . self::getDataDirDisplay() . '/' . $this->path . ' does not exist', Console::COLOR_RED);
+			return [];
+		}
+		
 		$resource->contents = file_get_contents('/meteringdata/' . $this->path);
 
 		return [$resource];

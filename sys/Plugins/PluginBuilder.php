@@ -6,6 +6,7 @@ use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\Parsers\CsvParser;
 use Environet\Sys\Plugins\Parsers\JsonParser;
 use Environet\Sys\Plugins\Transports\HttpTransport;
+use Environet\Sys\Plugins\Transports\HttpTransportExtended;
 use Environet\Sys\Plugins\Transports\LocalDirectoryTransport;
 use Environet\Sys\Plugins\Transports\LocalFileTransport;
 
@@ -34,7 +35,7 @@ class PluginBuilder {
 		$this->layers = [
 			new PluginLayer(
 				'transport',
-				[HttpTransport::class, LocalFileTransport::class, LocalDirectoryTransport::class],
+				[HttpTransport::class, HttpTransportExtended::class, LocalFileTransport::class, LocalDirectoryTransport::class],
 				'Choose a transport layer implementation. This determines the mechanism by which the plugin will access the data.'
 			),
 			new PluginLayer(

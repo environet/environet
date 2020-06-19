@@ -51,6 +51,12 @@ class MeteoStationClassificationQueries extends BaseQueries {
 	public static function getInsertEventType(): string {
 		return EventLogger::EVENT_TYPE_METEO_SC_ADD;
 	}
-
+	
+	/**
+	 * @inheritDoc
+	 */
+	public static function getDeleteEventType(): string {
+		return EventLogger::EVENT_TYPE_METEO_SC_DELETE;
+	}
 
 }

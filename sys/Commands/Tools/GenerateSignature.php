@@ -58,12 +58,12 @@ class GenerateSignature extends BaseCommand {
 		switch ($mode) {
 			case 1:
 				// Get from input
-				$content = $this->console->ask('Enter the content from which you want the generate the signature:', 501);
+				$content = $this->console->ask('Enter the content from which you want the generate the signature:');
 				break;
 			case 2:
 				// Get from file if exists
 				while (true) {
-					$contentFile = $this->console->ask('Enter the path of file (relative to ' . SRC_PATH . '):', 200);
+					$contentFile = $this->console->ask('Enter the path of file (relative to ' . SRC_PATH . '):');
 					if (!file_exists($contentFile)) {
 						$this->console->writeLine("File $contentFile does not exist");
 						continue;

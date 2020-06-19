@@ -184,29 +184,32 @@ abstract class AbstractInputXmlProcessor {
 	 */
 	protected function insertResults(array $timeSeriesPoints, int $timeSeriesId) {
 		try {
-			// Create empty insert query
-			$insert = $this->createResultInsert();
+			$timeSeriesPointsBatches = array_chunk($timeSeriesPoints, 3000, true);
 
-			$now = new DateTime('now', new DateTimeZone('UTC'));
+			foreach ($timeSeriesPointsBatches as $batch) {
+				// Create empty insert query
+				$insert = $this->createResultInsert();
+				$now = new DateTime('now', new DateTimeZone('UTC'));
 
-			foreach ($timeSeriesPoints as $key => $point) {
-				// Convert time to UTC
-				$time = DateTime::createFromFormat(DateTime::ISO8601, (string) $point->xpath('environet:PointTime')[0] ?? null);
-				$time->setTimezone(new DateTimeZone('UTC'));
+				foreach ($batch as $key => $point) {
+					// Convert time to UTC
+					$time = DateTime::createFromFormat(DateTime::ISO8601, (string) $point->xpath('environet:PointTime')[0] ?? null);
+					$time->setTimezone(new DateTimeZone('UTC'));
 
-				// Add 'values' row to insert query
-				$value = (string) $point->xpath('environet:PointValue')[0] ?? null;
-				$insert->addValueRow([":tsid$key", ":time$key", ":value$key", ":isForecast$key", ":createdAt$key"]);
-				$insert->addParameters([
-					"tsid$key"       => $timeSeriesId,
-					"time$key"       => $time->format('c'),
-					"value$key"      => $value,
-					"isForecast$key" => $now < $time,
-					"createdAt$key"  => $now->format('c'),
-				]);
+					// Add 'values' row to insert query
+					$value = (string) $point->xpath('environet:PointValue')[0] ?? null;
+					$insert->addValueRow([":tsid$key", ":time$key", ":value$key", ":isForecast$key", ":createdAt$key"]);
+					$insert->addParameters([
+						"tsid$key"       => $timeSeriesId,
+						"time$key"       => $time->format('c'),
+						"value$key"      => $value,
+						"isForecast$key" => $now < $time,
+						"createdAt$key"  => $now->format('c'),
+					]);
+				}
+
+				$insert->run();
 			}
-
-			$insert->run();
 		} catch (QueryException $e) {
 			throw UploadException::serverError();
 		}
