@@ -23,14 +23,19 @@ use Environet\Sys\Plugins\ApiClient;
 class HttpTransportExtended implements TransportInterface, BuilderLayerInterface {
 
 	/**
-	 * @var string URL of the data source
+	 * @var string Filename for JSON file with conversions of variables
 	 */
-	private $url;
+	private $conversionsFilename;
 
 	/**
-	 * @var string Mode of operation as workaround while initialization file is not implemented: "DWD" or "LfU"
+	 * @var string username for Web-API
 	 */
-	private $mode;
+	private $username;
+
+	/**
+	 * @var string password for Web-API
+	 */
+	private $password;
 
 	/**
 	 * @var ApiClient Class for calling REST API
@@ -38,14 +43,20 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	private $apiClient;
 
 	/**
-	 * @var list of monitoring point's conversions to variables
+	 * @var string URL of the data source
+	 */
+	private $url;
+
+	/**
+	 * @var array List of monitoring point conversions
 	 */
 	private $monitoringPointConversions;
 
 	/**
-	 * @var list of observed properties' conversions to variables
+	 * @var array List of observed property conversions
 	 */
 	private $observedPropertyConversions;
+
 
 	/**
 	 * HttpTransportExtended constructor.
@@ -54,67 +65,23 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	 * @param array $pluginConfig
 	 */
 	public function __construct(array $config, array $pluginConfig = []) {
-		$this->url = $config['url'];
-		$this->mode = $config['mode'];
+		$this->conversionsFilename = $config['conversionsFilename'];
+
+		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
+		$conversions = file_get_contents($configurationsPath . $this->conversionsFilename);
+		$conversions = JSON_decode($conversions, true);
+		$this->url = $conversions["generalInformation"]["URLPattern"];
+		$this->monitoringPointConversions = $conversions["monitoringPointConversions"];
+		$this->observedPropertyConversions = $conversions["observedPropertyConversions"];
+
+		$this->username = $config['username'];
+		$this->password = $config['password'];
+
+
 		if (sizeof($pluginConfig)>0) {
 			$this->apiClient = new ApiClient($pluginConfig['apiClient']);
 		} else {
 			$this->apiClient = NULL;
-		}
-
-		// TODO: Make this configurable
-		$monitoringPointConversionsDWD = [
-			"MPID1" => "#####",
-			"MPID2" => "#",
-		];
-
-		$observedPropertyConversionsDWD = [
-			// precipitation summed over an hour [°C]
-			"P_total_hourly" => [
-				"OBS1" => "RR",
-				"OBS2" => "precipitation",
-				"OBS3" => "rr",
-				"INT1" => "hourly",
-				"INT2" => "stunde",
-				"INT3" => "stundenwerte",
-			],
-			// current air temperature [°C]
-			"ta" => [
-				"OBS1" => "TU",
-				"OBS2" => "air_temperature",
-				"OBS3" => "tu",
-				"INT1" => "hourly",
-				"INT2" => "stunde",
-				"INT3" => "stundenwerte",
-			],
-		];
-
-		$monitoringPointConversionsLfU = [
-			"MPID" => "#",
-		];
-
-		$observedPropertyConversionsLfU = [
-			// current water level [cm]
-			"h" => [
-				"OBS" => "W",
-			],
-			// current river discharge [m³/s]
-			"Q" => [
-				"OBS" => "Q",
-			],
-			// current water temperature [°C]
-			"tw" => [
-				"OBS" => "WT",
-			],
-		];
-
-		if ($this->mode == "DWD") {
-			$this->monitoringPointConversions = $monitoringPointConversionsDWD;
-			$this->observedPropertyConversions = $observedPropertyConversionsDWD;
-		}
-		else {
-			$this->monitoringPointConversions = $monitoringPointConversionsLfU;
-			$this->observedPropertyConversions = $observedPropertyConversionsLfU;
 		}
 	}
 
@@ -125,17 +92,14 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	public static function create(Console $console): HttpTransportExtended {
 		$console->writeLine('');
 		$console->writeLine("Configuring extended http transport", Console::COLOR_YELLOW);
-		$url = $console->ask("Enter the url of data to be imported e.g.: https://example.com/data_[VARIABLE1].zip|file_in_zip_[VARIABLE2].txt", 200);
-		$mode = $console->ask("Enter mode of operation [preliminary] (DWD/LfU)", 10);
-
-		// TODO: Extend configuration: Add excel file for assignments, add excel file for formats
-		// TODO: Parse files and store in $config
+		$conversionsFilename = $console->ask("Filename of conversion specifications", 2000);
+		$username = $console->ask("Username to access Web-API, if needed", 64);
+		$password = $console->ask("Password to access Web-API, if needed", 64);
 
 		$config = [
-			'url' => $url,
-			'mode' => $mode,
-			'monitoringPointConversions' => $monitoringPointConversions,
-			'observedPropertyConversions' => $observedPropertyConversions,
+			'conversionsFilename' => $conversionsFilename,
+			'username' => $username,
+			'password' => $password
 		];
 
 		return new self($config);
@@ -146,8 +110,9 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	 * @inheritDoc
 	 */
 	public function serializeConfiguration(): string {
-		return 'url = "' . $this->url . '"' . "\n"
-			. 'mode = "' . $this->mode . '"' . "\n";
+		return 'conversionsFilename = "' . $this->conversionsFilename . '"' . "\n"
+			. 'username = "' . $this->username . '"' . "\n"
+			. 'password = "' . $this->password . '"' . "\n";
 	}
 
 
@@ -160,7 +125,10 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	 */
 	public function prepareVariables(string $NCD, string $observedProperty) : array {
 		// variable preparation
-		$variables = [];
+		$variables = [
+			"USERNAME" => $this->username,	// predefined property
+			"PASSWORD" => $this->password 	// predefined property
+		];
 
 		foreach ($this->monitoringPointConversions as $key => $value) {
 			preg_match_all("/#+/", $value, $matches, PREG_OFFSET_CAPTURE);
@@ -179,8 +147,10 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 			$variables += [ $key => $s ];
 		}
 
-		$observedPropertyConversion = $this->observedPropertyConversions[$observedProperty];
-		$variables += $observedPropertyConversion;
+		$observedPropertyConversions = $this->observedPropertyConversions[$observedProperty];
+		if ($observedPropertyConversions) {
+			$variables += $observedPropertyConversions;
+		}
 
 		return $variables;
 	}
@@ -207,56 +177,6 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 			$item["EUCD"] = $item["eucd_pst"];
 			array_push($monitoringPoints, $item);
 		}
-
-		//var_dump($monitoringPoints);
-		/*
-		// As API call not yet available, use hard coded list for DWD Germany
-		$monitoringPointsDWD = [
-			[
-				"NCD" => "87",							// national code of monitoring point
-				"end_time" => "20300101T00:00:00Z",		// time at which monitoring point goes out of order
-				"observed_properties" => [				// list of observed properties measured at this monitoring point from table monitoring_point_observed_property
-					"P_total_hourly",					// precipitation summed over an hour [mm]
-				],
-			],
-			[
-				"NCD" => "91",							// national code of monitoring point
-				"end_time" => "20300101T00:00:00Z",		// time at which monitoring point goes out of order
-				"observed_properties" => [				// list of observed properties measured at this monitoring point from table monitoring_point_observed_property
-					"P_total_hourly",					// precipitation summed over an hour [mm]
-					"ta",								// current air temperature [°C]
-				],
-			],
-		];
-
-		// As API call not yet available, use hard coded list for LfU Germany
-		$monitoringPointsLfU = [
-			[
-				"NCD" => "10026301",					// national code of monitoring point
-				"end_time" => "20300101T00:00:00Z",		// time at which monitoring point goes out of order
-				"observed_properties" => [				// list of observed properties measured at this monitoring point from table monitoring_point_observed_property
-					"h",								// current water level [cm]
-					"Q",								// current river discharge [m³/s]
-					"tw",								// current water temperature [°C]
-				],
-			],
-			[
-				"NCD" => "10032009",					// national code of monitoring point
-				"end_time" => "20300101T00:00:00Z",		// time at which monitoring point goes out of order
-				"observed_properties" => [				// list of observed properties measured at this monitoring point from table monitoring_point_observed_property
-					"h",								// current water level [cm]
-					"Q",								// current river discharge [m³/s]
-				],
-			],
-		];
-
-		if ($this->mode == "DWD") {
-			$monitoringPoints = $monitoringPointsDWD;
-		} else {
-			$monitoringPoints = $monitoringPointsLfU;
-		}
-
-		*/
 
 		$result = [];
 
@@ -306,8 +226,8 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 					$body->contents = (new HttpClient())->sendRequest(new Request($url))->getBody();
 				}
 				$body->meta = [
-					"Monitoring Point" => $monitoringPoint["NCD"], 
-					"ObservablePropertySymbol" => $observedProperty,
+					"MonitoringPoint" => $monitoringPoint["NCD"], 
+					"ObservedPropertySymbol" => $observedProperty,
 				];
 				array_push($result, $body);
 			}

@@ -2,7 +2,7 @@
 
 // TODOS:
 // - Get units from XML if available
-// - Get observable property symbold from XML if available
+// - Get observed property symbol from XML if available
 
 namespace Environet\Sys\Plugins\Parsers;
 
@@ -27,11 +27,6 @@ use SimpleXMLElement;
 class XmlParser implements ParserInterface, BuilderLayerInterface {
 
 	const API_TIME_FORMAT_STRING = 'Y-m-d\TH:i:sP';
-
-	/**
-	 * @var string Mode of operation as workaround while initialization file is not implemented: "LfU"
-	 */
-	private $mode;
 
 	/**
 	 * @var string Separator to group thousands in values. May be ""
@@ -61,18 +56,16 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 	 */
 	public function __construct(array $config) {
 
-		$this->mode = $config['mode'];
 		$this->separatorThousands = $config['separatorThousands'];
 		$this->separatorDecimals = $config['separatorDecimals'];
 		$this->formatsFilename = $config['formatsFilename'];
-		
 
 		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
 		$formats = file_get_contents($configurationsPath . $this->formatsFilename);
 		$this->formats = JSON_decode($formats, true);
 
-		// Parameter => ObservablePropertySymbol if symbol is coded in XML
-		// Parameter => ObservablePropertyUnit if unit is coded in XML
+		// Parameter => observedPropertySymbol if symbol is coded in XML
+		// Parameter => observedPropertyUnit if unit is coded in XML
 	}
 
 	private function getAndStripOneCommonElement(array &$formats) : string {
@@ -321,14 +314,14 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 
 	// remove thousands separator, change decimal separator, add entry for unit if not available
 	private function convertValue(array &$entry) {
-		$unit = $this->getParameter($entry, "Type", "ObservablePropertyUnit");
+		$unit = $this->getParameter($entry, "Type", "ObservedPropertyUnit");
 		foreach($entry as &$v) {
-			if ($v["Type"] == "ObservablePropertyValue") {
+			if ($v["Type"] == "ObservedPropertyValue") {
 				if ($this->separatorThousands != "") $v["Value"] = str_replace($this->separatorThousands, "", $v["Value"]);
 				if ($this->separatorDecimals != "." && $this->separatorDecimals != "") $v["Value"] = str_replace($this->separatorDecimals, ".", $v["Value"]);
 				if (!$unit) {
 					$elem = [
-						"Type" => "ObservablePropertyUnit",
+						"Type" => "ObservedPropertyUnit",
 						"Value" => $v["Unit"],
 						"Format" => null,
 						"Unit" => null,
@@ -417,31 +410,31 @@ XML;
 
 		$this->assembleDates($flatList);
 
-		// Add missing information in file from API-Call (Monitoring Point or Observable Property symbol)
+		// Add missing information in file from API-Call (Monitoring Point or Observed Property symbol)
 		if (sizeof($flatList) > 0 && $meta) {
-			$mp = $this->getParameter($flatList[0], "Type", "Monitoring Point");
+			$mp = $this->getParameter($flatList[0], "Type", "MonitoringPoint");
 			if (!$mp) {
 				$elem = [
-					"Type" => "Monitoring Point",
-					"Value" => $meta["Monitoring Point"],
+					"Type" => "MonitoringPoint",
+					"Value" => $meta["MonitoringPoint"],
 					"Format" => null,
 					"Unit" => null,
 				];
 				$this->addToEach($flatList, $elem);
 			}
-			$obs = $this->getParameter($flatList[0], "Type", "ObservablePropertySymbol");
+			$obs = $this->getParameter($flatList[0], "Type", "ObservedPropertySymbol");
 			if (!$obs) {
 				$elem = [
-					"Type" => "ObservablePropertySymbol",
-					"Value" => $meta["ObservablePropertySymbol"],
+					"Type" => "ObservedPropertySymbol",
+					"Value" => $meta["ObservedPropertySymbol"],
 					"Format" => null,
 					"Unit" => null,
 				];
 				foreach($flatList as &$entry) {
-					// First delete all occurrences of ObservablePropertyValue with wrong symbol
+					// First delete all occurrences of ObservedPropertyValue with wrong symbol
 					$toDelete = [];
 					foreach($entry as $key => $e) {
-						if ($e["Type"] == "ObservablePropertyValue" &&
+						if ($e["Type"] == "ObservedPropertyValue" &&
 						    $e["Format"] != $elem["Value"]) {
 							array_push($toDelete, $key);
 						}
@@ -450,7 +443,7 @@ XML;
 						\array_splice($entry, $key, 1);
 					}
 					//$this->delete($entry, "Format", $elem["Format"]);
-					// then add ObservablePropertySymbol
+					// then add ObservedPropertySymbol
 					array_push($entry, $elem);
 				}
 			}
@@ -465,21 +458,21 @@ XML;
 		$resultArray = [];
 		$properties = [];
 		foreach($flatList as $line) {
-			$mp = $this->getParameter($line, "Type", "Monitoring Point")["Value"];
+			$mp = $this->getParameter($line, "Type", "MonitoringPoint")["Value"];
 
 			if (!array_key_exists($mp, $resultArray)) {
 				$resultArray[$mp] = [];
 			}
 
-			$obs = $this->getParameter($line, "Type", "ObservablePropertySymbol")["Value"];
+			$obs = $this->getParameter($line, "Type", "ObservedPropertySymbol")["Value"];
 
 			if (!array_key_exists($obs, $resultArray[$mp])) {
 				$resultArray[$mp][$obs] = [];
 			}
 
 			$time = $this->getParameter($line, "Type", "DateTime")["Value"];
-			$value = strval($this->getParameter($line, "Type", "ObservablePropertyValue")["Value"]);
-			$unit = $this->getParameter($line, "Type", "ObservablePropertyUnit")["Value"];
+			$value = strval($this->getParameter($line, "Type", "ObservedPropertyValue")["Value"]);
+			$unit = $this->getParameter($line, "Type", "ObservedPropertyUnit")["Value"];
 
 			$resultArray[$mp][$obs] = array_merge($resultArray[$mp][$obs],
 				[
@@ -553,13 +546,11 @@ XML;
 		$console->writeLine('');
 		$console->writeLine('Configuring XML parser', Console::COLOR_YELLOW);
 
-		$mode = $console->ask("Enter mode of operation [preliminary] (LfU)", 10);
 		$separatorThousands = $console->ask('Separator for groups of thousands in values. May be empty. Example: , for 12,040.01 cm');
 		$separatorDecimals = $console->ask('Separator for decimals. Example: . for 142.3 cm');
 		$formatsFilename = $console->ask('Filename for xml format definitions');
 
 		$config = [
-			'mode' => $mode,
 			'separatorThousands' => $separatorThousands,
 			'separatorDecimals' => $separatorDecimals,
 			'formatsFilename' => $formatsFilename,
@@ -575,7 +566,6 @@ XML;
 	 */
 	public function serializeConfiguration(): string {
 		$config = '';
-		$config .= 'mode = "' . $this->mode . "\"\n";
 		$config .= 'separatorThousands = "' . $this->separatorThousands . "\"\n";
 		$config .= 'separatorDecimals = "' . $this->separatorDecimals . "\"\n";
 		$config .= 'formatsFilename = "' . $this->formatsFilename . "\"\n";
