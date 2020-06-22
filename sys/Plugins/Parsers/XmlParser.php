@@ -14,7 +14,7 @@ use Environet\Sys\Xml\CreateInputXml;
 use Environet\Sys\Xml\Exceptions\CreateInputXmlException;
 use Environet\Sys\Xml\Model\InputXmlData;
 use Environet\Sys\Xml\Model\InputXmlPropertyData;
-use Environet\Sys\Plugins\Transports\Resource;
+use Environet\Sys\Plugins\Resource;
 use SimpleXMLElement;
 
 /**

@@ -9,7 +9,7 @@ use Environet\Sys\General\HttpClient\Request;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\TransportInterface;
 use Environet\Sys\Plugins\ApiClient;
-
+use Environet\Sys\Plugins\Resource;
 /**
  * Class HttpTransportExtended
  *
