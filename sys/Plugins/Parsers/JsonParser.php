@@ -5,7 +5,7 @@ namespace Environet\Sys\Plugins\Parsers;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\ParserInterface;
-use Environet\Sys\Plugins\Transports\Resource;
+use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Xml\CreateInputXml;
 use Environet\Sys\Xml\Exceptions\CreateInputXmlException;
 use Environet\Sys\Xml\Model\InputXmlData;
