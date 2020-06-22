@@ -198,6 +198,9 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 
 				echo "GET " . $url . PHP_EOL;
 
+				$resource = new Resource();
+				$resource->name = $this->url;
+
 				if (count($parts) > 1) {
 					// contains pipe symbol, decode zip
 					$ext = pathinfo($url, PATHINFO_EXTENSION);
@@ -218,18 +221,16 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 						}
 					}
 					$zip->close();
-					$body = new \stdClass();
-					$body->contents = $data;
+					$resource->contents = $data;
 					unlink($temp);
 				} else {
-					$body = new \stdClass();
-					$body->contents = (new HttpClient())->sendRequest(new Request($url))->getBody();
+					$resource->contents = (new HttpClient())->sendRequest(new Request($url))->getBody();
 				}
-				$body->meta = [
+				$resource->meta = [
 					"MonitoringPoint" => $monitoringPoint["NCD"], 
 					"ObservedPropertySymbol" => $observedProperty,
 				];
-				array_push($result, $body);
+				array_push($result, $resource);
 			}
 		}
 

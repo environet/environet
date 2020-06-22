@@ -41,7 +41,7 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 	public static function create(Console $console): HttpTransport {
 		$console->writeLine('');
 		$console->writeLine("Configuring http transport", Console::COLOR_YELLOW);
-		$url = $console->ask("Enter the url of data to be imported e.g.: https://example.com/data.txt", 200);
+		$url = $console->ask("Enter the url of data to be imported e.g.: https://example.com/data.txt");
 		$config = [
 			'url' => $url,
 		];
@@ -63,7 +63,10 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 	 * @throws HttpClientException
 	 */
 	public function get(): array {
-		return [(new HttpClient())->sendRequest(new Request($this->url))->getBody()];
+		$resource = new Resource();
+		$resource->name = $this->url;
+		$resource->contents = (new HttpClient())->sendRequest(new Request($this->url))->getBody();
+		return [$resource];
 	}
 
 

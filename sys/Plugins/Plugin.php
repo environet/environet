@@ -32,13 +32,18 @@ class Plugin {
 	public function run(Console $console) {
 		$console->writeLine('Running plugin', '36');
 		$resources = $this->transport->get();
+		
+		if(count($resources) < 1) {
+			$console->writeLine('Nothing to upload', Console::COLOR_YELLOW);
+			return;
+		}
 
 		$successful = 0;
 		$failed = 0;
 
 		foreach ($resources as $resource) {
 			$console->writeLine("Uploading $resource->name", Console::COLOR_YELLOW);
-			$xmls = $this->parser->parse($resource->contents, $resource->meta);
+			$xmls = $this->parser->parse($resource);
 			$console->writeLine('');
 			foreach ($xmls as $xmlPayload) {
 				$console->write('Uploading monitoring point data', Console::COLOR_YELLOW);

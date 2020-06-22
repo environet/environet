@@ -14,6 +14,7 @@ use Environet\Sys\Xml\CreateInputXml;
 use Environet\Sys\Xml\Exceptions\CreateInputXmlException;
 use Environet\Sys\Xml\Model\InputXmlData;
 use Environet\Sys\Xml\Model\InputXmlPropertyData;
+use Environet\Sys\Plugins\Transports\Resource;
 use SimpleXMLElement;
 
 /**
@@ -342,11 +343,11 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 	 * @inheritDoc
 	 * @throws CreateInputXmlException
 	 */
-	public function parse(string $data, array $meta = null): array {
+	public function parse(Resource $resource): array {
 		
-		//echo $data;
+		//echo $resource->contents;
 
-		$data = <<<XML
+		$resource->contents = <<<XML
 <hnd-daten>
 <messstelle>
 <nummer>10032009</nummer>
@@ -396,7 +397,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 </messstelle>
 </hnd-daten>
 XML;
-		$xml = new SimpleXMLElement($data);
+		$xml = new SimpleXMLElement($resource->contents);
 
 		$formats = $this->formats;
 
