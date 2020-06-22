@@ -585,59 +585,6 @@ XML;
 
 
 	/**
-	 * Create an associative array from the input CSV string
-	 * Format: [mpointId => [propertySymbol => results]]
-	 *
-	 * @param string $csv
-	 *
-	 * @return array
-	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::parseResultLine()
-	 */
-	private function mPointDataArrayFromCSV(string $csv): array {
-		$resultArray = [];
-
-		$lines = explode("\n", $csv);
-
-		$lineCount = 0;
-		foreach ($lines as $line) {
-			++$lineCount;
-			if ($lineCount <= $this->nHeaderSkip) {
-				continue;
-			}
-			$resultLine = $this->parseResultLine($line);
-			if (empty($resultLine)) {
-				continue;
-			}
-
-			if (!array_key_exists($resultLine['mPointId'], $resultArray)) {
-				$resultArray[$resultLine['mPointId']] = [];
-			}
-
-			// Initialize time series for properties with an empty array
-			foreach ($this->properties as $property) {
-				if (!array_key_exists($property['symbol'], $resultArray[$resultLine['mPointId']])) {
-					$resultArray[$resultLine['mPointId']][$property['symbol']] = [];
-				}
-			}
-
-			foreach ($this->properties as $property) {
-				$resultArray[$resultLine['mPointId']][$property['symbol']] = array_merge(
-					$resultArray[$resultLine['mPointId']][$property['symbol']],
-					[
-						[
-							'time'  => $resultLine['time'],
-							'value' => $resultLine[$property['symbol']]
-						]
-					]
-				);
-			}
-		}
-
-		return $resultArray;
-	}
-
-
-	/**
 	 * Create XML data from the monitoring point input array.
 	 *
 	 * @param array $mPointsArray
@@ -675,33 +622,6 @@ XML;
 
 
 	/**
-	 * Parse one line of the CSV input string.
-	 *
-	 * @param $line
-	 *
-	 * @return array
-	 */
-	private function parseResultLine($line): array {
-		$values = array_map('trim', explode($this->csvDelimiter, $line));
-		if (!array_key_exists($this->timeCol, $values)) {
-			return [];
-		}
-
-		$data = [
-			'mPointId' => $values[$this->mPointIdCol],
-			'time'     => DateTime::createFromFormat($this->timeFormat, $values[$this->timeCol])->format(self::API_TIME_FORMAT_STRING),
-		];
-
-		foreach ($this->properties as $property) {
-			$data[$property['symbol']] = $values[$property['column']];
-		}
-
-
-		return $data;
-	}
-
-
-	/**
 	 * @inheritDoc
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::serializePropertyConfiguration()
 	 */
@@ -721,6 +641,7 @@ XML;
 
 		return new self($config);
 	}
+
 
 	/**
 	 * @inheritDoc
