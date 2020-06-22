@@ -44,6 +44,11 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 	private $separatorDecimals;
 
 	/**
+	 * @var string Filename of JSON file which contains formats for xml
+	 */
+	private $formatsFile;
+
+	/**
 	 * @var array Format specifications, where to find which information in xml file
 	 */
 	private $formats;
@@ -59,108 +64,21 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		$this->mode = $config['mode'];
 		$this->separatorThousands = $config['separatorThousands'];
 		$this->separatorDecimals = $config['separatorDecimals'];
+		$this->formatsFilename = $config['formatsFilename'];
+		
 
-		$formatsLfU = [
-			[ 
-				"Parameter" => "Monitoring Point",
-				"Value" => "MPID",
-				"Tag Hierarchy" => [
-					"hnd-daten",
-					"messstelle",
-					"nummer",
-				],
-			],
-			[ 
-				"Parameter" => "Year",
-				"Value" => "Y",
-				"Tag Hierarchy" => [
-					"hnd-daten",
-					"messstelle",
-					"messwert",
-					"datum",
-					"jahr",
-				],
-			],
-			[ 
-				"Parameter" => "Month",
-				"Value" => "m",
-				"Tag Hierarchy" => [
-					"hnd-daten",
-					"messstelle",
-					"messwert",
-					"datum",
-					"monat",
-				],
-			],
-			[ 
-				"Parameter" => "Day",
-				"Value" => "d",
-				"Tag Hierarchy" => [
-					"hnd-daten",
-					"messstelle",
-					"messwert",
-					"datum",
-					"tag",
-				],
-			],
-			[ 
-				"Parameter" => "Hour",
-				"Value" => "H",
-				"Tag Hierarchy" => [
-					"hnd-daten",
-					"messstelle",
-					"messwert",
-					"datum",
-					"stunde",
-				],
-			],
-			[ 
-				"Parameter" => "Minute",
-				"Value" => "i",
-				"Tag Hierarchy" => [
-					"hnd-daten",
-					"messstelle",
-					"messwert",
-					"datum",
-					"minute",
-				],
-			],
-			[
-				"Parameter" => "ObservablePropertyValue",
-				"Value" => "h",   // Symbol
-				"Unit" => "cm",
-				"Tag Hierarchy" => [
-					"hnd-daten",
-					"messstelle",
-					"messwert",
-					"wert",
-				],
-			],
-			[
-				"Parameter" => "ObservablePropertyValue",
-				"Value" => "Q",   // Symbol
-				"Unit" => "m3/s",
-				"Tag Hierarchy" => [
-					"hnd-daten",
-					"messstelle",
-					"messwert",
-					"wert",
-				],
-			],
-			// Parameter => ObservablePropertySymbol if symbol is coded in XML
-			// Parameter => ObservablePropertyUnit if unit is coded in XML
-		];
+		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
+		$formats = file_get_contents($configurationsPath . $this->formatsFilename);
+		$this->formats = JSON_decode($formats, true);
 
-		if (true) {
-			$this->formats = $formatsLfU;
-		}
-
+		// Parameter => ObservablePropertySymbol if symbol is coded in XML
+		// Parameter => ObservablePropertyUnit if unit is coded in XML
 	}
 
 	private function getAndStripOneCommonElement(array &$formats) : string {
 		if (sizeof($formats) == 0) return "";
-		if (sizeof($formats) == 1 && sizeof($formats[0]["Tag Hierarchy"] == 0)) return "";
-		if (sizeof($formats) == 1 && sizeof($formats[0]["Tag Hierarchy"] > 0))	return array_shift($formats[0]["Tag Hierarchy"]);
+		if (sizeof($formats) == 1 && sizeof($formats[0]["Tag Hierarchy"]) == 0) return "";
+		if (sizeof($formats) == 1 && sizeof($formats[0]["Tag Hierarchy"]) > 0)	return array_shift($formats[0]["Tag Hierarchy"]);
 		$difference = false;
 		for ($i = 1; $i < sizeof($formats); ++$i) {
 			if (sizeof($formats[$i]["Tag Hierarchy"]) == 0 || sizeof($formats[$i-1]["Tag Hierarchy"]) == 0 || 
@@ -238,7 +156,13 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 				//echo "format.Parameter: " . $format["Parameter"] . "\r\n";
 				$xpath = implode('/', $format["Tag Hierarchy"]);
 				//echo "xpath: " . $xpath . "\r\n";
-				$subXml = $group->xpath($xpath);
+				if ($xpath != "") {
+					// desired information is sub-item of group
+					$subXml = $group->xpath($xpath);
+				} else {
+					// desired information is group itself
+					$subXml = $group;
+				}
 				//ob_start();
 				//var_dump($subXml);
 				//echo "subXml: " . ob_get_clean() . "\r\n";
@@ -631,12 +555,14 @@ XML;
 
 		$mode = $console->ask("Enter mode of operation [preliminary] (LfU)", 10);
 		$separatorThousands = $console->ask('Separator for groups of thousands in values. May be empty. Example: , for 12,040.01 cm');
-		$separatorDecimals = $console->ask('Separator for decianls. Example: . for 142.3 cm');
+		$separatorDecimals = $console->ask('Separator for decimals. Example: . for 142.3 cm');
+		$formatsFilename = $console->ask('Filename for xml format definitions');
 
 		$config = [
 			'mode' => $mode,
 			'separatorThousands' => $separatorThousands,
 			'separatorDecimals' => $separatorDecimals,
+			'formatsFilename' => $formatsFilename,
 		];
 
 		return new self($config);
@@ -652,6 +578,7 @@ XML;
 		$config .= 'mode = "' . $this->mode . "\"\n";
 		$config .= 'separatorThousands = "' . $this->separatorThousands . "\"\n";
 		$config .= 'separatorDecimals = "' . $this->separatorDecimals . "\"\n";
+		$config .= 'formatsFilename = "' . $this->formatsFilename . "\"\n";
 
 		return $config;
 	}
