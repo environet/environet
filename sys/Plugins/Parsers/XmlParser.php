@@ -376,7 +376,96 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		
 		//echo $resource->contents;
 
-		$resource->contents = <<<XML
+		$resource->contents = <<<'XML'
+<?xml version='1.0' encoding="UTF-8" ?>
+<wfs:FeatureCollection
+   xmlns:ms="http://mapserver.gis.umn.edu/mapserver"
+   xmlns:wfs="http://www.opengis.net/wfs"
+   xmlns:gml="http://www.opengis.net/gml"
+   xmlns:ogc="http://www.opengis.net/ogc"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd 
+                       http://mapserver.gis.umn.edu/mapserver https://gis.lfrz.gv.at/wmsgw/?key=2993ead1af652c1e809263930333a2fb&amp;SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=DescribeFeatureType&amp;TYPENAME=pegelaktuell&amp;OUTPUTFORMAT=XMLSCHEMA">
+	<gml:boundedBy>
+		<gml:Box srsName="EPSG:31287">
+			<gml:coordinates>112844.000000,279413.000000 680586.000000,565345.000000</gml:coordinates>
+		</gml:Box>
+	</gml:boundedBy>
+	<gml:featureMember>
+		<ms:pegelaktuell fid="pegelaktuell.15">
+			<gml:boundedBy>
+				<gml:Box srsName="EPSG:31287">
+					<gml:coordinates>
+						372523.000000,316503.000000 372523.000000,316503.000000
+					</gml:coordinates>
+				</gml:Box>
+			</gml:boundedBy>
+			<ms:msGeometry>
+				<gml:Point srsName="EPSG:31287">
+					<gml:coordinates>372523.000000,316503.000000</gml:coordinates>
+				</gml:Point>
+			</ms:msGeometry>
+			<ms:gid>15</ms:gid>
+			<ms:dbmsnr>2001001</ms:dbmsnr>
+			<ms:hzbnr>212324</ms:hzbnr>
+			<ms:gewasser>Drau</ms:gewasser>
+			<ms:hd>Kärnten</ms:hd>
+			<ms:messstelle>Oberdrauburg</ms:messstelle>
+			<ms:land/>
+			<ms:internet>
+				https://info.ktn.gv.at/asp/hydro/daten/QP_Oberdrauburg.gif
+			</ms:internet>
+			<ms:parameter>Q</ms:parameter>
+			<ms:herkunft>F</ms:herkunft>
+			<ms:wert>134</ms:wert>
+			<ms:zp>2020-06-23 16:00:00</ms:zp>
+			<ms:typ>0</ms:typ>
+			<ms:farbe>2</ms:farbe>
+			<ms:datum>2020-06-23 17:20:01</ms:datum>
+			<ms:symbol>3</ms:symbol>
+			<ms:gesamtcode>230</ms:gesamtcode>
+			<ms:old_geom/>
+			<ms:geol>12,973611</ms:geol>
+			<ms:geob>46,748056</ms:geob>
+			<ms:wertw_cm>164.0</ms:wertw_cm>
+			<ms:prognose>false</ms:prognose>
+		</ms:pegelaktuell>
+	</gml:featureMember>
+	<gml:featureMember>
+		<ms:pegelaktuell fid="pegelaktuell.16">
+			<gml:boundedBy>
+			</gml:boundedBy>
+			<ms:msGeometry>
+			</ms:msGeometry>
+			<ms:gid>16</ms:gid>
+			<ms:dbmsnr>2001003</ms:dbmsnr>
+			<ms:hzbnr>212357</ms:hzbnr>
+			<ms:gewasser>Drau</ms:gewasser>
+			<ms:hd>Kärnten</ms:hd>
+			<ms:messstelle>Sachsenburg</ms:messstelle>
+			<ms:land/>
+			<ms:internet>
+			</ms:internet>
+			<ms:parameter>Q</ms:parameter>
+			<ms:herkunft>F</ms:herkunft>
+			<ms:wert>138</ms:wert>
+			<ms:zp>2020-06-23 16:00:00</ms:zp>
+			<ms:typ>0</ms:typ>
+			<ms:farbe>2</ms:farbe>
+			<ms:datum>2020-06-23 17:20:01</ms:datum>
+			<ms:symbol>3</ms:symbol>
+			<ms:gesamtcode>230</ms:gesamtcode>
+			<ms:old_geom/>
+			<ms:geol>13,350000</ms:geol>
+			<ms:geob>46,827500</ms:geob>
+			<ms:wertw_cm>138.0</ms:wertw_cm>
+			<ms:prognose>false</ms:prognose>
+		</ms:pegelaktuell>
+	</gml:featureMember>
+</wfs:FeatureCollection>
+XML;
+/*
+		$resource->contents = <<<'XML'
 <hnd-daten>
 <messstelle>
 <nummer>10032009</nummer>
@@ -426,8 +515,11 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 </messstelle>
 </hnd-daten>
 XML;
+*/
 
 		$xml = new SimpleXMLElement($resource->contents);
+		$ns = $xml->getDocNamespaces();
+		$xml->registerXPathNamespace('def', array_values($ns)[0]);
 
 		$formats = $this->formats;
 
