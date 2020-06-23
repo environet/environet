@@ -3,7 +3,7 @@
 
 namespace Environet\Sys\Plugins;
 
-use Environet\Sys\Plugins\Transports\Resource;
+use Environet\Sys\Plugins\Resource;
 use SimpleXMLElement;
 
 /**

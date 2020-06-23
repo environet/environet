@@ -69,6 +69,35 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		// Parameter => observedPropertyUnit if unit is coded in XML
 	}
 
+	private function convertUnitToBaseUnit(float &$value, string $symbol, string $unit) {
+		// default units needed for Dareffort:
+		// water level h: cm
+		// river discharge Q: m3/s
+		// water temperature tw: °C
+		// precipitation P: mm
+		// air temperature ta: °C
+		$symbolParts = explode('_', $symbol);
+		if (sizeof($symbolParts) > 0) {
+			$symbol = $symbolParts[0];
+		}
+
+		$unit = strtolower($unit);
+
+		if ($symbol == 'h') {
+			if ($unit == "mm") $value /= 10;
+			else if ($unit == "m") $value *= 100;
+		} else if ($symbol == "Q") {
+			// no sensible other units than m³/s
+		} else if ($symbol == "tw") {
+			// no sensible other units than °C
+		} else if ($symbol == "P") {
+			if ($unit == "cm" || $unit == "cm/h") $value *= 10;
+			else if ($unit == "m" || $unit == "m/h") $value *= 1000;
+		} else if ($symbol == "ta") {
+			// no sensible other units than °C
+		}
+	}
+
 	private function getAndStripOneCommonElement(array &$formats) : string {
 		if (sizeof($formats) == 0) return "";
 		if (sizeof($formats) == 1 && sizeof($formats[0]["Tag Hierarchy"]) == 0) return "";
@@ -373,7 +402,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 	</messwert>
 </messstelle>
 <messstelle>
-<nummer>10032010</nummer>
+<nummer>10026301</nummer>
 	<messwert>
 		<datum>
 			<jahr>2020</jahr>
@@ -397,6 +426,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 </messstelle>
 </hnd-daten>
 XML;
+
 		$xml = new SimpleXMLElement($resource->contents);
 
 		$formats = $this->formats;
@@ -412,12 +442,12 @@ XML;
 		$this->assembleDates($flatList);
 
 		// Add missing information in file from API-Call (Monitoring Point or Observed Property symbol)
-		if (sizeof($flatList) > 0 && $meta) {
+		if (sizeof($flatList) > 0 && $resource->meta) {
 			$mp = $this->getParameter($flatList[0], "Type", "MonitoringPoint");
 			if (!$mp) {
 				$elem = [
 					"Type" => "MonitoringPoint",
-					"Value" => $meta["MonitoringPoint"],
+					"Value" => $resource->meta["MonitoringPoint"],
 					"Format" => null,
 					"Unit" => null,
 				];
@@ -427,7 +457,7 @@ XML;
 			if (!$obs) {
 				$elem = [
 					"Type" => "ObservedPropertySymbol",
-					"Value" => $meta["ObservedPropertySymbol"],
+					"Value" => $resource->meta["ObservedPropertySymbol"],
 					"Format" => null,
 					"Unit" => null,
 				];
