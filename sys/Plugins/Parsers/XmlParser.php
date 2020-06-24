@@ -152,9 +152,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 
 		// Finish condition 1: No common elements, but unresolved information
 		if ($xpathCommonElements == "") {
-			echo "Error condition 1: Missing information";
-			//throw new Exception("Unresolved information: " . $out);
-			return [];
+			throw new \Exception("Unresolved information: " . $out);
 		}
 
 		// get groups
@@ -237,6 +235,24 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		return $result;
 	}
 
+
+	/**
+	 * Get internal symbol for observed property from external symbol. Conversion between symbols is given by 
+	 * variable conversion information. 
+	 *
+	 * @param array $conversions conversion information read from json file by transport.
+	 * @param string $variableName name of variable definition for observed property. E.g. "OBS"
+	 * @param string $symbol external symbol for observed property
+	 *
+	 * @return string internal symbol for observed property
+	 */
+	private function getInternalObservedPropertySymbol(array $observedPropertyConversions, string $variableName, string $symbol) : string {
+		foreach ($observedPropertyConversions as $key => $value) {
+			if ($value[$variableName] && $value[$variableName] == $symbol) return $key;
+		}
+		return null;
+	}
+
 	private function delete(array &$list, string $parameterName, string $parameterValue)
 	{
 		$toDelete = [];
@@ -270,29 +286,6 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		$Day = $this->getParameter($entry, "Type", "Day");
 		$Hour = $this->getParameter($entry, "Type", "Hour");
 		$Minute = $this->getParameter($entry, "Type", "Minute");
-
-		/*
-		$DateTime = [
-			"Type" => "DateTime",
-			"Value" => "19.6.2020 12:34",
-			"Format" => "d.m.Y H:i",
-			"Unit" => null
-		];
-		
-		$Date = [
-			"Type" => "Date",
-			"Value" => "19.6.2020",
-			"Format" => "d.m.Y",
-			"Unit" => null
-		];
-
-		$Time = [
-			"Type" => "Time",
-			"Value" => "15:39",
-			"Format" => "H:i",
-			"Unit" => null
-		];
-		*/
 
 		$result = [
 			"Type" => "DateTime",
@@ -376,146 +369,8 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		
 		//echo $resource->contents;
 
-		$resource->contents = <<<'XML'
-<?xml version='1.0' encoding="UTF-8" ?>
-<wfs:FeatureCollection
-   xmlns:ms="http://mapserver.gis.umn.edu/mapserver"
-   xmlns:wfs="http://www.opengis.net/wfs"
-   xmlns:gml="http://www.opengis.net/gml"
-   xmlns:ogc="http://www.opengis.net/ogc"
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd 
-                       http://mapserver.gis.umn.edu/mapserver https://gis.lfrz.gv.at/wmsgw/?key=2993ead1af652c1e809263930333a2fb&amp;SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=DescribeFeatureType&amp;TYPENAME=pegelaktuell&amp;OUTPUTFORMAT=XMLSCHEMA">
-	<gml:boundedBy>
-		<gml:Box srsName="EPSG:31287">
-			<gml:coordinates>112844.000000,279413.000000 680586.000000,565345.000000</gml:coordinates>
-		</gml:Box>
-	</gml:boundedBy>
-	<gml:featureMember>
-		<ms:pegelaktuell fid="pegelaktuell.15">
-			<gml:boundedBy>
-				<gml:Box srsName="EPSG:31287">
-					<gml:coordinates>
-						372523.000000,316503.000000 372523.000000,316503.000000
-					</gml:coordinates>
-				</gml:Box>
-			</gml:boundedBy>
-			<ms:msGeometry>
-				<gml:Point srsName="EPSG:31287">
-					<gml:coordinates>372523.000000,316503.000000</gml:coordinates>
-				</gml:Point>
-			</ms:msGeometry>
-			<ms:gid>15</ms:gid>
-			<ms:dbmsnr>2001001</ms:dbmsnr>
-			<ms:hzbnr>212324</ms:hzbnr>
-			<ms:gewasser>Drau</ms:gewasser>
-			<ms:hd>Kärnten</ms:hd>
-			<ms:messstelle>Oberdrauburg</ms:messstelle>
-			<ms:land/>
-			<ms:internet>
-				https://info.ktn.gv.at/asp/hydro/daten/QP_Oberdrauburg.gif
-			</ms:internet>
-			<ms:parameter>Q</ms:parameter>
-			<ms:herkunft>F</ms:herkunft>
-			<ms:wert>134</ms:wert>
-			<ms:zp>2020-06-23 16:00:00</ms:zp>
-			<ms:typ>0</ms:typ>
-			<ms:farbe>2</ms:farbe>
-			<ms:datum>2020-06-23 17:20:01</ms:datum>
-			<ms:symbol>3</ms:symbol>
-			<ms:gesamtcode>230</ms:gesamtcode>
-			<ms:old_geom/>
-			<ms:geol>12,973611</ms:geol>
-			<ms:geob>46,748056</ms:geob>
-			<ms:wertw_cm>164.0</ms:wertw_cm>
-			<ms:prognose>false</ms:prognose>
-		</ms:pegelaktuell>
-	</gml:featureMember>
-	<gml:featureMember>
-		<ms:pegelaktuell fid="pegelaktuell.16">
-			<gml:boundedBy>
-			</gml:boundedBy>
-			<ms:msGeometry>
-			</ms:msGeometry>
-			<ms:gid>16</ms:gid>
-			<ms:dbmsnr>2001003</ms:dbmsnr>
-			<ms:hzbnr>212357</ms:hzbnr>
-			<ms:gewasser>Drau</ms:gewasser>
-			<ms:hd>Kärnten</ms:hd>
-			<ms:messstelle>Sachsenburg</ms:messstelle>
-			<ms:land/>
-			<ms:internet>
-			</ms:internet>
-			<ms:parameter>Q</ms:parameter>
-			<ms:herkunft>F</ms:herkunft>
-			<ms:wert>138</ms:wert>
-			<ms:zp>2020-06-23 16:00:00</ms:zp>
-			<ms:typ>0</ms:typ>
-			<ms:farbe>2</ms:farbe>
-			<ms:datum>2020-06-23 17:20:01</ms:datum>
-			<ms:symbol>3</ms:symbol>
-			<ms:gesamtcode>230</ms:gesamtcode>
-			<ms:old_geom/>
-			<ms:geol>13,350000</ms:geol>
-			<ms:geob>46,827500</ms:geob>
-			<ms:wertw_cm>138.0</ms:wertw_cm>
-			<ms:prognose>false</ms:prognose>
-		</ms:pegelaktuell>
-	</gml:featureMember>
-</wfs:FeatureCollection>
-XML;
-/*
-		$resource->contents = <<<'XML'
-<hnd-daten>
-<messstelle>
-<nummer>10032009</nummer>
-	<messwert>
-		<datum>
-			<jahr>2020</jahr>
-			<monat>06</monat>
-			<tag>17</tag>
-			<stunde>00</stunde>
-			<minute>00</minute>
-		</datum>
-		<wert>197</wert>
-	</messwert>
-	<messwert>
-		<datum>
-			<jahr>2020</jahr>
-			<monat>06</monat>
-			<tag>17</tag>
-			<stunde>23</stunde>
-			<minute>45</minute>
-		</datum>
-		<wert>234</wert>
-	</messwert>
-</messstelle>
-<messstelle>
-<nummer>10026301</nummer>
-	<messwert>
-		<datum>
-			<jahr>2020</jahr>
-			<monat>06</monat>
-			<tag>17</tag>
-			<stunde>00</stunde>
-			<minute>00</minute>
-		</datum>
-		<wert>19,7</wert>
-	</messwert>
-	<messwert>
-		<datum>
-			<jahr>2020</jahr>
-			<monat>06</monat>
-			<tag>17</tag>
-			<stunde>23</stunde>
-			<minute>45</minute>
-		</datum>
-		<wert>23,4</wert>
-	</messwert>
-</messstelle>
-</hnd-daten>
-XML;
-*/
+		//$resource->contents = $this->getExampleXMLBMLRT();
+		$resource->contents = $this->getExampleXMLLfU();
 
 		$xml = new SimpleXMLElement($resource->contents);
 		$ns = $xml->getDocNamespaces();
@@ -533,28 +388,46 @@ XML;
 
 		$this->assembleDates($flatList);
 
-		// Add missing information in file from API-Call (Monitoring Point or Observed Property symbol)
-		if (sizeof($flatList) > 0 && $resource->meta) {
-			$mp = $this->getParameter($flatList[0], "Type", "MonitoringPoint");
-			if (!$mp) {
-				$elem = [
-					"Type" => "MonitoringPoint",
-					"Value" => $resource->meta["MonitoringPoint"],
-					"Format" => null,
-					"Unit" => null,
-				];
-				$this->addToEach($flatList, $elem);
-			}
-			$obs = $this->getParameter($flatList[0], "Type", "ObservedPropertySymbol");
-			if (!$obs) {
-				$elem = [
-					"Type" => "ObservedPropertySymbol",
-					"Value" => $resource->meta["ObservedPropertySymbol"],
-					"Format" => null,
-					"Unit" => null,
-				];
-				foreach($flatList as &$entry) {
-					// First delete all occurrences of ObservedPropertyValue with wrong symbol
+		// replace external observed property symbols and add missing information from API-Call (Monitoring Point or Oberved Property Symbol)
+		if ($resource->meta) {
+			foreach ($flatList as &$entry) {
+				$mp = $this->getParameter($entry, "Type", "MonitoringPoint");
+				if (!$mp) {
+					$elem = [
+						"Type" => "MonitoringPoint",
+						"Value" => $resource->meta["MonitoringPoint"],
+						"Format" => null,
+						"Unit" => null,
+					];
+					array_push($entry, $elem);			
+				}
+
+				$obs = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
+				if ($obs) {
+					// convert external (in-file) symbol to internal symbol
+					$symbolNameInFile = $obs["Value"];
+					$variableName = $obs["Format"];
+					if (!$symbolNameInFile) {
+						throw new \Exception("Field 'Value' of entry 'ObservedPropertySymbol' is missing in format specification");
+					}
+					if (!$variableName) {
+						throw new \Exception("Field 'Format' of entry 'ObservedPropertySymbol' is missing in format specification");
+					}
+					$symbol = $this->getInternalObservedPropertySymbol($resource->meta["observedPropertyConversions"], $variableName, $symbolNameInFile);
+					if ($symbol) {
+						$this->delete($entry, "Type", "ObservedPropertySymbol");
+						$obs["Value"] = $symbol;
+						array_push($entry, $obs);
+					}
+				} else {
+					// Add observed property symbol from API-Call
+					$elem = [
+						"Type" => "ObservedPropertySymbol",
+						"Value" => $resource->meta["ObservedPropertySymbol"],
+						"Format" => null,
+						"Unit" => null,
+					];
+					// delete all occurrences of ObservedPropertyValue with wrong symbol
 					$toDelete = [];
 					foreach($entry as $key => $e) {
 						if ($e["Type"] == "ObservedPropertyValue" &&
@@ -565,9 +438,8 @@ XML;
 					foreach($toDelete as $key) {
 						\array_splice($entry, $key, 1);
 					}
-					//$this->delete($entry, "Format", $elem["Format"]);
-					// then add ObservedPropertySymbol
-					array_push($entry, $elem);
+					// add ObservedPropertySymbol
+					array_push($entry, $elem);			
 				}
 			}
 		}
@@ -713,4 +585,148 @@ XML;
 	}
 
 
+	private function getExampleXMLBMLRT(): string {
+		return <<<'XML'
+<?xml version='1.0' encoding="UTF-8" ?>
+<wfs:FeatureCollection
+   xmlns:ms="http://mapserver.gis.umn.edu/mapserver"
+   xmlns:wfs="http://www.opengis.net/wfs"
+   xmlns:gml="http://www.opengis.net/gml"
+   xmlns:ogc="http://www.opengis.net/ogc"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd 
+                       http://mapserver.gis.umn.edu/mapserver https://gis.lfrz.gv.at/wmsgw/?key=2993ead1af652c1e809263930333a2fb&amp;SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=DescribeFeatureType&amp;TYPENAME=pegelaktuell&amp;OUTPUTFORMAT=XMLSCHEMA">
+	<gml:boundedBy>
+		<gml:Box srsName="EPSG:31287">
+			<gml:coordinates>112844.000000,279413.000000 680586.000000,565345.000000</gml:coordinates>
+		</gml:Box>
+	</gml:boundedBy>
+	<gml:featureMember>
+		<ms:pegelaktuell fid="pegelaktuell.15">
+			<gml:boundedBy>
+				<gml:Box srsName="EPSG:31287">
+					<gml:coordinates>
+						372523.000000,316503.000000 372523.000000,316503.000000
+					</gml:coordinates>
+				</gml:Box>
+			</gml:boundedBy>
+			<ms:msGeometry>
+				<gml:Point srsName="EPSG:31287">
+					<gml:coordinates>372523.000000,316503.000000</gml:coordinates>
+				</gml:Point>
+			</ms:msGeometry>
+			<ms:gid>15</ms:gid>
+			<ms:dbmsnr>2001001</ms:dbmsnr>
+			<ms:hzbnr>212324</ms:hzbnr>
+			<ms:gewasser>Drau</ms:gewasser>
+			<ms:hd>Kärnten</ms:hd>
+			<ms:messstelle>Oberdrauburg</ms:messstelle>
+			<ms:land/>
+			<ms:internet>
+				https://info.ktn.gv.at/asp/hydro/daten/QP_Oberdrauburg.gif
+			</ms:internet>
+			<ms:parameter>Q</ms:parameter>
+			<ms:herkunft>F</ms:herkunft>
+			<ms:wert>134</ms:wert>
+			<ms:zp>2020-06-23 16:00:00</ms:zp>
+			<ms:typ>0</ms:typ>
+			<ms:farbe>2</ms:farbe>
+			<ms:datum>2020-06-23 17:20:01</ms:datum>
+			<ms:symbol>3</ms:symbol>
+			<ms:gesamtcode>230</ms:gesamtcode>
+			<ms:old_geom/>
+			<ms:geol>12,973611</ms:geol>
+			<ms:geob>46,748056</ms:geob>
+			<ms:wertw_cm>164.0</ms:wertw_cm>
+			<ms:prognose>false</ms:prognose>
+		</ms:pegelaktuell>
+	</gml:featureMember>
+	<gml:featureMember>
+		<ms:pegelaktuell fid="pegelaktuell.16">
+			<gml:boundedBy>
+			</gml:boundedBy>
+			<ms:msGeometry>
+			</ms:msGeometry>
+			<ms:gid>16</ms:gid>
+			<ms:dbmsnr>2001003</ms:dbmsnr>
+			<ms:hzbnr>212357</ms:hzbnr>
+			<ms:gewasser>Drau</ms:gewasser>
+			<ms:hd>Kärnten</ms:hd>
+			<ms:messstelle>Sachsenburg</ms:messstelle>
+			<ms:land/>
+			<ms:internet>
+			</ms:internet>
+			<ms:parameter>Q</ms:parameter>
+			<ms:herkunft>F</ms:herkunft>
+			<ms:wert>138</ms:wert>
+			<ms:zp>2020-06-23 16:00:00</ms:zp>
+			<ms:typ>0</ms:typ>
+			<ms:farbe>2</ms:farbe>
+			<ms:datum>2020-06-23 17:20:01</ms:datum>
+			<ms:symbol>3</ms:symbol>
+			<ms:gesamtcode>230</ms:gesamtcode>
+			<ms:old_geom/>
+			<ms:geol>13,350000</ms:geol>
+			<ms:geob>46,827500</ms:geob>
+			<ms:wertw_cm>138.0</ms:wertw_cm>
+			<ms:prognose>false</ms:prognose>
+		</ms:pegelaktuell>
+	</gml:featureMember>
+</wfs:FeatureCollection>
+XML;
+	}
+
+
+	private function getExampleXMLLfU(): string {
+		return <<<'XML'
+<hnd-daten>
+<messstelle>
+<nummer>10032009</nummer>
+	<messwert>
+		<datum>
+			<jahr>2020</jahr>
+			<monat>06</monat>
+			<tag>17</tag>
+			<stunde>00</stunde>
+			<minute>00</minute>
+		</datum>
+		<wert>197</wert>
+	</messwert>
+	<messwert>
+		<datum>
+			<jahr>2020</jahr>
+			<monat>06</monat>
+			<tag>17</tag>
+			<stunde>23</stunde>
+			<minute>45</minute>
+		</datum>
+		<wert>234</wert>
+	</messwert>
+</messstelle>
+<messstelle>
+<nummer>10026301</nummer>
+	<messwert>
+		<datum>
+			<jahr>2020</jahr>
+			<monat>06</monat>
+			<tag>17</tag>
+			<stunde>00</stunde>
+			<minute>00</minute>
+		</datum>
+		<wert>19,7</wert>
+	</messwert>
+	<messwert>
+		<datum>
+			<jahr>2020</jahr>
+			<monat>06</monat>
+			<tag>17</tag>
+			<stunde>23</stunde>
+			<minute>45</minute>
+		</datum>
+		<wert>23,4</wert>
+	</messwert>
+</messstelle>
+</hnd-daten>
+XML;
+	}
 }

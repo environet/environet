@@ -229,6 +229,7 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 				$resource->meta = [
 					"MonitoringPoint" => $monitoringPoint["NCD"], 
 					"ObservedPropertySymbol" => $observedProperty,
+					"observedPropertyConversions" => $this->observedPropertyConversions,
 				];
 				array_push($result, $resource);
 			}
