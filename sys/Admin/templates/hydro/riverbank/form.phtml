@@ -1,0 +1,16 @@
+<?php include __DIR__ . '../../../layouts/before_app.phtml'; ?>
+<div class="card">
+    <h1>Riverbank<?= $record && $record['id'] ? ' (id: ' . $record['id'] . ')': ''?></h1>
+    <form action="" method="POST">
+        <input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
+        <div class="form-group">
+            <label for="value">Value</label>
+            <input type="text" name="value" id="value" class="form-control"  value="<?=formFieldValue('value', $record);?>" />
+        </div>
+        <div class="field">
+            <input type="submit" class="btn btn-primary" value="Save"/>
+        </div>
+    </form>
+</div>
+
+<?php include __DIR__ . '../../../layouts/after_app.phtml'; ?>

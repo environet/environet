@@ -30,14 +30,14 @@ class PluginCreate extends BaseCommand {
 	 */
 	public function run($arguments): int {
 		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
-
+		$configurationsRealPath = empty(getenv('ENVIRONET_PLUGIN_CONF_DIR')) ? $configurationsPath : getenv('ENVIRONET_PLUGIN_CONF_DIR') . '/configurations';
 		$pluginBuilder = new PluginBuilder();
 		$pluginBuilder->createConfiguration($this->console);
 
 		$configuration = $pluginBuilder->serializeConfiguration();
 
 		while (true) {
-			$this->console->writeLine("Your configuration will be saved into '" . $configurationsPath . "'. Enter a filename you wish to save it as.");
+			$this->console->writeLine("Your configuration will be saved into '" . $configurationsRealPath . "'. Enter a filename you wish to save it as.");
 			$filename = $this->console->ask("Configuration name:");
 
 			if (file_exists($configurationsPath . $filename)) {
@@ -53,7 +53,7 @@ class PluginCreate extends BaseCommand {
 		}
 		file_put_contents($configurationsPath . $filename, $configuration);
 
-		$this->console->writeLine("The configuration has been saved to " . realpath($configurationsPath . $filename));
+		$this->console->writeLine("The configuration has been saved to " . $configurationsRealPath . '/' . $filename);
 
 		return 0;
 	}

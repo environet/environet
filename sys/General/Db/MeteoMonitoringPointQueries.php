@@ -184,6 +184,11 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 
 		];
 	}
-
-
+	
+	/**
+	 * @inheritDoc
+	 */
+	public static function getDeleteEventType(): string {
+		return EventLogger::EVENT_TYPE_METEO_MP_DELETE;
+	}
 }

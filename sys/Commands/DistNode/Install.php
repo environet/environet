@@ -29,10 +29,19 @@ class Install extends BaseCommand {
 	 * @return int
 	 */
 	public function run($arguments): int {
-		$configFilePath = SRC_PATH . '/conf/conf.local.ini';
+		
+		$configDir = SRC_PATH . '/conf';
+		
+		$this->console->writeLine(
+			'This is an Environet distribution node install script, which will generate a configuration file for this distribution node deployment',
+			Console::COLOR_GREEN
+		);
+		
+		$configFilePath = $configDir . '/conf.local.ini';
+		$configFileRealpath = getenv('ENVIRONET_HOST_CONF_DIR', $configDir) . '/conf.local.ini';
 
 		if (file_exists($configFilePath)) {
-			$continue = $this->console->askYesNo("Local configuration file already exists: $configFilePath. Do you want to overwrite it?", false);
+			$continue = $this->console->askYesNo("Local configuration file already exists: $configFileRealpath. Do you want to overwrite it?", false);
 			if (!$continue) {
 				$this->console->writeLine("Abort install, keep existing config file", Console::COLOR_YELLOW);
 
@@ -47,24 +56,29 @@ class Install extends BaseCommand {
 			],
 			'database'  => []
 		];
-
+		
 		// Ask for timezone, and check the validity of it
-		while (true) {
-			$configArray['environet']['timezone'] = $this->console->ask("Enter a valid timezone name:");
-			if (!in_array($configArray['environet']['timezone'], timezone_identifiers_list())) {
-				$this->console->writeLine("Timezone is invalid! Try again", Console::COLOR_RED);
-				continue;
+		if(!empty(getenv('ENVIRONET_TIMEZONE'))) {
+			$configArray['environet']['timezone'] = getenv('ENVIRONET_TIMEZONE');
+		} else {
+			while (true) {
+				$configArray['environet']['timezone'] = $this->console->askWithDefault("Enter a valid timezone name:", "UTC");
+				if (!in_array($configArray['environet']['timezone'], timezone_identifiers_list())) {
+					$this->console->writeLine("Timezone is invalid! Try again", Console::COLOR_RED);
+					continue;
+				}
+				break;
 			}
-			break;
 		}
+		
 
 		dbConfig:
-		// Ask database config options
-		$dbHost = $this->console->askWithDefault("Enter the database host:", "dist_database");
-		$dbPort = $this->console->askWithDefault("Enter the database port:", 5432);
-		$dbDatabase = $this->console->ask("Enter the database name:");
-		$dbUser = $this->console->ask("Enter the database username:");
-		$dbPass = $this->console->askHidden("Enter the database password:");
+		// Ask database config options if not set in env
+		$dbHost = getenv('ENVIRONET_DB_HOST') ?: $this->console->askWithDefault("Enter the database host:", "dist_database");
+		$dbPort = getenv('ENVIRONET_DB_PORT') ?: $this->console->askWithDefault("Enter the database port:", 5432);
+		$dbDatabase = getenv('ENVIRONET_DB_NAME') ?: $this->console->ask("Enter the database name:");
+		$dbUser = getenv('ENVIRONET_DB_USER') ?: $this->console->ask("Enter the database username:");
+		$dbPass = getenv('ENVIRONET_DB_PASSWORD') ?: $this->console->askHidden("Enter the database password:");
 
 		// Check DB connection
 		try {
@@ -93,7 +107,8 @@ class Install extends BaseCommand {
 		file_put_contents($configFilePath, $iniContent);
 
 		$this->console->writeLineBreak();
-		$this->console->writeLine("The configuration has been saved to " . $configFilePath, Console::COLOR_GREEN);
+		$this->console->writeLine("The distribution node configuration has been generated successfully", Console::COLOR_GREEN);
+		$this->console->writeLine("The configuration has been saved to " . $configFileRealpath, Console::COLOR_GREEN);
 
 		return 0;
 	}

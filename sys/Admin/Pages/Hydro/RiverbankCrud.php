@@ -3,7 +3,8 @@
 namespace Environet\Sys\Admin\Pages\Hydro;
 
 use Environet\Sys\Admin\Pages\CrudPage;
-use Environet\Sys\General\Db\HydroStationClassificationQueries;
+use Environet\Sys\General\Db\RiverbankQueries;
+
 
 /**
  * Class StationClassificationCrud
@@ -13,37 +14,37 @@ use Environet\Sys\General\Db\HydroStationClassificationQueries;
  * @package Environet\Sys\Admin\Pages\Hydro
  * @author  SRG Group <dev@srg.hu>
  */
-class StationClassificationCrud extends CrudPage {
+class RiverbankCrud extends CrudPage {
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $queriesClass = HydroStationClassificationQueries::class;
+	protected $queriesClass = RiverbankQueries::class;
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $indexTemplate = '/hydro/stationclassification/index.phtml';
+	protected $indexTemplate = '/hydro/riverbank/index.phtml';
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $formTemplate = '/hydro/stationclassification/form.phtml';
+	protected $formTemplate = '/hydro/riverbank/form.phtml';
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $showTemplate = '/hydro/stationclassification/show.phtml';
+	protected $showTemplate = '/hydro/riverbank/show.phtml';
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $listPagePath = '/admin/hydro/station-classifications';
+	protected $listPagePath = '/admin/hydro/riverbanks';
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $successAddMessage = 'Station classification successfully saved';
+	protected $successAddMessage = 'Riverbank successfully saved';
 
 
 	/**
@@ -53,7 +54,7 @@ class StationClassificationCrud extends CrudPage {
 		$valid = true;
 
 		if (!validate($data, 'value', REGEX_ALPHANUMERIC, true)) {
-			$this->addMessage('Station classification value is empty, or format is invalid', self::MESSAGE_ERROR);
+			$this->addMessage('Riverbank value is empty, or format is invalid', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 

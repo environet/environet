@@ -28,6 +28,8 @@ class Console {
 	 * @var false|resource PHP standard input
 	 */
 	private $stdin;
+	
+	private static $instance;
 
 
 	/**
@@ -35,9 +37,13 @@ class Console {
 	 * Create instance, and set standard input
 	 */
 	public function __construct() {
+		self::$instance = $this;
 		$this->stdin = fopen('php://stdin', 'r');
 	}
-
+	
+	public static function getInstance(): Console {
+		return self::$instance;
+	}
 
 	/**
 	 * Write to output without a line break
@@ -78,15 +84,14 @@ class Console {
 	 * Ask for an answer.
 	 *
 	 * @param string $string
-	 * @param int    $length
 	 *
 	 * @return mixed
 	 */
-	public function ask(string $string, $length = 100) {
+	public function ask(string $string) {
 		$this->writeLine($string);
 		$this->write("> ");
 
-		$value = trim(fread($this->stdin, $length));
+		$value = trim(fgets($this->stdin));
 		$this->writeLineBreak();
 
 		return $value;
@@ -102,12 +107,12 @@ class Console {
 	 *
 	 * @return mixed
 	 */
-	public function askWithDefault(string $string, $defaultValue, $length = 100) {
+	public function askWithDefault(string $string, $defaultValue) {
 		$string = "$string [default: $defaultValue]";
 		$this->writeLine($string);
 		$this->write("> ");
 
-		$value = trim(fread($this->stdin, $length));
+		$value = trim(fgets($this->stdin));
 		if ($value === '') {
 			//Return default if empty answer was given
 			$value = $defaultValue;
@@ -126,12 +131,12 @@ class Console {
 	 *
 	 * @return mixed
 	 */
-	public function askHidden(string $string, $length = 100) {
+	public function askHidden(string $string) {
 		$this->writeLine($string);
 		$this->write("> ");
 
 		system('stty -echo');
-		$value = trim(fread($this->stdin, $length));
+		$value = trim(fgets($this->stdin));
 		system('stty echo');
 
 		$this->writeLineBreak();
@@ -200,7 +205,7 @@ class Console {
 	 * @return bool
 	 */
 	public function askYesNo(string $string, bool $default = true): bool {
-		$answer = $this->ask($string . ' ' . ($default ? '(Y/n)' : '(y/N)'), 2); //2 bytes because of the new line character
+		$answer = $this->ask($string . ' ' . ($default ? '(Y/n)' : '(y/N)'));
 		if ($answer === '') {
 			return $default;
 		}

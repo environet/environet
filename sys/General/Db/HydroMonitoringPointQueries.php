@@ -196,6 +196,12 @@ class HydroMonitoringPointQueries extends BaseQueries {
 			true
 		);
 	}
-
+	
+	/**
+	 * @inheritDoc
+	 */
+	public static function getDeleteEventType(): string {
+		return EventLogger::EVENT_TYPE_HYDRO_MP_DELETE;
+	}
 
 }

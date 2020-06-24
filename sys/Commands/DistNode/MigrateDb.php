@@ -51,7 +51,8 @@ class MigrateDb extends DbCommand {
 		$migrations = [
 			'createCrudPermissions',
 			'createDataAclTables',
-			'createUploadPermissions'
+			'createUploadPermissions',
+			'createRiverbankPermissions'
 		];
 
 		//Run each migrations, and log results
@@ -140,6 +141,26 @@ class MigrateDb extends DbCommand {
 		$schemaPath = SRC_PATH . '/database/create_upload_permissions.sql';
 		return $this->runSqlFile($schemaPath, $output);
 	}
+	
+	/**
+	 * Create riverbank permissions
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function createRiverbankPermissions(array &$output): int {
 
+		$count = $this->connection->runQuery(
+			'SELECT COUNT(*) FROM public.permissions WHERE name = :riverbankPermission',
+			['riverbankPermission' => 'admin.hydro.riverbanks.read']
+		)->fetch(PDO::FETCH_COLUMN);
+		if ($count) {
+			return -1;
+		}
+		$schemaPath = SRC_PATH . '/database/create_riverbank_permissions.sql';
+		return $this->runSqlFile($schemaPath, $output);
+	}
 
 }

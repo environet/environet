@@ -55,6 +55,13 @@ class HydroObservedPropertyQueries extends BaseQueries {
 	public static function getInsertEventType(): string {
 		return EventLogger::EVENT_TYPE_HYDRO_OP_ADD;
 	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public static function getDeleteEventType(): string {
+		return EventLogger::EVENT_TYPE_HYDRO_OP_DELETE;
+	}
 
 
 }

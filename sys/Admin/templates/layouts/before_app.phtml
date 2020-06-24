@@ -75,6 +75,11 @@
                                 <?= includeTemplatePart('menuitem.phtml', ['title' => 'Station classifications', 'route' => '/admin/hydro/station-classifications', 'icon' => 'certificate', 'matchExtra' => 1]) ?>
                             </li>
 						<?php endif; ?>
+						<?php if($request->getIdentity()->hasPermissions(['admin.hydro.riverbanks.read'])): ?>
+                            <li>
+								<?= includeTemplatePart('menuitem.phtml', ['title' => 'Riverbanks', 'route' => '/admin/hydro/riverbanks', 'icon' => 'certificate', 'matchExtra' => 1]) ?>
+                            </li>
+						<?php endif; ?>
 	                    <?php if($request->getIdentity()->hasPermissions(['admin.hydro.results.read'])): ?>
                             <li>
                                 <?= includeTemplatePart('menuitem.phtml', ['title' => 'Results', 'route' => '/admin/hydro/results', 'icon' => 'chart-pie', 'matchExtra' => 1]) ?>

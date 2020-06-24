@@ -108,16 +108,17 @@ class UploadHandler extends ApiHandler {
 			throw new ApiException(208);
 		}
 	}
-
-
+	
+	
 	/**
 	 * Create input processor based on the mpoint type. Type is detected with finding it in the type's database table
 	 *
-	 * @param SimpleXMLElement $xml  Parsed XML
+	 * @param SimpleXMLElement $xml Parsed XML
 	 *
 	 * @return AbstractInputXmlProcessor
-	 * @see HydroInputXmlProcessor
+	 * @throws UploadException
 	 * @see MeteoInputXmlProcessor
+	 * @see HydroInputXmlProcessor
 	 */
 	protected function createInputProcessor(SimpleXMLElement $xml): AbstractInputXmlProcessor {
 		if (($hydroProcessor = new HydroInputXmlProcessor($xml))->isValidType()) {
@@ -126,6 +127,8 @@ class UploadHandler extends ApiHandler {
 		if (($meteoProcessor = new MeteoInputXmlProcessor($xml))->isValidType()) {
 			return $meteoProcessor;
 		}
+		
+		throw new UploadException(402);
 	}
 
 
