@@ -1,9 +1,5 @@
 <?php
 
-// TODOS:
-// - Get units from XML if available
-// - Get observed property symbol from XML if available
-
 namespace Environet\Sys\Plugins\Parsers;
 
 use DateTime;
@@ -64,9 +60,6 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
 		$formats = file_get_contents($configurationsPath . $this->formatsFilename);
 		$this->formats = JSON_decode($formats, true);
-
-		// Parameter => observedPropertySymbol if symbol is coded in XML
-		// Parameter => observedPropertyUnit if unit is coded in XML
 	}
 
 	private function convertUnitToBaseUnit(float &$value, string $symbol, string $unit) {
@@ -337,20 +330,25 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 
 	// remove thousands separator, change decimal separator, add entry for unit if not available
 	private function convertValue(array &$entry) {
-		$unit = $this->getParameter($entry, "Type", "ObservedPropertyUnit");
-		foreach($entry as &$v) {
-			if ($v["Type"] == "ObservedPropertyValue") {
-				if ($this->separatorThousands != "") $v["Value"] = str_replace($this->separatorThousands, "", $v["Value"]);
-				if ($this->separatorDecimals != "." && $this->separatorDecimals != "") $v["Value"] = str_replace($this->separatorDecimals, ".", $v["Value"]);
-				if (!$unit) {
+		$itemUnit = $this->getParameter($entry, "Type", "ObservedPropertyUnit");
+		$itemSymbol = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
+		foreach($entry as &$item) {
+			if ($item["Type"] == "ObservedPropertyValue") {
+				if ($this->separatorThousands != "") $item["Value"] = str_replace($this->separatorThousands, "", $item["Value"]);
+				if ($this->separatorDecimals != "." && $this->separatorDecimals != "") $item["Value"] = str_replace($this->separatorDecimals, ".", $item["Value"]);
+				if (!$itemUnit) {
 					$elem = [
 						"Type" => "ObservedPropertyUnit",
-						"Value" => $v["Unit"],
+						"Value" => $item["Unit"],
 						"Format" => null,
 						"Unit" => null,
 					];
 					array_push($entry, $elem);
+					$unit = $item["Unit"];
+				} else {
+					$unit = $itemUnit["Value"];
 				}
+				$this->convertUnitToBaseUnit($item["Value"], $itemSymbol["Value"], $unit);
 			}
 		}
 	}
@@ -369,8 +367,8 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		
 		//echo $resource->contents;
 
-		//$resource->contents = $this->getExampleXMLBMLRT();
-		$resource->contents = $this->getExampleXMLLfU();
+		$resource->contents = $this->getExampleXMLBMLRT();
+		//$resource->contents = $this->getExampleXMLLfU();
 
 		$xml = new SimpleXMLElement($resource->contents);
 		$ns = $xml->getDocNamespaces();
