@@ -365,6 +365,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 	 */
 	public function parse(Resource $resource): array {
 		
+		//var_dump($resource->meta);
 		//echo $resource->contents;
 
 		$resource->contents = $this->getExampleXMLBMLRT();
@@ -384,13 +385,12 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 
 		$flatList = $this->diveIntoHierarchy($xml, $formats, [], 0);
 
-		$this->assembleDates($flatList);
-
 		// replace external observed property symbols and add missing information from API-Call (Monitoring Point or Oberved Property Symbol)
 		if ($resource->meta) {
 			foreach ($flatList as &$entry) {
 				$mp = $this->getParameter($entry, "Type", "MonitoringPoint");
 				if (!$mp) {
+					// Add observed property symbol from API-Call
 					$elem = [
 						"Type" => "MonitoringPoint",
 						"Value" => $resource->meta["MonitoringPoint"],
@@ -426,23 +426,36 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 						"Unit" => null,
 					];
 					// delete all occurrences of ObservedPropertyValue with wrong symbol
-					$toDelete = [];
-					foreach($entry as $key => $e) {
+					foreach($entry as $key => &$e) {
 						if ($e["Type"] == "ObservedPropertyValue" &&
 						    $e["Format"] != $elem["Value"]) {
-							array_push($toDelete, $key);
+							unset($entry[$key]);
 						}
 					}
-					foreach($toDelete as $key) {
-						\array_splice($entry, $key, 1);
-					}
+					$entry = array_values($entry);
+
 					// add ObservedPropertySymbol
 					array_push($entry, $elem);			
 				}
 			}
 		}
 
+		// delete entries which do not fit to API-call (extra monitoring points, extra observed properties)
+		if ($resource->meta) {
+			foreach($flatList as $key => &$entry) {
+				$mp = $this->getParameter($entry, "Type", "MonitoringPoint");
+				$obs = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
+				if ($mp["Value"] != $resource->meta["MonitoringPoint"] || $obs["Value"] != $resource->meta["ObservedPropertySymbol"]) {
+					unset($flatList[$key]);
+				}
+			}
+			$flatList = array_values($flatList);
+		}
+
+		$this->assembleDates($flatList);
 		$this->convertValues($flatList);
+
+		//var_dump($flatList);
 
 		//ob_start();
 		//var_dump($flatList);
