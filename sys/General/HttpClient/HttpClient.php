@@ -48,7 +48,7 @@ class HttpClient {
 		$this->options = array_merge($this->options, $options);
 
 		// Init curl resource
-		$curl = $curl = curl_init();
+		$curl = curl_init();
 
 		if (false === $curl) {
 			throw new HttpClientException('Unable to create a new cURL handle');
@@ -123,8 +123,8 @@ class HttpClient {
 
 		// Callback which writes body to response object
 		curl_setopt($curl, CURLOPT_WRITEFUNCTION, function ($ch, $data) use ($response) {
-			$response->setBody($data);
-
+			$response->appendBody($data);
+			
 			return strlen($data);
 		});
 
