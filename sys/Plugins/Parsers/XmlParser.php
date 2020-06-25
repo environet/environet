@@ -267,7 +267,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		foreach ($observedPropertyConversions as $key => $value) {
 			if ($value[$variableName] && $value[$variableName] == $symbol) return $key;
 		}
-		return null;
+		return "";
 	}
 
 	private function delete(array &$list, string $parameterName, string $parameterValue)
@@ -353,34 +353,45 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 	}
 
 	// remove thousands separator, change decimal separator, add entry for unit if not available
-	private function convertValue(array &$entry) {
+	// returns false if value invalid ("")
+	private function convertValue(array &$entry) : bool {
 		$itemUnit = $this->getParameter($entry, "Type", "ObservedPropertyUnit");
 		$itemSymbol = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
+		$valid = false;
 		foreach($entry as &$item) {
 			if ($item["Type"] == "ObservedPropertyValue") {
-				if ($this->separatorThousands != "") $item["Value"] = str_replace($this->separatorThousands, "", $item["Value"]);
-				if ($this->separatorDecimals != "." && $this->separatorDecimals != "") $item["Value"] = str_replace($this->separatorDecimals, ".", $item["Value"]);
-				if (!$itemUnit) {
-					$elem = [
-						"Type" => "ObservedPropertyUnit",
-						"Value" => $item["Unit"],
-						"Format" => null,
-						"Unit" => null,
-					];
-					array_push($entry, $elem);
-					$unit = $item["Unit"];
-				} else {
-					$unit = $itemUnit["Value"];
+				if ($item["Value"] != "") {
+					$valid = true;
+					if ($this->separatorThousands != "") $item["Value"] = str_replace($this->separatorThousands, "", $item["Value"]);
+					if ($this->separatorDecimals != "." && $this->separatorDecimals != "") $item["Value"] = str_replace($this->separatorDecimals, ".", $item["Value"]);
+					if (!$itemUnit) {
+						$elem = [
+							"Type" => "ObservedPropertyUnit",
+							"Value" => $item["Unit"],
+							"Format" => null,
+							"Unit" => null,
+						];
+						array_push($entry, $elem);
+						$unit = $item["Unit"];
+					} else {
+						$unit = $itemUnit["Value"];
+					}
+					$this->convertUnitToBaseUnit($item["Value"], $itemSymbol["Value"], $unit);
 				}
-				$this->convertUnitToBaseUnit($item["Value"], $itemSymbol["Value"], $unit);
 			}
 		}
+		return $valid;
 	}
 
+	// changed decimal and thousands separators of measured values and converts units
+	// deletes entries if value is not valid
 	private function convertValues(array &$flatList) {
-		foreach($flatList as &$entry) {
-			$this->convertValue($entry);
+		foreach($flatList as $key => &$entry) {
+			if (!$this->convertValue($entry)) {
+				unset($flatList[$key]);
+			}
 		}
+		$flatList = array_values($flatList);
 	}
 
 	/**
@@ -391,10 +402,11 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		
 		//var_dump($resource->meta);
 		//echo $resource->contents;
+		echo "Received " . strlen($resource->contents) . " characters.\r\n";
 
 		//$resource->contents = $this->getExampleXMLBMLRT();
 		//$resource->contents = $this->getExampleXMLLfU();
-		$resource->contents = $this->getExampleXMLARSO();
+		//$resource->contents = $this->getExampleXMLARSO();
 
 		$xml = new SimpleXMLElement($resource->contents);
 		$ns = $xml->getDocNamespaces();
@@ -410,7 +422,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 
 		$flatList = $this->diveIntoHierarchy($xml, $formats, [], 0);
 
-		// replace external observed property symbols and add missing information from API-Call (Monitoring Point or Oberved Property Symbol)
+		// replace external observed property symbols and add missing information from API-Call (Monitoring Point or Observed Property Symbol)
 		if ($resource->meta) {
 			foreach ($flatList as &$entry) {
 				$mp = $this->getParameter($entry, "Type", "MonitoringPoint");
@@ -430,17 +442,15 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 					// convert external (in-file) symbol to internal symbol
 					$symbolNameInFile = $obs["Value"];
 					$variableName = $obs["Format"];
-					if (!$symbolNameInFile) {
-						throw new \Exception("Field 'Value' of entry 'ObservedPropertySymbol' is missing in format specification");
-					}
-					if (!$variableName) {
-						throw new \Exception("Field 'Format' of entry 'ObservedPropertySymbol' is missing in format specification");
-					}
-					$symbol = $this->getInternalObservedPropertySymbol($resource->meta["observedPropertyConversions"], $variableName, $symbolNameInFile);
-					if ($symbol) {
-						$this->delete($entry, "Type", "ObservedPropertySymbol");
-						$obs["Value"] = $symbol;
-						array_push($entry, $obs);
+					if ($symbolNameInFile && $variableName) {
+						//var_dump($symbolNameInFile);
+						//var_dump($variableName);
+						$symbol = $this->getInternalObservedPropertySymbol($resource->meta["observedPropertyConversions"], $variableName, $symbolNameInFile);
+						if ($symbol) {
+							$this->delete($entry, "Type", "ObservedPropertySymbol");
+							$obs["Value"] = $symbol;
+							array_push($entry, $obs);
+						}
 					}
 				} else {
 					// Add observed property symbol from API-Call
@@ -476,6 +486,8 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 			}
 			$flatList = array_values($flatList);
 		}
+
+		//var_dump($flatList);
 
 		$this->assembleDates($flatList);
 		$this->convertValues($flatList);
