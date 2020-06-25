@@ -7,6 +7,7 @@ use Environet\Sys\General\HttpClient\Exceptions\HttpClientException;
 use Environet\Sys\General\HttpClient\HttpClient;
 use Environet\Sys\General\HttpClient\Request;
 use Environet\Sys\Plugins\BuilderLayerInterface;
+use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Plugins\TransportInterface;
 
 /**
