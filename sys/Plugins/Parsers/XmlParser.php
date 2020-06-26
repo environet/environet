@@ -62,13 +62,20 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		$this->formats = JSON_decode($formats, true);
 	}
 
+	/**
+	 * Convert a given unit to base unit for observed property.
+	 * Default units are:
+	 * water level h: cm
+	 * river discharge Q: m3/s
+	 * water temperature tw: °C
+	 * precipitation P: mm
+	 * air temperature ta: °C
+	 *
+	 * @param float $value measured value to convert
+	 * @param string $symbol internal symbol for observed property
+	 * @param string $unit unit in which $value is given
+	 */
 	private function convertUnitToBaseUnit(float &$value, string $symbol, string $unit) {
-		// default units needed for Dareffort:
-		// water level h: cm
-		// river discharge Q: m3/s
-		// water temperature tw: °C
-		// precipitation P: mm
-		// air temperature ta: °C
 		$symbolParts = explode('_', $symbol);
 		if (sizeof($symbolParts) > 0) {
 			$symbol = $symbolParts[0];
@@ -91,6 +98,12 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		}
 	}
 
+	/**
+	 * Returns one common element from xml tag hierarchy and strips it from format information which describes xml format.
+	 *
+	 * @param array $formats format information, including tag hierarchies for different parameters, which should be read from xml
+	 * @return string The first common element of tag hierarchy, if any. If there is none, "" is returned.
+	 */
 	private function getAndStripOneCommonElement(array &$formats) : string {
 		if (sizeof($formats) == 0) return "";
 		if (sizeof($formats) == 1 && sizeof($formats[0]["Tag Hierarchy"]) == 0) return "";
@@ -110,10 +123,20 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		return $result;
 	}
 
-	private function diveIntoHierarchy(SimpleXMLElement $xml, array $formats, array $resolved, int $hierarchyCounter) : array {
+	/**
+	 * Recursive function to parse a xml tree to acquire values for given parameters from xml tree
+	 * 
+	 * @param SimpleXMLElement $xml xml element to parse
+	 * @param array $formats format of information to be gathered from xml, including tag hierarchies for different parameters
+	 * @param array $resolved table of information found. 1st index is the entry if there are multiple, 2nd index is information, call with "[]"
+	 * @param int $hierarchyCounter level of hierarchy, call with "0"
+	 *
+	 * @return array list of information gathered from xml
+	 */
+	private function parseIntoHierarchy(SimpleXMLElement $xml, array $formats, array $resolved, int $hierarchyCounter) : array {
 		/*
 		echo "-----------------------------------------\r\n";
-		echo "diveIntoHierary called.\r\n";
+		echo "parseIntoHierary called.\r\n";
 		ob_start();
 		var_dump($xml);
 		echo "xml: " . ob_get_clean() . "\r\n";
@@ -229,7 +252,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 			if (sizeof($formatsNew) > 1) {
 				// do recursion 
 				//echo "do recursion\r\n";
-				$flatList = array_merge($flatList, $this->diveIntoHierarchy($group, $formatsNew, $groupResolved, $hierarchyCounter+1));
+				$flatList = array_merge($flatList, $this->parseIntoHierarchy($group, $formatsNew, $groupResolved, $hierarchyCounter+1));
 			} else {
 				// Finish condition 3: Success
 				// all information available. Return flat list entry from resolved
@@ -239,17 +262,6 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		}	// group
 
 		return $flatList;
-	}
-
-	private function getParameter(array $list, string $parameterName, string $parameterValue) : array {
-		$result = [];
-		foreach($list as $elem) {
-			if (array_key_exists($parameterName, $elem) && $elem[$parameterName] == $parameterValue) {
-				$result = $elem;
-				break;
-			}
-		}
-		return $result;
 	}
 
 
@@ -270,23 +282,57 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		return "";
 	}
 
-	private function delete(array &$list, string $parameterName, string $parameterValue)
-	{
-		$toDelete = [];
-		foreach($list as $key => $elem) {
-			if (array_key_exists($parameterName, $elem) && $elem[$parameterName] == $parameterValue) {
-				array_push($toDelete, $key);
+
+	/**
+	 * Get item from list, for which parameter name has a certain value. List item is an associative array in which parameter names are keys.
+	 *
+	 * @param array $list list of items.
+	 * @param string $parameterName name of parameter
+	 * @param string $parameterValue value of parameter
+	 *
+	 * @return array items found, "[]" if none found.
+	 */
+	private function getParameter(array $list, string $parameterName, string $parameterValue) : array {
+		$result = [];
+		foreach($list as $item) {
+			if (array_key_exists($parameterName, $item) && $item[$parameterName] == $parameterValue) {
+				$result = $item;
+				break;
 			}
 		}
-		foreach($toDelete as $key) {
-			\array_splice($list, $key, 1);
-		}
+		return $result;
 	}
 
-	private function exists(array $list, string $parameter, string $value) : bool {
+
+	/**
+	 * Deletes item from list for specified parameter and value. List item is an associative array in which parameter names are keys.
+	 *
+	 * @param array $list list to delete items from
+	 * @param string $parameterName name of parameter
+	 * @param string $parameterValue value for parameter
+	 */
+	private function delete(array &$list, string $parameterName, string $parameterValue)
+	{
+		foreach($list as $key => &$item) {
+			if (array_key_exists($parameterName, $item) && $item[$parameterName] == $parameterValue) {
+				unset($list[$key]);
+			}
+		}
+		$list = array_values($list);
+	}
+
+	/**
+	 * Check whether a given value for a parameter exists in list. List item is an associative array in which parameter names are keys.
+	 *
+	 * @param array $list list to check
+	 * @param string $parameterName name of parameter
+	 *
+	 * @return bool true, if item is existing in list
+	 */
+	private function exists(array $list, string $parameterName, string $parameterValue) : bool {
 		$exists = false;
-		foreach($list as $element) {
-			if ($element[$parameter] == $value) {
+		foreach($list as $item) {
+			if (array_key_exists($parameterName, $item) && $item[$parameterName] == $parameterValue) {
 				$exists = true;
 				break;
 			}
@@ -294,6 +340,12 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		return $exists;
 	}
 
+	/**
+	 * Assembles date from componentes like day, month, year, hour and minute
+	 *
+	 * @param array $entry list of parsed properties, in which separate items for day, month, etc... may occur. Separate items are joined to a 
+	 *                     "DateTime" item and deleted from $entry. "DateTime" has time format as given by API_TIME_FORMAT_STRING
+	 */
 	private function assembleDate(array &$entry) {
 		$DateTime = $this->getParameter($entry, "Type", "DateTime");
 		$Date = $this->getParameter($entry, "Type", "Date");
@@ -346,14 +398,29 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		array_push($entry, $result);
 	}
 
+
+	/**
+	 * Assemble dates in whole list of entries. 
+	 *
+	 * @param array $flatList list of parsed information. Entries are themselve lists of parsed parameters.
+	 * @see assembleDate
+	 */
 	private function assembleDates(array &$flatList) {
 		foreach($flatList as &$entry) {
 			$this->assembleDate($entry);
 		}
 	}
 
-	// remove thousands separator, change decimal separator, add entry for unit if not available
-	// returns false if value invalid ("")
+
+	/**
+	 * Convert value parameters in entry: Remove thousands separator, change decimal separator to ".", 
+	 * add entry for unit if not available and convert values to
+	 * base units.
+	 *
+	 * @param array $entry entry with parsed information
+	 *
+	 * @return bool returns true, if value is valid. Value may be empty string if not available. In this case value is invalid.
+	 */
 	private function convertValue(array &$entry) : bool {
 		$itemUnit = $this->getParameter($entry, "Type", "ObservedPropertyUnit");
 		$itemSymbol = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
@@ -383,8 +450,13 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		return $valid;
 	}
 
-	// changed decimal and thousands separators of measured values and converts units
-	// deletes entries if value is not valid
+
+	/**
+	 * Convert value parameters for whole list and deletes entries if value is not valid.
+	 *
+	 * @param array $flatList list of parsed information
+	 * @see convertValue
+	 */
 	private function convertValues(array &$flatList) {
 		foreach($flatList as $key => &$entry) {
 			if (!$this->convertValue($entry)) {
@@ -420,7 +492,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 			throw new \Exception("XML definition does not have a top-level element");
 		}
 
-		$flatList = $this->diveIntoHierarchy($xml, $formats, [], 0);
+		$flatList = $this->parseIntoHierarchy($xml, $formats, [], 0);
 
 		// replace external observed property symbols and add missing information from API-Call (Monitoring Point or Observed Property Symbol)
 		if ($resource->meta) {
@@ -633,6 +705,11 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 	}
 
 
+	/**
+	 * Return an example xml file for data provider "BMLRT" (Austrian hydrological service)
+	 *
+	 * @return string example xml
+	 */
 	private function getExampleXMLBMLRT(): string {
 		return <<<'XML'
 <?xml version='1.0' encoding="UTF-8" ?>
@@ -725,6 +802,11 @@ XML;
 	}
 
 
+	/**
+	 * Return an example xml file for data provider "LfU" (German hydrological service)
+	 *
+	 * @return string example xml
+	 */
 	private function getExampleXMLLfU(): string {
 		return <<<'XML'
 <hnd-daten>
@@ -778,6 +860,12 @@ XML;
 XML;
 	}
 
+
+	/**
+	 * Return an example xml file for data provider "ARSO" (Slowenian hydrological and meteorological service)
+	 *
+	 * @return string example xml
+	 */
 	private function getExampleXMLARSO(): string {
 		return <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
