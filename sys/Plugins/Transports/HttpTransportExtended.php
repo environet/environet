@@ -164,6 +164,10 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 
 		// Query distribution node to get list of monitoring points and observed properties
 		$sMonitoringPoints = $this->apiClient->requestMonitoringPoints();
+
+		//ini_set('xdebug.var_display_max_depth', '10');
+		//ini_set('xdebug.var_display_max_children', '256');
+		//ini_set('xdebug.var_display_max_data', '1024');
 		//var_dump($sMonitoringPoints);
 
 		$allObservedProperties = [];
