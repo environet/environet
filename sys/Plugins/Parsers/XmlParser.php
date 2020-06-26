@@ -496,13 +496,14 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 
 		// replace external observed property symbols and add missing information from API-Call (Monitoring Point or Observed Property Symbol)
 		if ($resource->meta) {
-			foreach ($flatList as &$entry) {
+			$newEntries = [];
+			foreach ($flatList as $key => &$entry) {
 				$mp = $this->getParameter($entry, "Type", "MonitoringPoint");
 				if (!$mp) {
-					// Add observed property symbol from API-Call
+					// Add monitoring point national code from API-Call
 					$elem = [
 						"Type" => "MonitoringPoint",
-						"Value" => $resource->meta["MonitoringPoint"],
+						"Value" => $resource->meta["MonitoringPointNCDs"][0],
 						"Format" => null,
 						"Unit" => null,
 					];
@@ -525,26 +526,58 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 						}
 					}
 				} else {
-					// Add observed property symbol from API-Call
-					$elem = [
-						"Type" => "ObservedPropertySymbol",
-						"Value" => $resource->meta["ObservedPropertySymbol"],
-						"Format" => null,
-						"Unit" => null,
-					];
-					// delete all occurrences of ObservedPropertyValue with wrong symbol
-					foreach($entry as $key => &$e) {
-						if ($e["Type"] == "ObservedPropertyValue" &&
-						    $e["Format"] != $elem["Value"]) {
-							unset($entry[$key]);
+					if (sizeof($resource->meta["ObservedPropertySymbols"]) == 1) {
+						// Only one observed property by call: Add observed property symbol from API-Call
+						$elem = [
+							"Type" => "ObservedPropertySymbol",
+							"Value" => $resource->meta["ObservedPropertySymbols"][0],
+							"Format" => null,
+							"Unit" => null,
+						];
+						// delete all occurrences of ObservedPropertyValue with wrong symbol
+						foreach($entry as $ekey => &$e) {
+							if ($e["Type"] == "ObservedPropertyValue" && $e["Format"] != $elem["Value"]) {
+								unset($entry[$ekey]);
+							}
 						}
+						$entry = array_values($entry);
+						array_push($entry, $elem);
+					} else {
+						// add observed property symbol from ObservedPropertyValue
+						$count = 0;
+						foreach($entry as &$e) {
+							if ($e["Type"] == "ObservedPropertyValue") {
+								// copy entry to new entries, because multiple occurrences of "ObservedPropertyValue" may be
+								// present in $entry for different observed properties
+								$newEntry = $entry;
+								$prop = $e["Format"];
+								$elem = [
+									"Type" => "ObservedPropertySymbol",
+									"Value" => $prop,
+									"Format" => null,
+									"Unit" => null,
+								];
+								array_push($newEntry, $elem);
+								// delete all occurrences of ObservedPropertyValue with wrong symbol
+								foreach($newEntry as $newenkey => &$newenval) {
+									if ($newenval["Type"] == "ObservedPropertyValue" && $newenval["Format"] != $prop) {
+										unset($newEntry[$newenkey]);
+									}
+								}
+								$newEntry = array_values($newEntry);
+								array_push($newEntries, $newEntry);
+								++$count;
+							}
+						}
+						if ($count == 0) {
+							throw new \Exception("No value for any observed property in entry.");
+						}
+						unset($flatList[$key]);
 					}
-					$entry = array_values($entry);
-
-					// add ObservedPropertySymbol
-					array_push($entry, $elem);			
 				}
 			}
+			$flatList = array_values($flatList);
+			$flatList = array_merge($flatList, $newEntries);
 		}
 
 		// delete entries which do not fit to API-call (extra monitoring points, extra observed properties)
@@ -552,7 +585,8 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 			foreach($flatList as $key => &$entry) {
 				$mp = $this->getParameter($entry, "Type", "MonitoringPoint");
 				$obs = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
-				if ($mp["Value"] != $resource->meta["MonitoringPoint"] || $obs["Value"] != $resource->meta["ObservedPropertySymbol"]) {
+				//echo "mp: " .$mp["Value"] . ", obs: ". $obs["Value"] ."\r\n";
+				if (!in_array($mp["Value"], $resource->meta["MonitoringPointNCDs"]) || !in_array($obs["Value"], $resource->meta["ObservedPropertySymbols"])) {
 					unset($flatList[$key]);
 				}
 			}
@@ -601,9 +635,9 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 
 		}	
 
-//ini_set('xdebug.var_display_max_depth', '10');
-//ini_set('xdebug.var_display_max_children', '256');
-//ini_set('xdebug.var_display_max_data', '1024');
+		//ini_set('xdebug.var_display_max_depth', '10');
+		//ini_set('xdebug.var_display_max_children', '256');
+		//ini_set('xdebug.var_display_max_data', '1024');
 
 		//ob_start();
 		//var_dump($resultArray);

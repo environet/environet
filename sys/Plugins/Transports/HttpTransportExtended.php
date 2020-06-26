@@ -166,16 +166,43 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		$sMonitoringPoints = $this->apiClient->requestMonitoringPoints();
 		//var_dump($sMonitoringPoints);
 
+		$allObservedProperties = [];
+		$allNCDs = [];
 		$monitoringPoints = [];
 		foreach ($sMonitoringPoints['hydro'] as $item) {
 			$item["NCD"] = $item["ncd_wgst"];
 			$item["EUCD"] = $item["eucd_wgst"];
 			array_push($monitoringPoints, $item);
+			array_push($allNCDs, $item["NCD"]);
+			$allObservedProperties = array_merge($item["observed_properties"]);
 		}
 		foreach ($sMonitoringPoints['meteo'] as $item) {
 			$item["NCD"] = $item["ncd_pst"];
 			$item["EUCD"] = $item["eucd_pst"];
 			array_push($monitoringPoints, $item);
+			array_push($allNCDs, $item["NCD"]);
+			$allObservedProperties = array_merge($item["observed_properties"]);
+		}
+		$allObservedProperties = array_unique($allObservedProperties);
+
+		// check if a monitoring point conversion variable is in URL pattern
+		$allMonitoringPointsInOneFile = true;
+		foreach ($this->monitoringPointConversions as $key => $value) {
+			if (strpos($this->url, "[".$key."]") !== false) {
+				$allMonitoringPointsInOneFile = false;
+				break;
+			}
+		}
+
+		// check if a observed property conversion variable is in URL pattern
+		$allObservedPropertyInOneFile = true;
+		foreach ($this->observedPropertyConversions as $property) {
+			foreach ($property as $key => $value) {
+				if (strpos($this->url, "[".$key."]") !== false) {
+					$allObservedPropertyInOneFile = false;
+					break;
+				}
+			}
 		}
 
 		$result = [];
@@ -199,7 +226,7 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 				echo "GET " . $url . PHP_EOL;
 
 				$resource = new Resource();
-				$resource->name = $this->url;
+				$resource->name = $url;
 
 				if (count($parts) > 1) {
 					// contains pipe symbol, decode zip
@@ -227,11 +254,17 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 					$resource->contents = (new HttpClient())->sendRequest(new Request($url))->getBody();
 				}
 				$resource->meta = [
-					"MonitoringPoint" => $monitoringPoint["NCD"], 
-					"ObservedPropertySymbol" => $observedProperty,
+					"MonitoringPointNCDs" => $allMonitoringPointsInOneFile ? $allNCDs : [ $monitoringPoint["NCD"] ], 
+					"ObservedPropertySymbols" => $allObservedPropertyInOneFile ? $allObservedProperties : [ $observedProperty ],
 					"observedPropertyConversions" => $this->observedPropertyConversions,
 				];
 				array_push($result, $resource);
+				if ($allObservedPropertyInOneFile) {
+					break;
+				}
+			}
+			if ($allMonitoringPointsInOneFile) {
+				break;
 			}
 		}
 
