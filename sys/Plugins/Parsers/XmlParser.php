@@ -233,6 +233,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 					$item["Type"] = $format["Parameter"];
 					if ($format["Attribute"] == "") {
 						$item["Value"] = $subXml[0]->__toString();
+						if ($item["Value"] === "") $item["Value"] = "0";
 					} else {
 						//$item["Value"] = $subXml[0]->attributes()[$format["Attribute"]];
 						$item["Value"] = $subXml[0][$format["Attribute"]]->__toString();
