@@ -379,7 +379,9 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		{
 			$date = DateTime::createFromFormat($Date["Format"].' '.$Time["Format"], $Date["Value"].' '.$Time["Value"]);
 			if (!$date) {
-				throw new \Exception("Invalid date or time format");
+				echo("Warning: Invalid date or time format: " . $Date["Format"] . " - " . $Date["Value"] 
+					. " -- " . $Time["Format"] . " - " . $Time["Value"] . ". Replaced with 1970-01-01\r\n");
+				$date = new DateTime('1970-01-01T00:00:00Z');
 			}
 			$result["Value"] = $date->format(self::API_TIME_FORMAT_STRING);
 			$this->delete($entry, "Type", "Date");
@@ -389,7 +391,8 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		{
 			$date = DateTime::createFromFormat($DateTime["Format"], $DateTime["Value"]);
 			if (!$date) {
-				throw new \Exception("Invalid datetime format");
+				echo("Warning: Invalid datetime format: " . $DateTime["Format"] . " --- " . $DateTime["Value"] . ". Replaced with 1970-01-01\r\n");
+				$date = new DateTime('1970-01-01T00:00:00Z');
 			}
 			$result["Value"] = $date->format(self::API_TIME_FORMAT_STRING);
 			$this->delete($entry, "Type", "DateTime");
