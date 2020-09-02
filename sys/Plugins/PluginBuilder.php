@@ -5,6 +5,7 @@ namespace Environet\Sys\Plugins;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\Parsers\CsvParser;
 use Environet\Sys\Plugins\Parsers\JsonParser;
+use Environet\Sys\Plugins\Parsers\XmlParser;
 use Environet\Sys\Plugins\Transports\HttpTransport;
 use Environet\Sys\Plugins\Transports\HttpTransportExtended;
 use Environet\Sys\Plugins\Transports\LocalDirectoryTransport;
@@ -40,7 +41,7 @@ class PluginBuilder {
 			),
 			new PluginLayer(
 				'parser',
-				[JsonParser::class, CsvParser::class],
+				[JsonParser::class, CsvParser::class, XmlParser::class],
 				'Choose a parser layer implementation. It will be used to transform the data acquired through the transport into an API compatible XML format.'
 			),
 			new PluginLayer(
@@ -85,7 +86,7 @@ class PluginBuilder {
 		$this->plugin = new Plugin();
 
 		foreach ($this->layers as $layer) {
-			$this->plugin->{$layer->getName()} = new $config[$layer->getName()]['className']($config[$layer->getName()]);
+			$this->plugin->{$layer->getName()} = new $config[$layer->getName()]['className']($config[$layer->getName()], $config);
 		}
 
 		return $this->plugin;

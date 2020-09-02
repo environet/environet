@@ -84,7 +84,23 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::meteringPointInputXmlsFromArray()
 	 */
 	public function parse(Resource $resource): array {
-		$dataArray = $this->mPointDataArrayFromCSV($resource->contents);
+		$properties = $this->properties;
+		if ($resource->meta) {
+			// Delete observed properties which are not requested.
+			// This is necessary because in some csv files only the requested observed property is contained,
+			// but for each observed property in the same column. (e.g. DWD)
+			// So without deleting the non-requested observed properties here, in such a case
+			// the file would be misinterpreted: Every configured observed property would have the value of 
+			// the requested observed property.
+			foreach ($properties as $key => &$entry) {
+				$symbol = $entry["symbol"];
+				if (!in_array($symbol, $resource->meta["ObservedPropertySymbols"])) {
+					unset($properties[$key]);
+				}
+			}
+			$properties = array_values($properties);
+		}
+		$dataArray = $this->mPointDataArrayFromCSV($resource->contents, $properties);
 		return $this->meteringPointInputXmlsFromArray($dataArray);
 	}
 
@@ -98,7 +114,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	 * @return array
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::parseResultLine()
 	 */
-	private function mPointDataArrayFromCSV(string $csv): array {
+	private function mPointDataArrayFromCSV(string $csv, array $properties): array {
 		$resultArray = [];
 
 		$lines = explode("\n", $csv);
@@ -109,7 +125,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 			if ($lineCount <= $this->nHeaderSkip) {
 				continue;
 			}
-			$resultLine = $this->parseResultLine($line);
+			$resultLine = $this->parseResultLine($line, $properties);
 			if (empty($resultLine)) {
 				continue;
 			}
@@ -119,13 +135,13 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 			}
 
 			// Initialize time series for properties with an empty array
-			foreach ($this->properties as $property) {
+			foreach ($properties as $property) {
 				if (!array_key_exists($property['symbol'], $resultArray[$resultLine['mPointId']])) {
 					$resultArray[$resultLine['mPointId']][$property['symbol']] = [];
 				}
 			}
 
-			foreach ($this->properties as $property) {
+			foreach ($properties as $property) {
 				if(empty($resultLine[$property['symbol']]))
 					continue;
 				
@@ -189,7 +205,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	 *
 	 * @return array
 	 */
-	private function parseResultLine($line): array {
+	private function parseResultLine($line, $properties): array {
 		$values = array_map('trim', explode($this->csvDelimiter, $line));
 		if (!array_key_exists($this->timeCol, $values)) {
 			return [];
@@ -200,7 +216,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 			'time'     => DateTime::createFromFormat($this->timeFormat, $values[$this->timeCol])->format(self::API_TIME_FORMAT_STRING),
 		];
 
-		foreach ($this->properties as $property) {
+		foreach ($properties as $property) {
 			$data[$property['symbol']] = $values[$property['column']];
 		}
 
