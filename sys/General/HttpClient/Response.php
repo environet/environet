@@ -122,6 +122,20 @@ class Response {
 
 		return $this;
 	}
+	
+	
+	/**
+	 * Append to raw body string
+	 *
+	 * @param string $body
+	 *
+	 * @return Response
+	 */
+	public function appendBody(string $data): string {
+		$this->body .= $data;
+		
+		return $this->body;
+	}
 
 
 	/**

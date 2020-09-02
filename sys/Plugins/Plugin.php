@@ -43,7 +43,7 @@ class Plugin {
 
 		foreach ($resources as $resource) {
 			$console->writeLine("Uploading $resource->name", Console::COLOR_YELLOW);
-			$xmls = $this->parser->parse($resource->contents);
+			$xmls = $this->parser->parse($resource);
 			$console->writeLine('');
 			foreach ($xmls as $xmlPayload) {
 				$console->write('Uploading monitoring point data', Console::COLOR_YELLOW);

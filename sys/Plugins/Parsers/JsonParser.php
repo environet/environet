@@ -5,6 +5,7 @@ namespace Environet\Sys\Plugins\Parsers;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\ParserInterface;
+use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Xml\CreateInputXml;
 use Environet\Sys\Xml\Exceptions\CreateInputXmlException;
 use Environet\Sys\Xml\Model\InputXmlData;
@@ -38,9 +39,9 @@ class JsonParser implements ParserInterface, BuilderLayerInterface {
 	 * @see InputXmlData
 	 * @see InputXmlPropertyData
 	 */
-	public function parse(string $data): array {
+	public function parse(Resource $resource): array {
 
-		$parsed = json_decode($data, true);
+		$parsed = json_decode($resource->contents, true);
 		$creator = new CreateInputXml();
 		$property = new InputXmlPropertyData($this->propertySymbol, $parsed);
 

@@ -4,6 +4,7 @@ namespace Environet\Sys\Plugins\Transports;
 
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\BuilderLayerInterface;
+use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Plugins\TransportInterface;
 
 /**

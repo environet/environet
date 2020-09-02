@@ -7,6 +7,7 @@ use Environet\Sys\General\HttpClient\Exceptions\HttpClientException;
 use Environet\Sys\General\HttpClient\HttpClient;
 use Environet\Sys\General\HttpClient\Request;
 use Environet\Sys\Plugins\BuilderLayerInterface;
+use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Plugins\TransportInterface;
 
 /**
@@ -63,7 +64,10 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 	 * @throws HttpClientException
 	 */
 	public function get(): array {
-		return [(new HttpClient())->sendRequest(new Request($this->url))->getBody()];
+		$resource = new Resource();
+		$resource->name = $this->url;
+		$resource->contents = (new HttpClient())->sendRequest(new Request($this->url))->getBody();
+		return [$resource];
 	}
 
 

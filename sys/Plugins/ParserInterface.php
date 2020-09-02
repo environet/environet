@@ -3,6 +3,7 @@
 
 namespace Environet\Sys\Plugins;
 
+use Environet\Sys\Plugins\Resource;
 use SimpleXMLElement;
 
 /**
@@ -17,13 +18,10 @@ interface ParserInterface {
 
 
 	/**
-	 * @param string $data
-	 *
-	 * Parse input string data (string is from for example a file)
-	 *
+	 * @param Resource $resource
 	 * @return SimpleXMLElement[]
 	 */
-	public function parse(string $data): array;
+	public function parse(Resource $resource): array;
 
 
 }

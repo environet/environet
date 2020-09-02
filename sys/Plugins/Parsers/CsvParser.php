@@ -6,6 +6,7 @@ use DateTime;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\ParserInterface;
+use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Xml\CreateInputXml;
 use Environet\Sys\Xml\Exceptions\CreateInputXmlException;
 use Environet\Sys\Xml\Model\InputXmlData;
@@ -82,8 +83,8 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::mPointDataArrayFromCSV()
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::meteringPointInputXmlsFromArray()
 	 */
-	public function parse(string $data): array {
-		$dataArray = $this->mPointDataArrayFromCSV($data);
+	public function parse(Resource $resource): array {
+		$dataArray = $this->mPointDataArrayFromCSV($resource->contents);
 		return $this->meteringPointInputXmlsFromArray($dataArray);
 	}
 
