@@ -497,6 +497,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		}
 
 		$flatList = $this->parseIntoHierarchy($xml, $formats, [], 0);
+		//var_dump($flatList);
 
 		// replace external observed property symbols and add missing information from API-Call (Monitoring Point or Observed Property Symbol)
 		if ($resource->meta) {

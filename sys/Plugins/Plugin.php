@@ -40,33 +40,45 @@ class Plugin {
 
 		$successful = 0;
 		$failed = 0;
+		$successfulDownloads = 0;
+		$failedDownloads = 0;
 
 		foreach ($resources as $resource) {
-			$console->writeLine("Uploading $resource->name", Console::COLOR_YELLOW);
-			$xmls = $this->parser->parse($resource);
-			$console->writeLine('');
-			foreach ($xmls as $xmlPayload) {
-				$console->write('Uploading monitoring point data', Console::COLOR_YELLOW);
-				//$console->write($xmlPayload->asXML(), Console::COLOR_YELLOW);
-				try {
-					$apiResponse = $this->apiClient->upload($xmlPayload);
-					$console->write("\r");
-					$console->writeLine('Monitoring point data upload successful  ', Console::COLOR_GREEN);
-					$successful ++;
-				} catch (\Exception $e) {
-					$console->write("\r");
-					$console->writeLine('Upload failed, response:                ', Console::COLOR_RED);
-					$console->writeLine($e->getMessage(), Console::COLOR_RED);
-					// $console->writeLine('Request xml:');
-					// $console->writeLine($xmlPayload->asXML());
-					$failed ++;
+			try {
+				$console->writeLine("Uploading $resource->name", Console::COLOR_YELLOW);
+				$xmls = $this->parser->parse($resource);
+				$console->writeLine("Parsing successful");
+				$successfulDownloads++;
+				foreach ($xmls as $xmlPayload) {
+					$console->write('Uploading monitoring point data', Console::COLOR_YELLOW);
+					//$console->write($xmlPayload->asXML(), Console::COLOR_YELLOW);
+					try {
+						$apiResponse = $this->apiClient->upload($xmlPayload);
+						$console->write("\r");
+						$console->writeLine('Monitoring point data upload successful  ', Console::COLOR_GREEN);
+						$successful ++;
+					} catch (\Exception $e) {
+						$console->write("\r");
+						$console->writeLine('Upload failed, response:                ', Console::COLOR_RED);
+						$console->writeLine($e->getMessage(), Console::COLOR_RED);
+						// $console->writeLine('Request xml:');
+						// $console->writeLine($xmlPayload->asXML());
+						$failed ++;
+					}
 				}
+			} catch (\Exception $e) {
+				$console->write("\r");
+				$console->write('Parsing failed, response: ', Console::COLOR_RED);
+				$console->writeLine($e->getMessage(), Console::COLOR_RED);
+				$failedDownloads++;
 			}
 		}
 
 		$console->writeLine('');
-		$console->writeLine("Successful requests: $successful", Console::COLOR_GREEN);
-		$console->writeLine("Failed requests: $failed", Console::COLOR_RED);
+		$console->writeLine("Successful downloads from data provider: $successfulDownloads", Console::COLOR_GREEN);
+		$console->writeLine("Successful uploads to distribution node: $successful", Console::COLOR_GREEN);
+		$console->writeLine("Failed downloads from data provider: $failedDownloads", Console::COLOR_RED);
+		$console->writeLine("Failed uploads to distribution nodes: $failed", Console::COLOR_RED);
 	}
 
 
