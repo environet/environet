@@ -58,8 +58,12 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		$this->formatsFilename = $config['formatsFilename'];
 
 		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
-		$formats = file_get_contents($configurationsPath . $this->formatsFilename);
+		$formatsPathname = $configurationsPath . $this->formatsFilename;
+		$formats = file_get_contents($formatsPathname);
 		$this->formats = JSON_decode($formats, true);
+		if (!$this->formats) {
+			throw new \Exception("Syntax error in json string of formats configuration file '$formatsPathname'.");			
+		}
 	}
 
 	/**

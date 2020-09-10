@@ -68,8 +68,13 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		$this->conversionsFilename = $config['conversionsFilename'];
 
 		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
-		$conversions = file_get_contents($configurationsPath . $this->conversionsFilename);
+		$conversionsPathname = $configurationsPath . $this->conversionsFilename;
+		$conversions = file_get_contents($conversionsPathname);
 		$conversions = JSON_decode($conversions, true);
+		if (!$conversions) {
+			throw new \Exception("Syntax error in json string of conversions configuration file '$conversionsPathname'.");			
+		}
+
 		$this->url = $conversions["generalInformation"]["URLPattern"];
 		$this->monitoringPointConversions = $conversions["monitoringPointConversions"];
 		$this->observedPropertyConversions = $conversions["observedPropertyConversions"];
