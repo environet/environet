@@ -488,6 +488,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		//$resource->contents = $this->getExampleXMLLfU();
 		//$resource->contents = $this->getExampleXMLARSO();
 
+		libxml_use_internal_errors(TRUE); // this turns off spitting parsing errors on screen
 		$xml = new SimpleXMLElement($resource->contents);
 		$ns = $xml->getDocNamespaces();
 		$xml->registerXPathNamespace('def', array_values($ns)[0]);
