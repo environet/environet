@@ -183,14 +183,14 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 			$item["EUCD"] = $item["eucd_wgst"];
 			array_push($monitoringPoints, $item);
 			array_push($allNCDs, $item["NCD"]);
-			$allObservedProperties = array_merge($item["observed_properties"]);
+			$allObservedProperties = array_merge($allObservedProperties, $item["observed_properties"]);
 		}
 		foreach ($sMonitoringPoints['meteo'] as $item) {
 			$item["NCD"] = $item["ncd_pst"];
 			$item["EUCD"] = $item["eucd_pst"];
 			array_push($monitoringPoints, $item);
 			array_push($allNCDs, $item["NCD"]);
-			$allObservedProperties = array_merge($item["observed_properties"]);
+			$allObservedProperties = array_merge($allObservedProperties, $item["observed_properties"]);
 		}
 		$allObservedProperties = array_unique($allObservedProperties);
 
