@@ -368,6 +368,7 @@ class MonitoringPointQueries {
 			->from("{$this->type}_result as result_sub")
 			->select("result_sub.value")
 			->where("result_sub.time = {$this->type}_result.time")
+			->where("result_sub.time_seriesid = {$this->type}_result.time_seriesid")
 			->where("result_sub.is_forecast = 'FALSE'")
 			->orderBy('result_sub.created_at', 'DESC')
 			->limit(1);
@@ -406,6 +407,7 @@ class MonitoringPointQueries {
 			"{$this->type}_observed_property.description",
 			"{$this->type}_observed_property.unit",
 			"{$this->type}_result.time",
+			"{$this->type}_result.time_seriesid",
 			"{$this->type}_time_series.result_time"
 		];
 
