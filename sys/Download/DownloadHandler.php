@@ -205,6 +205,8 @@ class DownloadHandler extends ApiHandler {
 				} catch (Throwable $e) {
 					throw new DownloadException(304);
 				}
+			} else {
+				$params['start'] = (new DateTime())->modify('today');
 			}
 
 			$endTime = $this->request->getQueryParam('end', false);
@@ -214,6 +216,8 @@ class DownloadHandler extends ApiHandler {
 				} catch (Throwable $e) {
 					throw new DownloadException(305);
 				}
+			} else {
+				$params['end'] = (new DateTime())->modify('+1 day')->modify('today');
 			}
 
 			$params['points'] = $this->parseArrayParam('point');
