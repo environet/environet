@@ -21,11 +21,13 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 	 * @var string
 	 */
 	private $path;
+
 	
 	private static function getDataDirDisplay(): string {
 		return (substr(getenv('LOCAL_DATA_DIR'), 0, 1) == '/' ? '' : '[Environet docker directory]/') . getenv('LOCAL_DATA_DIR');
 	}
-	
+
+
 	/**
 	 * @inheritDoc
 	 */
@@ -37,13 +39,13 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 		
 		$path = $console->ask('');
 		
-		while(empty($path)) {
+		while (empty($path)) {
 			$console->writeLine('Not a valid file path', Console::COLOR_RED);
 			$console->writeLine('Enter path to the file to be imported. This should be relative to ' . self::getDataDirDisplay());
 			$path = $console->ask('');
 		}
 		
-		if(!file_exists('/meteringdata/' . $path)) {
+		if (!file_exists('/meteringdata/' . $path)) {
 			$console->writeLine('The file ' . self::getDataDirDisplay() . '/' . $path . 'does not exist. You can create this file later and continue with the plugin configuration.', Console::COLOR_RED);
 			if (!$console->askYesNo("Do you want to continue?", false)) {
 				exit;
