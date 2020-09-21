@@ -22,10 +22,12 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 	 */
 	private $path;
 
+
 	private static function getDataDirDisplay(): string {
 		return (substr(getenv('LOCAL_DATA_DIR'), 0, 1) == '/' ? '' : '[Environet docker directory]/') . getenv('LOCAL_DATA_DIR');
 	}
-	
+
+
 	/**
 	 * @inheritDoc
 	 */
@@ -37,7 +39,7 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 		$console->write('Leave empty if the data files are located immediately under that directory.');
 		$path = $console->ask('');
 		
-		if(!file_exists('/meteringdata/' . $path)) {
+		if (!file_exists('/meteringdata/' . $path)) {
 			$console->writeLine('The folder ' . self::getDataDirDisplay() . '/' . $path . 'does not exist. You can create this folder later and continue with the plugin configuration.', Console::COLOR_RED);
 			if (!$console->askYesNo("Do you want to continue?", false)) {
 				exit;

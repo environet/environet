@@ -174,9 +174,8 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	private function meteringPointInputXmlsFromArray(array $mPointsArray): array {
 		$payloads = [];
 
-		$creator = new CreateInputXml();
 		foreach ($mPointsArray as $mPointId => $properties) {
-			array_push($payloads, $creator->generateXml(new InputXmlData($mPointId, $this->inputXmlDataFromArray($properties))));
+			array_push($payloads, (new CreateInputXml())->generateXml(new InputXmlData($mPointId, $this->inputXmlDataFromArray($properties))));
 		}
 
 		return $payloads;
@@ -208,6 +207,14 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	private function parseResultLine($line, $properties): array {
 		$values = array_map('trim', explode($this->csvDelimiter, $line));
 		if (!array_key_exists($this->timeCol, $values)) {
+			// No time set
+			return [];
+		}
+
+		$time = DateTime::createFromFormat($this->timeFormat, $values[$this->timeCol]);
+
+		if(!$time) {
+			// Couldn't parse time
 			return [];
 		}
 

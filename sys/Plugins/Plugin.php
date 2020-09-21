@@ -33,7 +33,7 @@ class Plugin {
 		$console->writeLine('Running plugin', '36');
 		$resources = $this->transport->get();
 		
-		if(count($resources) < 1) {
+		if (count($resources) < 1) {
 			$console->writeLine('Nothing to upload', Console::COLOR_YELLOW);
 			return;
 		}
@@ -43,8 +43,12 @@ class Plugin {
 
 		foreach ($resources as $resource) {
 			$console->writeLine("Uploading $resource->name", Console::COLOR_YELLOW);
+
 			$xmls = $this->parser->parse($resource);
-			$console->writeLine('');
+			if (!count($xmls)) {
+				$console->writeLine("Couldn't parse $resource->name into xml", Console::COLOR_RED);
+			}
+
 			foreach ($xmls as $xmlPayload) {
 				$console->write('Uploading monitoring point data', Console::COLOR_YELLOW);
 				//$console->write($xmlPayload->asXML(), Console::COLOR_YELLOW);
@@ -52,13 +56,14 @@ class Plugin {
 					$apiResponse = $this->apiClient->upload($xmlPayload);
 					$console->write("\r");
 					$console->writeLine('Monitoring point data upload successful  ', Console::COLOR_GREEN);
+					$console->writeLine('');
+
 					$successful ++;
 				} catch (\Exception $e) {
 					$console->write("\r");
 					$console->writeLine('Upload failed, response:                ', Console::COLOR_RED);
 					$console->writeLine($e->getMessage(), Console::COLOR_RED);
-					// $console->writeLine('Request xml:');
-					// $console->writeLine($xmlPayload->asXML());
+					$console->writeLine('');
 					$failed ++;
 				}
 			}
