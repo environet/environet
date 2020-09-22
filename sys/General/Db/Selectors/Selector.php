@@ -71,17 +71,6 @@ abstract class Selector {
 
 
 	/**
-	 * Determine if the currently stored identity is an admin.
-	 *
-	 * @return bool
-	 * @uses \Environet\Sys\General\Identity::hasPermissions()
-	 */
-	protected function isOperatorAdmin(): bool {
-		return $this->operator->hasPermissions([Identity::ADMIN_PERMISSION]);
-	}
-
-
-	/**
 	 * Serialize the selector data into a comma separated string.
 	 *
 	 * @return string
