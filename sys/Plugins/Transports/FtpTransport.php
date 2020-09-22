@@ -42,6 +42,10 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 	 */
 	private $path;
 
+	/**
+	 * @var string
+	 */
+	private $filenamePattern;
 
 	/**
 	 * @inheritDoc
@@ -67,13 +71,17 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		$console->write('Leave empty if the data files are in the FTP root directory.');
 		$path = $console->ask('');
 
+		$console->writeLine('Enter filename pattern of files to consider. Use an asterisk (*) for variable parts of the filename.');
+		$console->write('Filename pattern:');
+		$filenamePattern = $console->ask('');
+
 		$config = [
 			'host' => $host,
 			'secure' => $secure,
 			'username' => $username,
 			'password' => $password,
 			'path' => $path,
-
+			'filenamePattern' => $filenamePattern,
 		];
 
 		return new self($config);
@@ -88,7 +96,8 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 			. 'secure = "' . $this->secure .'"' . "\n"
 			. 'username = "' . $this->username . '"' . "\n"
 			. 'password = "' . $this->password . '"' . "\n"
-			. 'path = "' . $this->path . '"' . "\n";
+			. 'path = "' . $this->path . '"' . "\n"
+			. 'filenamePattern = "' . $this->filenamePattern . '"' . "\n";
 	}
 
 
@@ -103,6 +112,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		$this->username = $config['username'];
 		$this->password = $config['password'];
 		$this->path = $config['path'];
+		$this->filenamePattern = $config['filenamePattern'];
 	}
 
 
@@ -132,7 +142,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		//ftp_chdir($conn, $this->path);
 
 		$contents = ftp_nlist($conn, $this->path);
-		//die(var_dump($contents));
+		die(var_dump($contents));
 		$console->writeLine('There are ' . count($contents) . ' files inside the folder', Console::COLOR_YELLOW);
 
 		foreach ($contents as $content) {
