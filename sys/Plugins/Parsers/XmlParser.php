@@ -239,6 +239,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 						$item["Value"] = $subXml[0]->__toString();
 						if ($item["Value"] === "") $item["Value"] = "0";
 					} else {
+						//var_dump($subXml[0]);
 						//$item["Value"] = $subXml[0]->attributes()[$format["Attribute"]];
 						$item["Value"] = $subXml[0][$format["Attribute"]]->__toString();
 						//echo "resolved by attribute2: " . $item["Value"] . "\r\n";
@@ -484,6 +485,9 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		//echo $resource->contents;
 		echo "Received " . strlen($resource->contents) . " characters.\r\n";
 
+
+		$resource->contents = str_replace("xlink:href", "href", $resource->contents);	// Workaround for WaterML 2.0
+
 		//$resource->contents = $this->getExampleXMLBMLRT();
 		//$resource->contents = $this->getExampleXMLLfU();
 		//$resource->contents = $this->getExampleXMLARSO();
@@ -502,7 +506,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		}
 
 		$flatList = $this->parseIntoHierarchy($xml, $formats, [], 0);
-		//var_dump($flatList);
+		//var_dump($flatList[0]);
 
 		// replace external observed property symbols and add missing information from API-Call (Monitoring Point or Observed Property Symbol)
 		if ($resource->meta) {
@@ -533,6 +537,8 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 							$this->delete($entry, "Type", "ObservedPropertySymbol");
 							$obs["Value"] = $symbol;
 							array_push($entry, $obs);
+						} else {
+							unset($flatList[$key]);   // Delete whole entry as observed property was not found
 						}
 					}
 				} else {
@@ -591,7 +597,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		}
 
 		// delete entries which do not fit to API-call (extra monitoring points, extra observed properties)
-		if ($resource->meta) {
+		if ($resource->meta && !$resource->meta["keepExtraData"]) {
 			foreach($flatList as $key => &$entry) {
 				$mp = $this->getParameter($entry, "Type", "MonitoringPoint");
 				$obs = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
@@ -603,7 +609,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 			$flatList = array_values($flatList);
 		}
 
-		//var_dump($flatList);
+		//die(var_dump($flatList));
 
 		$this->assembleDates($flatList);
 		$this->convertValues($flatList);
@@ -645,13 +651,15 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 
 		}	
 
-		//ini_set('xdebug.var_display_max_depth', '10');
-		//ini_set('xdebug.var_display_max_children', '256');
-		//ini_set('xdebug.var_display_max_data', '1024');
+		/*
+		ini_set('xdebug.var_display_max_depth', '10');
+		ini_set('xdebug.var_display_max_children', '256');
+		ini_set('xdebug.var_display_max_data', '1024');
 
-		//ob_start();
-		//var_dump($resultArray);
-		//echo "resultArray: " . ob_get_clean() . "\r\n";
+		ob_start();
+		var_dump($resultArray);
+		echo "resultArray: " . ob_get_clean() . "\r\n";
+		*/
 
 		//$tmp = $this->meteringPointInputXmlsFromArray($resultArray);
 		//var_dump($tmp);
