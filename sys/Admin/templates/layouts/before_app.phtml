@@ -40,7 +40,7 @@
 
             <?php if($request->getIdentity()->hasPermissions(['admin.providers.read']) || $request->getIdentity()->hasPermissions(['admin.providers.readown'])): ?>
                 <li>
-                    <?= includeTemplatePart('menuitem.phtml', ['title' => 'Data providers', 'route' => '/admin/data-providers', 'icon' => 'address-book', 'matchExtra' => 1]) ?>
+                    <?= includeTemplatePart('menuitem.phtml', ['title' => 'Operators', 'route' => '/admin/data-providers', 'icon' => 'address-book', 'matchExtra' => 1]) ?>
                 </li>
 			<?php endif; ?>
 
