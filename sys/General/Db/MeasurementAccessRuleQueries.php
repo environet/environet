@@ -46,10 +46,16 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 
 
 	public static function prepareData(array $data): array {
+		if (is_array(($monitoringPointSelector = $data['monitoringpoint_selector'] ?? null))) {
+			$monitoringPointSelector = array_search('*', $monitoringPointSelector) !== false ? '*' : implode(',', array_unique(array_filter($monitoringPointSelector)));
+		}
+		if (is_array(($observedPropertySelector = $data['observed_property_selector'] ?? null))) {
+			$observedPropertySelector = array_search('*', $observedPropertySelector) !== false ? '*' : implode(',', array_unique(array_filter($observedPropertySelector)));
+		}
 		return [
 			'operator_id' => $data['operator'] ?? null,
-			'monitoringpoint_selector' => $data['monitoringpoint_selector'] ?? null,
-			'observed_property_selector' => $data['observed_property_selector'] ?? null,
+			'monitoringpoint_selector' => $monitoringPointSelector,
+			'observed_property_selector' => $observedPropertySelector,
 		];
 	}
 
