@@ -19,7 +19,7 @@ use Environet\Sys\Xml\Model\InputXmlPropertyData;
  * @package Environet\Sys\Plugins\Parsers
  * @author  SRG Group <dev@srg.hu>
  */
-class JsonParser implements ParserInterface, BuilderLayerInterface {
+class JsonParser extends AbstractParser implements BuilderLayerInterface {
 
 	/**
 	 * @var string
@@ -55,12 +55,16 @@ class JsonParser implements ParserInterface, BuilderLayerInterface {
 	public static function create(Console $console): ParserInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring json parser property');
+
+		$timeZone = self::createTimeZoneConfig($console);
+
 		$monitoringPointId = $console->ask('Enter monitoring point id:');
 		$propertySymbol = $console->ask('Enter property symbol:');
 
 		$config = [
 			'monitoringPointId' => $monitoringPointId,
-			'propertySymbol'    => $propertySymbol
+			'propertySymbol'    => $propertySymbol,
+			'timeZone'          => $timeZone,
 		];
 
 		return new self($config);
@@ -75,6 +79,7 @@ class JsonParser implements ParserInterface, BuilderLayerInterface {
 	public function __construct(array $config) {
 		$this->monitoringPointId = $config['monitoringPointId'];
 		$this->propertySymbol = $config['propertySymbol'];
+		parent::__construct($config);
 	}
 
 
@@ -85,6 +90,7 @@ class JsonParser implements ParserInterface, BuilderLayerInterface {
 		$result = '';
 		$result .= "monitoringPointId = $this->monitoringPointId\n";
 		$result .= "propertySymbol = $this->propertySymbol\n";
+		$result .= 'timeZone = ' . $this->timeZone . "\n";
 
 		return $result;
 	}

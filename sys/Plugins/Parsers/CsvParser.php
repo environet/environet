@@ -3,6 +3,7 @@
 namespace Environet\Sys\Plugins\Parsers;
 
 use DateTime;
+use DateTimeZone;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\ParserInterface;
@@ -21,7 +22,7 @@ use SimpleXMLElement;
  * @package Environet\Sys\Plugins\Parsers
  * @author  SRG Group <dev@srg.hu>
  */
-class CsvParser implements ParserInterface, BuilderLayerInterface {
+class CsvParser extends AbstractParser implements BuilderLayerInterface {
 
 	const API_TIME_FORMAT_STRING = 'Y-m-d\TH:i:sP';
 
@@ -62,7 +63,6 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	 * @param array $config
 	 */
 	public function __construct(array $config) {
-
 		$this->csvDelimiter = $config['csvDelimiter'];
 		$this->nHeaderSkip = $config['nHeaderSkip'];
 		$this->mPointIdCol = $config['mPointIdCol'];
@@ -74,6 +74,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 				'column' => explode(';', $propertyString)[1]
 			];
 		}, $config['properties']);
+		parent::__construct($config);
 	}
 
 
@@ -90,7 +91,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 			// This is necessary because in some csv files only the requested observed property is contained,
 			// but for each observed property in the same column. (e.g. DWD)
 			// So without deleting the non-requested observed properties here, in such a case
-			// the file would be misinterpreted: Every configured observed property would have the value of 
+			// the file would be misinterpreted: Every configured observed property would have the value of
 			// the requested observed property.
 			foreach ($properties as $key => &$entry) {
 				$symbol = $entry["symbol"];
@@ -101,6 +102,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 			$properties = array_values($properties);
 		}
 		$dataArray = $this->mPointDataArrayFromCSV($resource->contents, $properties);
+
 		return $this->meteringPointInputXmlsFromArray($dataArray);
 	}
 
@@ -121,7 +123,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 
 		$lineCount = 0;
 		foreach ($lines as $line) {
-			++$lineCount;
+			++ $lineCount;
 			if ($lineCount <= $this->nHeaderSkip) {
 				continue;
 			}
@@ -142,9 +144,10 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 			}
 
 			foreach ($properties as $property) {
-				if(empty($resultLine[$property['symbol']]))
+				if (empty($resultLine[$property['symbol']])) {
 					continue;
-				
+				}
+
 				$resultArray[$resultLine['mPointId']][$property['symbol']] = array_merge(
 					$resultArray[$resultLine['mPointId']][$property['symbol']],
 					[
@@ -211,16 +214,18 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 			return [];
 		}
 
-		$time = DateTime::createFromFormat($this->timeFormat, $values[$this->timeCol]);
+		$time = DateTime::createFromFormat($this->timeFormat, $values[$this->timeCol], $this->getTimeZone());
 
-		if(!$time) {
+		if (!$time) {
 			// Couldn't parse time
 			return [];
 		}
 
+		//Set timezone to UTC
+		$time->setTimezone(new DateTimeZone('UTC'));
 		$data = [
 			'mPointId' => $values[$this->mPointIdCol],
-			'time'     => DateTime::createFromFormat($this->timeFormat, $values[$this->timeCol])->format(self::API_TIME_FORMAT_STRING),
+			'time'     => $time->format(self::API_TIME_FORMAT_STRING),
 		];
 
 		foreach ($properties as $property) {
@@ -239,6 +244,8 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	public static function create(Console $console): ParserInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring csv parser', Console::COLOR_YELLOW);
+
+		$timeZone = self::createTimeZoneConfig($console);
 
 		$console->writeLine('Enter the csv delimiter character. E.g.: a comma in case of comma separated csv files', Console::COLOR_YELLOW);
 		$csvDelimiter = $console->ask('Csv delimiter:');
@@ -269,6 +276,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 
 		$config = [
 			'csvDelimiter' => $csvDelimiter,
+			'timeZone'     => $timeZone,
 			'nHeaderSkip'  => $nHeaderSkip,
 			'mPointIdCol'  => $mPointIdCol,
 			'timeCol'      => $timeCol,
@@ -305,6 +313,7 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 		$config .= 'mPointIdCol = ' . $this->mPointIdCol . "\n";
 		$config .= 'timeCol = ' . $this->timeCol . "\n";
 		$config .= 'timeFormat = ' . $this->timeFormat . "\n";
+		$config .= 'timeZone = ' . $this->timeZone . "\n";
 
 		foreach ($this->properties as $property) {
 			$config .= 'properties[] = "' . self::serializePropertyConfiguration($property) . "\"\n";

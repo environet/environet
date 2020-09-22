@@ -3,6 +3,7 @@
 namespace Environet\Sys\Plugins\Parsers;
 
 use DateTime;
+use DateTimeZone;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\ParserInterface;
@@ -21,7 +22,7 @@ use SimpleXMLElement;
  * @package Environet\Sys\Plugins\Parsers
  * @author  SRG Group <dev@srg.hu>, STASA <info@stasa.de>
  */
-class XmlParser implements ParserInterface, BuilderLayerInterface {
+class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 	const API_TIME_FORMAT_STRING = 'Y-m-d\TH:i:sP';
 
@@ -38,7 +39,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 	/**
 	 * @var string Filename of JSON file which contains formats for xml
 	 */
-	private $formatsFile;
+	private $formatsFilename;
 
 	/**
 	 * @var array Format specifications, where to find which information in xml file
@@ -60,7 +61,9 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
 		$formats = file_get_contents($configurationsPath . $this->formatsFilename);
 		$this->formats = JSON_decode($formats, true);
+		parent::__construct($config);
 	}
+
 
 	/**
 	 * Convert a given unit to base unit for observed property.
@@ -110,7 +113,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		if (sizeof($formats) == 1 && sizeof($formats[0]["Tag Hierarchy"]) > 0)	return array_shift($formats[0]["Tag Hierarchy"]);
 		$difference = false;
 		for ($i = 1; $i < sizeof($formats); ++$i) {
-			if (sizeof($formats[$i]["Tag Hierarchy"]) == 0 || sizeof($formats[$i-1]["Tag Hierarchy"]) == 0 || 
+			if (sizeof($formats[$i]["Tag Hierarchy"]) == 0 || sizeof($formats[$i-1]["Tag Hierarchy"]) == 0 ||
 				$formats[$i]["Tag Hierarchy"][0] != $formats[$i-1]["Tag Hierarchy"][0]) {
 				$difference = true;
 			}
@@ -125,7 +128,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 
 	/**
 	 * Recursive function to parse a xml tree to acquire values for given parameters from xml tree
-	 * 
+	 *
 	 * @param SimpleXMLElement $xml xml element to parse
 	 * @param array $formats format of information to be gathered from xml, including tag hierarchies for different parameters
 	 * @param array $resolved table of information found. 1st index is the entry if there are multiple, 2nd index is information, call with "[]"
@@ -157,7 +160,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 			echo "Error condition 1: Call, but all information already resolved.";
 			return [];
 		}
-		
+
 		// get groups of common hierarchy
 		$commonElements = [];
 		do {
@@ -251,7 +254,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 			}
 
 			if (sizeof($formatsNew) > 1) {
-				// do recursion 
+				// do recursion
 				//echo "do recursion\r\n";
 				$flatList = array_merge($flatList, $this->parseIntoHierarchy($group, $formatsNew, $groupResolved, $hierarchyCounter+1));
 			} else {
@@ -267,8 +270,8 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 
 
 	/**
-	 * Get internal symbol for observed property from external symbol. Conversion between symbols is given by 
-	 * variable conversion information. 
+	 * Get internal symbol for observed property from external symbol. Conversion between symbols is given by
+	 * variable conversion information.
 	 *
 	 * @param array $conversions conversion information read from json file by transport.
 	 * @param string $variableName name of variable definition for observed property. E.g. "OBS"
@@ -344,7 +347,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 	/**
 	 * Assembles date from componentes like day, month, year, hour and minute
 	 *
-	 * @param array $entry list of parsed properties, in which separate items for day, month, etc... may occur. Separate items are joined to a 
+	 * @param array $entry list of parsed properties, in which separate items for day, month, etc... may occur. Separate items are joined to a
 	 *                     "DateTime" item and deleted from $entry. "DateTime" has time format as given by API_TIME_FORMAT_STRING
 	 */
 	private function assembleDate(array &$entry) {
@@ -364,9 +367,9 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 			"Unit" => null
 		];
 
-		if ($Year && $Month && $Day && $Hour && $Minute) 
+		if ($Year && $Month && $Day && $Hour && $Minute)
 		{
-			$t = mktime(strval($Hour["Value"]), strval($Minute["Value"]), 0, 
+			$t = mktime(strval($Hour["Value"]), strval($Minute["Value"]), 0,
 				strval($Month["Value"]), strval($Day["Value"]), strval($Year["Value"]));
 			$result["Value"] = date(self::API_TIME_FORMAT_STRING, $t);
 			$this->delete($entry, "Type", "Year");
@@ -374,26 +377,28 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 			$this->delete($entry, "Type", "Day");
 			$this->delete($entry, "Type", "Hour");
 			$this->delete($entry, "Type", "Minute");
-		} 
-		else if ($Date && $Time) 
+		}
+		else if ($Date && $Time)
 		{
-			$date = DateTime::createFromFormat($Date["Format"].' '.$Time["Format"], $Date["Value"].' '.$Time["Value"]);
+			$date = DateTime::createFromFormat($Date["Format"].' '.$Time["Format"], $Date["Value"].' '.$Time["Value"], $this->getTimeZone());
 			if (!$date) {
-				echo("Warning: Invalid date or time format: " . $Date["Format"] . " - " . $Date["Value"] 
+				echo("Warning: Invalid date or time format: " . $Date["Format"] . " - " . $Date["Value"]
 					. " -- " . $Time["Format"] . " - " . $Time["Value"] . ". Replaced with 1970-01-01\r\n");
 				$date = new DateTime('1970-01-01T00:00:00Z');
 			}
+			$date->setTimezone(new DateTimeZone('UTC'));
 			$result["Value"] = $date->format(self::API_TIME_FORMAT_STRING);
 			$this->delete($entry, "Type", "Date");
 			$this->delete($entry, "Type", "Time");
-		} 
-		else if ($DateTime) 
+		}
+		else if ($DateTime)
 		{
-			$date = DateTime::createFromFormat($DateTime["Format"], $DateTime["Value"]);
+			$date = DateTime::createFromFormat($DateTime["Format"], $DateTime["Value"], $this->getTimeZone());
 			if (!$date) {
 				echo("Warning: Invalid datetime format: " . $DateTime["Format"] . " --- " . $DateTime["Value"] . ". Replaced with 1970-01-01\r\n");
 				$date = new DateTime('1970-01-01T00:00:00Z');
 			}
+			$date->setTimezone(new DateTimeZone('UTC'));
 			$result["Value"] = $date->format(self::API_TIME_FORMAT_STRING);
 			$this->delete($entry, "Type", "DateTime");
 		} else {
@@ -404,7 +409,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 
 
 	/**
-	 * Assemble dates in whole list of entries. 
+	 * Assemble dates in whole list of entries.
 	 *
 	 * @param array $flatList list of parsed information. Entries are themselve lists of parsed parameters.
 	 * @see assembleDate
@@ -417,7 +422,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 
 
 	/**
-	 * Convert value parameters in entry: Remove thousands separator, change decimal separator to ".", 
+	 * Convert value parameters in entry: Remove thousands separator, change decimal separator to ".",
 	 * add entry for unit if not available and convert values to
 	 * base units.
 	 *
@@ -475,7 +480,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 	 * @throws CreateInputXmlException
 	 */
 	public function parse(Resource $resource): array {
-		
+
 		//var_dump($resource->meta);
 		//echo $resource->contents;
 		echo "Received " . strlen($resource->contents) . " characters.\r\n";
@@ -511,7 +516,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 						"Format" => null,
 						"Unit" => null,
 					];
-					array_push($entry, $elem);			
+					array_push($entry, $elem);
 				}
 
 				$obs = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
@@ -637,7 +642,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 				]
 			);
 
-		}	
+		}
 
 		//ini_set('xdebug.var_display_max_depth', '10');
 		//ini_set('xdebug.var_display_max_children', '256');
@@ -699,6 +704,8 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring XML parser', Console::COLOR_YELLOW);
 
+		$timeZone = self::createTimeZoneConfig($console);
+
 		$separatorThousands = $console->ask('Separator for groups of thousands in values. May be empty. Example: , for 12,040.01 cm');
 		$separatorDecimals = $console->ask('Separator for decimals. Example: . for 142.3 cm');
 		$formatsFilename = $console->ask('Filename for xml format definitions');
@@ -707,6 +714,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 			'separatorThousands' => $separatorThousands,
 			'separatorDecimals' => $separatorDecimals,
 			'formatsFilename' => $formatsFilename,
+			'timeZone' => $timeZone
 		];
 
 		return new self($config);
@@ -722,6 +730,7 @@ class XmlParser implements ParserInterface, BuilderLayerInterface {
 		$config .= 'separatorThousands = "' . $this->separatorThousands . "\"\n";
 		$config .= 'separatorDecimals = "' . $this->separatorDecimals . "\"\n";
 		$config .= 'formatsFilename = "' . $this->formatsFilename . "\"\n";
+		$config .= 'timeZone = ' . $this->timeZone . "\n";
 
 		return $config;
 	}
