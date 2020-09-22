@@ -50,7 +50,7 @@ class DataProviderCrud extends CrudPage {
 	/**
 	 * @inheritdoc
 	 */
-	protected $successAddMessage = 'Data provider successfully added';
+	protected $successAddMessage = 'Operator successfully added';
 
 
 	/**

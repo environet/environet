@@ -4,11 +4,14 @@ namespace Environet\Sys\Admin\Pages\MeasurementAccessRule;
 
 use Environet\Sys\Admin\Pages\CrudPage;
 use Environet\Sys\General\Db\GroupQueries;
+use Environet\Sys\General\Db\HydroMonitoringPointQueries;
 use Environet\Sys\General\Db\MeasurementAccessRuleQueries;
+use Environet\Sys\General\Db\MeteoMonitoringPointQueries;
 use Environet\Sys\General\Db\OperatorQueries;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\UserQueries;
 use Environet\Sys\General\Exceptions\QueryException;
+use Environet\Sys\General\Response;
 
 /**
  * Class DataAccessRuleCrud
@@ -111,6 +114,82 @@ class MeasurementAccessRuleCrud extends CrudPage {
 		}
 
 		return $options;
+	}
+
+
+	/**
+	 * Get points of an operator with ajax request for select options
+	 *
+	 * @return Response
+	 * @throws QueryException
+	 */
+	public function operatorPoints() {
+		$search = trim($this->request->getQueryParam('search'));
+		$operator = trim($this->request->getQueryParam('operator'));
+		$hydroQuery = (new Select())->select(['name', 'id'])->from(HydroMonitoringPointQueries::$tableName);
+		$meteoQuery = (new Select())->select(['name', 'id'])->from(MeteoMonitoringPointQueries::$tableName);
+		if ($operator) {
+			$hydroQuery->where('operatorid = :operatorid')->addParameter('operatorid', $operator);
+			$meteoQuery->where('operatorid = :operatorid')->addParameter('operatorid', $operator);
+		}
+		if ($search) {
+			$hydroQuery->where('name LIKE %'.$search.'%');
+			$meteoQuery->where('name LIKE %'.$search.'%');
+		}
+		$meteoPoints = $meteoQuery->run();
+		$hydroPoints = $hydroQuery->run();
+		$results = [];
+		foreach ($hydroPoints as $hydroPoint) {
+			$results[] = [
+				'value' => $hydroPoint['id'],
+				'name' => $hydroPoint['name']
+			];
+		}
+		foreach ($meteoPoints as $meteoPoint) {
+			$results[] = [
+				'value' => $meteoPoint['id'],
+				'name' => $meteoPoint['name']
+			];
+		}
+		return new Response(json_encode($results));
+	}
+
+
+	/**
+	 * Get properites of an operator with ajax request for select options
+	 *
+	 * @return Response
+	 * @throws QueryException
+	 */
+	public function operatorProperties() {
+		$operator = trim($this->request->getQueryParam('operator'));
+		$hydroQuery = (new Select())->select(['DISTINCT(symbol)', 'hydro_observed_property.id'])->from('hydro_observed_property')
+			->join('hydropoint_observed_property', 'hydropoint_observed_property.observed_propertyid = hydro_observed_property.id')
+			->join('hydropoint', 'hydropoint.id = hydropoint_observed_property.mpointid');
+		$meteoQuery = (new Select())->select(['DISTINCT(symbol)', 'meteo_observed_property.id'])->from('meteo_observed_property')
+			->join('meteopoint_observed_property', 'meteopoint_observed_property.meteo_observed_propertyid = meteo_observed_property.id')
+			->join('meteopoint', 'meteopoint.id = meteopoint_observed_property.meteopointid');
+		if ($operator) {
+			$hydroQuery->where('hydropoint.operatorid = :operatorid')->addParameter('operatorid', $operator);
+			$meteoQuery->where('meteopoint.operatorid = :operatorid')->addParameter('operatorid', $operator);
+		}
+		$meteoProperties = $meteoQuery->run();
+		$hydroProperties = $hydroQuery->run();
+		$results = [];
+		foreach ($hydroProperties as $hydroProperty) {
+			$results[] = [
+				'value' => $hydroProperty['id'],
+				'name' => $hydroProperty['symbol']
+			];
+		}
+		foreach ($meteoProperties as $meteoProperty) {
+			$results[] = [
+				'value' => $meteoProperty['id'],
+				'name' => $meteoProperty['symbol']
+			];
+		}
+
+		return new Response(json_encode($results));
 	}
 
 

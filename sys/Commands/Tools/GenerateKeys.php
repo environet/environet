@@ -35,8 +35,10 @@ class GenerateKeys extends BaseCommand {
 	 * @return int
 	 */
 	public function run($arguments): int {
-
-		$keyLocation = $this->console->askWithDefault('Enter the destination of files (relative to ' . SRC_PATH . '):', self::$keyDefaultLocation, 200);
+		$keyDefaultLocation = SRC_PATH . '/conf/plugins/credentials/';
+		$keyRealLocation = empty(getenv('ENVIRONET_PLUGIN_CONF_DIR')) ? $keyDefaultLocation : getenv('ENVIRONET_PLUGIN_CONF_DIR') . '/credentials';
+		
+		$keyLocation = $this->console->askWithDefault('Enter the destination of files (relative to ' . $keyRealLocation . '):', self::$keyDefaultLocation);
 		$prefix = $this->console->ask('Enter the prefix for filenames (prefix_private.pem & prefix_public.pem). Prefix is optional');
 
 		$keyLocation = SRC_PATH . '/' . ltrim($keyLocation, '/');
@@ -44,7 +46,7 @@ class GenerateKeys extends BaseCommand {
 			mkdir($keyLocation, 0755, true);
 		}
 
-		$prefix = $prefix ? "$prefix_" : '';
+		$prefix = $prefix ? "{$prefix}_" : '';
 
 		$privateFileName = "{$prefix}private.pem";
 		$publicFileName = "{$prefix}public.pem";
