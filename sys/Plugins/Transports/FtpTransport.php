@@ -48,6 +48,11 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 	private $filenamePattern;
 
 	/**
+	 * @var bool
+	 */
+	private $newestFileOnly;
+
+	/**
 	 * @inheritDoc
 	 */
 	public static function create(Console $console): TransportInterface {
@@ -72,8 +77,12 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		$path = $console->ask('');
 
 		$console->writeLine('Enter filename pattern of files to consider. Use an asterisk (*) for variable parts of the filename.');
-		$console->write('Filename pattern:');
+		$console->write('Filename pattern, leave empty for all files:');
 		$filenamePattern = $console->ask('');
+
+		$console->writeLine('Newest file only:');
+		$console->write('Enter 1 if only the newest of all matching files should be used:');
+		$newestFileOnly = $console->askWithDefault('', false);
 
 		$config = [
 			'host' => $host,
@@ -82,6 +91,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 			'password' => $password,
 			'path' => $path,
 			'filenamePattern' => $filenamePattern,
+			'newestFileOnly' => $newestFileOnly,
 		];
 
 		return new self($config);
@@ -97,7 +107,8 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 			. 'username = "' . $this->username . '"' . "\n"
 			. 'password = "' . $this->password . '"' . "\n"
 			. 'path = "' . $this->path . '"' . "\n"
-			. 'filenamePattern = "' . $this->filenamePattern . '"' . "\n";
+			. 'filenamePattern = "' . $this->filenamePattern . '"' . "\n"
+			. 'newestFileOnly = "' . $this->newestFileOnly . '"' . "\n";
 	}
 
 
@@ -113,8 +124,22 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		$this->password = $config['password'];
 		$this->path = $config['path'];
 		$this->filenamePattern = $config['filenamePattern'];
+		$this->newestFileOnly = $config['newestFileOnly'];
 	}
 
+
+	public function newestFile(array $files) {
+		$out = [];
+		$newest = 0;
+		foreach ($files as $entry) {
+			if ($this->filenamePattern !== '' && !fnmatch($this->filenamePattern, $entry['name'])) continue;
+			if (count($out) > 0 && $entry['modify'] < $newest) continue;
+			if (count($out) == 0) array_push($out, $entry);
+			else $out[0] = $entry;
+			$newest = $entry['modify'];
+		}
+		return $out;
+	}
 
 	/**
 	 * @inheritDoc
@@ -141,19 +166,62 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 
 		//ftp_chdir($conn, $this->path);
 
-		$contents = ftp_nlist($conn, $this->path);
-		die(var_dump($contents));
-		$console->writeLine('There are ' . count($contents) . ' files inside the folder', Console::COLOR_YELLOW);
+		$path = $this->path;
+		if ($path !== '' && substr($path, -1) !== '/') $path .= "/";
+
+		$contentsAll = ftp_mlsd($conn, $this->path);
+		//$count = 0;
+		if ($contentsAll === false) {
+			$contentsNames = ftp_nlist($conn, $this->path);
+			$contentsAll = [];
+			foreach ($contentsNames as $name) {
+				$entry = [];
+				$entry['name'] = $name;
+				$entry['type'] = 'file';
+				//$mtime = filemtime("ftp://". $this->username . ":" . $this->password . "@" . $this->host . "/" . $name);
+				$mtime = ftp_mdtm($conn, $name);
+				$entry['modify'] = $mtime;
+				array_push($contentsAll, $entry);
+				echo $name . " - Timestamp " . $mtime . "\n";
+				//++$count;
+				//if ($count > 5) break;
+			}
+			$path = '';	// Do not prepend path
+		}
+		
+		//die(var_dump($contentsAll));
+
+		// take only files
+		foreach ($contentsAll as $key => &$entry) {
+			if ($entry['type'] !== 'file') unset($contentsAll[$key]);
+		}
+
+		if ($this->newestFileOnly) $contentsAll = $this->newestFile($contentsAll);
+
+		// Take only files which meet the filename pattern
+		$contents = [];
+		foreach ($contentsAll as $entry) {
+			if ($this->filenamePattern !== '' && !fnmatch($this->filenamePattern, $entry['name'])) continue;
+			array_push($contents, $path . $entry['name']);
+		}
+
+		//die(var_dump($contents));
+		//$console->writeLine('There are ' . count($contents) . ' files inside the folder', Console::COLOR_YELLOW);
 
 		foreach ($contents as $content) {
 			ftp_get($conn, $localCopyPath . end(explode('/', $content)), $content);
 			$resource = new Resource();
 			$resource->name = end(explode('/', $content));
 			$resource->contents = file_get_contents($localCopyPath . end(explode('/', $content)));
+			$resource->meta = [
+				"MonitoringPointNCDs" => [], 
+				"ObservedPropertySymbols" => [],
+				"observedPropertyConversions" => [],
+			];
 			$results[] = $resource;
 		}
 
-		
+		//die(var_dump($results));
 		return $results;
 	}
 
