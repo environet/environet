@@ -15,7 +15,6 @@ use Environet\Sys\Plugins\ParserInterface;
  */
 abstract class AbstractParser implements ParserInterface {
 
-
 	/**
 	 * @var string
 	 */
@@ -55,5 +54,6 @@ abstract class AbstractParser implements ParserInterface {
 	protected function getTimeZone(): DateTimeZone {
 		return new DateTimeZone($this->timeZone ?: 'UTC');
 	}
+
 
 }

@@ -87,19 +87,26 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		$unit = strtolower($unit);
 
 		if ($symbol == 'h') {
-			if ($unit == "mm") $value /= 10;
-			else if ($unit == "m") $value *= 100;
-		} else if ($symbol == "Q") {
+			if ($unit == "mm") {
+				$value /= 10;
+			} elseif ($unit == "m") {
+				$value *= 100;
+			}
+		} elseif ($symbol == "Q") {
 			// no sensible other units than m³/s
-		} else if ($symbol == "tw") {
+		} elseif ($symbol == "tw") {
 			// no sensible other units than °C
-		} else if ($symbol == "P") {
-			if ($unit == "cm" || $unit == "cm/h") $value *= 10;
-			else if ($unit == "m" || $unit == "m/h") $value *= 1000;
-		} else if ($symbol == "ta") {
+		} elseif ($symbol == "P") {
+			if ($unit == "cm" || $unit == "cm/h") {
+				$value *= 10;
+			} elseif ($unit == "m" || $unit == "m/h") {
+				$value *= 1000;
+			}
+		} elseif ($symbol == "ta") {
 			// no sensible other units than °C
 		}
 	}
+
 
 	/**
 	 * Returns one common element from xml tag hierarchy and strips it from format information which describes xml format.
@@ -108,9 +115,15 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 * @return string The first common element of tag hierarchy, if any. If there is none, "" is returned.
 	 */
 	private function getAndStripOneCommonElement(array &$formats) : string {
-		if (sizeof($formats) == 0) return "";
-		if (sizeof($formats) == 1 && sizeof($formats[0]["Tag Hierarchy"]) == 0) return "";
-		if (sizeof($formats) == 1 && sizeof($formats[0]["Tag Hierarchy"]) > 0)	return array_shift($formats[0]["Tag Hierarchy"]);
+		if (sizeof($formats) == 0) {
+			return "";
+		}
+		if (sizeof($formats) == 1 && sizeof($formats[0]["Tag Hierarchy"]) == 0) {
+			return "";
+		}
+		if (sizeof($formats) == 1 && sizeof($formats[0]["Tag Hierarchy"]) > 0) {
+			return array_shift($formats[0]["Tag Hierarchy"]);
+		}
 		$difference = false;
 		for ($i = 1; $i < sizeof($formats); ++$i) {
 			if (sizeof($formats[$i]["Tag Hierarchy"]) == 0 || sizeof($formats[$i-1]["Tag Hierarchy"]) == 0 ||
@@ -118,13 +131,16 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 				$difference = true;
 			}
 		}
-		if ($difference) return "";
+		if ($difference) {
+			return "";
+		}
 		$result = $formats[0]["Tag Hierarchy"][0];
 		for ($i = 0; $i < sizeof($formats); ++$i) {
 			array_shift($formats[$i]["Tag Hierarchy"]);
 		}
 		return $result;
 	}
+
 
 	/**
 	 * Recursive function to parse a xml tree to acquire values for given parameters from xml tree
@@ -152,7 +168,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		echo "hierarchyCounter: " . $hierarchyCounter . "\r\n";
 		*/
 
-		if ($hierarchyCounter>10) {
+		if ($hierarchyCounter > 10) {
 			throw new \Exception("XML hierarchy deeper than 10");
 		}
 
@@ -165,7 +181,9 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		$commonElements = [];
 		do {
 			$common = $this->getAndStripOneCommonElement($formats);
-			if ($common != "") array_push($commonElements, $common);
+			if ($common != "") {
+				array_push($commonElements, $common);
+			}
 		} while ($common != "");
 		$xpathCommonElements = implode('/', $commonElements);
 
@@ -224,19 +242,22 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 					//var_dump($groupResolved);
 					//echo "   value=" . $format["Value"] . "\r\n";
 					//var_dump($format["optional"]);
-					if ($format["optional"]) continue;
+					if ($format["optional"]) {
+						continue;
+					}
 					throw new \Exception("Given elements do not exist in file: " . $xpath);
 				}
 				if (sizeof($subXml) == 0) {
 					// do nothing
 					//echo "do nothing.\r\n";
-				}
-				else if (sizeof($subXml) == 1) {
+				} elseif (sizeof($subXml) == 1) {
 					$item = [];
 					$item["Type"] = $format["Parameter"];
 					if ($format["Attribute"] == "") {
 						$item["Value"] = $subXml[0]->__toString();
-						if ($item["Value"] === "") $item["Value"] = "0";
+						if ($item["Value"] === "") {
+							$item["Value"] = "0";
+						}
 					} else {
 						//$item["Value"] = $subXml[0]->attributes()[$format["Attribute"]];
 						$item["Value"] = $subXml[0][$format["Attribute"]]->__toString();
@@ -256,7 +277,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 			if (sizeof($formatsNew) > 1) {
 				// do recursion
 				//echo "do recursion\r\n";
-				$flatList = array_merge($flatList, $this->parseIntoHierarchy($group, $formatsNew, $groupResolved, $hierarchyCounter+1));
+				$flatList = array_merge($flatList, $this->parseIntoHierarchy($group, $formatsNew, $groupResolved, $hierarchyCounter + 1));
 			} else {
 				// Finish condition 3: Success
 				// all information available. Return flat list entry from resolved
@@ -281,7 +302,9 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 */
 	private function getInternalObservedPropertySymbol(array $observedPropertyConversions, string $variableName, string $symbol) : string {
 		foreach ($observedPropertyConversions as $key => $value) {
-			if ($value[$variableName] && $value[$variableName] == $symbol) return $key;
+			if ($value[$variableName] && $value[$variableName] == $symbol) {
+				return $key;
+			}
 		}
 		return "";
 	}
@@ -298,7 +321,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 */
 	private function getParameter(array $list, string $parameterName, string $parameterValue) : array {
 		$result = [];
-		foreach($list as $item) {
+		foreach ($list as $item) {
 			if (array_key_exists($parameterName, $item) && $item[$parameterName] == $parameterValue) {
 				$result = $item;
 				break;
@@ -315,15 +338,15 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 * @param string $parameterName name of parameter
 	 * @param string $parameterValue value for parameter
 	 */
-	private function delete(array &$list, string $parameterName, string $parameterValue)
-	{
-		foreach($list as $key => &$item) {
+	private function delete(array &$list, string $parameterName, string $parameterValue) {
+		foreach ($list as $key => &$item) {
 			if (array_key_exists($parameterName, $item) && $item[$parameterName] == $parameterValue) {
 				unset($list[$key]);
 			}
 		}
 		$list = array_values($list);
 	}
+
 
 	/**
 	 * Check whether a given value for a parameter exists in list. List item is an associative array in which parameter names are keys.
@@ -335,7 +358,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 */
 	private function exists(array $list, string $parameterName, string $parameterValue) : bool {
 		$exists = false;
-		foreach($list as $item) {
+		foreach ($list as $item) {
 			if (array_key_exists($parameterName, $item) && $item[$parameterName] == $parameterValue) {
 				$exists = true;
 				break;
@@ -343,6 +366,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		}
 		return $exists;
 	}
+
 
 	/**
 	 * Assembles date from componentes like day, month, year, hour and minute
@@ -415,7 +439,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 * @see assembleDate
 	 */
 	private function assembleDates(array &$flatList) {
-		foreach($flatList as &$entry) {
+		foreach ($flatList as &$entry) {
 			$this->assembleDate($entry);
 		}
 	}
@@ -434,12 +458,16 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		$itemUnit = $this->getParameter($entry, "Type", "ObservedPropertyUnit");
 		$itemSymbol = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
 		$valid = false;
-		foreach($entry as &$item) {
+		foreach ($entry as &$item) {
 			if ($item["Type"] == "ObservedPropertyValue") {
 				if ($item["Value"] != "") {
 					$valid = true;
-					if ($this->separatorThousands != "") $item["Value"] = str_replace($this->separatorThousands, "", $item["Value"]);
-					if ($this->separatorDecimals != "." && $this->separatorDecimals != "") $item["Value"] = str_replace($this->separatorDecimals, ".", $item["Value"]);
+					if ($this->separatorThousands != "") {
+						$item["Value"] = str_replace($this->separatorThousands, "", $item["Value"]);
+					}
+					if ($this->separatorDecimals != "." && $this->separatorDecimals != "") {
+						$item["Value"] = str_replace($this->separatorDecimals, ".", $item["Value"]);
+					}
 					if (!$itemUnit) {
 						$elem = [
 							"Type" => "ObservedPropertyUnit",
@@ -467,13 +495,14 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 * @see convertValue
 	 */
 	private function convertValues(array &$flatList) {
-		foreach($flatList as $key => &$entry) {
+		foreach ($flatList as $key => &$entry) {
 			if (!$this->convertValue($entry)) {
 				unset($flatList[$key]);
 			}
 		}
 		$flatList = array_values($flatList);
 	}
+
 
 	/**
 	 * @inheritDoc
@@ -544,7 +573,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 							"Unit" => null,
 						];
 						// delete all occurrences of ObservedPropertyValue with wrong symbol
-						foreach($entry as $ekey => &$e) {
+						foreach ($entry as $ekey => &$e) {
 							if ($e["Type"] == "ObservedPropertyValue" && $e["Format"] != $elem["Value"]) {
 								unset($entry[$ekey]);
 							}
@@ -554,7 +583,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 					} else {
 						// add observed property symbol from ObservedPropertyValue
 						$count = 0;
-						foreach($entry as &$e) {
+						foreach ($entry as &$e) {
 							if ($e["Type"] == "ObservedPropertyValue") {
 								// copy entry to new entries, because multiple occurrences of "ObservedPropertyValue" may be
 								// present in $entry for different observed properties
@@ -568,7 +597,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 								];
 								array_push($newEntry, $elem);
 								// delete all occurrences of ObservedPropertyValue with wrong symbol
-								foreach($newEntry as $newenkey => &$newenval) {
+								foreach ($newEntry as $newenkey => &$newenval) {
 									if ($newenval["Type"] == "ObservedPropertyValue" && $newenval["Format"] != $prop) {
 										unset($newEntry[$newenkey]);
 									}
@@ -591,7 +620,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 		// delete entries which do not fit to API-call (extra monitoring points, extra observed properties)
 		if ($resource->meta) {
-			foreach($flatList as $key => &$entry) {
+			foreach ($flatList as $key => &$entry) {
 				$mp = $this->getParameter($entry, "Type", "MonitoringPoint");
 				$obs = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
 				//echo "mp: " .$mp["Value"] . ", obs: ". $obs["Value"] ."\r\n";
@@ -615,7 +644,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 		$resultArray = [];
 		$properties = [];
-		foreach($flatList as $line) {
+		foreach ($flatList as $line) {
 			$mp = $this->getParameter($line, "Type", "MonitoringPoint")["Value"];
 
 			if (!array_key_exists($mp, $resultArray)) {
@@ -632,7 +661,8 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 			$value = strval($this->getParameter($line, "Type", "ObservedPropertyValue")["Value"]);
 			$unit = $this->getParameter($line, "Type", "ObservedPropertyUnit")["Value"];
 
-			$resultArray[$mp][$obs] = array_merge($resultArray[$mp][$obs],
+			$resultArray[$mp][$obs] = array_merge(
+				$resultArray[$mp][$obs],
 				[
 					[
 						'time' => $time,
@@ -1102,4 +1132,6 @@ XML;
 </arsopodatki>
 XML;
 	}
+
+
 }

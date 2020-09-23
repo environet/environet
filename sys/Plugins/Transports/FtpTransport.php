@@ -52,6 +52,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 	 */
 	private $newestFileOnly;
 
+
 	/**
 	 * @inheritDoc
 	 */
@@ -63,8 +64,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		$host = $console->ask('');
 
 		$console->writeLine('Secure connection:');
-		$console->write('Enter 0 for an FTP connection without SSL');
-		$secure = $console->askWithDefault('Secure FTP connection', true);
+		$secure = $console->askWithDefault('Enter 0 for an FTP connection without SSL', true);
 
 		$console->writeLine('FTP username:');
 		$username = $console->ask('');
@@ -132,14 +132,22 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		$out = [];
 		$newest = 0;
 		foreach ($files as $entry) {
-			if ($this->filenamePattern !== '' && !fnmatch($this->filenamePattern, $entry['name'])) continue;
-			if (count($out) > 0 && $entry['modify'] < $newest) continue;
-			if (count($out) == 0) array_push($out, $entry);
-			else $out[0] = $entry;
+			if ($this->filenamePattern !== '' && !fnmatch($this->filenamePattern, $entry['name'])) {
+				continue;
+			}
+			if (count($out) > 0 && $entry['modify'] < $newest) {
+				continue;
+			}
+			if (count($out) == 0) {
+				array_push($out, $entry);
+			} else {
+				$out[0] = $entry;
+			}
 			$newest = $entry['modify'];
 		}
 		return $out;
 	}
+
 
 	/**
 	 * @inheritDoc
@@ -167,7 +175,9 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		//ftp_chdir($conn, $this->path);
 
 		$path = $this->path;
-		if ($path !== '' && substr($path, -1) !== '/') $path .= "/";
+		if ($path !== '' && substr($path, -1) !== '/') {
+			$path .= "/";
+		}
 
 		$contentsAll = ftp_mlsd($conn, $this->path);
 		//$count = 0;
@@ -193,15 +203,21 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 
 		// take only files
 		foreach ($contentsAll as $key => &$entry) {
-			if ($entry['type'] !== 'file') unset($contentsAll[$key]);
+			if ($entry['type'] !== 'file') {
+				unset($contentsAll[$key]);
+			}
 		}
 
-		if ($this->newestFileOnly) $contentsAll = $this->newestFile($contentsAll);
+		if ($this->newestFileOnly) {
+			$contentsAll = $this->newestFile($contentsAll);
+		}
 
 		// Take only files which meet the filename pattern
 		$contents = [];
 		foreach ($contentsAll as $entry) {
-			if ($this->filenamePattern !== '' && !fnmatch($this->filenamePattern, $entry['name'])) continue;
+			if ($this->filenamePattern !== '' && !fnmatch($this->filenamePattern, $entry['name'])) {
+				continue;
+			}
 			array_push($contents, $path . $entry['name']);
 		}
 
@@ -213,11 +229,11 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 			$resource = new Resource();
 			$resource->name = end(explode('/', $content));
 			$resource->contents = file_get_contents($localCopyPath . end(explode('/', $content)));
-			$resource->meta = [
-				"MonitoringPointNCDs" => [], 
+			/*$resource->meta = [
+				"MonitoringPointNCDs" => [],
 				"ObservedPropertySymbols" => [],
 				"observedPropertyConversions" => [],
-			];
+			];*/
 			$results[] = $resource;
 		}
 
