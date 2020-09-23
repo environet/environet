@@ -34,19 +34,19 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 	public static function create(Console $console): TransportInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring local directory transport', Console::COLOR_YELLOW);
-		
+
 		$console->writeLine('Enter path to the directory where the data files are. This should be a path relative to ' . self::getDataDirDisplay());
 		$console->write('Leave empty if the data files are located immediately under that directory.');
 		$path = $console->ask('');
-		
-		if (!file_exists('/meteringdata/' . $path)) {
-			$console->writeLine('The folder ' . self::getDataDirDisplay() . '/' . $path . 'does not exist. You can create this folder later and continue with the plugin configuration.', Console::COLOR_RED);
+
+		if (!is_dir('/meteringdata/' . $path)) {
+			$console->writeLine('The folder ' . self::getDataDirDisplay() . '/' . $path . ' does not exist. You can create this folder later and continue with the plugin configuration.', Console::COLOR_RED);
 			if (!$console->askYesNo("Do you want to continue?", false)) {
 				exit;
 			}
 		}
-		
-		
+
+
 		$config = [
 			'path' => $path,
 		];
@@ -87,9 +87,9 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 		}
 
 		$dataFolderFiles = array_filter(glob("/meteringdata/{$this->path}/*"), 'is_file');
-		
+
 		$console->writeLine('There are ' . count($dataFolderFiles) . ' files in the data folder (' . self::getDataDirDisplay() . ')');
-		
+
 		$newOrChangedFiles = [];
 		foreach ($dataFolderFiles as $filePath) {
 			$filePathArray = explode('/', $filePath);
@@ -104,7 +104,7 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 				$newOrChangedFiles[] = $resource;
 			}
 		}
-		
+
 		$console->writeLine(count($newOrChangedFiles) . ' files have changed since the last run');
 
 		return $newOrChangedFiles;

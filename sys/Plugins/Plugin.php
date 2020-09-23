@@ -57,7 +57,7 @@ class Plugin {
 					$console->write('Uploading monitoring point data', Console::COLOR_YELLOW);
 					//$console->write($xmlPayload->asXML(), Console::COLOR_YELLOW);
 					try {
-						$apiResponse = $this->apiClient->upload($xmlPayload);
+						$this->apiClient->upload($xmlPayload);
 						$console->write("\r");
 						$console->writeLine('Monitoring point data upload successful  ', Console::COLOR_GREEN);
 						$console->writeLine('');
@@ -67,6 +67,8 @@ class Plugin {
 						$console->write("\r");
 						$console->writeLine('Upload failed, response:                ', Console::COLOR_RED);
 						$console->writeLine($e->getMessage(), Console::COLOR_RED);
+						$console->writeLine('Payload was ', Console::COLOR_YELLOW);
+						$console->writeLine($xmlPayload->asXML());
 						$console->writeLine('');
 						$failed ++;
 					}
