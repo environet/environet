@@ -17,18 +17,7 @@ use Exception;
  * @package Environet\Sys\General\Db\Selectors
  * @author  SRG Group <dev@srg.hu>
  */
-class MonitoringPointSelector extends Selector {
-
-
-	/**
-	 * @var Identity
-	 */
-	private $operator;
-
-	/**
-	 * @var int
-	 */
-	private $type;
+class MonitoringPointSelector extends BaseAccessSelector {
 
 	/**
 	 * @var array
@@ -46,11 +35,8 @@ class MonitoringPointSelector extends Selector {
 	 * @throws QueryException
 	 */
 	public function __construct(string $values, $type, int $operatorId) {
-		$this->operator = $this->getOperatorIdentity($operatorId);
-		$this->type = $type;
 		$this->eucd = null;
-
-		parent::__construct($values, self::SELECTOR_TYPE_INT);
+		parent::__construct($values, $type, $operatorId);
 	}
 
 
@@ -90,14 +76,15 @@ class MonitoringPointSelector extends Selector {
 	 */
 	protected function getHydroPointsByOperator(): string {
 		if ($this->isOperatorAdmin()) {
-			return (new Select())->select('string_agg(hydropoint.id::text, \',\')')->from('hydropoint')->run(Query::FETCH_FIRST);
+			$points = (new Select())->select('string_agg(hydropoint.id::text, \',\') as points')->from('hydropoint')->run(Query::FETCH_FIRST);
+		} else {
+			$points = (new Select())
+				->select('string_agg(hydropoint.id::text, \',\') as points')
+				->from('hydropoint')
+				->where("hydropoint.operatorid = {$this->operatorId}")
+				->run(Query::FETCH_FIRST);
 		}
-
-		return (new Select())
-			->select('string_agg(hydropoint.id::text, \',\')')
-			->from('hydropoint')
-			->where("hydropoint.operatorid === {$this->operator->getId()}")
-			->run(Query::FETCH_FIRST);
+		return $points ? $points['points'] : '';
 	}
 
 
@@ -108,14 +95,15 @@ class MonitoringPointSelector extends Selector {
 	 */
 	protected function getMeteoPointsByOperator(): string {
 		if ($this->isOperatorAdmin()) {
-			return (new Select())->select('string_agg(meteopoint.id::text, \',\')')->from('meteopoint')->run(Query::FETCH_FIRST);
+			$points = (new Select())->select('string_agg(meteopoint.id::text, \',\') as points')->from('meteopoint')->run(Query::FETCH_FIRST);
+		} else {
+			$points = (new Select())
+				->select('string_agg(meteopoint.id::text, \',\') as points')
+				->from('meteopoint')
+				->where("meteopoint.operatorid = {$this->operatorId}")
+				->run(Query::FETCH_FIRST);
 		}
-
-		return (new Select())
-			->select('string_agg(meteopoint.id::text, \',\')')
-			->from('meteopoint')
-			->where("meteopoint.operatorid === {$this->operator->getId()}")
-			->run(Query::FETCH_FIRST);
+		return $points ? $points['points'] : '';
 	}
 
 

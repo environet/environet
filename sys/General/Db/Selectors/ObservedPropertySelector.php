@@ -18,17 +18,7 @@ use http\Client\Curl\User;
  * @package Environet\Sys\General\Db\Selectors
  * @author  SRG Group <dev@srg.hu>
  */
-class ObservedPropertySelector extends Selector {
-
-	/**
-	 * @var Identity|null
-	 */
-	private $operator;
-
-	/**
-	 * @var int
-	 */
-	private $type;
+class ObservedPropertySelector extends BaseAccessSelector {
 
 	/**
 	 * @var array
@@ -46,11 +36,9 @@ class ObservedPropertySelector extends Selector {
 	 * @throws QueryException
 	 */
 	public function __construct(string $values, $type, int $operatorId = 0) {
-		$this->operator = $operatorId ? $this->getOperatorIdentity($operatorId) : null;
-		$this->type = $type;
 		$this->symbols = null;
 
-		parent::__construct($values, self::SELECTOR_TYPE_INT);
+		parent::__construct($values, $type, $operatorId);
 	}
 
 
@@ -123,19 +111,20 @@ class ObservedPropertySelector extends Selector {
 	 */
 	protected function getHydroPropertiesByOperator(): string {
 		if ($this->isOperatorAdmin()) {
-			return (new Select())
-				->select('string_agg(hydro_observed_property.id::text, \',\')')
+			$properties (new Select())
+				->select('string_agg(hydro_observed_property.id::text, \',\') as properties')
 				->from('hydro_observed_property')
 				->run(Query::FETCH_FIRST);
+		} else {
+			$properties = (new Select())
+				->select('string_agg(hydro_observed_property.id::text, \',\') as properties')
+				->from('hydro_observed_property')
+				->join('hydropoint_observed_property', 'hydropoint_observed_property.observed_propertyid = hydro_observed_property.id')
+				->join('hydropoint', 'hydropoint.id = hydropoint_observed_property.mpointid')
+				->where("hydropoint.operatorid = {$this->operatorId}")
+				->run(Query::FETCH_FIRST);
 		}
-
-		return (new Select())
-			->select('string_agg(hydro_observed_property.id::text, \',\')')
-			->from('hydro_observed_property')
-			->join('hydropoint_observed_property', 'hydropoint_observed_property.observed_propertyid = hydro_observed_property.id')
-			->join('hydropoint', 'hydropoint.id = hydropoint_observed_property.mpointid')
-			->where("hydropoint.operatorid === {$this->operator->getId()}")
-			->run(Query::FETCH_FIRST);
+		return $properties ? $properties['properties'] : '';
 	}
 
 
@@ -146,19 +135,21 @@ class ObservedPropertySelector extends Selector {
 	 */
 	protected function getMeteoPropertiesByOperator(): string {
 		if ($this->isOperatorAdmin()) {
-			return (new Select())
-				->select('string_agg(meteo_observed_property.id::text, \',\')')
+			$properties = (new Select())
+				->select('string_agg(meteo_observed_property.id::text, \',\') as properties')
 				->from('meteo_observed_property')
+				->run(Query::FETCH_FIRST);
+		} else {
+			$properties = (new Select())
+				->select('string_agg(meteo_observed_property.id::text, \',\') as properties')
+				->from('meteo_observed_property')
+				->join('meteopoint_observed_property', 'meteopoint_observed_property.observed_propertyid = meteo_observed_property.id')
+				->join('meteopoint', 'meteopoint.id = meteopoint_observed_property.mpointid')
+				->where("meteopoint.operatorid = {$this->operatorId}")
 				->run(Query::FETCH_FIRST);
 		}
 
-		return (new Select())
-			->select('string_agg(meteo_observed_property.id::text, \',\')')
-			->from('meteo_observed_property')
-			->join('meteopoint_observed_property', 'meteopoint_observed_property.observed_propertyid = meteo_observed_property.id')
-			->join('meteopoint', 'meteopoint.id = meteopoint_observed_property.mpointid')
-			->where("meteopoint.operatorid === {$this->operator->getId()}")
-			->run(Query::FETCH_FIRST);
+		return $properties ? $properties['properties'] : '';
 	}
 
 
@@ -205,7 +196,7 @@ class ObservedPropertySelector extends Selector {
 	 */
 	public function unserialize($serialized) {
 		if ($serialized === '*') {
-			if (!$this->operator) {
+			if (!$this->operatorIdentity) {
 				throw new Exception('Missing operator!');
 			}
 

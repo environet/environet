@@ -3,6 +3,7 @@
 namespace Environet\Sys\Plugins\Parsers;
 
 use DateTime;
+use DateTimeZone;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\ParserInterface;
@@ -21,7 +22,7 @@ use SimpleXMLElement;
  * @package Environet\Sys\Plugins\Parsers
  * @author  SRG Group <dev@srg.hu>
  */
-class CsvParser implements ParserInterface, BuilderLayerInterface {
+class CsvParser extends AbstractParser implements BuilderLayerInterface {
 
 	const API_TIME_FORMAT_STRING = 'Y-m-d\TH:i:sP';
 
@@ -51,9 +52,29 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	private $timeFormat;
 
 	/**
+	 * @var mixed The level where the observed property can be found in the source (row / column)
+	 */
+	private $propertyLevel = 'column';
+
+	/**
 	 * @var array A symbol => column number representation of observable properties
 	 */
-	private $properties;
+	private $propertySymbolsToColumns;
+
+	/**
+	 * @var int The observed property symbols column number
+	 */
+	private $propertySymbolColumn;
+
+	/**
+	 * @var int The observed property values column number
+	 */
+	private $propertyValueColumn;
+
+	/**
+	 * @var string Filename for JSON file with conversions of variables
+	 */
+	private $conversionsFilename;
 
 
 	/**
@@ -62,18 +83,34 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	 * @param array $config
 	 */
 	public function __construct(array $config) {
-
 		$this->csvDelimiter = $config['csvDelimiter'];
 		$this->nHeaderSkip = $config['nHeaderSkip'];
 		$this->mPointIdCol = $config['mPointIdCol'];
 		$this->timeCol = $config['timeCol'];
 		$this->timeFormat = $config['timeFormat'];
-		$this->properties = array_map(function ($propertyString) {
-			return [
-				'symbol' => explode(';', $propertyString)[0],
-				'column' => explode(';', $propertyString)[1]
-			];
+		$this->conversionsFilename = $config['conversionsFilename'];
+
+		if ($config['propertyLevel']) {
+			$this->propertyLevel = $config['propertyLevel'];
+		}
+
+		$this->propertySymbolsToColumns = array_map(function ($propertyString) {
+			if ($this->propertyLevel === 'column') {
+				return [
+					'symbol' => explode(';', $propertyString)[0],
+					'column' => explode(';', $propertyString)[1]
+				];
+			} else {
+				return [
+					'symbol' => $propertyString
+				];
+			}
 		}, $config['properties']);
+
+		$this->propertySymbolColumn = $config['propertySymbolColumn'];
+		$this->propertyValueColumn = $config['propertyValueColumn'];
+
+		parent::__construct($config);
 	}
 
 
@@ -84,13 +121,13 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::meteringPointInputXmlsFromArray()
 	 */
 	public function parse(Resource $resource): array {
-		$properties = $this->properties;
+		$properties = $this->propertySymbolsToColumns;
 		if ($resource->meta) {
 			// Delete observed properties which are not requested.
 			// This is necessary because in some csv files only the requested observed property is contained,
 			// but for each observed property in the same column. (e.g. DWD)
 			// So without deleting the non-requested observed properties here, in such a case
-			// the file would be misinterpreted: Every configured observed property would have the value of 
+			// the file would be misinterpreted: Every configured observed property would have the value of
 			// the requested observed property.
 			foreach ($properties as $key => &$entry) {
 				$symbol = $entry["symbol"];
@@ -98,9 +135,11 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 					unset($properties[$key]);
 				}
 			}
-			$properties = array_values($properties);
+			$this->propertySymbolsToColumns = array_values($properties);
 		}
-		$dataArray = $this->mPointDataArrayFromCSV($resource->contents, $properties);
+
+		$dataArray = $this->mPointDataArrayFromCSV($resource->contents);
+
 		return $this->meteringPointInputXmlsFromArray($dataArray);
 	}
 
@@ -114,18 +153,18 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	 * @return array
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::parseResultLine()
 	 */
-	private function mPointDataArrayFromCSV(string $csv, array $properties): array {
+	private function mPointDataArrayFromCSV(string $csv): array {
 		$resultArray = [];
 
 		$lines = explode("\n", $csv);
 
 		$lineCount = 0;
 		foreach ($lines as $line) {
-			++$lineCount;
+			++ $lineCount;
 			if ($lineCount <= $this->nHeaderSkip) {
 				continue;
 			}
-			$resultLine = $this->parseResultLine($line, $properties);
+			$resultLine = $this->parseResultLine($line);
 			if (empty($resultLine)) {
 				continue;
 			}
@@ -135,16 +174,20 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 			}
 
 			// Initialize time series for properties with an empty array
-			foreach ($properties as $property) {
+			foreach ($this->propertySymbolsToColumns as $property) {
+				if (empty($resultLine[$property['symbol']])) {
+					continue;
+				}
 				if (!array_key_exists($property['symbol'], $resultArray[$resultLine['mPointId']])) {
 					$resultArray[$resultLine['mPointId']][$property['symbol']] = [];
 				}
 			}
 
-			foreach ($properties as $property) {
-				if(empty($resultLine[$property['symbol']]))
+			foreach ($this->propertySymbolsToColumns as $property) {
+				if (empty($resultLine[$property['symbol']])) {
 					continue;
-				
+				}
+
 				$resultArray[$resultLine['mPointId']][$property['symbol']] = array_merge(
 					$resultArray[$resultLine['mPointId']][$property['symbol']],
 					[
@@ -204,31 +247,58 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	 *
 	 * @return array
 	 */
-	private function parseResultLine($line, $properties): array {
+	private function parseResultLine($line): array {
 		$values = array_map('trim', explode($this->csvDelimiter, $line));
 		if (!array_key_exists($this->timeCol, $values)) {
 			// No time set
 			return [];
 		}
 
-		$time = DateTime::createFromFormat($this->timeFormat, $values[$this->timeCol]);
+		$time = DateTime::createFromFormat($this->timeFormat, $values[$this->timeCol], $this->getTimeZone());
 
-		if(!$time) {
+		if (!$time) {
 			// Couldn't parse time
+			Console::getInstance()->writeLine('Couldn\'t parse time in row: ' . $line);
 			return [];
 		}
 
+		//Set timezone to UTC
+		$time->setTimezone(new DateTimeZone('UTC'));
 		$data = [
 			'mPointId' => $values[$this->mPointIdCol],
-			'time'     => DateTime::createFromFormat($this->timeFormat, $values[$this->timeCol])->format(self::API_TIME_FORMAT_STRING),
+			'time'     => $time->format(self::API_TIME_FORMAT_STRING),
 		];
 
-		foreach ($properties as $property) {
-			$data[$property['symbol']] = $values[$property['column']];
+		switch ($this->propertyLevel) {
+			case 'row':
+				$symbol = $this->mapToDistributionSymbol($values[$this->propertySymbolColumn]);
+				if (!$symbol) {
+					Console::getInstance()->writeLine('Unknown symbol: ' . $values[$this->propertySymbolColumn]);
+				}
+					$data[$symbol] = $values[$this->propertyValueColumn];
+
+				break;
+			default:
+				foreach ($this->propertySymbolsToColumns as $property) {
+					$data[$property['symbol']] = $values[$property['column']];
+				}
 		}
 
-
 		return $data;
+	}
+
+
+	private function mapToDistributionSymbol($symbol) {
+		if ($this->conversionsFilename) {
+			$conversions = JSON_decode(file_get_contents(SRC_PATH . '/conf/plugins/configurations/' . $this->conversionsFilename), true);
+
+			foreach ($conversions['observedPropertyConversions'] as $key => $value) {
+				if ($value == $symbol) {
+					return $key;
+				}
+			}
+		}
+		return $symbol;
 	}
 
 
@@ -239,6 +309,8 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 	public static function create(Console $console): ParserInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring csv parser', Console::COLOR_YELLOW);
+
+		$timeZone = self::createTimeZoneConfig($console);
 
 		$console->writeLine('Enter the csv delimiter character. E.g.: a comma in case of comma separated csv files', Console::COLOR_YELLOW);
 		$csvDelimiter = $console->ask('Csv delimiter:');
@@ -256,27 +328,72 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 		$timeFormat = $console->ask('Time format (for example, the format \'Y-m-d H:i:s\' corresponds to dates such as: 2020-03-15 10:15:00, while \'Y.m.d. H:i\' would match 2020.03.15. 10:15):');
 
 		$console->writeLine('Configuring observed properties', Console::COLOR_YELLOW);
-		$console->writeLine('For each observed property that can be found in the csv file, enter the symbol (that it used on the distribution node) first, and then the column number where the values are located.', Console::COLOR_YELLOW);
 
-		$properties = [];
-		do {
-			$properties[] = self::serializePropertyConfiguration([
-				'symbol' => $console->ask("Property symbol:"),
-				'column' => $console->ask("Column number:") - 1
-			]);
-		} while ($console->askYesNo('Do you want to add more properties?'));
+		$console->writeLine('In what way are the values in the files mathed to the observed property symbols?');
+		$console->writeLine('Choose \'column\' if the values of an observed property have their own column in the files');
+		$console->writeLine('Choose \'row\' if the rows have a column containing observed property symbols that specify which symbol the value belongs to');
+		$propertyLevel = static::chooseObservedPropertyLevel(Console::getInstance());
 
+		if ($propertyLevel === 'column') {
+			$console->writeLine('For each observed property that can be found in the csv file, enter the symbol (that is used on the distribution node) first, and then the column number where the values are located.', Console::COLOR_YELLOW);
+
+			$properties = [];
+			do {
+				$properties[] = self::serializePropertyConfiguration([
+					'symbol' => $console->ask("Property symbol:"),
+					'column' => $console->ask("Column number:") - 1
+				]);
+			} while ($console->askYesNo('Do you want to add more properties?'));
+		} else {
+			$console->writeLine('Conversions', Console::COLOR_YELLOW);
+			$console->writeLine('Observed properties in your files might have a name that differs from the one used by the distribution node for the same property. You can set up a json file to specify the necessary conversions.');
+			$conversionsFilename = $console->askWithDefault("Filename of conversion specifications", '');
+
+			$console->writeLine('For each observed property that you want to parse from the csv file, enter its symbol (that is used on the distribution node)', Console::COLOR_YELLOW);
+			$properties = [];
+			do {
+				$properties[] = $console->ask("Property symbol:");
+			} while ($console->askYesNo('Do you want to add more properties?'));
+
+			$propertySymbolColumn = $console->ask("Property symbol column number:") - 1;
+			$propertyValueColumn = $console->ask("Property value column number:") - 1;
+		}
 
 		$config = [
 			'csvDelimiter' => $csvDelimiter,
+			'timeZone'     => $timeZone,
 			'nHeaderSkip'  => $nHeaderSkip,
 			'mPointIdCol'  => $mPointIdCol,
 			'timeCol'      => $timeCol,
 			'timeFormat'   => $timeFormat,
-			'properties'   => $properties
+			'properties'   => $properties,
+			'propertyLevel' => $propertyLevel,
+			'conversionsFilename' => $conversionsFilename,
+			'propertySymbolColumn' => $propertySymbolColumn,
+			'propertyValueColumn' => $propertyValueColumn
 		];
 
 		return new self($config);
+	}
+
+
+	/**
+	 * Ask for alternative if the current layer has any.
+	 *
+	 * @param Console $console
+	 *
+	 * @return mixed
+	 */
+	private static function chooseObservedPropertyLevel(Console $console): string {
+		$alternatives = ['column', 'row'];
+
+		foreach (['column', 'row'] as $i => $alternative) {
+			$console->writeLine($i + 1 . ": " . $alternative);
+		}
+		$console->writeLine('');
+		$choice = $console->askOption("Enter a number for your choice:");
+
+		return $alternatives[(int) $choice - 1];
 	}
 
 
@@ -305,9 +422,19 @@ class CsvParser implements ParserInterface, BuilderLayerInterface {
 		$config .= 'mPointIdCol = ' . $this->mPointIdCol . "\n";
 		$config .= 'timeCol = ' . $this->timeCol . "\n";
 		$config .= 'timeFormat = ' . $this->timeFormat . "\n";
+		$config .= 'timeZone = ' . $this->timeZone . "\n";
+		$config .= 'conversionsFilename = ' . $this->conversionsFilename . "\n";
+		$config .= 'propertyLevel = ' . $this->propertyLevel . "\n";
+		$config .= 'propertySymbolColumn = ' . $this->propertySymbolColumn . "\n";
+		$config .= 'propertyValueColumn = ' . $this->propertyValueColumn . "\n";
 
-		foreach ($this->properties as $property) {
-			$config .= 'properties[] = "' . self::serializePropertyConfiguration($property) . "\"\n";
+
+		foreach ($this->propertySymbolsToColumns as $property) {
+			if ($this->propertyLevel === 'column') {
+				$config .= 'properties[] = "' . self::serializePropertyConfiguration($property) . "\"\n";
+			} else {
+				$config .= 'properties[] = "' . $property['symbol'] . "\"\n";
+			}
 		}
 
 		return $config;
