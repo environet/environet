@@ -395,7 +395,11 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		{
 			$t = mktime(strval($Hour["Value"]), strval($Minute["Value"]), 0,
 				strval($Month["Value"]), strval($Day["Value"]), strval($Year["Value"]));
-			$result["Value"] = date(self::API_TIME_FORMAT_STRING, $t);
+			$format = "dmY H:i:s";
+			$dateLocal = date($format, $t);
+			$date = DateTime::createFromFormat($format, $dateLocal, $this->getTimeZone());
+			$date->setTimezone(new DateTimeZone('UTC'));
+			$result["Value"] = $date->format(self::API_TIME_FORMAT_STRING);
 			$this->delete($entry, "Type", "Year");
 			$this->delete($entry, "Type", "Month");
 			$this->delete($entry, "Type", "Day");
