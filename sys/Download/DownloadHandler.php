@@ -117,6 +117,10 @@ class DownloadHandler extends ApiHandler {
 			->where("users_groups.usersid = {$this->getIdentity()->getId()}")
 			->run();
 
+		if (empty($rules)) {
+			throw new AccessRuleException('There are no access rules configured or group assigned for this user! Please contact an administrator for support.');
+		}
+
 		// Initialize rule member values and check for requested points or selectors
 		$availablePoints = [];
 		$availableProps = [];

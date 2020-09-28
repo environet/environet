@@ -6,9 +6,7 @@ namespace Environet\Sys\General\Db\Selectors;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\QueryException;
-use Environet\Sys\General\Identity;
 use Exception;
-use http\Client\Curl\User;
 
 /**
  * Class ObservedPropertySelector
@@ -50,7 +48,9 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	 */
 	public function getSymbols(): array {
 		if ($this->symbols === null) {
-			if ($this->type === MPOINT_TYPE_HYDRO) {
+			if (empty($this->values)) {
+				$symbols = [];
+			} elseif ($this->type === MPOINT_TYPE_HYDRO) {
 				$symbols = (new Select())
 					->select('id, symbol')
 					->from('hydro_observed_property')
@@ -111,7 +111,7 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	 */
 	protected function getHydroPropertiesByOperator(): string {
 		if ($this->isOperatorAdmin()) {
-			$properties (new Select())
+			$properties(new Select())
 				->select('string_agg(hydro_observed_property.id::text, \',\') as properties')
 				->from('hydro_observed_property')
 				->run(Query::FETCH_FIRST);
@@ -124,7 +124,8 @@ class ObservedPropertySelector extends BaseAccessSelector {
 				->where("hydropoint.operatorid = {$this->operatorId}")
 				->run(Query::FETCH_FIRST);
 		}
-		return $properties ? $properties['properties'] : '';
+
+		return $properties ? $properties['properties'] ?? '' : '';
 	}
 
 
@@ -156,10 +157,13 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	/**
 	 * Checks if the provided values are permitted
 	 *
-	 * @param array $values
+	 * @param       $type
+	 * @param array $symbols
+	 * @param array $availableValues
 	 *
 	 * @return array
 	 * @throws QueryException
+	 * @throws Exception
 	 */
 	public static function checkAgainstSymbols($type, array $symbols, array $availableValues): array {
 		if ($type === MPOINT_TYPE_HYDRO) {
@@ -174,6 +178,14 @@ class ObservedPropertySelector extends BaseAccessSelector {
 				->from('meteo_observed_property')
 				->whereIn('symbol', $symbols, 'symbolParam')
 				->run();
+		}
+
+		if (count($symbols) !== count($requestedProps)) {
+			$invalid = array_diff($symbols, array_column($requestedProps, 'symbol'));
+			if (count($invalid) > 1) {
+				throw new Exception('Requested observed property symbols are invalid: ' . implode(', ', $invalid));
+			}
+			throw new Exception("Requested observed property symbol is invalid: " . implode('', $invalid));
 		}
 
 		$result = [];
@@ -211,4 +223,6 @@ class ObservedPropertySelector extends BaseAccessSelector {
 
 		parent::unserialize($serialized);
 	}
+
+
 }
