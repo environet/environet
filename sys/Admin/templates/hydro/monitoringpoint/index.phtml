@@ -22,6 +22,7 @@
         <thead>
             <tr>
                 <th><?=sortableColumn('Name', 'name');?></th>
+                <th><?=sortableColumn('Country', 'country');?></th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -32,6 +33,7 @@
 			?>
                 <tr>
                     <td><?=$record['name'] ?? null;?></td>
+                    <td><?=$record['country'] ?? null;?></td>
                     <td class="actions">
                         <a href="/admin/hydro/monitoring-points/show?id=<?=$record['id'];?>"><i class="fas fa-eye text-muted"></i></a>
                         <a href="/admin/hydro/monitoring-points/edit?id=<?=$record['id'];?>"><i class="fas fa-edit"></i></a>

@@ -16,8 +16,8 @@
 				<th><?=sortableColumn('Property', 'hop.symbol');?></th>
 				<th><?=sortableColumn('Phenomenon time begin', 'hts.phenomenon_time_begin');?></th>
 				<th><?=sortableColumn('Phenomenon time end', 'hts.phenomenon_time_end');?></th>
-				<th><?=sortableColumn('Result time', 'hts.result_time');?></th>
-				<th><?=sortableColumn('Time', 'hr.time');?></th>
+				<th><?=sortableColumn('Result time', 'hts.time');?></th>
+				<th><?=sortableColumn('Time', 'hr.result_time');?></th>
 				<th><?=sortableColumn('Value', 'hr.value');?></th>
 			</tr>
 		</thead>
@@ -31,8 +31,8 @@
 				<td><?=$result['symbol'] ?? null;?></td>
 				<td><?=$result['phenomenon_time_begin'] ?? null;?></td>
 				<td><?=$result['phenomenon_time_end'] ?? null;?></td>
-				<td><?=$result['result_time'] ?? null;?></td>
 				<td><?=$result['time'] ?? null;?></td>
+				<td><?=$result['result_time'] ?? null;?></td>
 				<td><?=$result['value'] ?? null;?></td>
 			</tr>
 			<?php
