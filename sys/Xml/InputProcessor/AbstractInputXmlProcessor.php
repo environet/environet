@@ -6,10 +6,12 @@ use DateTime;
 use DateTimeZone;
 use Environet\Sys\General\Db\Connection;
 use Environet\Sys\General\Db\Query\Insert;
+use Environet\Sys\General\Db\UserQueries;
 use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\Exceptions\InvalidConfigurationException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\Exceptions\UniqueConstraintQueryException;
+use Environet\Sys\General\Identity;
 use Environet\Sys\Upload\Exceptions\UploadException;
 use Exception;
 use SimpleXMLElement;
@@ -44,12 +46,13 @@ abstract class AbstractInputXmlProcessor {
 	/**
 	 * Find monitoring point in database based on identifier, which is the EUCD identifier
 	 *
-	 * @param string $identifier
+	 * @param string        $identifier
+	 * @param Identity|null $identity
 	 *
 	 * @return mixed
 	 * @throws UploadException
 	 */
-	abstract protected function findMonitoringPoint(string $identifier): ?array;
+	abstract protected function findMonitoringPoint(string $identifier, Identity $identity = null): ?array;
 
 
 	/**
@@ -112,17 +115,18 @@ abstract class AbstractInputXmlProcessor {
 	 * 3. Iterates the observed properties in the xml, and updates time series for them.
 	 * 4. Inserts the results in the database. {@see AbstractInputXmlProcessor::insertResults()}
 	 *
-	 * @throws UploadException
+	 * @param Identity $identity
+	 *
 	 * @throws ApiException
 	 * @throws InvalidConfigurationException
-	 * @throws Exception
+	 * @throws UploadException
 	 * @see  Connection
 	 * @uses \Environet\Sys\Xml\InputProcessor\AbstractInputXmlProcessor::findMonitoringPoint()
 	 * @uses \Environet\Sys\Xml\InputProcessor\AbstractInputXmlProcessor::getPropertyIdIfAllowed()
 	 * @uses \Environet\Sys\Xml\InputProcessor\AbstractInputXmlProcessor::getOrCreateTimeSeries()
 	 * @uses \Environet\Sys\Xml\InputProcessor\AbstractInputXmlProcessor::insertResults()
 	 */
-	public function process() {
+	public function process(Identity $identity) {
 		// Create an UTC-time
 		$now = new DateTime('now', (new DateTimeZone('UTC')));
 
@@ -133,7 +137,7 @@ abstract class AbstractInputXmlProcessor {
 			$monitoringPointId = (string) $this->xml->xpath('/environet:UploadData/environet:MonitoringPointId[1]')[0] ?? null;
 
 			// Find monitoring point in database
-			if (!($mPoint = $this->findMonitoringPoint($monitoringPointId))) {
+			if (!($mPoint = $this->findMonitoringPoint($monitoringPointId, $identity))) {
 				throw new UploadException(402);
 			}
 
@@ -219,6 +223,18 @@ abstract class AbstractInputXmlProcessor {
 		} catch (QueryException $e) {
 			throw UploadException::serverError();
 		}
+	}
+
+
+	/**
+	 * @param Identity $identity
+	 *
+	 * @return array
+	 * @throws QueryException
+	 */
+	protected function getOperatorIdsOfIdentity(Identity $identity): array {
+		$groups = array_column(UserQueries::getUserGroups($identity->getId()), 'id');
+		return array_column(UserQueries::getMergedOperatorsOfUser($identity->getId(), $groups ?: []), 'id');
 	}
 
 

@@ -73,7 +73,7 @@ class UploadHandler extends ApiHandler {
 
 			try {
 				// Input is valid syntactically and semantically valid, process it
-				$this->createInputProcessor($parsedXml)->process();
+				$this->createInputProcessor($parsedXml)->process($this->getIdentity());
 			} catch (InputXmlProcessException $e) {
 				// There are some invalid values in XML
 				throw new UploadException(401);
@@ -108,8 +108,8 @@ class UploadHandler extends ApiHandler {
 			throw new ApiException(208);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Create input processor based on the mpoint type. Type is detected with finding it in the type's database table
 	 *
@@ -127,7 +127,7 @@ class UploadHandler extends ApiHandler {
 		if (($meteoProcessor = new MeteoInputXmlProcessor($xml))->isValidType()) {
 			return $meteoProcessor;
 		}
-		
+
 		throw new UploadException(402);
 	}
 
