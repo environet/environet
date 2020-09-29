@@ -39,8 +39,7 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 				->addParameter('id', $identifier);
 
 			if ($identity) {
-				$mPointQuery->where('operatorid IN (:operatorIds)')
-					->addParameter('operatorIds', implode(',', $this->getOperatorIdsOfIdentity($identity)));
+				$mPointQuery->where('operatorid IN (' . implode(',', $this->getOperatorIdsOfIdentity($identity)) . ')');
 			}
 
 			$mPoint = $mPointQuery->run(Query::FETCH_FIRST);
