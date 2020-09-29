@@ -173,4 +173,79 @@ class MigrateDb extends DbCommand {
 		return $this->runSqlFile($schemaPath, $output);
 	}
 
+
+	/**
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function createResultUniqueIndexesDeleteDuplicates(array &$output): int {
+
+		$return = -1;
+		foreach (['hydro', 'meteo'] as $type) {
+			//Find duplicates for type
+			$tsColumn = ($type == 'meteo' ? 'meteo_' : '') . 'time_seriesid';
+			$resultTable = "{$type}_result";
+			$indexName = "{$type}_unique_time_value";
+
+			if (!$this->checkIndex($resultTable, $indexName)) {
+				//If index is not yet created, delete duplicates first, and after it add unique index
+				$return = 0;
+				$this->console->writeLine("Clean duplicated $type results...");
+				$uniqueValues = [];
+				$deleteIds = [];
+
+				$results = $this->connection->runQuery(
+					"SELECT * FROM public.$resultTable ORDER BY $tsColumn DESC, time DESC, value DESC, is_forecast DESC, created_at DESC",
+					[]
+				)->fetchAll();
+				$this->console->writeLine(sprintf("Fount %d records", count($results)));
+				foreach ($results as $result) {
+					$uniqueValue = $result[$tsColumn] . '_' . $result['time'] . '_' . $result['value'] . '_' . $result['is_forecast'];
+					if (in_array($uniqueValue, $uniqueValues)) {
+						$deleteIds[] = $result['id'];
+					} else {
+						if (count($uniqueValues) > 50) {
+							array_shift($uniqueValues);
+						}
+						$uniqueValues[] = $uniqueValue;
+					}
+				}
+
+				if ($deleteIds) {
+					//Delete ids
+					$this->console->writeLine(sprintf('Delete %d duplicated rows for type %s', count($deleteIds), $type));
+					$this->connection->runQuery('DELETE FROM public.'.$type.'_result WHERE id IN(' . implode(',', $deleteIds) . ')', []);
+				}
+
+				//Add index
+				$this->console->write("Create unique index...");
+				$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS $indexName ON $resultTable ($tsColumn,time,value,is_forecast)", []);
+				$this->console->writeLine("done\n");
+			}
+		}
+
+		return $return;
+	}
+
+
+	/**
+	 * Check if index exists in table
+	 *
+	 * @param string $tableName
+	 * @param string $indexName
+	 *
+	 * @return bool
+	 * @throws QueryException
+	 */
+	private function checkIndex(string $tableName, string $indexName) {
+		$count = $this->connection->runQuery("select COUNT(*)
+			from pg_class t, pg_class i, pg_index ix, pg_attribute a
+			where t.oid = ix.indrelid and i.oid = ix.indexrelid and a.attrelid = t.oid and a.attnum = ANY(ix.indkey) and t.relkind = 'r' 
+			  and t.relname like '$tableName' and i.relname = '$indexName'", [])->fetchColumn();
+		return ((int) $count) > 0;
+	}
+
+
 }
