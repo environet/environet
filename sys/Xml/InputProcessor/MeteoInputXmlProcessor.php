@@ -139,7 +139,8 @@ class MeteoInputXmlProcessor extends AbstractInputXmlProcessor {
 	 * @inheritDoc
 	 */
 	protected function createResultInsert(): Insert {
-		return (new Insert())->table('meteo_result')->columns(['meteo_time_seriesid', 'time', 'value', 'is_forecast', 'created_at']);
+		return (new Insert())->table('meteo_result')->columns(['meteo_time_seriesid', 'time', 'value', 'is_forecast', 'created_at'])
+			->ignoreConflict(['meteo_time_seriesid', 'time', 'value', 'is_forecast']);
 	}
 
 

@@ -5,6 +5,7 @@ namespace Environet\Sys\General\Db;
 use Environet\Sys\Config;
 use Environet\Sys\General\Exceptions\InvalidConfigurationException;
 use Environet\Sys\General\Exceptions\QueryException;
+use Environet\Sys\General\Exceptions\UniqueConstraintQueryException;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -118,8 +119,17 @@ class Connection {
 			return $statement;
 		}
 
+		switch ($statement->errorCode()) {
+			case 23505:
+				$class = UniqueConstraintQueryException::class;
+				break;
+			default:
+				$class = QueryException::class;
+				break;
+		}
+
 		//Error during query, throw an exception
-		throw new QueryException('SQL query error with code ' . $statement->errorCode() . ': ' . ($statement->errorInfo()[2] ?? null));
+		throw new $class('SQL query error with code ' . $statement->errorCode() . ': ' . ($statement->errorInfo()[2] ?? null));
 	}
 
 

@@ -52,15 +52,18 @@ class MigrateDb extends DbCommand {
 			'createCrudPermissions',
 			'createDataAclTables',
 			'createUploadPermissions',
-			'createRiverbankPermissions'
+			'createRiverbankPermissions',
+			'createResultUniqueIndexesDeleteDuplicates',
 		];
+		ini_set('memory_limit', - 1);
 
 		//Run each migrations, and log results
+		$mainExitCode = 0;
 		foreach ($migrations as $migration) {
 			$output = [];
 			$exitCode = $this->{$migration}($output);
 
-			if ($exitCode === -1) {
+			if ($exitCode === - 1) {
 				//Already migrated
 				$this->console->writeLine("$migration: Already migrated", Console::COLOR_YELLOW);
 			} elseif ($exitCode > 0) {
@@ -69,6 +72,7 @@ class MigrateDb extends DbCommand {
 				foreach ($output as $item) {
 					$this->console->writeLine("$item");
 				}
+				$mainExitCode = 1;
 			} else {
 				//Success
 				$this->console->writeLine("$migration: Done", Console::COLOR_GREEN);
@@ -76,7 +80,7 @@ class MigrateDb extends DbCommand {
 			$this->console->writeLineBreak();
 		}
 
-		return $exitCode;
+		return $mainExitCode;
 	}
 
 
@@ -95,15 +99,17 @@ class MigrateDb extends DbCommand {
 			['loginPermission' => 'admin.login']
 		)->fetch(PDO::FETCH_COLUMN);
 		if ($count) {
-			return -1;
+			return - 1;
 		}
 		$schemaPath = SRC_PATH . '/database/create_crud_permissions.sql';
+
 		return $this->runSqlFile($schemaPath, $output);
 	}
 
 
 	/**
 	 * Create acl tables
+	 *
 	 * @param array $output
 	 *
 	 * @return int
@@ -116,9 +122,10 @@ class MigrateDb extends DbCommand {
 			['tableName' => 'measurement_access_rules']
 		)->fetch(PDO::FETCH_COLUMN);
 		if ($count) {
-			return -1;
+			return - 1;
 		}
 		$schemaPath = SRC_PATH . '/database/data_acl.sql';
+
 		return $this->runSqlFile($schemaPath, $output);
 	}
 
@@ -136,12 +143,14 @@ class MigrateDb extends DbCommand {
 			['uploadPermission' => 'admin.missingData.upload']
 		)->fetch(PDO::FETCH_COLUMN);
 		if ($count) {
-			return -1;
+			return - 1;
 		}
 		$schemaPath = SRC_PATH . '/database/create_upload_permissions.sql';
+
 		return $this->runSqlFile($schemaPath, $output);
 	}
-	
+
+
 	/**
 	 * Create riverbank permissions
 	 *
@@ -157,9 +166,10 @@ class MigrateDb extends DbCommand {
 			['riverbankPermission' => 'admin.hydro.riverbanks.read']
 		)->fetch(PDO::FETCH_COLUMN);
 		if ($count) {
-			return -1;
+			return - 1;
 		}
 		$schemaPath = SRC_PATH . '/database/create_riverbank_permissions.sql';
+
 		return $this->runSqlFile($schemaPath, $output);
 	}
 

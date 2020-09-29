@@ -9,6 +9,7 @@ use Environet\Sys\General\Db\Query\Insert;
 use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\Exceptions\InvalidConfigurationException;
 use Environet\Sys\General\Exceptions\QueryException;
+use Environet\Sys\General\Exceptions\UniqueConstraintQueryException;
 use Environet\Sys\Upload\Exceptions\UploadException;
 use Exception;
 use SimpleXMLElement;
@@ -208,7 +209,12 @@ abstract class AbstractInputXmlProcessor {
 					]);
 				}
 
-				$insert->run();
+				try {
+					$insert->run();
+				} catch (UniqueConstraintQueryException $exception) {
+					//Do not add the same results
+					continue;
+				}
 			}
 		} catch (QueryException $e) {
 			throw UploadException::serverError();
