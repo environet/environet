@@ -47,6 +47,11 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	private $timeCol;
 
 	/**
+	 * @var mixed Value to ignore
+	 */
+	private $skipValue;
+
+	/**
 	 * @var mixed Time format string
 	 */
 	private $timeFormat;
@@ -87,6 +92,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		$this->nHeaderSkip = $config['nHeaderSkip'];
 		$this->mPointIdCol = $config['mPointIdCol'];
 		$this->timeCol = $config['timeCol'];
+		$this->skipValue = $config['skipValue'];
 		$this->timeFormat = $config['timeFormat'];
 		$this->conversionsFilename = $config['conversionsFilename'];
 
@@ -158,6 +164,11 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 
 		$lines = explode("\n", $csv);
 
+		$skipValues = [''];
+		if ($this->skipValue) {
+			$skipValues[] = $this->skipValue;
+		}
+
 		$lineCount = 0;
 		foreach ($lines as $line) {
 			++ $lineCount;
@@ -175,7 +186,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 
 			// Initialize time series for properties with an empty array
 			foreach ($this->propertySymbolsToColumns as $property) {
-				if (empty($resultLine[$property['symbol']])) {
+				if ($this->isSkipValue($resultLine, $property['symbol'], $skipValues)) {
 					continue;
 				}
 				if (!array_key_exists($property['symbol'], $resultArray[$resultLine['mPointId']])) {
@@ -184,7 +195,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 			}
 
 			foreach ($this->propertySymbolsToColumns as $property) {
-				if (empty($resultLine[$property['symbol']])) {
+				if ($this->isSkipValue($resultLine, $property['symbol'], $skipValues)) {
 					continue;
 				}
 
@@ -259,6 +270,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		if (!$time) {
 			// Couldn't parse time
 			Console::getInstance()->writeLine('Couldn\'t parse time in row: ' . $line);
+
 			return [];
 		}
 
@@ -275,7 +287,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 				if (!$symbol) {
 					Console::getInstance()->writeLine('Unknown symbol: ' . $values[$this->propertySymbolColumn]);
 				}
-					$data[$symbol] = $values[$this->propertyValueColumn];
+				$data[$symbol] = $values[$this->propertyValueColumn];
 
 				break;
 			default:
@@ -298,6 +310,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 				}
 			}
 		}
+
 		return $symbol;
 	}
 
@@ -323,6 +336,9 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 
 		$console->writeLine('In what number column (from left) of the csv file is the time of measurement?', Console::COLOR_YELLOW);
 		$timeCol = $console->ask('Column number:') - 1;
+
+		$console->writeLine('Skip values with exact values: (if the value of a property matches the entered value, the row will be ignored)', Console::COLOR_YELLOW);
+		$skipValue = $console->ask('Skip value:');
 
 		$console->writeLine('In what format is the time represented in the file?', Console::COLOR_YELLOW);
 		$timeFormat = $console->ask('Time format (for example, the format \'Y-m-d H:i:s\' corresponds to dates such as: 2020-03-15 10:15:00, while \'Y.m.d. H:i\' would match 2020.03.15. 10:15):');
@@ -360,17 +376,18 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		}
 
 		$config = [
-			'csvDelimiter' => $csvDelimiter,
-			'timeZone'     => $timeZone,
-			'nHeaderSkip'  => $nHeaderSkip,
-			'mPointIdCol'  => $mPointIdCol,
-			'timeCol'      => $timeCol,
-			'timeFormat'   => $timeFormat,
-			'properties'   => $properties,
-			'propertyLevel' => $propertyLevel,
-			'conversionsFilename' => $conversionsFilename,
+			'csvDelimiter'         => $csvDelimiter,
+			'timeZone'             => $timeZone,
+			'nHeaderSkip'          => $nHeaderSkip,
+			'mPointIdCol'          => $mPointIdCol,
+			'timeCol'              => $timeCol,
+			'skipValue'            => $skipValue,
+			'timeFormat'           => $timeFormat,
+			'properties'           => $properties,
+			'propertyLevel'        => $propertyLevel,
+			'conversionsFilename'  => $conversionsFilename,
 			'propertySymbolColumn' => $propertySymbolColumn,
-			'propertyValueColumn' => $propertyValueColumn
+			'propertyValueColumn'  => $propertyValueColumn
 		];
 
 		return new self($config);
@@ -394,6 +411,26 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		$choice = $console->askOption("Enter a number for your choice:");
 
 		return $alternatives[(int) $choice - 1];
+	}
+
+
+	/**
+	 * @param array  $resultLine
+	 * @param string $symbol
+	 *
+	 * @param array  $skipValues
+	 *
+	 * @return bool
+	 */
+	private function isSkipValue(array $resultLine, string $symbol, array $skipValues = []): bool {
+		if (!isset($resultLine[$symbol])) {
+			return true;
+		}
+		if (in_array($resultLine[$symbol], $skipValues, true)) {
+			return true;
+		}
+
+		return false;
 	}
 
 
@@ -423,6 +460,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		$config .= 'timeCol = ' . $this->timeCol . "\n";
 		$config .= 'timeFormat = ' . $this->timeFormat . "\n";
 		$config .= 'timeZone = ' . $this->timeZone . "\n";
+		$config .= 'skipValue = ' . $this->skipValue . "\n";
 		$config .= 'conversionsFilename = ' . $this->conversionsFilename . "\n";
 		$config .= 'propertyLevel = ' . $this->propertyLevel . "\n";
 		$config .= 'propertySymbolColumn = ' . $this->propertySymbolColumn . "\n";
