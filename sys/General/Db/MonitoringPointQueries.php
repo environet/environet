@@ -6,6 +6,7 @@ namespace Environet\Sys\General\Db;
 use DateTime;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\QueryException;
+use Exception;
 use stdClass;
 
 /**
@@ -157,6 +158,7 @@ class MonitoringPointQueries {
 	 * @param array $countries
 	 *
 	 * @return MonitoringPointQueries
+	 * @throws Exception
 	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::filterBy()
 	 */
 	public function setCountries($countries = []) {
@@ -165,6 +167,17 @@ class MonitoringPointQueries {
 		}
 
 		if (!empty($countries)) {
+			$invalid = [];
+			foreach ($countries as $country) {
+				if (strlen($country) !== 2) {
+					$invalid[] = $param;
+				}
+			}
+
+			if (!empty($invalid)) {
+				throw new Exception('Invalid country parameter(s): "' . implode('", "', $invalid) . '"');
+			}
+
 			$this->filterBy('country', 'whereIn', ['{type}point.country', $countries, 'country']);
 		}
 
@@ -358,6 +371,7 @@ class MonitoringPointQueries {
 	 * Build the main or one of the sub queries.
 	 *
 	 * @param Select $select
+	 * @param bool   $isSubset
 	 *
 	 * @return Select
 	 */

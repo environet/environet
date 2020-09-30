@@ -6,7 +6,6 @@ namespace Environet\Sys\General\Db\Selectors;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\QueryException;
-use Environet\Sys\General\Identity;
 use Exception;
 
 /**
@@ -48,7 +47,9 @@ class MonitoringPointSelector extends BaseAccessSelector {
 	 */
 	public function getEUCD(): array {
 		if ($this->eucd === null) {
-			if ($this->type === MPOINT_TYPE_HYDRO) {
+			if (empty($this->values)) {
+				$points = [];
+			} elseif ($this->type === MPOINT_TYPE_HYDRO) {
 				$points = (new Select())
 					->select('id, eucd_wgst as eucd')
 					->from('hydropoint')
@@ -84,7 +85,8 @@ class MonitoringPointSelector extends BaseAccessSelector {
 				->where("hydropoint.operatorid = {$this->operatorId}")
 				->run(Query::FETCH_FIRST);
 		}
-		return $points ? $points['points'] : '';
+
+		return $points ? $points['points'] ?? '' : '';
 	}
 
 
@@ -103,6 +105,7 @@ class MonitoringPointSelector extends BaseAccessSelector {
 				->where("meteopoint.operatorid = {$this->operatorId}")
 				->run(Query::FETCH_FIRST);
 		}
+
 		return $points ? $points['points'] : '';
 	}
 
@@ -114,6 +117,7 @@ class MonitoringPointSelector extends BaseAccessSelector {
 	 *
 	 * @return array
 	 * @throws QueryException
+	 * @throws Exception
 	 */
 	public static function checkAgainstEUCD($type, array $eucdValues, array $availableValues): array {
 		if ($type === MPOINT_TYPE_HYDRO) {
@@ -128,6 +132,14 @@ class MonitoringPointSelector extends BaseAccessSelector {
 				->from('meteopoint')
 				->whereIn('eucd_pst', $eucdValues, 'eucdParam')
 				->run();
+		}
+
+		if (count($eucdValues) !== count($requestedPoints)) {
+			$invalid = array_diff($eucdValues, array_column($requestedPoints, 'eucd'));
+			if (count($invalid) > 1) {
+				throw new Exception('Requested monitoring points are invalid: ' . implode(', ', $invalid));
+			}
+			throw new Exception("Requested monitoring point is invalid: " . implode('', $invalid));
 		}
 
 		$result = [];
@@ -161,4 +173,6 @@ class MonitoringPointSelector extends BaseAccessSelector {
 
 		parent::unserialize($serialized);
 	}
+
+
 }

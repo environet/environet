@@ -52,15 +52,18 @@ class MigrateDb extends DbCommand {
 			'createCrudPermissions',
 			'createDataAclTables',
 			'createUploadPermissions',
-			'createRiverbankPermissions'
+			'createRiverbankPermissions',
+			'createResultUniqueIndexesDeleteDuplicates',
 		];
+		ini_set('memory_limit', - 1);
 
 		//Run each migrations, and log results
+		$mainExitCode = 0;
 		foreach ($migrations as $migration) {
 			$output = [];
 			$exitCode = $this->{$migration}($output);
 
-			if ($exitCode === -1) {
+			if ($exitCode === - 1) {
 				//Already migrated
 				$this->console->writeLine("$migration: Already migrated", Console::COLOR_YELLOW);
 			} elseif ($exitCode > 0) {
@@ -69,6 +72,7 @@ class MigrateDb extends DbCommand {
 				foreach ($output as $item) {
 					$this->console->writeLine("$item");
 				}
+				$mainExitCode = 1;
 			} else {
 				//Success
 				$this->console->writeLine("$migration: Done", Console::COLOR_GREEN);
@@ -76,7 +80,7 @@ class MigrateDb extends DbCommand {
 			$this->console->writeLineBreak();
 		}
 
-		return $exitCode;
+		return $mainExitCode;
 	}
 
 
@@ -95,15 +99,17 @@ class MigrateDb extends DbCommand {
 			['loginPermission' => 'admin.login']
 		)->fetch(PDO::FETCH_COLUMN);
 		if ($count) {
-			return -1;
+			return - 1;
 		}
 		$schemaPath = SRC_PATH . '/database/create_crud_permissions.sql';
+
 		return $this->runSqlFile($schemaPath, $output);
 	}
 
 
 	/**
 	 * Create acl tables
+	 *
 	 * @param array $output
 	 *
 	 * @return int
@@ -116,9 +122,10 @@ class MigrateDb extends DbCommand {
 			['tableName' => 'measurement_access_rules']
 		)->fetch(PDO::FETCH_COLUMN);
 		if ($count) {
-			return -1;
+			return - 1;
 		}
 		$schemaPath = SRC_PATH . '/database/data_acl.sql';
+
 		return $this->runSqlFile($schemaPath, $output);
 	}
 
@@ -136,12 +143,14 @@ class MigrateDb extends DbCommand {
 			['uploadPermission' => 'admin.missingData.upload']
 		)->fetch(PDO::FETCH_COLUMN);
 		if ($count) {
-			return -1;
+			return - 1;
 		}
 		$schemaPath = SRC_PATH . '/database/create_upload_permissions.sql';
+
 		return $this->runSqlFile($schemaPath, $output);
 	}
-	
+
+
 	/**
 	 * Create riverbank permissions
 	 *
@@ -157,10 +166,86 @@ class MigrateDb extends DbCommand {
 			['riverbankPermission' => 'admin.hydro.riverbanks.read']
 		)->fetch(PDO::FETCH_COLUMN);
 		if ($count) {
-			return -1;
+			return - 1;
 		}
 		$schemaPath = SRC_PATH . '/database/create_riverbank_permissions.sql';
+
 		return $this->runSqlFile($schemaPath, $output);
 	}
+
+
+	/**
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function createResultUniqueIndexesDeleteDuplicates(array &$output): int {
+
+		$return = -1;
+		foreach (['hydro', 'meteo'] as $type) {
+			//Find duplicates for type
+			$tsColumn = ($type == 'meteo' ? 'meteo_' : '') . 'time_seriesid';
+			$resultTable = "{$type}_result";
+			$indexName = "{$type}_unique_time_value";
+
+			if (!$this->checkIndex($resultTable, $indexName)) {
+				//If index is not yet created, delete duplicates first, and after it add unique index
+				$return = 0;
+				$this->console->writeLine("Clean duplicated $type results...");
+				$uniqueValues = [];
+				$deleteIds = [];
+
+				$results = $this->connection->runQuery(
+					"SELECT * FROM public.$resultTable ORDER BY $tsColumn DESC, time DESC, value DESC, is_forecast DESC, created_at DESC",
+					[]
+				)->fetchAll();
+				$this->console->writeLine(sprintf("Fount %d records", count($results)));
+				foreach ($results as $result) {
+					$uniqueValue = $result[$tsColumn] . '_' . $result['time'] . '_' . $result['value'] . '_' . $result['is_forecast'];
+					if (in_array($uniqueValue, $uniqueValues)) {
+						$deleteIds[] = $result['id'];
+					} else {
+						if (count($uniqueValues) > 50) {
+							array_shift($uniqueValues);
+						}
+						$uniqueValues[] = $uniqueValue;
+					}
+				}
+
+				if ($deleteIds) {
+					//Delete ids
+					$this->console->writeLine(sprintf('Delete %d duplicated rows for type %s', count($deleteIds), $type));
+					$this->connection->runQuery('DELETE FROM public.'.$type.'_result WHERE id IN(' . implode(',', $deleteIds) . ')', []);
+				}
+
+				//Add index
+				$this->console->write("Create unique index...");
+				$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS $indexName ON $resultTable ($tsColumn,time,value,is_forecast)", []);
+				$this->console->writeLine("done\n");
+			}
+		}
+
+		return $return;
+	}
+
+
+	/**
+	 * Check if index exists in table
+	 *
+	 * @param string $tableName
+	 * @param string $indexName
+	 *
+	 * @return bool
+	 * @throws QueryException
+	 */
+	private function checkIndex(string $tableName, string $indexName) {
+		$count = $this->connection->runQuery("select COUNT(*)
+			from pg_class t, pg_class i, pg_index ix, pg_attribute a
+			where t.oid = ix.indrelid and i.oid = ix.indexrelid and a.attrelid = t.oid and a.attnum = ANY(ix.indkey) and t.relkind = 'r' 
+			  and t.relname like '$tableName' and i.relname = '$indexName'", [])->fetchColumn();
+		return ((int) $count) > 0;
+	}
+
 
 }

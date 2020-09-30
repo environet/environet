@@ -283,7 +283,7 @@ class Select extends Query {
 		try {
 			// Clone the select query, clean it (selects, joins, etc) and get the total count of rows
 			$totalCount = (clone $this)
-				->clearSelects()->clearGroupBy()->clearOrderBy()->clearJoins()
+				->clearSelects()->clearGroupBy()->clearOrderBy()
 				->select('COUNT(*)')
 				->run(Query::FETCH_COUNT);
 		} catch (QueryException $e) {

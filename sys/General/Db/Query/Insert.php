@@ -30,6 +30,11 @@ class Insert extends Query {
 	 */
 	protected $values = [];
 
+	/**
+	 * @var array|null
+	 */
+	protected $ignoreConflictFields = null;
+
 
 	/**
 	 * Set columns array. It overwrites all previous value.
@@ -118,6 +123,19 @@ class Insert extends Query {
 
 
 	/**
+	 * Add on conflict statement
+	 *
+	 * @param array $fields
+	 *
+	 * @return Insert
+	 */
+	public function ignoreConflict(array $fields): self {
+		$this->ignoreConflictFields = $fields;
+		return $this;
+	}
+
+
+	/**
 	 * Validates the query properties.
 	 * It's invalid if no columns and values has been set, or if there are any count-mismatch
 	 *
@@ -160,6 +178,11 @@ class Insert extends Query {
 			$values[] = '(' . implode(', ', $valueRow) . ')';
 		}
 		$queryString[] = implode(',', $values);
+
+		if ($this->ignoreConflictFields) {
+			$conflictFields = implode(',', $this->ignoreConflictFields);
+			$queryString[] = "ON CONFLICT ($conflictFields) DO NOTHING";
+		}
 
 		return implode(' ', $queryString) . ';';
 	}

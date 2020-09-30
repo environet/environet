@@ -10,6 +10,7 @@ use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\Query\Update;
 use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\Exceptions\QueryException;
+use Environet\Sys\General\Identity;
 use Environet\Sys\Upload\Exceptions\UploadException;
 use Exception;
 
@@ -29,14 +30,19 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 	 * @throws ApiException
 	 * @uses \Environet\Sys\General\Db\Query\Select::run()
 	 */
-	protected function findMonitoringPoint(string $identifier): ?array {
+	protected function findMonitoringPoint(string $identifier, Identity $identity = null): ?array {
 		try {
 			// Find hydro monitoring point
-			$mPoint = (new Select())
+			$mPointQuery = (new Select())
 				->from('hydropoint')
-				->where('eucd_wgst = :id')
-				->addParameter('id', $identifier)
-				->run(Query::FETCH_FIRST);
+				->where('ncd_wgst = :id')
+				->addParameter('id', $identifier);
+
+			if ($identity) {
+				$mPointQuery->where('operatorid IN (' . implode(',', $this->getOperatorIdsOfIdentity($identity)) . ')');
+			}
+
+			$mPoint = $mPointQuery->run(Query::FETCH_FIRST);
 		} catch (QueryException $e) {
 			throw UploadException::serverError();
 		}
@@ -139,7 +145,8 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 	 * @inheritDoc
 	 */
 	protected function createResultInsert(): Insert {
-		return (new Insert())->table('hydro_result')->columns(['time_seriesid', 'time', 'value', 'is_forecast', 'created_at']);
+		return (new Insert())->table('hydro_result')->columns(['time_seriesid', 'time', 'value', 'is_forecast', 'created_at'])
+			->ignoreConflict(['time_seriesid', 'time', 'value', 'is_forecast']);
 	}
 
 

@@ -187,6 +187,7 @@ abstract class ApiHandler extends BaseHandler {
 	 * 2. Validates the signature parsed from the authorization header and validates it with the provided token from the request and the public key.
 	 *
 	 * @param array $requiredPermissions
+	 *
 	 * @throws ApiException
 	 * @throws QueryException
 	 */

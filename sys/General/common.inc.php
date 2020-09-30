@@ -18,7 +18,7 @@ use Environet\Sys\General\Response;
 
 defined('REGEX_NAME') || define('REGEX_NAME', '/^[\p{L}\s\-]*$/iu');
 defined('REGEX_PHONE') || define('REGEX_PHONE', '/^[\d\-\+]*$/iu');
-defined('REGEX_EMAIL') || define('REGEX_EMAIL', '/^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/i');
+defined('REGEX_EMAIL') || define('REGEX_EMAIL', '/^((?!\.)[\w\-_.\+]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/i');
 defined('REGEX_ALPHANUMERIC') || define('REGEX_ALPHANUMERIC', '/[a-zA-Z0-9_-]/i');
 defined('REGEX_USERNAME') || define('REGEX_USERNAME', REGEX_ALPHANUMERIC);
 defined('REGEX_URL') || define('REGEX_URL', '/^(?:http(s)?:\/\/)?[\w.\-]+(?:\.[\w\.\-]+)+[\w\-\._~:\/?#[\]@!\$&\'\(\)\*\+,;=.]+$/i');
