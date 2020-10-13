@@ -127,6 +127,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::meteringPointInputXmlsFromArray()
 	 */
 	public function parse(Resource $resource): array {
+		$propertiesOriginal = $this->propertySymbolsToColumns;
 		$properties = $this->propertySymbolsToColumns;
 		if ($resource->meta) {
 			// Delete observed properties which are not requested.
@@ -146,7 +147,11 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 
 		$dataArray = $this->mPointDataArrayFromCSV($resource->contents);
 
-		return $this->meteringPointInputXmlsFromArray($dataArray);
+		$result = $this->meteringPointInputXmlsFromArray($dataArray);
+
+		$this->propertySymbolsToColumns = $propertiesOriginal;
+
+		return $result;
 	}
 
 
