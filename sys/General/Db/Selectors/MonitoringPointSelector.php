@@ -106,7 +106,7 @@ class MonitoringPointSelector extends BaseAccessSelector {
 				->run(Query::FETCH_FIRST);
 		}
 
-		return $points ? $points['points'] : '';
+		return $points ? $points['points'] ?? '' : '';
 	}
 
 
