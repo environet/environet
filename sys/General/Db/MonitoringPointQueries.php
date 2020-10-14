@@ -382,7 +382,7 @@ class MonitoringPointQueries {
 			->from("{$this->type}_result as result_sub")
 			->select("result_sub.value")
 			->where("result_sub.time = {$this->type}_result.time")
-			->where("result_sub.time_seriesid = {$this->type}_result.time_seriesid")
+			->where("result_sub.".($this->type === 'meteo' ? 'meteo_' : '')."time_seriesid = {$this->type}_result.".($this->type === 'meteo' ? 'meteo_' : '')."time_seriesid")
 			->where("result_sub.is_forecast = 'FALSE'")
 			->orderBy('result_sub.created_at', 'DESC')
 			->limit(1);
@@ -421,7 +421,7 @@ class MonitoringPointQueries {
 			"{$this->type}_observed_property.description",
 			"{$this->type}_observed_property.unit",
 			"{$this->type}_result.time",
-			"{$this->type}_result.time_seriesid",
+			"{$this->type}_result.".($this->type === 'meteo' ? 'meteo_' : '')."time_seriesid",
 			"{$this->type}_time_series.result_time"
 		];
 
@@ -439,9 +439,9 @@ class MonitoringPointQueries {
 
 		$select
 			->from("{$this->type}_result")
-			->join("{$this->type}_time_series", "{$this->type}_time_series.id = {$this->type}_result.time_seriesid")
-			->join("{$this->type}point", "{$this->type}point.id = {$this->type}_time_series.mpointid")
-			->join("{$this->type}_observed_property", "{$this->type}_observed_property.id = {$this->type}_time_series.observed_propertyid")
+			->join("{$this->type}_time_series", "{$this->type}_time_series.id = {$this->type}_result.".($this->type === 'meteo' ? 'meteo_' : '')."time_seriesid")
+			->join("{$this->type}point", "{$this->type}point.id = {$this->type}_time_series.".($this->type === 'meteo' ? 'meteopointid' : 'mpointid'))
+			->join("{$this->type}_observed_property", "{$this->type}_observed_property.id = {$this->type}_time_series.".($this->type === 'meteo' ? 'meteo_observed_propertyid' : 'observed_propertyid'))
 			->where("{$this->type}_result.is_forecast = 'FALSE'")
 			->select($selectFields);
 
