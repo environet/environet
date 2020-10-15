@@ -179,15 +179,12 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 			if ($lineCount <= $this->nHeaderSkip) {
 				$values = array_map('trim', explode($this->csvDelimiter, $line));
 				if (sizeof($values) < 2) continue;
-				if ($values[0] === 'Datenart') {
+				$prop = $this->getHeaderKeyword($values[0]);
+				if ($prop === 'OBS') {
 					$obsMode = 'header';
-					if ($values[1] === 'Q') {
-						$obsData = 'Q';
-					} else if ($values[1] === 'W') {
-						$obsData = 'h';
-					}
+					$obsData = $this->mapToDistributionSymbol($values[1]);
 				}
-				if ($values[0] === 'Stationsnummer') {
+				if ($prop === 'MPID') {
 					$mpidMode = 'header';
 					$mpidData = $values[1];
 				}
@@ -345,6 +342,20 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		return $symbol;
 	}
 
+	private function getHeaderKeyword($keyword) {
+		$result = "";
+		if ($this->conversionsFilename) {
+			$conversions = JSON_decode(file_get_contents(SRC_PATH . '/conf/plugins/configurations/' . $this->conversionsFilename), true);
+			if (!array_key_exists('header', $conversions)) return $result;
+			foreach ($conversions['header'] as $key => $value) {
+				if ($value == $keyword) {
+					return $key;
+				}
+			}
+		}
+
+		return $result;
+	}
 
 	/**
 	 * @inheritDoc
