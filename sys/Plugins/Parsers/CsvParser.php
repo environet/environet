@@ -242,7 +242,6 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 				);
 			}
 		}
-echo "Obs: $obsData\n";
 		return $resultArray;
 	}
 
