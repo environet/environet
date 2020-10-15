@@ -240,9 +240,9 @@ class FtpTransportExtended implements TransportInterface, BuilderLayerInterface 
 
 		// Take only files which meet the filename pattern
 		$contents = [];
-		foreach ($contentsAll as $entry) {
-			if ($this->filenamePattern !== '' && !fnmatch($this->filenamePattern, $entry['name'])) continue;
-			array_push($contents, $path . $entry['name']);
+		foreach ($contentsAll as $entry2) {
+			if ($this->filenamePattern !== '' && !fnmatch($this->filenamePattern, $entry2['name'])) continue;
+			array_push($contents, $path . $entry2['name']);
 		}
 
 		//die(var_dump($contents));
