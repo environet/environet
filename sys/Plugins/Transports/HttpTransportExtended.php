@@ -48,6 +48,11 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	private $url;
 
 	/**
+	 * @var string Which stations to query: "hydro" or "meteo". Query both, if not one of these or if not specified
+	 */
+	private $monitoringPointType;
+
+	/**
 	 * @var array List of monitoring point conversions
 	 */
 	private $monitoringPointConversions;
@@ -77,6 +82,11 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		$this->username = $config['username'];
 		$this->password = $config['password'];
 
+		if (array_key_exists('monitoringPointType', $config)) {
+			$this->monitoringPointType = $config['monitoringPointType'];
+		} else {
+			$this->monitoringPointType = 'both';
+		}
 
 		if (sizeof($pluginConfig)>0) {
 			$this->apiClient = new ApiClient($pluginConfig['apiClient']);
@@ -95,11 +105,13 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		$conversionsFilename = $console->ask("Filename of conversion specifications", 2000);
 		$username = $console->ask("Username to access Web-API, if needed", 64);
 		$password = $console->ask("Password to access Web-API, if needed", 64);
+		$monitoringPointType = $console->ask("Type of monitoring points to query: 'hydro', 'meteo' or else both", 64);
 
 		$config = [
 			'conversionsFilename' => $conversionsFilename,
 			'username' => $username,
-			'password' => $password
+			'password' => $password,
+			'monitoringPointType' => $monitoringPointType
 		];
 
 		return new self($config);
@@ -112,7 +124,8 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	public function serializeConfiguration(): string {
 		return 'conversionsFilename = "' . $this->conversionsFilename . '"' . "\n"
 			. 'username = "' . $this->username . '"' . "\n"
-			. 'password = "' . $this->password . '"' . "\n";
+			. 'password = "' . $this->password . '"' . "\n"
+			. 'monitoringPointType = "' . $this->monitoringPointType . '"' . "\n";
 	}
 
 
@@ -173,19 +186,23 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		$allObservedProperties = [];
 		$allNCDs = [];
 		$monitoringPoints = [];
-		foreach ($sMonitoringPoints['hydro'] as $item) {
-			$item["NCD"] = $item["ncd_wgst"];
-			$item["EUCD"] = $item["eucd_wgst"];
-			array_push($monitoringPoints, $item);
-			array_push($allNCDs, $item["NCD"]);
-			$allObservedProperties = array_merge($item["observed_properties"]);
+		if ($this->monitoringPointType !== 'meteo') {
+			foreach ($sMonitoringPoints['hydro'] as $item) {
+				$item["NCD"] = $item["ncd_wgst"];
+				$item["EUCD"] = $item["eucd_wgst"];
+				array_push($monitoringPoints, $item);
+				array_push($allNCDs, $item["NCD"]);
+				$allObservedProperties = array_merge($item["observed_properties"]);
+			}
 		}
-		foreach ($sMonitoringPoints['meteo'] as $item) {
-			$item["NCD"] = $item["ncd_pst"];
-			$item["EUCD"] = $item["eucd_pst"];
-			array_push($monitoringPoints, $item);
-			array_push($allNCDs, $item["NCD"]);
-			$allObservedProperties = array_merge($item["observed_properties"]);
+		if ($this->monitoringPointType !== 'hydro') {
+			foreach ($sMonitoringPoints['meteo'] as $item) {
+				$item["NCD"] = $item["ncd_pst"];
+				$item["EUCD"] = $item["eucd_pst"];
+				array_push($monitoringPoints, $item);
+				array_push($allNCDs, $item["NCD"]);
+				$allObservedProperties = array_merge($item["observed_properties"]);
+			}
 		}
 		$allObservedProperties = array_unique($allObservedProperties);
 
