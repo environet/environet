@@ -68,8 +68,13 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		$this->conversionsFilename = $config['conversionsFilename'];
 
 		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
-		$conversions = file_get_contents($configurationsPath . $this->conversionsFilename);
+		$conversionsPathname = $configurationsPath . $this->conversionsFilename;
+		$conversions = file_get_contents($conversionsPathname);
 		$conversions = JSON_decode($conversions, true);
+		if (!$conversions) {
+			throw new \Exception("Syntax error in json string of conversions configuration file '$conversionsPathname'.");			
+		}
+
 		$this->url = $conversions["generalInformation"]["URLPattern"];
 		$this->monitoringPointConversions = $conversions["monitoringPointConversions"];
 		$this->observedPropertyConversions = $conversions["observedPropertyConversions"];
@@ -178,14 +183,14 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 			$item["EUCD"] = $item["eucd_wgst"];
 			array_push($monitoringPoints, $item);
 			array_push($allNCDs, $item["NCD"]);
-			$allObservedProperties = array_merge($item["observed_properties"]);
+			$allObservedProperties = array_merge($allObservedProperties, $item["observed_properties"]);
 		}
 		foreach ($sMonitoringPoints['meteo'] as $item) {
 			$item["NCD"] = $item["ncd_pst"];
 			$item["EUCD"] = $item["eucd_pst"];
 			array_push($monitoringPoints, $item);
 			array_push($allNCDs, $item["NCD"]);
-			$allObservedProperties = array_merge($item["observed_properties"]);
+			$allObservedProperties = array_merge($allObservedProperties, $item["observed_properties"]);
 		}
 		$allObservedProperties = array_unique($allObservedProperties);
 
