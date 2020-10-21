@@ -174,15 +174,38 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 			$skipValues[] = $this->skipValue;
 		}
 
+		$mpidMode = '';
+		$obsMode = '';
 		$lineCount = 0;
 		foreach ($lines as $line) {
 			++ $lineCount;
+			
+			// parse or skip header
 			if ($lineCount <= $this->nHeaderSkip) {
+				$values = array_map('trim', explode($this->csvDelimiter, $line));
+				if (sizeof($values) < 2) continue;
+				$prop = $this->getHeaderKeyword($values[0]);
+				if ($prop === 'OBS') {
+					$obsMode = 'header';
+					$obsData = $this->mapToDistributionSymbol($values[1]);
+				}
+				if ($prop === 'MPID') {
+					$mpidMode = 'header';
+					$mpidData = $values[1];
+				}
+				continue;
+			}
+
+			if (empty($line)) {
 				continue;
 			}
 			$resultLine = $this->parseResultLine($line);
 			if (empty($resultLine)) {
 				continue;
+			}
+
+			if ($mpidMode === 'header') {
+				$resultLine['mPointId'] = $mpidData;
 			}
 
 			if (!array_key_exists($resultLine['mPointId'], $resultArray)) {
@@ -191,6 +214,9 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 
 			// Initialize time series for properties with an empty array
 			foreach ($this->propertySymbolsToColumns as $property) {
+				if ($obsMode === 'header' && $property['symbol'] !== $obsData) {
+					continue;
+				}
 				if ($this->isSkipValue($resultLine, $property['symbol'], $skipValues)) {
 					continue;
 				}
@@ -200,6 +226,9 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 			}
 
 			foreach ($this->propertySymbolsToColumns as $property) {
+				if ($obsMode === 'header' && $property['symbol'] !== $obsData) {
+					continue;
+				}
 				if ($this->isSkipValue($resultLine, $property['symbol'], $skipValues)) {
 					continue;
 				}
@@ -215,7 +244,6 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 				);
 			}
 		}
-
 		return $resultArray;
 	}
 
@@ -319,6 +347,20 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		return $symbol;
 	}
 
+	private function getHeaderKeyword($keyword) {
+		$result = "";
+		if ($this->conversionsFilename) {
+			$conversions = JSON_decode(file_get_contents(SRC_PATH . '/conf/plugins/configurations/' . $this->conversionsFilename), true);
+			if (!array_key_exists('header', $conversions)) return $result;
+			foreach ($conversions['header'] as $key => $value) {
+				if ($value == $keyword) {
+					return $key;
+				}
+			}
+		}
+
+		return $result;
+	}
 
 	/**
 	 * @inheritDoc
