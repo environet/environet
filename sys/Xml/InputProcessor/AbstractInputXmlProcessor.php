@@ -92,15 +92,17 @@ abstract class AbstractInputXmlProcessor {
 	/**
 	 * Check if mpoint found under this type (hydro or meteo)
 	 *
+	 * @param Identity $identity
+	 *
 	 * @return bool
 	 */
-	public function isValidType(): bool {
+	public function isValidType(Identity $identity): bool {
 		try {
 			// Find monitoring point id in xml
 			$monitoringPointId = (string) $this->xml->xpath('/environet:UploadData/environet:MonitoringPointId[1]')[0] ?? null;
 
 			// Find monitoring point in database
-			return !!($mPoint = $this->findMonitoringPoint($monitoringPointId));
+			return !!($mPoint = $this->findMonitoringPoint($monitoringPointId, $identity));
 		} catch (Exception $e) {
 			return false;
 		}

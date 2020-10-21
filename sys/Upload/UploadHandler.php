@@ -116,15 +116,15 @@ class UploadHandler extends ApiHandler {
 	 * @param SimpleXMLElement $xml Parsed XML
 	 *
 	 * @return AbstractInputXmlProcessor
-	 * @throws UploadException
+	 * @throws UploadException|ApiException
 	 * @see MeteoInputXmlProcessor
 	 * @see HydroInputXmlProcessor
 	 */
 	protected function createInputProcessor(SimpleXMLElement $xml): AbstractInputXmlProcessor {
-		if (($hydroProcessor = new HydroInputXmlProcessor($xml))->isValidType()) {
+		if (($hydroProcessor = new HydroInputXmlProcessor($xml))->isValidType($this->getIdentity())) {
 			return $hydroProcessor;
 		}
-		if (($meteoProcessor = new MeteoInputXmlProcessor($xml))->isValidType()) {
+		if (($meteoProcessor = new MeteoInputXmlProcessor($xml))->isValidType($this->getIdentity())) {
 			return $meteoProcessor;
 		}
 
