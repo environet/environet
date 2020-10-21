@@ -3,6 +3,7 @@
 namespace Environet\Sys\Plugins\Parsers;
 
 use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\BuilderLayerInterface;
@@ -12,6 +13,7 @@ use Environet\Sys\Xml\CreateInputXml;
 use Environet\Sys\Xml\Exceptions\CreateInputXmlException;
 use Environet\Sys\Xml\Model\InputXmlData;
 use Environet\Sys\Xml\Model\InputXmlPropertyData;
+use Exception;
 use SimpleXMLElement;
 
 /**
@@ -145,7 +147,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 			$this->propertySymbolsToColumns = array_values($properties);
 		}
 
-		$dataArray = $this->mPointDataArrayFromCSV($resource->contents);
+		$dataArray = $this->mPointDataArrayFromCSV($resource);
 
 		$result = $this->meteringPointInputXmlsFromArray($dataArray);
 
@@ -159,12 +161,31 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	 * Create an associative array from the input CSV string
 	 * Format: [mpointId => [propertySymbol => results]]
 	 *
-	 * @param string $csv
+	 * @param Resource $resource
 	 *
 	 * @return array
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::parseResultLine()
 	 */
-	private function mPointDataArrayFromCSV(string $csv): array {
+	private function mPointDataArrayFromCSV(Resource $resource): array {
+		$csv = $resource->contents;
+
+		$globalTime = null;
+		if ($this->timeInFilenameFormat) {
+			//Should use global time for whole file
+			try {
+				//Match date based on regex
+				$hasMatch = preg_match('/.*(?P<time>' . dateFormatToRegex($this->timeInFilenameFormat) . ')/', $resource->name, $match);
+			} catch (Exception $exception) {
+				$hasMatch = false;
+			}
+			if (!$hasMatch) {
+				return [];
+			}
+			//Create DateTime
+			$globalTime = DateTime::createFromFormat($this->timeInFilenameFormat, $match['time'], $this->getTimeZone());
+			$globalTime->setTimezone(new DateTimeZone('UTC'));
+		}
+
 		$resultArray = [];
 
 		$lines = explode("\n", $csv);
@@ -199,7 +220,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 			if (empty($line)) {
 				continue;
 			}
-			$resultLine = $this->parseResultLine($line);
+			$resultLine = $this->parseResultLine($line, $globalTime);
 			if (empty($resultLine)) {
 				continue;
 			}
@@ -287,31 +308,40 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Parse one line of the CSV input string.
 	 *
-	 * @param $line
+	 * @param                        $line
+	 * @param DateTimeInterface|null $time A global time for the whole file
 	 *
 	 * @return array
 	 */
-	private function parseResultLine($line): array {
+	private function parseResultLine($line, ?DateTimeInterface $time = null): array {
 		$values = array_map('trim', explode($this->csvDelimiter, $line));
-		if (!array_key_exists($this->timeCol, $values)) {
-			// No time set
-			return [];
-		}
-
-		$time = DateTime::createFromFormat($this->timeFormat, $values[$this->timeCol], $this->getTimeZone());
 
 		if (!$time) {
-			// Couldn't parse time
-			Console::getInstance()->writeLine('Couldn\'t parse time in row: ' . $line);
+			if (!array_key_exists($this->timeCol, $values)) {
+				// No time set, and no global time set
+				return [];
+			}
 
-			return [];
+			$time = DateTime::createFromFormat($this->timeFormat, $values[$this->timeCol], $this->getTimeZone());
+
+			if (!$time) {
+				// Couldn't parse time
+				Console::getInstance()->writeLine('Couldn\'t parse time in row: ' . $line);
+
+				return [];
+			}
 		}
 
 		//Set timezone to UTC
 		$time->setTimezone(new DateTimeZone('UTC'));
+
+		if (!array_key_exists($this->mPointIdCol, $values) || $values[$this->mPointIdCol] === '') {
+			return [];
+		}
+
 		$data = [
 			'mPointId' => $values[$this->mPointIdCol],
-			'time'     => $time->format(self::API_TIME_FORMAT_STRING),
+			'time' => $time->format(self::API_TIME_FORMAT_STRING)
 		];
 
 		switch ($this->propertyLevel) {
@@ -381,14 +411,18 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		$console->writeLine('In what number column (from left) of the csv file is the identifier of the monitoring point?', Console::COLOR_YELLOW);
 		$mPointIdCol = $console->ask('Column number:') - 1;
 
-		$console->writeLine('In what number column (from left) of the csv file is the time of measurement?', Console::COLOR_YELLOW);
-		$timeCol = $console->ask('Column number:') - 1;
+		$timeCol = $timeFormat = null;
+		if (!($timeInFilenameFormat = self::createTimeInFilenameConfig($console))) {
+			//Times are in csv, not in filename - default
+			$console->writeLine('In what number column (from left) of the csv file is the time of measurement?', Console::COLOR_YELLOW);
+			$timeCol = $console->ask('Column number:') - 1;
+
+			$console->writeLine('In what format is the time represented in the file?', Console::COLOR_YELLOW);
+			$timeFormat = $console->ask('Time format (for example, the format \'Y-m-d H:i:s\' corresponds to dates such as: 2020-03-15 10:15:00, while \'Y.m.d. H:i\' would match 2020.03.15. 10:15):');
+		}
 
 		$console->writeLine('Skip values with exact values: (if the value of a property matches the entered value, the row will be ignored)', Console::COLOR_YELLOW);
 		$skipValue = $console->ask('Skip value:');
-
-		$console->writeLine('In what format is the time represented in the file?', Console::COLOR_YELLOW);
-		$timeFormat = $console->ask('Time format (for example, the format \'Y-m-d H:i:s\' corresponds to dates such as: 2020-03-15 10:15:00, while \'Y.m.d. H:i\' would match 2020.03.15. 10:15):');
 
 		$console->writeLine('Configuring observed properties', Console::COLOR_YELLOW);
 
@@ -430,6 +464,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 			'timeCol'              => $timeCol,
 			'skipValue'            => $skipValue,
 			'timeFormat'           => $timeFormat,
+			'timeInFilenameFormat' => $timeInFilenameFormat,
 			'properties'           => $properties,
 			'propertyLevel'        => $propertyLevel,
 			'conversionsFilename'  => $conversionsFilename,
@@ -506,6 +541,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		$config .= 'mPointIdCol = ' . $this->mPointIdCol . "\n";
 		$config .= 'timeCol = ' . $this->timeCol . "\n";
 		$config .= 'timeFormat = ' . $this->timeFormat . "\n";
+		$config .= 'timeInFilenameFormat = ' . $this->timeInFilenameFormat . "\n";
 		$config .= 'timeZone = ' . $this->timeZone . "\n";
 		$config .= 'skipValue = ' . $this->skipValue . "\n";
 		$config .= 'conversionsFilename = ' . $this->conversionsFilename . "\n";

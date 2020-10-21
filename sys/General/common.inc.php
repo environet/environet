@@ -286,3 +286,50 @@ function buildIni(array $array) {
 
 	return implode("\n", $lines);
 }
+
+/**
+ * Generate a regex pattern based on date format
+ *
+ * @param string $dateFormat
+ *
+ * @return string
+ * @throws Exception
+ */
+function dateFormatToRegex(string $dateFormat): string {
+	$letters = str_split($dateFormat);
+	$regexParts = array_map(function ($letter) {
+		if (in_array($letter, ['d', 'm', 'y'], true)) {
+			return '\d{2}';
+		} elseif (in_array($letter, ['j', 'n'], true)) {
+			return '\d{1,2}';
+		} elseif ($letter === 'Y') {
+			return '\d{4}';
+		} elseif ($letter === 'N') {
+			return '[1-7]';
+		} elseif ($letter === 'w') {
+			return '[0-6]';
+		} elseif ($letter === 'z') {
+			return '[0-9]{1,3}';
+		} elseif ($letter === 'W') {
+			return '\d{2}';
+		} elseif ($letter === 'a') {
+			return '[ap]m';
+		} elseif ($letter === 'A') {
+			return '[AP]M';
+		} elseif ($letter === 'g') {
+			return '[1-9][1-2]?';
+		} elseif ($letter === 'G') {
+			return '[0-9]{1,2}';
+		} elseif ($letter === 'h') {
+			return '[01][0-9]';
+		} elseif ($letter === 'H') {
+			return '[012][0-9]';
+		} elseif (in_array($letter, ['i', 's'], true)) {
+			return '[0-5][0-9]';
+		} else {
+			throw new Exception('This date format part for regex convert not supported: '.$letter);
+		}
+	}, $letters);
+
+	return implode('', $regexParts);
+}

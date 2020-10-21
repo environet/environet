@@ -20,6 +20,11 @@ abstract class AbstractParser implements ParserInterface {
 	 */
 	protected $timeZone;
 
+	/**
+	 * @var string
+	 */
+	protected $timeInFilenameFormat;
+
 
 	/**
 	 * AbstractParser constructor.
@@ -28,6 +33,7 @@ abstract class AbstractParser implements ParserInterface {
 	 */
 	public function __construct(array $config) {
 		$this->timeZone = $config['timeZone'] ?? 'UTC';
+		$this->timeInFilenameFormat = $config['timeInFilenameFormat'] ?? null;
 	}
 
 
@@ -44,6 +50,28 @@ abstract class AbstractParser implements ParserInterface {
 		} while (!in_array($timezone, $validList));
 
 		return $timezone;
+	}
+
+
+	/**
+	 * Create settings for dates in file's name
+	 *
+	 * @param Console $console
+	 *
+	 * @return mixed
+	 */
+	public static function createTimeInFilenameConfig(Console $console): ?string {
+		$console->writeLine('Is the time of measurement presented in filename?', Console::COLOR_YELLOW);
+		$timeInFilename = $console->askWithDefault('[y/n]', 'n');
+		$timeInFilename = trim(strtolower($timeInFilename)) === 'y';
+
+		$timeInFilenameFormat = null;
+		if ($timeInFilename) {
+			$console->writeLine('In what format is the time represented in?', Console::COLOR_YELLOW);
+			$timeInFilenameFormat = $console->ask('Time format (for example, the format \'Y-m-d H:i:s\' corresponds to dates such as: 2020-03-15 10:15:00, while \'Y.m.d. H:i\' would match 2020.03.15. 10:15):');
+		}
+
+		return $timeInFilenameFormat;
 	}
 
 

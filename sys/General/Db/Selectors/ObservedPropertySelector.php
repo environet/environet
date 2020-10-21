@@ -93,8 +93,8 @@ class ObservedPropertySelector extends BaseAccessSelector {
 			$ids = (new Select())
 				->select('string_agg(meteo_observed_property.id::text, \',\')')
 				->from('meteo_observed_property')
-				->join('meteopoint_observed_property', 'meteopoint_observed_property.observed_propertyid = meteo_observed_property.id')
-				->whereIn('meteopoint_observed_property.mpointid', $points, 'point')
+				->join('meteopoint_observed_property', 'meteopoint_observed_property.meteo_observed_propertyid = meteo_observed_property.id')
+				->whereIn('meteopoint_observed_property.meteopointid', $points, 'point')
 				->run(Query::FETCH_FIRST);
 		} else {
 			throw new Exception('Invalid monitoring point type!');
@@ -111,7 +111,7 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	 */
 	protected function getHydroPropertiesByOperator(): string {
 		if ($this->isOperatorAdmin()) {
-			$properties(new Select())
+			$properties = (new Select())
 				->select('string_agg(hydro_observed_property.id::text, \',\') as properties')
 				->from('hydro_observed_property')
 				->run(Query::FETCH_FIRST);
@@ -144,13 +144,13 @@ class ObservedPropertySelector extends BaseAccessSelector {
 			$properties = (new Select())
 				->select('string_agg(meteo_observed_property.id::text, \',\') as properties')
 				->from('meteo_observed_property')
-				->join('meteopoint_observed_property', 'meteopoint_observed_property.observed_propertyid = meteo_observed_property.id')
-				->join('meteopoint', 'meteopoint.id = meteopoint_observed_property.mpointid')
+				->join('meteopoint_observed_property', 'meteopoint_observed_property.meteo_observed_propertyid = meteo_observed_property.id')
+				->join('meteopoint', 'meteopoint.id = meteopoint_observed_property.meteopointid')
 				->where("meteopoint.operatorid = {$this->operatorId}")
 				->run(Query::FETCH_FIRST);
 		}
 
-		return $properties ? $properties['properties'] : '';
+		return $properties ? $properties['properties'] ?? '' : '';
 	}
 
 
