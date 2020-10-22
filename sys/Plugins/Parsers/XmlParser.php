@@ -59,9 +59,15 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		$this->formatsFilename = $config['formatsFilename'];
 
 		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
-		$formats = file_get_contents($configurationsPath . $this->formatsFilename);
+		$formatsPathname = $configurationsPath . $this->formatsFilename;
+		$formats = file_get_contents($formatsPathname);
 		$this->formats = JSON_decode($formats, true);
-		parent::__construct($config);
+
+		if (!$this->formats) {
+			throw new \Exception("Syntax error in json string of formats configuration file '$formatsPathname'.");			
+		}
+
+    parent::__construct($config);
 	}
 
 
@@ -259,6 +265,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 							$item["Value"] = "0";
 						}
 					} else {
+						//var_dump($subXml[0]);
 						//$item["Value"] = $subXml[0]->attributes()[$format["Attribute"]];
 						$item["Value"] = $subXml[0][$format["Attribute"]]->__toString();
 						//echo "resolved by attribute2: " . $item["Value"] . "\r\n";
@@ -395,7 +402,11 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		{
 			$t = mktime(strval($Hour["Value"]), strval($Minute["Value"]), 0,
 				strval($Month["Value"]), strval($Day["Value"]), strval($Year["Value"]));
-			$result["Value"] = date(self::API_TIME_FORMAT_STRING, $t);
+			$format = "dmY H:i:s";
+			$dateLocal = date($format, $t);
+			$date = DateTime::createFromFormat($format, $dateLocal, $this->getTimeZone());
+			$date->setTimezone(new DateTimeZone('UTC'));
+			$result["Value"] = $date->format(self::API_TIME_FORMAT_STRING);
 			$this->delete($entry, "Type", "Year");
 			$this->delete($entry, "Type", "Month");
 			$this->delete($entry, "Type", "Day");
@@ -514,10 +525,14 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		//echo $resource->contents;
 		echo "Received " . strlen($resource->contents) . " characters.\r\n";
 
+
+		$resource->contents = str_replace("xlink:href", "href", $resource->contents);	// Workaround for WaterML 2.0
+
 		//$resource->contents = $this->getExampleXMLBMLRT();
 		//$resource->contents = $this->getExampleXMLLfU();
 		//$resource->contents = $this->getExampleXMLARSO();
 
+		libxml_use_internal_errors(TRUE); // this turns off spitting parsing errors on screen
 		$xml = new SimpleXMLElement($resource->contents);
 		$ns = $xml->getDocNamespaces();
 		$xml->registerXPathNamespace('def', array_values($ns)[0]);
@@ -531,6 +546,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		}
 
 		$flatList = $this->parseIntoHierarchy($xml, $formats, [], 0);
+		//var_dump($flatList[0]);
 
 		// replace external observed property symbols and add missing information from API-Call (Monitoring Point or Observed Property Symbol)
 		if ($resource->meta) {
@@ -561,6 +577,8 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 							$this->delete($entry, "Type", "ObservedPropertySymbol");
 							$obs["Value"] = $symbol;
 							array_push($entry, $obs);
+						} else {
+							unset($flatList[$key]);   // Delete whole entry as observed property was not found
 						}
 					}
 				} else {
@@ -619,7 +637,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		}
 
 		// delete entries which do not fit to API-call (extra monitoring points, extra observed properties)
-		if ($resource->meta) {
+		if ($resource->meta && !$resource->meta["keepExtraData"]) {
 			foreach ($flatList as $key => &$entry) {
 				$mp = $this->getParameter($entry, "Type", "MonitoringPoint");
 				$obs = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
@@ -631,7 +649,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 			$flatList = array_values($flatList);
 		}
 
-		//var_dump($flatList);
+		//die(var_dump($flatList));
 
 		$this->assembleDates($flatList);
 		$this->convertValues($flatList);
@@ -674,13 +692,15 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 		}
 
-		//ini_set('xdebug.var_display_max_depth', '10');
-		//ini_set('xdebug.var_display_max_children', '256');
-		//ini_set('xdebug.var_display_max_data', '1024');
+		/*
+		ini_set('xdebug.var_display_max_depth', '10');
+		ini_set('xdebug.var_display_max_children', '256');
+		ini_set('xdebug.var_display_max_data', '1024');
 
-		//ob_start();
-		//var_dump($resultArray);
-		//echo "resultArray: " . ob_get_clean() . "\r\n";
+		ob_start();
+		var_dump($resultArray);
+		echo "resultArray: " . ob_get_clean() . "\r\n";
+		*/
 
 		//$tmp = $this->meteringPointInputXmlsFromArray($resultArray);
 		//var_dump($tmp);

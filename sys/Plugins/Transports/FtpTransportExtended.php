@@ -6,16 +6,22 @@ use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Plugins\TransportInterface;
+use Environet\Sys\Plugins\ApiClient;
 
 /**
- * Class FtpTransport
+ * Class FtpTransportExtended
  *
  * Transport layer for importing data from a FTP directory.
  *
  * @package Environet\Sys\Plugins\Transports
  * @author  SRG Group <dev@srg.hu>
  */
-class FtpTransport implements TransportInterface, BuilderLayerInterface {
+class FtpTransportExtended implements TransportInterface, BuilderLayerInterface {
+
+	/**
+	 * @var string Filename for JSON file with conversions of variables
+	 */
+	private $conversionsFilename;
 
 	/**
 	 * @var bool
@@ -52,19 +58,29 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 	 */
 	private $newestFileOnly;
 
+	/**
+	 * @var array List of monitoring point conversions
+	 */
+	private $monitoringPointConversions;
+
+	/**
+	 * @var array List of observed property conversions
+	 */
+	private $observedPropertyConversions;
 
 	/**
 	 * @inheritDoc
 	 */
 	public static function create(Console $console): TransportInterface {
 		$console->writeLine('');
-		$console->writeLine('Configuring FTP transport', Console::COLOR_YELLOW);
+		$console->writeLine('Configuring Extended FTP transport', Console::COLOR_YELLOW);
 
 		$console->writeLine('FTP host:');
 		$host = $console->ask('');
 
 		$console->writeLine('Secure connection:');
-		$secure = $console->askWithDefault('Enter 0 for an FTP connection without SSL', true);
+		$console->write('Enter 0 for an FTP connection without SSL');
+		$secure = $console->askWithDefault('Secure FTP connection', true);
 
 		$console->writeLine('FTP username:');
 		$username = $console->ask('');
@@ -84,6 +100,8 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		$console->write('Enter 1 if only the newest of all matching files should be used:');
 		$newestFileOnly = $console->askWithDefault('', false);
 
+		$conversionsFilename = $console->ask("Filename of conversion specifications", 2000);
+
 		$config = [
 			'host' => $host,
 			'secure' => $secure,
@@ -92,6 +110,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 			'path' => $path,
 			'filenamePattern' => $filenamePattern,
 			'newestFileOnly' => $newestFileOnly,
+			'conversionsFilename' => $conversionsFilename,
 		];
 
 		return new self($config);
@@ -108,7 +127,8 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 			. 'password = "' . $this->password . '"' . "\n"
 			. 'path = "' . $this->path . '"' . "\n"
 			. 'filenamePattern = "' . $this->filenamePattern . '"' . "\n"
-			. 'newestFileOnly = "' . $this->newestFileOnly . '"' . "\n";
+			. 'newestFileOnly = "' . $this->newestFileOnly . '"' . "\n"
+			. 'conversionsFilename = "' . $this->conversionsFilename . '"' . "\n";
 	}
 
 
@@ -117,7 +137,21 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 	 *
 	 * @param array $config
 	 */
-	public function __construct(array $config) {
+	public function __construct(array $config, array $pluginConfig = []) {
+		$this->conversionsFilename = $config['conversionsFilename'];
+
+		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
+		$conversionsPathname = $configurationsPath . $this->conversionsFilename;
+		$conversions = file_get_contents($conversionsPathname);
+		$conversions = JSON_decode($conversions, true);
+		if (!$conversions) {
+			throw new \Exception("Syntax error in json string of conversions configuration file '$conversionsPathname'.");			
+		}
+
+		//$this->url = $conversions["generalInformation"]["URLPattern"];
+		$this->monitoringPointConversions = $conversions["monitoringPointConversions"];
+		$this->observedPropertyConversions = $conversions["observedPropertyConversions"];
+
 		$this->host = $config['host'];
 		$this->secure = $config['secure'];
 		$this->username = $config['username'];
@@ -125,6 +159,12 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		$this->path = $config['path'];
 		$this->filenamePattern = $config['filenamePattern'];
 		$this->newestFileOnly = $config['newestFileOnly'];
+
+		if (sizeof($pluginConfig)>0) {
+			$this->apiClient = new ApiClient($pluginConfig['apiClient']);
+		} else {
+			$this->apiClient = NULL;
+		}
 	}
 
 
@@ -132,22 +172,14 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		$out = [];
 		$newest = 0;
 		foreach ($files as $entry) {
-			if ($this->filenamePattern !== '' && !fnmatch($this->filenamePattern, $entry['name'])) {
-				continue;
-			}
-			if (count($out) > 0 && $entry['modify'] < $newest) {
-				continue;
-			}
-			if (count($out) == 0) {
-				array_push($out, $entry);
-			} else {
-				$out[0] = $entry;
-			}
+			if ($this->filenamePattern !== '' && !fnmatch($this->filenamePattern, $entry['name'])) continue;
+			if (count($out) > 0 && $entry['modify'] < $newest) continue;
+			if (count($out) == 0) array_push($out, $entry);
+			else $out[0] = $entry;
 			$newest = $entry['modify'];
 		}
 		return $out;
 	}
-
 
 	/**
 	 * @inheritDoc
@@ -175,9 +207,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		//ftp_chdir($conn, $this->path);
 
 		$path = $this->path;
-		if ($path !== '' && substr($path, -1) !== '/') {
-			$path .= "/";
-		}
+		if ($path !== '' && substr($path, -1) !== '/') $path .= "/";
 
 		$contentsAll = ftp_mlsd($conn, $this->path);
 		//$count = 0;
@@ -203,21 +233,15 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 
 		// take only files
 		foreach ($contentsAll as $key => &$entry) {
-			if ($entry['type'] !== 'file') {
-				unset($contentsAll[$key]);
-			}
+			if ($entry['type'] !== 'file') unset($contentsAll[$key]);
 		}
 
-		if ($this->newestFileOnly) {
-			$contentsAll = $this->newestFile($contentsAll);
-		}
+		if ($this->newestFileOnly) $contentsAll = $this->newestFile($contentsAll);
 
 		// Take only files which meet the filename pattern
 		$contents = [];
 		foreach ($contentsAll as $entry2) {
-			if ($this->filenamePattern !== '' && !fnmatch($this->filenamePattern, $entry2['name'])) {
-				continue;
-			}
+			if ($this->filenamePattern !== '' && !fnmatch($this->filenamePattern, $entry2['name'])) continue;
 			array_push($contents, $path . $entry2['name']);
 		}
 
@@ -229,11 +253,12 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 			$resource = new Resource();
 			$resource->name = end(explode('/', $content));
 			$resource->contents = file_get_contents($localCopyPath . end(explode('/', $content)));
-			/*$resource->meta = [
-				"MonitoringPointNCDs" => [],
+			$resource->meta = [
+				"MonitoringPointNCDs" => [], 
 				"ObservedPropertySymbols" => [],
-				"observedPropertyConversions" => [],
-			];*/
+				"observedPropertyConversions" => $this->observedPropertyConversions,
+				"keepExtraData" => true,
+			];
 			$results[] = $resource;
 		}
 
@@ -246,7 +271,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 	 * @inheritDoc
 	 */
 	public static function getName(): string {
-		return 'FTP directory transport';
+		return 'Extended FTP directory transport';
 	}
 
 
