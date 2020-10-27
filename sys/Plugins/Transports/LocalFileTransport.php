@@ -82,7 +82,7 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 	 * @inheritDoc
 	 * @see Resource
 	 */
-	public function get(): array {
+	public function get(Console $console): array {
 		$resource = new Resource();
 		$resource->name = $this->path;
 

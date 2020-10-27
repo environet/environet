@@ -31,8 +31,8 @@ class Plugin {
 	 */
 	public function run(Console $console) {
 		$console->writeLine('Running plugin', '36');
-		$resources = $this->transport->get();
-		
+		$resources = $this->transport->get($console);
+
 		if (count($resources) < 1) {
 			$console->writeLine('Nothing to upload', Console::COLOR_YELLOW);
 			return;
@@ -52,7 +52,7 @@ class Plugin {
 					$console->writeLine("Couldn't parse $resource->name into xml", Console::COLOR_RED);
 				}
 				$successfulDownloads++;
-	
+
 				foreach ($xmls as $xmlPayload) {
 					$console->write('Uploading monitoring point data', Console::COLOR_YELLOW);
 					//$console->write($xmlPayload->asXML(), Console::COLOR_YELLOW);

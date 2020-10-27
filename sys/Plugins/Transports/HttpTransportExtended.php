@@ -178,7 +178,7 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	 * @inheritDoc
 	 * @throws HttpClientException
 	 */
-	public function get(): array {
+	public function get(Console $console): array {
 
 		// Query distribution node to get list of monitoring points and observed properties
 		$sMonitoringPoints = $this->apiClient->requestMonitoringPoints();

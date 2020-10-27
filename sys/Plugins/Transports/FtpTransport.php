@@ -153,7 +153,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 	 * @inheritDoc
 	 * @see Resource
 	 */
-	public function get(): array {
+	public function get(Console $console): array {
 		$console = Console::getInstance();
 		$localFileDir = SRC_PATH . '/data/plugin_input_files/';
 		$localCopyPath = $localFileDir . $this->path;
@@ -163,7 +163,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		}
 
 		$results = [];
-		
+
 		$conn = $this->secure ? ftp_ssl_connect($this->host) : ftp_connect($this->host);
 
 		$login_result = ftp_login($conn, $this->username, $this->password);
@@ -198,7 +198,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 			}
 			$path = '';	// Do not prepend path
 		}
-		
+
 		//die(var_dump($contentsAll));
 
 		// take only files
