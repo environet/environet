@@ -19,6 +19,7 @@ use Environet\Sys\Plugins\Resource;
  *
  * @package Environet\Sys\Plugins\Transports
  * @author  SRG Group <dev@srg.hu>, STASA <info@stasa.de>
+ * @deprecated All functionalities are moved the original HTTP transport
  */
 class HttpTransportExtended implements TransportInterface, BuilderLayerInterface {
 
@@ -77,7 +78,7 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		$conversions = file_get_contents($conversionsPathname);
 		$conversions = JSON_decode($conversions, true);
 		if (!$conversions) {
-			throw new \Exception("Syntax error in json string of conversions configuration file '$conversionsPathname'.");			
+			throw new \Exception("Syntax error in json string of conversions configuration file '$conversionsPathname'.");
 		}
 
 		$this->url = $conversions["generalInformation"]["URLPattern"];
@@ -258,9 +259,9 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 					// contains pipe symbol, decode zip
 					$ext = pathinfo($url, PATHINFO_EXTENSION);
 					$temp = tempnam(sys_get_temp_dir(), $ext);
-					
+
 					copy($url, $temp);
-					
+
 					$zip = new \ZipArchive;
 					$zip->open($temp);
 					$found = false;
@@ -280,7 +281,7 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 					$resource->contents = (new HttpClient())->sendRequest(new Request($url))->getBody();
 				}
 				$resource->meta = [
-					"MonitoringPointNCDs" => $allMonitoringPointsInOneFile ? $allNCDs : [ $monitoringPoint["NCD"] ], 
+					"MonitoringPointNCDs" => $allMonitoringPointsInOneFile ? $allNCDs : [ $monitoringPoint["NCD"] ],
 					"ObservedPropertySymbols" => $allObservedPropertyInOneFile ? $allObservedProperties : [ $observedProperty ],
 					"observedPropertyConversions" => $this->observedPropertyConversions,
 				];
