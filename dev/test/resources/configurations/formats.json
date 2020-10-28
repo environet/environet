@@ -1,0 +1,57 @@
+[
+  {
+    "Parameter": "MonitoringPoint",
+    "Value": "",
+    "Attribute": "sifra",
+    "Tag Hierarchy": [
+      "arsopodatki",
+      "postaja"
+    ]
+  },
+  {
+    "Parameter": "ObservedPropertyValue",
+    "Value": "h",
+    "Unit": "cm",
+    "Attribute": "",
+    "optional": true,
+    "Tag Hierarchy": [
+      "arsopodatki",
+      "postaja",
+      "vodostaj"
+    ]
+  },
+  {
+    "Parameter": "ObservedPropertyValue",
+    "Value": "Q",
+    "Unit": "m3/s",
+    "Attribute": "",
+    "optional": true,
+    "Tag Hierarchy": [
+      "arsopodatki",
+      "postaja",
+      "pretok"
+    ]
+  },
+  {
+    "Parameter": "ObservedPropertyValue",
+    "Value": "tw",
+    "Unit": "°C",
+    "Attribute": "",
+    "optional": true,
+    "Tag Hierarchy": [
+      "arsopodatki",
+      "postaja",
+      "temp_vode"
+    ]
+  },
+  {
+    "Parameter": "DateTime",
+    "Value": "Y-m-d H:i",
+    "Attribute": "",
+    "Tag Hierarchy": [
+      "arsopodatki",
+      "postaja",
+      "datum"
+    ]
+  }
+]
