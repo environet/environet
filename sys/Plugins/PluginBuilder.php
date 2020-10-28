@@ -7,7 +7,6 @@ use Environet\Sys\Plugins\Parsers\CsvParser;
 use Environet\Sys\Plugins\Parsers\JsonParser;
 use Environet\Sys\Plugins\Parsers\XmlParser;
 use Environet\Sys\Plugins\Transports\FtpTransport;
-use Environet\Sys\Plugins\Transports\FtpTransportExtended;
 use Environet\Sys\Plugins\Transports\HttpTransport;
 use Environet\Sys\Plugins\Transports\LocalDirectoryTransport;
 use Environet\Sys\Plugins\Transports\LocalFileTransport;

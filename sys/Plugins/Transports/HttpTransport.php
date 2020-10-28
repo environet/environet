@@ -10,6 +10,7 @@ use Environet\Sys\Plugins\ApiClient;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Plugins\TransportInterface;
+use Environet\Sys\Plugins\WithConversionsConfigTrait;
 use Exception;
 
 /**
@@ -21,6 +22,8 @@ use Exception;
  * @author  SRG Group <dev@srg.hu>
  */
 class HttpTransport implements TransportInterface, BuilderLayerInterface {
+
+	use WithConversionsConfigTrait;
 
 	const TYPE_MANUAL = 1;
 	const TYPE_JSON   = 2;
@@ -59,11 +62,6 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 	 * @var string password for Web-API
 	 */
 	private $password;
-
-	/**
-	 * @var array|null Conversions.json configurations
-	 */
-	protected $conversionsConfig;
 
 
 	/**
@@ -255,27 +253,6 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 		unlink($temp); //Delete temp file
 
 		return $resource->contents ? $resource : null;
-	}
-
-
-	/**
-	 * Get conversions from the JSON config
-	 *
-	 * @return array
-	 * @throws Exception
-	 */
-	protected function getConversionsConfig(): array {
-		if (is_null($this->conversionsConfig)) {
-			$conversionsPathname = CONFIGURATION_PATH . '/' . $this->conversionsFilename; //Path of file is in a fixed location
-			if (!(file_exists($conversionsPathname) && //File must be existing
-				($conversions = file_get_contents($conversionsPathname)) && //File must be not-empty and readable
-				($conversions = json_decode($conversions, true)) //Decode to json
-			)) {
-				throw new Exception("Syntax error in json string of conversions configuration file '$conversionsPathname', or file does not exist.");
-			}
-			$this->conversionsConfig = $conversions;
-		}
-		return $this->conversionsConfig;
 	}
 
 
