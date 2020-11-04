@@ -143,7 +143,7 @@ class UserCrud extends CrudPage {
 				}
 				if ($data['password'] != $data['password_confirm']) {
 					// if the password confirmation failed
-					$this->addMessage('The passwords, aren\'t match.', self::MESSAGE_ERROR);
+					$this->addMessage('Password confirmation is invalid', self::MESSAGE_ERROR);
 					$valid = false;
 				}
 			}

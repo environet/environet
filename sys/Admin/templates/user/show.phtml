@@ -1,5 +1,12 @@
 <?php include __DIR__ . '../../layouts/before_app.phtml'; ?>
-<div class="card">
+<div class="card showPage">
+	<div class="actions">
+		<a href="/admin/users/edit?id=<?=$record['id'];?>" class="btn btn-primary">Edit user</a>
+		<a href="<?=$listPage;?>" class="btn btn-secondary">Back to list</a>
+	</div>
+
+	<h1>User #<?=$record['id'] ?? '';?></h1>
+
     <dl class="row">
         <dt class="col-sm-3">ID</dt>
         <dd class="col-sm-9">#<?=$record['id'] ?? '';?></dd>
@@ -9,8 +16,6 @@
         <dd class="col-sm-9"><?=$record['username'] ?? '';?></dd>
         <dt class="col-sm-3">E-mail address</dt>
         <dd class="col-sm-9"><?=$record['email'] ?? '';?></dd>
-        <dt class="col-sm-3">Password</dt>
-        <dd class="col-sm-9"><?=!empty($record['password']) ? '******' : '';?></dd>
         <dt class="col-sm-3">Last login at</dt>
         <dd class="col-sm-9"><?=dateFormat($record['loggedin_at'] ?? null)?></dd>
         <dt class="col-sm-3">Groups</dt>
@@ -39,13 +44,9 @@
         </dd>
         <dt class="col-sm-3">Public keys</dt>
         <dd class="col-sm-9">
-            <ul>
-                <?php foreach ($record['show_publicKeys'] ?: [] as $publicKey) { ?>
-                    <li>
-                        <a href="/admin/public-keys/show?id=<?=$publicKey['id'];?>">#<?=$publicKey['id'] ?? null;?></a>
-                    </li>
-                <?php } ?>
-            </ul>
+			<?php foreach ($record['show_publicKeys'] ?: [] as $publicKey) { ?>
+				<pre class="small"><?=$publicKey['public_key'];?></pre>
+			<?php } ?>
         </dd>
     </dl>
 </div>

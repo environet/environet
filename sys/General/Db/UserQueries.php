@@ -345,6 +345,7 @@ class UserQueries extends BaseQueries {
 		$record['show_publicKeys'] = (new Select())
 			->from('public_keys')
 			->where('usersid = :userId')
+			->where('revoked = FALSE')
 			->addParameter(':userId', $record['id'])
 			->run();
 
