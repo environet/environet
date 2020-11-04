@@ -102,6 +102,8 @@ class UserCrud extends CrudPage {
 			$records = [];
 		}
 
+		$this->updateListPageState();
+
 		return $this->render('/user/index.phtml', compact('records', 'totalCount', 'currentPage', 'maxPage', 'searchString'));
 	}
 

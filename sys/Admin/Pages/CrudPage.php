@@ -107,6 +107,8 @@ abstract class CrudPage extends BasePage {
 			$records = [];
 		}
 
+		$this->updateListPageState();
+
 		return $this->render($this->indexTemplate, compact('records', 'totalCount', 'currentPage', 'maxPage', 'searchString'));
 	}
 
@@ -138,7 +140,8 @@ abstract class CrudPage extends BasePage {
 			throw new PermissionException("You don't have permission to view record with id: '$id'");
 		}
 
-		return $this->render($this->showTemplate, compact('record'));
+		$listPage = $this->getListPageLinkWithState();
+		return $this->render($this->showTemplate, compact('record', 'listPage'));
 	}
 
 
@@ -172,7 +175,7 @@ abstract class CrudPage extends BasePage {
 		$this->queriesClass::save($postData, $id);
 		$this->addMessage($this->successAddMessage, self::MESSAGE_SUCCESS);
 
-		return $this->redirect($this->listPagePath);
+		return $this->redirect($this->getListPageLinkWithState());
 	}
 
 
@@ -283,7 +286,7 @@ abstract class CrudPage extends BasePage {
 			$this->addMessage($exception->getMessage(), self::MESSAGE_ERROR);
 		}
 
-		return $this->redirect($this->listPagePath);
+		return $this->redirect($this->getListPageLinkWithState());
 	}
 
 
@@ -296,9 +299,60 @@ abstract class CrudPage extends BasePage {
 	 * @throws RenderException
 	 */
 	protected function renderForm(array $record = null): Response {
-		$context = array_merge(['record' => $record], $this->formContext());
+		$context = array_merge([
+			'record' => $record,
+			'listPage' => $this->getListPageLinkWithState()
+		], $this->formContext());
 
 		return $this->render($this->formTemplate, $context);
+	}
+
+
+	/**
+	 * Return key of base path of CRUD
+	 */
+	protected function getBasePathKey(): string {
+		$pathParts = $this->request->getPathParts();
+		$pathParts = array_filter($pathParts, function ($part) {
+			return !in_array($part, ['show', 'edit', 'add', 'delete']);
+		});
+		return implode('_', $pathParts);
+	}
+
+
+	/**
+	 * Read list page state from session
+	 */
+	protected function getListPageState(): ?array {
+		return $_SESSION['listPageStates'][$this->getBasePathKey()] ?? null;
+	}
+
+
+	/**
+	 * Update list page state in session
+	 */
+	protected function updateListPageState() {
+		$params = $this->request->getQueryParams();
+		$params = array_filter($params, function ($param) {
+			return !in_array($param, ['page', 'order_by', 'order_dir', 'search']);
+		});
+		$_SESSION['listPageStates'][$this->getBasePathKey()] = $params;
+	}
+
+
+	/**
+	 * Get url of list page with state
+	 */
+	protected function getListPageLinkWithState(): string {
+		$path = $this->listPagePath;
+		if (($listPageState = $this->getListPageState())) {
+			$separator = strpos($path, '?') !== false ? '&' : '?';
+			$listPageState = array_map(function ($item) {
+				return urlencode($item);
+			}, $listPageState);
+			$path .= $separator.http_build_query($listPageState);
+		}
+		return $path;
 	}
 
 
