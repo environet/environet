@@ -138,14 +138,21 @@ section#main-content {
       padding: 0;
     }
 
-    &.message-error {
-      color: map_get($theme-colors, 'danger');
+    li {
+      margin: 1em 0;
+      width: 100%;
+      padding: 1em;
+      color: white;
+      border-radius: $border-radius-sm;
     }
-    &.message-success {
-      color: map_get($theme-colors, 'success');
+    &.message-error li {
+      background-color: map_get($theme-colors, 'danger');
     }
-    &.message-warning {
-      color: map_get($theme-colors, 'warning');
+    &.message-success li {
+      background-color: map_get($theme-colors, 'success');
+    }
+    &.message-warning li {
+      background-color: map_get($theme-colors, 'warning');
     }
   }
 
@@ -169,4 +176,15 @@ section#main-content {
   right: 0;
   background-color: white;
   padding: 1em;
+}
+
+
+.card.showPage, .card.formPage {
+  dd ul li {
+    list-style-type: disc;
+  }
+
+  > div.actions {
+    margin-left: auto;
+  }
 }
