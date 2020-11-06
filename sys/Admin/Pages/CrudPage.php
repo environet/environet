@@ -347,10 +347,10 @@ abstract class CrudPage extends BasePage {
 		$path = $this->listPagePath;
 		if (($listPageState = $this->getListPageState())) {
 			$separator = strpos($path, '?') !== false ? '&' : '?';
-			$listPageState = array_map(function ($item) {
+			$listPageState = array_filter(array_map(function ($item) {
 				return urlencode($item);
-			}, $listPageState);
-			$path .= $separator.http_build_query($listPageState);
+			}, $listPageState));
+			$path .= $listPageState ? $separator.http_build_query($listPageState) : '';
 		}
 		return $path;
 	}

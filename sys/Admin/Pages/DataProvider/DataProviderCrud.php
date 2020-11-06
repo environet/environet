@@ -111,6 +111,8 @@ class DataProviderCrud extends CrudPage {
 			$operators = [];
 		}
 
+		$this->updateListPageState();
+
 		return $this->render($this->indexTemplate, compact('operators', 'totalCount', 'currentPage', 'maxPage', 'searchString'));
 	}
 
