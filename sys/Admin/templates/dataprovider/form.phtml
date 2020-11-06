@@ -1,7 +1,10 @@
 <?php include __DIR__ . '../../layouts/before_app.phtml'; ?>
 
-<div class="card">
-	<h1><?= __(($record && $record['id']) ? 'Edit operator (id: ' . $record['id'] . ')': 'Add operator'); ?></h1>
+<div class="card formPage">
+	<div class="actions">
+		<a href="<?=$listPage;?>" class="btn btn-secondary">Back to list</a>
+	</div>
+	<h1><?= __(($record && $record['id']) ? 'Edit operator #' . $record['id'] : 'Add operator and it\'s user'); ?></h1>
 	<form action="" method="POST">
 		<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
 
@@ -26,6 +29,7 @@
 			<div class="form-group">
 				<label for="dataProviderUrl"><?=__('URL');?></label>
 				<input type="url" name="url" id="dataProviderUrl" class="form-control" value="<?=formFieldValue('url', $record);?>"/>
+				<small class="help-block text-muted">Full url, e.g. https://example.com</small>
 			</div>
 			<div class="form-group">
 				<label for="dataProviderOtherInfo"><?=__('Other info');?></label>

@@ -1,6 +1,13 @@
 <?php include __DIR__ . '../../layouts/before_app.phtml'; ?>
-<div class="card">
-    <dl class="row">
+<div class="card showPage">
+	<div class="actions">
+		<a href="/admin/data-providers/edit?id=<?=$record['id'];?>" class="btn btn-primary">Edit operator</a>
+		<a href="<?=$listPage;?>" class="btn btn-secondary">Back to list</a>
+	</div>
+
+	<h1>Operator #<?=$record['id'] ?? '';?></h1>
+
+	<dl class="row">
         <dt class="col-sm-3">ID</dt>
         <dd class="col-sm-9">#<?=$record['id'] ?? '';?></dd>
         <dt class="col-sm-3">Name</dt>
