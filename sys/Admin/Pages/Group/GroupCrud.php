@@ -41,6 +41,11 @@ class GroupCrud extends CrudPage {
 
 	/**
 	 * @inheritdoc
+	 */g
+	protected $showTemplate = '/group/show.phtml';
+
+	/**
+	 * @inheritdoc
 	 */
 	protected $listPagePath = '/admin/groups';
 

@@ -195,6 +195,7 @@ class AdminHandler extends BaseHandler {
 		'^users\/delete' => [UserCrud::class, 'delete', ['admin.users.delete']],
 
 		'^groups$'        => [GroupCrud::class, 'list', ['admin.groups.read']],
+		'^groups\/show'   => [GroupCrud::class, 'show', ['admin.groups.read']],
 		'^groups\/edit$'  => [GroupCrud::class, 'edit', ['admin.groups.update']],
 		'^groups\/add'    => [GroupCrud::class, 'add', ['admin.groups.create']],
 		'^groups\/delete' => [GroupCrud::class, 'delete', ['admin.groups.delete']],
