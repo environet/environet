@@ -1,8 +1,23 @@
-<form method="get">
-	<div class="input-group listSearch">
-		<input type="search" name="search" class="form-control" placeholder="<?=__('Search')?>" value="<?=htmlspecialchars(urldecode($searchString))?>">
-		<div class="input-group-append clearSearch">
-			<button class="btn btn-outline-secondary" type="button"><i class="fas fa-times"></i></button>
-		</div>
+<form method="get" class="form-inline filterForm">
+	<?php if (isset($listFilters) && !is_null($listFilters)) { ?>
+		<?php foreach ($listFilters as $name => $listFilter) { ?>
+			<div class="form-group listFilter mr-3">
+				<select name="<?=$name;?>" class="form-control form-control-sm">
+					<option value=""> - <?=$listFilter['label'];?> - </option>
+					<?php foreach ($listFilter['options'] as $value => $label) { ?>
+						<option value="<?=$value;?>" <?=(!empty($listFilter['selected']) && $listFilter['selected'] == $value) ? 'selected' : '';?>>
+							<?=$label;?>
+						</option>
+					<?php } ?>
+				</select>
+			</div>
+		<?php } ?>
+	<?php } ?>
+	<div class="form-group listSearch mr-3">
+		<input type="search" name="search" class="form-control form-control-sm" placeholder="<?=__('Search')?>" value="<?=htmlspecialchars(urldecode($searchString))?>">
+	</div>
+	<div class="field">
+		<input type="submit" class="btn btn-sm btn-primary" value="<?=__('Filter');?>"/>
+		<input type="reset" class="btn btn-sm btn-secondary" value="<?=__('Clear');?>"/>
 	</div>
 </form>

@@ -109,7 +109,9 @@ abstract class CrudPage extends BasePage {
 
 		$this->updateListPageState();
 
-		return $this->render($this->indexTemplate, compact('records', 'totalCount', 'currentPage', 'maxPage', 'searchString'));
+		$listFilters = $this->getListFilters();
+
+		return $this->render($this->indexTemplate, compact('records', 'totalCount', 'currentPage', 'maxPage', 'searchString', 'listFilters'));
 	}
 
 
@@ -333,8 +335,12 @@ abstract class CrudPage extends BasePage {
 	 */
 	protected function updateListPageState() {
 		$params = $this->request->getQueryParams();
-		$params = array_filter($params, function ($param) {
-			return !in_array($param, ['page', 'order_by', 'order_dir', 'search']);
+		$stateFields = ['page', 'order_by', 'order_dir', 'search'];
+		if (($filterFields = $this->getListFilters())) {
+			$stateFields = array_merge($stateFields, array_keys($filterFields));
+		}
+		$params = array_filter($params, function ($param) use ($stateFields) {
+			return !in_array($param, $stateFields);
 		});
 		$_SESSION['listPageStates'][$this->getBasePathKey()] = $params;
 	}
@@ -404,6 +410,15 @@ abstract class CrudPage extends BasePage {
 
 	protected function modifyListQuery(Select $query) {
 		return true;
+	}
+
+
+	/**
+	 * Get array of filter configirations for list page
+	 * @return array|null
+	 */
+	protected function getListFilters(): ?array {
+		return null;
 	}
 
 

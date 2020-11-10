@@ -14,30 +14,23 @@ window.addEventListener('load', function () {
 
 
 docReady(function () {
-	Array.prototype.filter.call(document.querySelectorAll('.listSearch'), (searchContainer) => {
-		const searchInput = searchContainer.querySelector('input')
-		const button = searchContainer.querySelector('.clearSearch');
-		if (button) {
-			searchInput.addEventListener('change', function() {
-				if (searchInput.value !== '') {
-					button.classList.remove('d-none')
+	const filterForm = document.querySelector('form.filterForm');
+	if (filterForm) {
+		const resetButton = filterForm.querySelector('input[type=reset]');
+		const filterFields = filterForm.querySelectorAll('input[type=search], select');
+		resetButton.addEventListener('click', function(event) {
+			event.preventDefault();
+			filterFields.forEach(function (filterField) {
+				if (filterField.tagName === 'SELECT') {
+					filterField.selectedIndex = 0
 				} else {
-					button.classList.add('d-none');
+					filterField.value = '';
 				}
 			});
-		}
-		searchInput.addEventListener('keyup', function() {
-			searchInput.dispatchEvent(new Event('change'));
+			filterForm.submit();
 		});
-		searchInput.dispatchEvent(new Event('change'));
-
-		button.addEventListener('click', function() {
-			searchInput.value = '';
-			searchInput.dispatchEvent(new Event('change'));
-			searchInput.closest('form').submit();
-		});
-	});
-})
+	}
+});
 
 
 const accessRuleForm = document.getElementById('accessRuleForm');
