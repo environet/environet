@@ -41,7 +41,7 @@ class GroupCrud extends CrudPage {
 
 	/**
 	 * @inheritdoc
-	 */g
+	 */
 	protected $showTemplate = '/group/show.phtml';
 
 	/**
