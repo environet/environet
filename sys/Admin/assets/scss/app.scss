@@ -187,3 +187,9 @@ section#main-content {
     margin-left: auto;
   }
 }
+
+.card.showPage {
+  dd {
+    min-height: 1.5em;
+  }
+}
