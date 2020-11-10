@@ -3,6 +3,7 @@
 namespace Environet\Sys\Admin\Pages\MonitoringPoint;
 
 use Environet\Sys\Admin\Pages\CrudPage;
+use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\UserQueries;
 use Environet\Sys\General\Exceptions\QueryException;
@@ -29,15 +30,23 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 */
 	private $headingLine;
 
+	/**
+	 * @var string
+	 */
 	protected $readOwnPermissionName;
 
+	/**
+	 * @var string
+	 */
 	protected $updateOwnPermissionName;
 
 
 	/**
 	 * @param Select $query
+	 *
 	 * @return bool|void
 	 * @throws QueryException
+	 * @throws \Exception
 	 */
 	protected function modifyListQuery(Select $query) {
 		if (!$this->readOwnPermissionName) {
@@ -49,6 +58,13 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 			$operators = UserQueries::getOperatorsOfUser($this->request->getIdentity()->getId());
 			$query->whereIn('operatorid', array_column($operators, 'id'), 'operatorId');
 		}
+
+		if ($this->request->getQueryParam('country')) {
+			$query->where('country = :country')->addParameter('country', $this->request->getQueryParam('country'));
+		}
+
+		$query->join('operator', "operator.id = {$this->queriesClass::$tableName}.operatorid");
+		$query->select('operator.name as operator');
 	}
 
 
@@ -60,12 +76,14 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 		if (in_array($this->readOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())) {
 			return $this->userIsOperatorOfMonitoringPoint($id);
 		}
+
 		return true;
 	}
 
 
 	/**
 	 * @param int $id Monitoring point id
+	 *
 	 * @return bool
 	 * @throws QueryException
 	 */
@@ -89,6 +107,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 		if (in_array($this->updateOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())) {
 			return $this->userIsOperatorOfMonitoringPoint($id);
 		}
+
 		return true;
 	}
 
@@ -162,7 +181,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	public function csvUpload(): string {
 		if ($this->request->isPost()) {
 			$csvLines = array_map('str_getcsv', file($_FILES["csv"]['tmp_name']));
-			
+
 			$this->headingLine = array_shift($csvLines);
 
 			foreach ($csvLines as $lineNumber => $line) {
@@ -182,6 +201,27 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 		}
 
 		return $this->redirect($this->listPagePath);
+	}
+
+
+	/**
+	 * @return array[]|null
+	 * @throws QueryException
+	 */
+	protected function getListFilters(): ?array {
+		$countries = array_filter((new Select())
+			->select('DISTINCT(country)')
+			->from($this->queriesClass::$tableName)
+			->orderBy('country', 'ASC')
+			->run(Query::FETCH_COLUMN));
+
+		return [
+			'country' => [
+				'label'    => 'Country',
+				'options'  => array_combine($countries, $countries),
+				'selected' => $this->request->getQueryParam('country') ?? null
+			]
+		];
 	}
 
 
