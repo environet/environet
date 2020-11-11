@@ -1,6 +1,10 @@
 <?php include __DIR__ . '../../../layouts/before_app.phtml'; ?>
-<div class="card">
-    <h1>Observed property<?= $record && $record['id'] ? '(id: ' . $record['id'] . ')': ''?></h1>
+<div class="card formPage">
+	<div class="actions">
+		<a href="<?=$listPage;?>" class="btn btn-secondary">Back to list</a>
+	</div>
+
+	<h1>Observed property<?= $record && $record['id'] ? ' #' . $record['id'] : ''?></h1>
     <form action="" method="POST">
 		<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
         <div class="form-group">

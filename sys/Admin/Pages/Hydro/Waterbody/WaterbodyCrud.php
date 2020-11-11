@@ -70,7 +70,8 @@ class WaterbodyCrud extends CrudPage {
 			return httpErrorPage(404);
 		}
 
-		return $this->render($this->showTemplate, compact('record'));
+		$listPage = $this->getListPageLinkWithState();
+		return $this->render($this->showTemplate, compact('record', 'listPage'));
 	}
 
 
