@@ -1,6 +1,10 @@
 <?php include __DIR__ . '../../../layouts/before_app.phtml'; ?>
-<div class="card">
-    <h1>Hydro monitoring point<?= $record && $record['id'] ? '(id: ' . $record['id'] . ')': ''?></h1>
+<div class="card formPage">
+	<div class="actions">
+		<a href="<?=$listPage;?>" class="btn btn-secondary">Back to list</a>
+	</div>
+
+    <h1>Hydro monitoring point<?= $record && $record['id'] ? ' #' . $record['id'] : ''?></h1>
     <form action="" novalidate class="needs-validation" method="POST">
         <input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
         <div class="form-group">
@@ -12,7 +16,7 @@
         </div>
 
         <div class="form-group">
-            <label for="eucd_wgst">Eucd wgst</label>
+            <label for="eucd_wgst">EUCD WGST</label>
             <input type="text" name="eucd_wgst" id="eucd_wgst" class="form-control" required value="<?=formFieldValue('eucd_wgst', $record);?>" />
             <div class="invalid-feedback">
                 Please provide a valid Eucd wgst value!
@@ -20,7 +24,7 @@
         </div>
 
         <div class="form-group">
-            <label for="ncd_wgst">Ncd wgst</label>
+            <label for="ncd_wgst">NCD WGST</label>
             <input type="text" name="ncd_wgst" id="ncd_wgst" class="form-control" required value="<?=formFieldValue('ncd_wgst', $record);?>" />
             <div class="invalid-feedback">
                 Please provide a valid Ncd wgst value!
@@ -38,17 +42,17 @@
         </div>
 
         <div class="form-group">
-            <label for="lat">Lat</label>
+            <label for="lat">Latitude coordinate</label>
             <input type="number" name="lat" id="lat" step="0.000001" class="form-control" value="<?=formFieldValue('lat', $record);?>" />
         </div>
 
         <div class="form-group">
-            <label for="long">Long</label>
+            <label for="long">Longitude coordinate</label>
             <input type="number" name="long" id="long" step="0.000001" class="form-control" value="<?=formFieldValue('long', $record);?>" />
         </div>
 
         <div class="form-group">
-            <label for="z">Z</label>
+            <label for="z">Z coordinate</label>
             <input type="number" name="z" id="z" step="0.000001" class="form-control" value="<?=formFieldValue('z', $record);?>" />
         </div>
 
@@ -88,7 +92,7 @@
         </div>
 
         <fieldset class="form-group">
-            <legend><?=__('Classification');?></legend>
+            <legend><?=__('Station classification');?></legend>
             <?php $selectedClassification = formFieldValue('classification', $record); ?>
             <div class="field">
                 <select name="classification">

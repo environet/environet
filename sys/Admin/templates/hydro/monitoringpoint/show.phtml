@@ -1,6 +1,12 @@
 <?php include __DIR__ . '../../../layouts/before_app.phtml'; ?>
-<div class="card">
-    <h1>Hydro monitoring point</h1>
+<div class="card showPage">
+	<div class="actions">
+		<a href="/admin/hydro/monitoring-points/edit?id=<?=$record['id'];?>" class="btn btn-primary">Edit monitoring point</a>
+		<a href="<?=$listPage;?>" class="btn btn-secondary">Back to list</a>
+	</div>
+
+	<h1>Hydro monitoring point #<?=$record['id'] ?? '';?></h1>
+
     <dl class="row">
         <dt class="col-sm-3">ID</dt>
         <dd class="col-sm-9">#<?=$record['id'] ?? '';?></dd>
@@ -8,56 +14,71 @@
         <dt class="col-sm-3">Name</dt>
         <dd class="col-sm-9"><?=$record['name'] ?? '';?></dd>
 
-        <dt class="col-sm-3">eucd_wgst</dt>
+        <dt class="col-sm-3">EUCD WGST</dt>
         <dd class="col-sm-9"><?=$record['eucd_wgst'] ?? '';?></dd>
 
-        <dt class="col-sm-3">ncd_wgst</dt>
+        <dt class="col-sm-3">NCD WGST</dt>
         <dd class="col-sm-9"><?=$record['ncd_wgst'] ?? '';?></dd>
 
-        <dt class="col-sm-3">lat</dt>
+		<dt class="col-sm-3">Operator</dt>
+		<dd class="col-sm-9">
+		    <?php if(!empty($record['operator'])): ?>
+				<a href="/admin/data-providers/show?id=<?= $record['operator']['id'] ;?>">#<?= $record['operator']['id'] ?></a>
+				<span><?=$record['operator']['name'] ?? null;?></span>
+		    <?php endif; ?>
+		</dd>
+
+		<dt class="col-sm-3">Waterbody</dt>
+		<dd class="col-sm-9">
+		    <?php if(!empty($record['waterbody'])): ?>
+				<a href="/admin/hydro/waterbodies/show?id=<?= $record['waterbody']['european_river_code'] ;?>">#<?= $record['waterbody']['european_river_code'] ?></a>
+		    <?php endif; ?>
+		</dd>
+
+		<dt class="col-sm-3">Country</dt>
+		<dd class="col-sm-9"><?=$record['country'] ?? '';?></dd>
+
+		<dt class="col-sm-3">Location</dt>
+		<dd class="col-sm-9"><?=$record['location'] ?? '';?></dd>
+
+		<dt class="col-sm-3">River basin</dt>
+		<dd class="col-sm-9"><?=$record['river_basin'] ?? '';?></dd>
+
+        <dt class="col-sm-3">Latitude coordinate</dt>
         <dd class="col-sm-9"><?=$record['lat'] ?? '';?></dd>
 
-        <dt class="col-sm-3">long</dt>
+        <dt class="col-sm-3">Longitude coordinate</dt>
         <dd class="col-sm-9"><?=$record['long'] ?? '';?></dd>
 
-        <dt class="col-sm-3">z</dt>
+        <dt class="col-sm-3">Z coordinate</dt>
         <dd class="col-sm-9"><?=$record['z'] ?? '';?></dd>
 
-        <dt class="col-sm-3">maplat</dt>
+        <dt class="col-sm-3">Map Latitude coordinate</dt>
         <dd class="col-sm-9"><?=$record['maplat'] ?? '';?></dd>
 
-        <dt class="col-sm-3">maplong</dt>
+        <dt class="col-sm-3">Map Longitude coordinate</dt>
         <dd class="col-sm-9"><?=$record['maplong'] ?? '';?></dd>
 
-        <dt class="col-sm-3">river_kilometer</dt>
+        <dt class="col-sm-3">River kilometer</dt>
         <dd class="col-sm-9"><?=$record['river_kilometer'] ?? '';?></dd>
 
-        <dt class="col-sm-3">catchment_area</dt>
+        <dt class="col-sm-3">Catchment area</dt>
         <dd class="col-sm-9"><?=$record['catchment_area'] ?? '';?></dd>
 
-        <dt class="col-sm-3">river_basin</dt>
-        <dd class="col-sm-9"><?=$record['river_basin'] ?? '';?></dd>
-
-        <dt class="col-sm-3">gauge_zero</dt>
+        <dt class="col-sm-3">Gauge zero</dt>
         <dd class="col-sm-9"><?=$record['gauge_zero'] ?? '';?></dd>
 
-        <dt class="col-sm-3">start_time</dt>
+        <dt class="col-sm-3">Start time</dt>
         <dd class="col-sm-9"><?=$record['start_time'] ?? '';?></dd>
 
-        <dt class="col-sm-3">end_time</dt>
+        <dt class="col-sm-3">End time</dt>
         <dd class="col-sm-9"><?=$record['end_time'] ?? '';?></dd>
 
-        <dt class="col-sm-3">utc_offset</dt>
+        <dt class="col-sm-3">UTC Offset</dt>
         <dd class="col-sm-9"><?=$record['utc_offset'] ?? '';?></dd>
 
-        <dt class="col-sm-3">vertical_reference</dt>
+        <dt class="col-sm-3">Vertical reference</dt>
         <dd class="col-sm-9"><?=$record['vertical_reference'] ?? '';?></dd>
-
-        <dt class="col-sm-3">country</dt>
-        <dd class="col-sm-9"><?=$record['country'] ?? '';?></dd>
-
-        <dt class="col-sm-3">location</dt>
-        <dd class="col-sm-9"><?=$record['location'] ?? '';?></dd>
 
         <dt class="col-sm-3">Station classification</dt>
         <dd class="col-sm-9">
@@ -66,26 +87,11 @@
                 <span><?=$record['classification']['value'] ?? null;?></span>
             <?php endif; ?>
         </dd>
-        <dt class="col-sm-3">Operator</dt>
-        <dd class="col-sm-9">
-			<?php if(!empty($record['operator'])): ?>
-                <a href="/admin/data-providers/show?id=<?= $record['operator']['id'] ;?>">#<?= $record['operator']['id'] ?></a>
-                <span><?=$record['operator']['name'] ?? null;?></span>
-			<?php endif; ?>
-        </dd>
 
         <dt class="col-sm-3">Riverbank</dt>
         <dd class="col-sm-9">
 			<?php if(!empty($record['riverbank'])): ?>
                 <span><?=$record['riverbank']['value'] ?? null;?></span>
-			<?php endif; ?>
-        </dd>
-
-        <dt class="col-sm-3">Waterbody</dt>
-        <dd class="col-sm-9">
-			<?php if(!empty($record['waterbody'])): ?>
-                <a href="/admin/hydro/waterbodies/show?id=<?= $record['waterbody']['european_river_code'] ;?>">#<?= $record['waterbody']['european_river_code'] ?></a>
-                <span><?=$record['waterbody']['cname'] ?? null;?></span>
 			<?php endif; ?>
         </dd>
 
