@@ -16,18 +16,40 @@ window.addEventListener('load', function () {
 docReady(function () {
 	const filterForm = document.querySelector('form.filterForm');
 	if (filterForm) {
+		const filterFieldsSelector = 'input[type=search], input[type=date], select';
 		const resetButton = filterForm.querySelector('input[type=reset]');
-		const filterFields = filterForm.querySelectorAll('input[type=search], select');
-		resetButton.addEventListener('click', function(event) {
-			event.preventDefault();
+
+		const disableEmptyFilters = function(form) {
+			const filterFields = filterForm.querySelectorAll(filterFieldsSelector + ', input[type=hidden]');
 			filterFields.forEach(function (filterField) {
 				if (filterField.tagName === 'SELECT') {
-					filterField.selectedIndex = 0
+					if (filterField.selectedIndex === 0) {
+						filterField.disabled = 'disabled';
+					}
+				} else {
+					if (filterField.value === '') {
+						filterField.disabled = 'disabled';
+					}
+				}
+			});
+		};
+
+		resetButton.addEventListener('click', function(event) {
+			event.preventDefault();
+			const filterFields = filterForm.querySelectorAll(filterFieldsSelector);
+			filterFields.forEach(function (filterField) {
+				if (filterField.tagName === 'SELECT') {
+					filterField.selectedIndex = 0;
 				} else {
 					filterField.value = '';
 				}
 			});
+			disableEmptyFilters(filterForm);
 			filterForm.submit();
+		});
+
+		filterForm.addEventListener('submit', function() {
+			disableEmptyFilters(filterForm);
 		});
 	}
 });

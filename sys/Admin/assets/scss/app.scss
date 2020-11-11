@@ -193,3 +193,20 @@ section#main-content {
     min-height: 1.5em;
   }
 }
+
+.filterForm {
+  flex-flow: row wrap;
+  justify-content: right;
+  align-items: end;
+  & > .form-group {
+    flex: 0 1 0;
+  }
+  .listFilter {
+    input, label {
+      flex: 1 0 100%;
+    }
+  }
+  .filterSubmit {
+    flex-flow: nowrap;
+  }
+}

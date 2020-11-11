@@ -41,12 +41,9 @@ function getPaginatorParts(int $currentPage, int $maxPage) {
  * @return string
  */
 function sortableColumn(string $label, string $name) {
-	/** @var Request $request */
-	global $request;
 
-	//Get current order state
-	$currentDir = $request->getQueryParam('order_dir');
-	$currentBy = $request->getQueryParam('order_by');
+	$currentBy = getCurrentOrderBy();
+	$currentDir = getCurrentOrderDir();
 
 	//Column is active, if the currentBy is the column's name
 	$active = ($currentDir && $currentBy === $name);
@@ -68,6 +65,22 @@ function sortableColumn(string $label, string $name) {
 	//Render HTML link
 	return sprintf('<a href="%s">%s</a><span class="sort-icon %s"></span>', $href, $label, $markerClass);
 
+}
+
+/**
+ * @return string|null
+ */
+function getCurrentOrderBy(): ?string {
+	global $request;
+	return $request->getQueryParam('order_by');
+}
+
+/**
+ * @return string|null
+ */
+function getCurrentOrderDir(): ?string {
+	global $request;
+	return $request->getQueryParam('order_dir');
 }
 
 /**
