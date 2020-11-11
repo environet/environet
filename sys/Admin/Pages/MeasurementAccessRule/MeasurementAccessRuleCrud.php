@@ -8,6 +8,7 @@ use Environet\Sys\General\Db\HydroMonitoringPointQueries;
 use Environet\Sys\General\Db\MeasurementAccessRuleQueries;
 use Environet\Sys\General\Db\MeteoMonitoringPointQueries;
 use Environet\Sys\General\Db\OperatorQueries;
+use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\UserQueries;
 use Environet\Sys\General\Exceptions\QueryException;
@@ -53,10 +54,19 @@ class MeasurementAccessRuleCrud extends CrudPage {
 	 */
 	protected $successAddMessage = 'Measurement access rule successfully added';
 
+	/**
+	 * @var string
+	 */
 	protected $readOwnPermissionName = 'admin.measurementaccessrules.readown';
 
+	/**
+	 * @var string
+	 */
 	protected $updateOwnPermissionName = 'admin.measurementaccessrules.updateown';
 
+	/**
+	 * @var string
+	 */
 	protected $createOwnPermissionName = 'admin.measurementaccessrules.createown';
 
 
@@ -71,6 +81,9 @@ class MeasurementAccessRuleCrud extends CrudPage {
 			$operators = UserQueries::getOperatorsOfUser($this->request->getIdentity()->getId());
 			$query->whereIn('operator_id', array_column($operators, 'id'), 'operatorId');
 		}
+
+		$query->join('operator', 'operator.id = measurement_access_rules.operator_id', Query::JOIN_INNER);
+		$query->select('operator.name as operator_name');
 	}
 
 
