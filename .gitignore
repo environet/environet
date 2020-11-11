@@ -1,7 +1,10 @@
 .idea
 /dev/*.phar
 /dev/schemas
+/dev/vendor
+/dev/composer.lock
 /logs
 /data/logs
 /database/dareffort_content.sql
 /conf/conf.local.ini
+
