@@ -1,0 +1,10 @@
+<div class="actions">
+	<?php if (isset($editUrl) && isset($editTitle)) { ?>
+		<a href="<?=$editUrl;?>" class="btn btn-primary"><?=$editTitle;?></a>
+	<?php } ?>
+	<a href="<?=$listPage;?>" class="btn btn-secondary">Back to list</a>
+</div>
+
+<?php if (isset($pageTitle)) {?>
+	<h1><?=$pageTitle;?></h1>
+<?php } ?>

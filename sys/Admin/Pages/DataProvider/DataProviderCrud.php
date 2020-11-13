@@ -54,6 +54,16 @@ class DataProviderCrud extends CrudPage {
 
 
 	/**
+	 * @param bool $plural
+	 *
+	 * @return string
+	 */
+	protected function getEntityName(bool $plural = false): string {
+		return $plural ? 'operators' : 'operator';
+	}
+
+
+	/**
 	 * List page action for data providers.
 	 *
 	 * @return Response
@@ -112,8 +122,9 @@ class DataProviderCrud extends CrudPage {
 		}
 
 		$this->updateListPageState();
+		$pageTitle = $this->getTitle('list');
 
-		return $this->render($this->indexTemplate, compact('operators', 'totalCount', 'currentPage', 'maxPage', 'searchString'));
+		return $this->render($this->indexTemplate, compact('operators', 'totalCount', 'currentPage', 'maxPage', 'searchString', 'pageTitle'));
 	}
 
 

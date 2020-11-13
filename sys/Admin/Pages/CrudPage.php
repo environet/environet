@@ -24,6 +24,11 @@ use Exception;
  */
 abstract class CrudPage extends BasePage {
 
+	const PAGE_LIST = 'list';
+	const PAGE_ADD = 'add';
+	const PAGE_EDIT = 'edit';
+	const PAGE_SHOW = 'show';
+
 	/**
 	 * Relative path to the index template file.
 	 * @var string
@@ -59,6 +64,47 @@ abstract class CrudPage extends BasePage {
 	 * @var string
 	 */
 	protected $listPagePath;
+
+
+	/**
+	 * @param bool $plural
+	 *
+	 * @return string|null
+	 */
+	abstract protected function getEntityName(bool $plural = false): string;
+
+
+	/**
+	 * Build the title of the page
+	 *
+	 * @param string     $pageType
+	 * @param array|null $record
+	 *
+	 * @return string
+	 */
+	protected function getTitle(string $pageType, ?array $record = null) {
+		$recordTitle = [];
+		if ($record) {
+			if (!empty($record['id'])) {
+				$recordTitle[] = '#'.$record['id'];
+			}
+			if (!empty($record['name'])) {
+				$recordTitle[] = $record['name'];
+			}
+		}
+		$recordTitle = implode(' - ', $recordTitle);
+		switch ($pageType) {
+			case self::PAGE_LIST:
+				return ucfirst($this->getEntityName(true));
+			case self::PAGE_ADD:
+				return 'Add '.$this->getEntityName();
+			case self::PAGE_SHOW:
+				$name = ucfirst($this->getEntityName());
+				return "$name: $recordTitle";
+			case self::PAGE_EDIT:
+				return "Edit {$this->getEntityName()}: $recordTitle";
+		}
+	}
 
 
 	/**
@@ -110,8 +156,9 @@ abstract class CrudPage extends BasePage {
 		$this->updateListPageState();
 
 		$listFilters = $this->getListFilters();
+		$pageTitle = $this->getTitle(self::PAGE_LIST);
 
-		return $this->render($this->indexTemplate, compact('records', 'totalCount', 'currentPage', 'maxPage', 'searchString', 'listFilters'));
+		return $this->render($this->indexTemplate, compact('records', 'totalCount', 'currentPage', 'maxPage', 'searchString', 'listFilters', 'pageTitle'));
 	}
 
 
@@ -143,7 +190,8 @@ abstract class CrudPage extends BasePage {
 		}
 
 		$listPage = $this->getListPageLinkWithState();
-		return $this->render($this->showTemplate, compact('record', 'listPage'));
+		$pageTitle = $this->getTitle(self::PAGE_SHOW, $record);
+		return $this->render($this->showTemplate, compact('record', 'listPage', 'pageTitle'));
 	}
 
 
@@ -301,9 +349,12 @@ abstract class CrudPage extends BasePage {
 	 * @throws RenderException
 	 */
 	protected function renderForm(array $record = null): Response {
+		$pageTitle = $this->getTitle($record ? self::PAGE_EDIT : self::PAGE_ADD, $record);
+
 		$context = array_merge([
 			'record' => $record,
-			'listPage' => $this->getListPageLinkWithState()
+			'listPage' => $this->getListPageLinkWithState(),
+			'pageTitle' => $pageTitle
 		], $this->formContext());
 
 		return $this->render($this->formTemplate, $context);

@@ -1,0 +1,19 @@
+<?php if (isset($pageTitle)) {?>
+	<h1><?=$pageTitle;?></h1>
+<?php } ?>
+
+<div class="d-flex w-100 mb-3">
+	<div class="mr-auto">
+	<?php if (isset($addUrl) && isset($addTitle)) { ?>
+		<a href="<?=$addUrl;?>" class="btn btn-primary" ><?=$addTitle;?></a>
+	<?php } ?>
+	</div>
+
+	<?php if (!isset($noFilter) || $noFilter === false) {?>
+		<?=includeTemplatePart('list_search.phtml', [
+			'listFilters' => $listFilters ?? null,
+			'searchString' => $searchString ?? null
+		]);?>
+	<?php } ?>
+
+</div>

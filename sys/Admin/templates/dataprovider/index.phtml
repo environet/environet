@@ -1,12 +1,9 @@
 <?php include __DIR__ . '../../layouts/before_app.phtml'; ?>
 <div class="card">
-
-	<div class="d-flex w-100">
-		<div class="mr-auto form-group">
-			<a href="/admin/data-providers/add" class="btn btn-primary" >Add operator</a>
-		</div>
-		<?php include __DIR__ . '/../parts/list_search.phtml'; ?>
-	</div>
+	<?=includeTemplatePart('crud_list_header.phtml', get_defined_vars() + [
+		'addUrl' => '/admin/data-providers/add',
+		'addTitle' => 'Add operator'
+	]);?>
 
     <table class="table table-striped table-bordered">
         <thead>

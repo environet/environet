@@ -188,7 +188,7 @@ function selectOptions(array $options, $selected = null, string $emptyOption = n
  * Renders a template part with the provided context variables
  *
  * @param string $templatePath
- * @param array $vars
+ * @param array  $vars
  * @return string
  */
 function includeTemplatePart($templatePath, $vars = []) {
