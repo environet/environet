@@ -1,19 +1,12 @@
 <?php include __DIR__ . '../../../layouts/before_app.phtml'; ?>
 <div class="card">
-    <h1>Hydro monitoring points</h1>
-
-	<div class="d-flex w-100">
-		<div class="mr-auto form-group">
-			<div class="form-group d-inline-block mr-2">
-				<a href="/admin/hydro/monitoring-points/add" class="btn btn-primary" >Add monitoring point</a>
-			</div>
-			<?= includeTemplatePart('csvuploadbutton.phtml', [
-				'uploadEndpoint' => '/admin/hydro/monitoring-points/csv-upload'
-			]); ?>
-		</div>
-		<?php include __DIR__ . '/../../parts/list_search.phtml'; ?>
-
-	</div>
+	<?=includeTemplatePart('crud_list_header.phtml', get_defined_vars() + [
+		'addUrl' => '/admin/hydro/monitoring-points/add',
+		'addTitle' => 'Add hydro monitoring point'
+	]);?>
+	<?=includeTemplatePart('csvuploadbutton.phtml', [
+		'uploadEndpoint' => '/admin/hydro/monitoring-points/csv-upload'
+	]); ?>
 
     <table class="table table-striped table-bordered">
         <thead>

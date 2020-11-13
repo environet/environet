@@ -50,6 +50,16 @@ class WaterbodyCrud extends CrudPage {
 
 
 	/**
+	 * @param bool $plural
+	 *
+	 * @return string
+	 */
+	protected function getEntityName(bool $plural = false): string {
+		return $plural ? 'waterbodies' : 'waterbody';
+	}
+
+
+	/**
 	 * Show page action.
 	 *
 	 * @return Response
@@ -70,8 +80,13 @@ class WaterbodyCrud extends CrudPage {
 			return httpErrorPage(404);
 		}
 
+		//Make an alias for pageTitle
+		$record['id'] = $record['european_river_code'];
+
 		$listPage = $this->getListPageLinkWithState();
-		return $this->render($this->showTemplate, compact('record', 'listPage'));
+		$pageTitle = $this->getTitle(self::PAGE_SHOW, $record);
+
+		return $this->render($this->showTemplate, compact('record', 'listPage', 'pageTitle'));
 	}
 
 
@@ -97,6 +112,9 @@ class WaterbodyCrud extends CrudPage {
 		if ($this->request->isPost()) {
 			return self::handleFormPost($id, $record);
 		}
+
+		//Make an alias for pageTitle
+		$record['id'] = $record['european_river_code'];
 
 		return $this->renderForm($record);
 	}

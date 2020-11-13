@@ -1,11 +1,7 @@
 <?php include __DIR__ . '../../../layouts/before_app.phtml'; ?>
 <div class="card formPage">
-	<div class="actions">
-		<a href="<?=$listPage;?>" class="btn btn-secondary">Back to list</a>
-	</div>
-
-    <h1>Station classification<?= $record && $record['id'] ? ' #' . $record['id'] : ''?></h1>
-    <form action="" method="POST">
+	<?=includeTemplatePart('crud_show_header.phtml', get_defined_vars());?>
+	<form action="" method="POST">
 		<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
         <div class="form-group">
             <label for="value">Value</label>

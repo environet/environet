@@ -1,9 +1,8 @@
 <?php include __DIR__ . '../../layouts/before_app.phtml'; ?>
 <div class="card showPage">
 	<?=includeTemplatePart('crud_show_header.phtml', get_defined_vars() + [
-			'editUrl' => '/admin/data-providers/edit?id='.$record['id'],
-			'editTitle' => 'Edit operator'
-		]);?>
+		'editUrl' => '/admin/data-providers/edit?id='.$record['id']
+	]);?>
 
 	<dl class="row">
         <dt class="col-sm-3">ID</dt>

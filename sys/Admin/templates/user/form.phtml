@@ -2,11 +2,7 @@
 <?php $editMode = isset($record) && !empty($record['id']); ?>
 
 <div class="card formPage">
-	<div class="actions">
-		<a href="<?=$listPage;?>" class="btn btn-secondary">Back to list</a>
-	</div>
-
-	<h1><?= __($editMode ? 'Edit user #' . $record['id'] . '' : 'Add user'); ?></h1>
+	<?=includeTemplatePart('crud_show_header.phtml', get_defined_vars());?>
 	<form method="post">
 		<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
 

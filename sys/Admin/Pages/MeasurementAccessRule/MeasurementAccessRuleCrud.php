@@ -71,6 +71,16 @@ class MeasurementAccessRuleCrud extends CrudPage {
 
 
 	/**
+	 * @param bool $plural
+	 *
+	 * @return string
+	 */
+	protected function getEntityName(bool $plural = false): string {
+		return $plural ? 'measurement access rules' : 'measurement access rule';
+	}
+
+
+	/**
 	 * @param Select $query
 	 * @return bool|void
 	 * @throws QueryException

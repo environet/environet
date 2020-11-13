@@ -107,8 +107,9 @@ abstract class MonitoringPointResultsCrud extends CrudPage {
 		$precision = max(2, $precisions ? max($precisions) : 0);
 
 		$listFilters = $this->getListFilters();
+		$pageTitle = $this->getTitle(self::PAGE_LIST);
 
-		return $this->render($this->getTemplate(), compact('results', 'totalCount', 'currentPage', 'maxPage', 'searchString', 'listFilters', 'precision'));
+		return $this->render($this->getTemplate(), compact('results', 'totalCount', 'currentPage', 'maxPage', 'searchString', 'listFilters', 'precision', 'pageTitle'));
 	}
 
 

@@ -42,6 +42,17 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 
 
 	/**
+	 * @param bool $plural
+	 *
+	 * @return string
+	 */
+	protected function getEntityName(bool $plural = false): string {
+		$typePrefix = ($this instanceof \Environet\Sys\Admin\Pages\Meteo\MonitoringPointCrud) ? 'meteo' : 'hydro';
+		return $plural ? "$typePrefix monitoring points" : "$typePrefix monitoring point";
+	}
+
+
+	/**
 	 * @param Select $query
 	 *
 	 * @return bool|void

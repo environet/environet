@@ -56,6 +56,16 @@ class GroupCrud extends CrudPage {
 
 
 	/**
+	 * @param bool $plural
+	 *
+	 * @return string
+	 */
+	protected function getEntityName(bool $plural = false): string {
+		return $plural ? 'groups' : 'group';
+	}
+
+
+	/**
 	 * @inheritDoc
 	 */
 	protected function formContext(): array {

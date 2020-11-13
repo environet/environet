@@ -1,6 +1,6 @@
 <div class="actions">
-	<?php if (isset($editUrl) && isset($editTitle)) { ?>
-		<a href="<?=$editUrl;?>" class="btn btn-primary"><?=$editTitle;?></a>
+	<?php if (isset($editUrl)) { ?>
+		<a href="<?=$editUrl;?>" class="btn btn-primary"><?=isset($editTitle) ? $editTitle : 'Edit';?></a>
 	<?php } ?>
 	<a href="<?=$listPage;?>" class="btn btn-secondary">Back to list</a>
 </div>

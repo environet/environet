@@ -54,6 +54,16 @@ class UserCrud extends CrudPage {
 
 
 	/**
+	 * @param bool $plural
+	 *
+	 * @return string
+	 */
+	protected function getEntityName(bool $plural = false): string {
+		return $plural ? 'users' : 'user';
+	}
+
+
+	/**
 	 * List page action for users.
 	 *
 	 * @return Response
@@ -103,8 +113,9 @@ class UserCrud extends CrudPage {
 		}
 
 		$this->updateListPageState();
+		$pageTitle = $this->getTitle(self::PAGE_LIST);
 
-		return $this->render('/user/index.phtml', compact('records', 'totalCount', 'currentPage', 'maxPage', 'searchString'));
+		return $this->render('/user/index.phtml', compact('records', 'totalCount', 'currentPage', 'maxPage', 'searchString', 'pageTitle'));
 	}
 
 

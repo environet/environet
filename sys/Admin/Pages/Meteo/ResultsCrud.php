@@ -19,6 +19,16 @@ class ResultsCrud extends MonitoringPointResultsCrud {
 
 
 	/**
+	 * @param bool $plural
+	 *
+	 * @return string
+	 */
+	protected function getEntityName(bool $plural = false): string {
+		return $plural ? 'meteo results' : 'meteo result';
+	}
+
+
+	/**
 	 * @return Select
 	 */
 	protected function getBaseQuery(): Select {

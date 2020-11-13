@@ -122,7 +122,7 @@ class DataProviderCrud extends CrudPage {
 		}
 
 		$this->updateListPageState();
-		$pageTitle = $this->getTitle('list');
+		$pageTitle = $this->getTitle(self::PAGE_LIST);
 
 		return $this->render($this->indexTemplate, compact('operators', 'totalCount', 'currentPage', 'maxPage', 'searchString', 'pageTitle'));
 	}
