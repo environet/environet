@@ -12,10 +12,10 @@ INSERT INTO "public"."permissions"("name") VALUES
 ('admin.groups.update'),
 ('admin.groups.delete'),
 
-('admin.providers.read'),
-('admin.providers.create'),
-('admin.providers.update'),
-('admin.providers.delete'),
+('admin.operators.read'),
+('admin.operators.create'),
+('admin.operators.update'),
+('admin.operators.delete'),
 
 ('admin.hydro.observedproperties.read'),
 ('admin.hydro.observedproperties.create'),

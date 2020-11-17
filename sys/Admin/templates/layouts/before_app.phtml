@@ -35,9 +35,9 @@
                 </li>
             <?php endif; ?>
 
-            <?php if($request->getIdentity()->hasPermissions(['admin.providers.read']) || $request->getIdentity()->hasPermissions(['admin.providers.readown'])): ?>
+            <?php if($request->getIdentity()->hasPermissions(['admin.operators.read']) || $request->getIdentity()->hasPermissions(['admin.operators.readown'])): ?>
                 <li>
-                    <?= includeTemplatePart('menuitem.phtml', ['title' => 'Operators', 'route' => '/admin/data-providers', 'icon' => 'address-book', 'matchExtra' => 1]) ?>
+                    <?= includeTemplatePart('menuitem.phtml', ['title' => 'Operators', 'route' => '/admin/operators', 'icon' => 'address-book', 'matchExtra' => 1]) ?>
                 </li>
 			<?php endif; ?>
 

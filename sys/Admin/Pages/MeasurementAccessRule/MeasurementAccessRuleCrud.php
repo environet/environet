@@ -19,7 +19,7 @@ use Environet\Sys\General\Response;
  *
  * Handles CRUD operations for data access rules.
  *
- * @package Environet\Sys\Admin\Pages\DataProvider
+ * @package Environet\Sys\Admin\Pages\MeasurementAccessRule
  * @author  SRG Group <dev@srg.hu>
  */
 class MeasurementAccessRuleCrud extends CrudPage {

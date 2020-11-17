@@ -215,10 +215,10 @@ class UserQueries extends BaseQueries {
 			$result[] = $row['permission'];
 		}
 
-		if (static::isDataProviderUser($userId)) {
+		if (static::isOperatorUser($userId)) {
 			$result = array_merge($result, [
-				'admin.providers.readown',
-				'admin.providers.updateown',
+				'admin.operators.readown',
+				'admin.operators.updateown',
 				'admin.hydro.monitoringpoints.readown',
 				'admin.hydro.monitoringpoints.updateown',
 				'admin.hydro.monitoringpoints.createown',
@@ -247,7 +247,7 @@ class UserQueries extends BaseQueries {
 	 * @throws QueryException
 	 * @uses \Environet\Sys\General\Db\Query\Select::run()
 	 */
-	public static function isDataProviderUser(int $userId): bool {
+	public static function isOperatorUser(int $userId): bool {
 		return count(static::getOperatorsOfUser($userId));
 	}
 

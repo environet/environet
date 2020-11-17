@@ -1,0 +1,55 @@
+<?php include __DIR__ . '../../layouts/before_app.phtml'; ?>
+<div class="card">
+	<?=includeTemplatePart('crud_list_header.phtml', get_defined_vars() + [
+		'addUrl' => '/admin/operators/add',
+		'addTitle' => 'Add operator'
+	]);?>
+
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th><?=sortableColumn('Operator name', 'name');?></th>
+                <th><?=sortableColumn('Users of operator', 'user_count');?></th>
+                <th><?=sortableColumn('Groups of operator', 'group_count');?></th>
+                <th class="actions">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+				if (count($operators) > 0):
+					foreach ($operators as $operator):
+			?>
+                <tr>
+                    <td><?=$operator['name'] ?? null;?></td>
+                    <td><?=$operator['user_count'] ?? null;?></td>
+                    <td><?=$operator['group_count'] ?? null;?></td>
+                    <td class="actions">
+                        <a href="/admin/operators/show?id=<?=$operator['id'];?>"><i class="fas fa-eye text-muted"></i></a>
+                        <a href="/admin/operators/edit?id=<?=$operator['id'];?>"><i class="fas fa-edit"></i></a>
+                    </td>
+                </tr>
+			<?php
+					endforeach;
+				else:
+			?>
+					<tr>
+						<td colspan="4">
+							There is no record to show.
+						</td>
+					</tr>
+			<?
+				endif;
+            ?>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4">
+                    <div class="paginator">
+                        <?php include __DIR__.'/../parts/paginator.phtml';?>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<?php include __DIR__ . '../../layouts/after_app.phtml'; ?>

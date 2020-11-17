@@ -4,7 +4,7 @@ namespace Environet\Sys\Admin;
 
 use Environet\Sys\Admin\Pages\BasePage;
 use Environet\Sys\Admin\Pages\Dashboard;
-use Environet\Sys\Admin\Pages\DataProvider\DataProviderCrud;
+use Environet\Sys\Admin\Pages\Operator\OperatorCrud;
 use Environet\Sys\Admin\Pages\DownloadTest;
 use Environet\Sys\Admin\Pages\Group\GroupCrud;
 use Environet\Sys\Admin\Pages\Hydro\RiverbankCrud;
@@ -200,10 +200,10 @@ class AdminHandler extends BaseHandler {
 		'^groups\/add'    => [GroupCrud::class, 'add', ['admin.groups.create']],
 		'^groups\/delete' => [GroupCrud::class, 'delete', ['admin.groups.delete']],
 
-		'^data-providers$'       => [DataProviderCrud::class, 'list', ['admin.providers.read'], ['admin.providers.readown']],
-		'^data-providers\/show$' => [DataProviderCrud::class, 'show', ['admin.providers.read'], ['admin.providers.readown']],
-		'^data-providers\/add$'  => [DataProviderCrud::class, 'add', ['admin.providers.create']],
-		'^data-providers\/edit$' => [DataProviderCrud::class, 'edit', ['admin.providers.update'], ['admin.providers.updateown']],
+		'^operators$'       => [OperatorCrud::class, 'list', ['admin.operators.read'], ['admin.operators.readown']],
+		'^operators\/show$' => [OperatorCrud::class, 'show', ['admin.operators.read'], ['admin.operators.readown']],
+		'^operators\/add$'  => [OperatorCrud::class, 'add', ['admin.operators.create']],
+		'^operators\/edit$' => [OperatorCrud::class, 'edit', ['admin.operators.update'], ['admin.operators.updateown']],
 
 		'^hydro\/observed-properties$'        => [HydroObservedPropertyCrud::class, 'list', ['admin.hydro.observedproperties.read']],
 		'^hydro\/observed-properties\/show$'  => [HydroObservedPropertyCrud::class, 'show', ['admin.hydro.observedproperties.read']],

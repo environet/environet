@@ -1019,7 +1019,7 @@
 <li><a href="#25_3_dashboard">Dashboard</a></li>
 <li><a href="#25_4_users">Users</a></li>
 <li><a href="#25_5_groups">Groups</a></li>
-<li><a href="#25_6_data_providers">Data providers</a></li>
+<li><a href="#25_6_operators">Operators</a></li>
 <li><a href="#25_7_1_hydro">Hydro</a>
 <ul>
 <li><a href="#25_7_2_hydro_monitoring_point">Hydro monitoring points</a></li>
@@ -1502,28 +1502,28 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <h4 id="group-deleting">Group deleting</h4>
 <p>You can delete a group if you click the “Trash” icon at the end of the specific row. If you clicked, it shows a confirm window, where you have to approve the deleting. <strong>If any user or operator have already assigned to the specified group, the delete operation cannot be performed.</strong> First time you have to detach these relations and after that you can delete the group.</p>
 <p>Path: <code>/admin/groups/delete?id=[group identifier]</code></p>
-<p><a name="25_6_data_providers"></a></p>
-<h2 id="data-providers">Data providers</h2>
-<p>Here you can handle the data providers what has already added to the system.</p>
-<p>Path: <code>/admin/data-providers</code></p>
+<p><a name="25_6_operators"></a></p>
+<h2 id="operators">Operators</h2>
+<p>Here you can handle the operators what has already added to the system.</p>
+<p>Path: <code>/admin/operators</code></p>
 <p>Searchable: name, address, email</p>
-<h4 id="new-data-provider">New data provider</h4>
-<p>You can add new data provider if you click the “Add data provider” button on the top left of the data provider’s list page.</p>
-<p>Path: <code>/admin/data-providers/add</code></p>
-<p>On the data providers creating page, you have to fill the following mandatory fields:</p>
+<h4 id="new-operator">New operator</h4>
+<p>You can add new operator if you click the “Add operator” button on the top left of the operator’s list page.</p>
+<p>Path: <code>/admin/operators/add</code></p>
+<p>On the operators creating page, you have to fill the following mandatory fields:</p>
 <p>Operator data - name - phone - e-mail - url</p>
 <p>User data - name - username - email</p>
 <p>The user data is necessary because of each operator has to be assigned to at least one user.</p>
-<h4 id="updating-data-provider">Updating data provider</h4>
-<p>You can select a data provider to update if you click the “Pencil” icon at the end of the specific row.</p>
-<p>Path: <code>/admin/data-providers/edit?id=[data-provider identifier]</code></p>
-<p>Here you can change all of operator’s data and you can assign more users or groups to the specific dataprovider.</p>
-<h4 id="data-provider-show-page">Data provider show page</h4>
-<p>You can select a data provider to show if you click the “Eye” icon at the end of the specific row.</p>
-<p>Path: <code>/admin/data-providers/show?id=[data-provider identifier]</code></p>
-<p>Here you can see the stored data of the data providers and its relations to direction of users and groups.</p>
-<h4 id="data-provider-deleting">Data provider deleting</h4>
-<p>You cannot delete any data provider.</p>
+<h4 id="updating-operator">Updating operator</h4>
+<p>You can select a operator to update if you click the “Pencil” icon at the end of the specific row.</p>
+<p>Path: <code>/admin/operators/edit?id=[operator identifier]</code></p>
+<p>Here you can change all of operator’s data and you can assign more users or groups to the specific operator.</p>
+<h4 id="operator-show-page">Operator show page</h4>
+<p>You can select a operator to show if you click the “Eye” icon at the end of the specific row.</p>
+<p>Path: <code>/admin/operators/show?id=[operator identifier]</code></p>
+<p>Here you can see the stored data of the operators and its relations to direction of users and groups.</p>
+<h4 id="operator-deleting">Operator deleting</h4>
+<p>You cannot delete any operator.</p>
 <p><a name="25_7_1_hydro"></a></p>
 <h2 id="hydro">Hydro</h2>
 <p><a name="25_7_2_hydro_monitoring_point"></a></p>
