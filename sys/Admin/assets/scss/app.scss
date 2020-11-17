@@ -29,8 +29,13 @@ $fa-font-path: '~@fortawesome/fontawesome-free/webfonts';
 @import 'sidebar';
 @import 'identity-dropdown';
 
+html {
+	height: 100%;
+}
+
 body {
 	color: $gray69;
+	height: 100%;
 	display: flex;
 	flex-direction: column;
 	background: $gray238;
