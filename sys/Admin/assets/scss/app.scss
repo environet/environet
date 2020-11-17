@@ -208,7 +208,7 @@ section#main-content {
 .filterForm {
 	flex-flow: row wrap;
 	justify-content: right;
-	align-items: end;
+	align-items: flex-end;
 
 	& > .form-group {
 		flex: 0 1 0;
