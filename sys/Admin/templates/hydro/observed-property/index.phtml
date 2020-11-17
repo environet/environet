@@ -11,7 +11,7 @@
                 <th><?=sortableColumn('Symbol', 'symbol');?></th>
                 <th><?=sortableColumn('Type', 'type');?></th>
                 <th><?=sortableColumn('Description', 'description');?></th>
-                <th>Actions</th>
+                <th class="actions">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -34,7 +34,7 @@
 				else:
 			?>
 					<tr>
-						<td colspan="3">
+						<td colspan="4">
 							There is no record to show.
 						</td>
 					</tr>
@@ -44,7 +44,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="3">
+                <td colspan="4">
                     <div class="paginator">
                         <?php include __DIR__.'/../../parts/paginator.phtml';?>
                     </div>

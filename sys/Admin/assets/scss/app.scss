@@ -25,188 +25,206 @@ $fa-font-path: '~@fortawesome/fontawesome-free/webfonts';
 @import '~@fortawesome/fontawesome-free/scss/fontawesome';
 @import '~@fortawesome/fontawesome-free/scss/solid';
 
+@import 'mixins';
 @import 'sidebar';
 @import 'identity-dropdown';
 
 html {
-  height: 100%;
+	height: 100%;
 }
+
 body {
-  color: #454545;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background: #eeeeee;
-  overflow: hidden;
+	color: $gray69;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	background: $gray238;
+	overflow: hidden;
 }
 
 a {
-  color: $primary-color;
+	color: $primary-color;
 }
 
 a, a:hover, a:focus {
-
-  text-decoration: none;
-
-  outline: none;
-
-  outline: 0;
-
+	text-decoration: none;
+	outline: none;
+	outline: 0;
 }
 
 ul li {
-  list-style: none;
+	list-style: none;
 }
 
 table {
-  th {
-    span.sort-icon {
-      margin-left: .3em;
-      &.fa-sort {
-        color: $text-muted
-      }
-    }
-  }
+	th {
+		&.actions {
+			@include fitColumnToContent;
+		}
+		span.sort-icon {
+			margin-left: .3em;
 
-  td.actions a {
-    margin: 0 .1em;
-  }
+			&.fa-sort {
+				color: $text-muted
+			}
+		}
+	}
+
+	td.actions {
+		@include fitColumnToContent;
+
+		a {
+			margin: 0 .1em;
+		}
+	}
 }
 
+.fit-content {
+	@include fitColumnToContent;
+}
 
 .container.error-page {
-  padding-top: 1em;
+	padding-top: 1em;
 }
 
 
 .card {
-  //align-items: flex-start;
+	//align-items: flex-start;
 }
 
 dl.row {
-  width: 100%;
+	width: 100%;
 }
 
 .add-record-button {
-  margin: 1em 0;
+	margin: 1em 0;
 }
 
 #loginForm {
-  padding: 2em $content-padding-horizontal;
-  margin: 0 auto;
-  max-width: 400px;
+	padding: 2em $content-padding-horizontal;
+	margin: 0 auto;
+	max-width: 400px;
 }
 
 .dropdown {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 header#siteHeader {
-  background: $header-background-color;
-  padding: .5em $content-padding-horizontal;
-  display: flex;
-  align-items: center;
-  color: white;
-  font-size: 1.3em;
-  a {
-    color: inherit;
-    &:hover, &:focus, &:active {
-      color: $accent-color;
-    }
-  }
+	background: $header-background-color;
+	padding: .5em $content-padding-horizontal;
+	display: flex;
+	align-items: center;
+	color: white;
+	font-size: 1.3em;
+
+	a {
+		color: inherit;
+
+		&:hover, &:focus, &:active {
+			color: $accent-color;
+		}
+	}
 }
 
 #identity {
-  margin-left: auto;
+	margin-left: auto;
 }
 
 section#container {
-  display: flex;
-  flex: 1;
-  height: 100%;
-  overflow: auto;
+	display: flex;
+	flex: 1;
+	height: 100%;
+	overflow: auto;
 }
 
 section#main-content {
-  flex: 1;
-  overflow: auto;
-  padding: 1em $content-padding-horizontal;
+	flex: 1;
+	overflow: auto;
+	padding: 1em $content-padding-horizontal;
 
-  .messages {
-    ul {
-      margin: 0;
-      padding: 0;
-    }
+	.messages {
+		ul {
+			margin: 0;
+			padding: 0;
+		}
 
-    li {
-      margin: 1em 0;
-      width: 100%;
-      padding: 1em;
-      color: white;
-      border-radius: $border-radius-sm;
-    }
-    &.message-error li {
-      background-color: map_get($theme-colors, 'danger');
-    }
-    &.message-success li {
-      background-color: map_get($theme-colors, 'success');
-    }
-    &.message-warning li {
-      background-color: map_get($theme-colors, 'warning');
-    }
-  }
+		li {
+			margin: 1em 0;
+			width: 100%;
+			padding: 1em;
+			color: white;
+			border-radius: $border-radius-sm;
+		}
 
-  .card {
-    padding: 1em;
-  }
+		&.message-error li {
+			background-color: map_get($theme-colors, 'danger');
+		}
+
+		&.message-success li {
+			background-color: map_get($theme-colors, 'success');
+		}
+
+		&.message-warning li {
+			background-color: map_get($theme-colors, 'warning');
+		}
+	}
+
+	.card {
+		padding: 1em;
+	}
 }
 
 .paginator {
-  text-align: center;
-  .pagination {
-    display: inline-flex;
-  }
+	text-align: center;
+
+	.pagination {
+		display: inline-flex;
+	}
 }
 
 #debug {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  background-color: white;
-  padding: 1em;
+	display: none;
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	background-color: white;
+	padding: 1em;
 }
 
 
 .card.showPage, .card.formPage {
-  dd ul li {
-    list-style-type: disc;
-  }
+	dd ul li {
+		list-style-type: disc;
+	}
 
-  > div.actions {
-    margin-left: auto;
-  }
+	> div.actions {
+		margin-left: auto;
+	}
 }
 
 .card.showPage {
-  dd {
-    min-height: 1.5em;
-  }
+	dd {
+		min-height: 1.5em;
+	}
 }
 
 .filterForm {
-  flex-flow: row wrap;
-  justify-content: right;
-  align-items: end;
-  & > .form-group {
-    flex: 0 1 0;
-  }
-  .listFilter {
-    input, label {
-      flex: 1 0 100%;
-    }
-  }
-  .filterSubmit {
-    flex-flow: nowrap;
-  }
+	flex-flow: row wrap;
+	justify-content: right;
+	align-items: end;
+
+	& > .form-group {
+		flex: 0 1 0;
+	}
+
+	.listFilter {
+		input, label {
+			flex: 1 0 100%;
+		}
+	}
+
+	.filterSubmit {
+		flex-flow: nowrap;
+	}
 }

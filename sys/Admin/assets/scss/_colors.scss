@@ -3,9 +3,11 @@ $primary-color: darken(#0085ff, 15%);
 $accent-color: orange;
 $header-background-color: darken($primary-color, 20%);
 $sidebar-bg-color: darken($primary-color, 15%);
+$gray69: #454545;
+$gray238: #eee;
 
 $theme-colors: (
-  "blue": $accent-color,
-  "primary": $primary-color,
-  "danger": $error-color
+	"blue": $accent-color,
+	"primary": $primary-color,
+	"danger": $error-color
 );

@@ -10,7 +10,7 @@
 		<thead>
 		<tr>
 			<th><?=sortableColumn('Name', 'name');?></th>
-			<th>Actions</th>
+			<th class="actions">Actions</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -20,7 +20,7 @@
 			?>
 					<tr>
 						<td><?=$group['name'] ?? null;?></td>
-						<td style="width:120px" class="actions">
+						<td class="actions">
 							<a href="/admin/groups/show?id=<?=$group['id'];?>"><i class="fas fa-eye text-muted"></i></a>
 							<a href="/admin/groups/edit?id=<?=$group['id'];?>"><i class="fas fa-edit"></i></a>
 							<a href="/admin/groups/delete?id=<?=$group['id'];?>" onclick="return confirm('Are you sure to delete?')"><i class="fas fa-trash text-danger"></i></a>
