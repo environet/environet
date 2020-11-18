@@ -4,9 +4,9 @@
 			'addUrl' => '/admin/meteo/monitoring-points/add',
 			'addTitle' => 'Add meteo monitoring point'
 		]);?>
-	<?=includeTemplatePart('csvuploadbutton.phtml', [
-		'uploadEndpoint' => '/admin/meteo/monitoring-points/csv-upload'
-	]); ?>
+	<div class="mb-2">
+		<a href="/admin/meteo/monitoring-points/csv-upload" class="btn btn-secondary">Upload CSV</a>
+	</div>
 
     <table class="table table-striped table-bordered">
         <thead>

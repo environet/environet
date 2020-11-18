@@ -37,12 +37,13 @@ class HydroMonitoringPointQueries extends BaseQueries {
 
 	/**
 	 * @param array $operatorIds
+	 *
 	 * @return array
 	 * @throws QueryException
 	 */
 	public static function all(array $operatorIds = null) {
 		$query = (new Select())
-			->select(static::$tableName. '.*')
+			->select(static::$tableName . '.*')
 			->from(static::$tableName);
 
 		if (!is_null($operatorIds)) {
@@ -109,40 +110,59 @@ class HydroMonitoringPointQueries extends BaseQueries {
 	 * @inheritDoc
 	 */
 	public static function prepareData(array $data): array {
-		return [
+		$mapKeys = [
+			'station_classificationid' => 'classification',
+			'operatorid' => 'operator',
+			'bankid' => 'riverbank',
+			'waterbodyeuropean_river_code' => 'waterbody',
+		];
+		foreach ($mapKeys as $toKey => $fromKey) {
+			if (array_key_exists($fromKey, $data)) {
+				$data[$toKey] = $data[$fromKey];
+				unset($data[$fromKey]);
+			}
+		}
+		$returnData = [
 			// strings
-			'name'                         => $data['name'],
-			'eucd_wgst'                    => $data['eucd_wgst'],
-			'ncd_wgst'                     => $data['ncd_wgst'],
-			'country'                      => $data['country'],
+			'name'                         => $data['name'] ?? null,
+			'ncd_wgst'                     => $data['ncd_wgst'] ?? null,
+			'country'                      => $data['country'] ?? null,
 			'location'                     => $data['location'] ?? null,
 			'river_basin'                  => $data['river_basin'] ?? null,
 			'vertical_reference'           => $data['vertical_reference'] ?? null,
 
 			// numbers
-			'river_kilometer'              => isset($data['river_kilometer']) ? (float) $data['river_kilometer'] : null,
-			'catchment_area'               => isset($data['catchment_area']) ? (float) $data['catchment_area'] : null,
-			'gauge_zero'                   => isset($data['gauge_zero']) ? (float) $data['gauge_zero'] : null,
-			'long'                         => isset($data['long']) ? (float) $data['long'] : null,
-			'lat'                          => isset($data['lat']) ? (float) $data['lat'] : null,
-			'z'                            => isset($data['z']) ? (float) $data['z'] : null,
-			'maplat'                       => isset($data['maplat']) ? (float) $data['maplat'] : null,
-			'maplong'                      => isset($data['maplong']) ? (float) $data['maplong'] : null,
-
+			'river_kilometer'              => isset($data['river_kilometer']) && $data['river_kilometer'] !== '' ? (float) $data['river_kilometer'] : null,
+			'catchment_area'               => isset($data['catchment_area']) && $data['catchment_area'] !== '' ? (float) $data['catchment_area'] : null,
+			'gauge_zero'                   => isset($data['gauge_zero']) && $data['gauge_zero'] !== '' ? (float) $data['gauge_zero'] : null,
+			'long'                         => isset($data['long']) && $data['long'] !== '' ? (float) $data['long'] : null,
+			'lat'                          => isset($data['lat']) && $data['lat'] !== '' ? (float) $data['lat'] : null,
+			'z'                            => isset($data['z']) && $data['z'] !== '' ? (float) $data['z'] : null,
+			'maplat'                       => isset($data['maplat']) && $data['maplat'] !== '' ? (float) $data['maplat'] : null,
+			'maplong'                      => isset($data['maplong']) && $data['maplong'] !== '' ? (float) $data['maplong'] : null,
+			'utc_offset'                   => isset($data['utc_offset']) && $data['utc_offset'] !== '' ? (int) $data['utc_offset'] : null,
 
 			// foreign keys
-			'station_classificationid'     => isset($data['classification']) ? $data['classification'] ?: null : null,
-			'operatorid'                   => isset($data['operator']) ? $data['operator'] ?: null : null,
-			'bankid'                       => isset($data['riverbank']) ? $data['riverbank'] ?: null : null,
-			'waterbodyeuropean_river_code' => isset($data['waterbody']) ? $data['waterbody'] ?: null : null,
+			'station_classificationid'     => isset($data['station_classificationid']) ? $data['station_classificationid'] ?: null : null,
+			'operatorid'                   => isset($data['operatorid']) ? $data['operatorid'] ?: null : null,
+			'bankid'                       => isset($data['bankid']) ? $data['bankid'] ?: null : null,
+			'waterbodyeuropean_river_code' => isset($data['waterbodyeuropean_river_code']) ? $data['waterbodyeuropean_river_code'] ?: null : null,
 
 			// dates
 			'start_time'                   => !empty($data['start_time']) ? $data['start_time'] : null,
 			'end_time'                     => !empty($data['end_time']) ? $data['end_time'] : null,
-
-			// hidden
-			'utc_offset'                   => 0,
 		];
+
+		//Save only fields which have been provided in data array
+		$returnData = array_filter($returnData, function ($key) use ($data) {
+			return array_key_exists($key, $data);
+		}, ARRAY_FILTER_USE_KEY);
+
+		if (!empty($returnData['ncd_wgst']) && !empty($returnData['country'])) {
+			$returnData['eucd_wgst'] = self::generateEUCD($returnData['ncd_wgst'], $returnData['country']);
+		}
+
+		return $returnData;
 	}
 
 
@@ -196,12 +216,25 @@ class HydroMonitoringPointQueries extends BaseQueries {
 			true
 		);
 	}
-	
+
+
 	/**
 	 * @inheritDoc
 	 */
 	public static function getDeleteEventType(): string {
 		return EventLogger::EVENT_TYPE_HYDRO_MP_DELETE;
 	}
+
+
+	/**
+	 * @param string $ncd
+	 * @param string $country
+	 *
+	 * @return string
+	 */
+	public static function generateEUCD(string $ncd, string $country): ?string {
+		return $country . $ncd . '_HYDRO';
+	}
+
 
 }

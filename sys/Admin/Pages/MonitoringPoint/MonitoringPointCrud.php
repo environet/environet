@@ -7,6 +7,9 @@ use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\UserQueries;
 use Environet\Sys\General\Exceptions\QueryException;
+use Environet\Sys\General\Exceptions\RenderException;
+use Environet\Sys\General\Response;
+use Exception;
 
 /**
  * Class MonitoringPointCrud
@@ -40,6 +43,23 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 */
 	protected $updateOwnPermissionName;
 
+	/**
+	 * @var string
+	 */
+	protected $observedPropertiesCsvColumn = 'observed_properties';
+
+	/**
+	 * @inheritdoc
+	 */
+	protected $csvUploadTemplate = '/parts/csvupload.phtml';
+
+
+	/**
+	 * Get enums for CSV upload page
+	 * @return array
+	 */
+	abstract protected function getCsvEnums(): array;
+
 
 	/**
 	 * @param bool $plural
@@ -49,6 +69,23 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	protected function getEntityName(bool $plural = false): string {
 		$typePrefix = ($this instanceof \Environet\Sys\Admin\Pages\Meteo\MonitoringPointCrud) ? 'meteo' : 'hydro';
 		return $plural ? "$typePrefix monitoring points" : "$typePrefix monitoring point";
+	}
+
+
+	/**
+	 * Get allowe operator ids of the user
+	 *
+	 * @return array|null
+	 * @throws QueryException
+	 */
+	protected function getAllowedOperatorIds(): ?array {
+		if (in_array($this->readOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())) {
+			// Get the ids of operators the user is part of, and filter the query accordingly
+			$operators = UserQueries::getOperatorsOfUser($this->request->getIdentity()->getId());
+			return $operators ? array_column($operators, 'id') : [];
+		}
+		//All
+		return null;
 	}
 
 
@@ -64,10 +101,10 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 			throw new \Exception('Read own permission not set');
 		}
 
-		if (in_array($this->readOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())) {
+		$allowedOperatorIds = $this->getAllowedOperatorIds();
+		if (!is_null($allowedOperatorIds)) {
 			// Get the ids of operators the user is part of, and filter the query accordingly
-			$operators = UserQueries::getOperatorsOfUser($this->request->getIdentity()->getId());
-			$query->whereIn('operatorid', array_column($operators, 'id'), 'operatorId');
+			$query->whereIn('operatorid', $allowedOperatorIds, 'operatorId');
 		}
 
 		if ($this->request->getQueryParam('country')) {
@@ -99,7 +136,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 * @throws QueryException
 	 */
 	private function userIsOperatorOfMonitoringPoint(int $id): bool {
-		$operatorIds = array_column(UserQueries::getOperatorsOfUser($this->request->getIdentity()->getId()), 'id');
+		$operatorIds = $this->getAllowedOperatorIds() ?: [];
 		$query = (new Select())
 			->select($this->queriesClass::$tableName . '.id')
 			->from($this->queriesClass::$tableName)
@@ -155,28 +192,51 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 * @param array $line
 	 *
 	 * @return array
-	 * @uses \Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCSVMapInterface::getCsvColumnMappings()
+	 * @throws Exception
 	 * @uses \Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCSVMapInterface::getObservedPropertiesCsvColumn()
 	 * @uses \Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud::parseObservedPropertyIdsFromString()
+	 * @uses \Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCSVMapInterface::getCsvColumnMappings()
 	 */
 	protected function dataFromCsvLine(array $line): array {
-		$data = [];
-
-		foreach ($this->headingLine as $colNumber => $name) {
-			$data[$name] = $line[$colNumber];
+		if (count($line) !== count($this->headingLine)) {
+			throw new Exception('CSV column number not correct');
 		}
+		$data = array_combine($this->headingLine, $line);
 
-		$observedPropertiesColNum = array_search($this->getObservedPropertiesCsvColumn(), $this->headingLine);
-		if ($observedPropertiesColNum !== false && isset($line[$observedPropertiesColNum])) {
-			$observedPropertyIds = $this->parseObservedPropertyIdsFromString($line[$observedPropertiesColNum]);
+		if (isset($data[$this->observedPropertiesCsvColumn])) {
+			$observedPropertyIds = $this->parseObservedPropertyIdsFromString($data[$this->observedPropertiesCsvColumn]);
 			$data['observedProperties'] = $observedPropertyIds;
 		} else {
 			$data['observedProperties'] = [];
 		}
-
-		unset($data[$this->getObservedPropertiesCsvColumn()]);
-
+		unset($data[$this->observedPropertiesCsvColumn]);
 		return $data;
+	}
+
+
+	/**
+	 * @return string[]
+	 */
+	public function getCsvColumns(): array {
+		return [
+			'name' => 'Station name [text]',
+			'location' => 'Location [text]',
+			'country' => '2-char country code [text]',
+			'operator' => ['title' => 'Operator ID [ID]', 'outField' => 'operatorid'],
+			'riverbank' => ['title' => 'Riverbank ID [ID]', 'outField' => 'bankid'],
+			'waterbody' => ['title' => 'Waterbody ID [ID]', 'outField' => 'waterbodyeuropean_river_code'],
+			'vertical_reference' => 'Vertical reference [text]',
+			'long' => 'Longitude coordinate [number]',
+			'lat' => 'Latitude coordinate [number]',
+			'z' => 'Z oordinate [number]',
+			'maplong' => 'Map longitude coordinate [number]',
+			'maplat' => 'Map longitude coordinate [number]',
+			'start_time' => 'Start time [yyyy-mm-dd]',
+			'end_time' => 'End time [yyyy-mm-dd]',
+			'utc_offset' => 'UTC offset [number]',
+			'river_basin' => 'River basin [text]',
+			$this->observedPropertiesCsvColumn => 'Observered properties [text]'
+		];
 	}
 
 
@@ -184,6 +244,8 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 * Parse and save data from an input CSV file.
 	 *
 	 * @return string
+	 * @throws QueryException
+	 * @throws RenderException
 	 * @uses \Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud::dataFromCsvLine()
 	 * @uses \Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCSVMapInterface::getGlobalIdName()
 	 * @uses \Environet\Sys\Admin\Pages\CrudPage::addMessage()
@@ -195,23 +257,119 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 
 			$this->headingLine = array_shift($csvLines);
 
+			$updated = [];
+			$added = [];
+			$errorLines = [];
+			$allowedOperatorIds = $this->getAllowedOperatorIds();
 			foreach ($csvLines as $lineNumber => $line) {
 				$csvId = $line[array_search($this->getGlobalIdName(), $this->headingLine)];
 				$record = $this->queriesClass::getByColumn($this->getGlobalIdName(), $csvId);
 				$recordId = $record ? $record['id'] : null;
 
+				//Allow operator only if user is allowed to edit the point
+				if ($recordId && !is_null($allowedOperatorIds) && !in_array($record['operatorid'], $allowedOperatorIds)) {
+					$errorLines[] = $csvId;
+					continue;
+				}
+
 				$data = $this->dataFromCsvLine($line);
 
 				try {
 					$this->queriesClass::save($data, $recordId);
-					$this->addMessage(($recordId ? "Updated" : "Saved") . " " . $line[0], self::MESSAGE_SUCCESS);
+					if ($recordId) {
+						$updated[] = $csvId;
+					} else {
+						$added[] = $csvId;
+					}
 				} catch (\Exception $e) {
-					$this->addMessage("Could not save $line[0]:" . $e->getMessage(), self::MESSAGE_ERROR);
+					$errorLines[] = $csvId;
 				}
 			}
+
+			if (!empty($added)) {
+				$this->addMessage('Added points: ' . count($added), self::MESSAGE_SUCCESS);
+			}
+			if (!empty($updated)) {
+				$this->addMessage('Updated points: ' . count($updated), self::MESSAGE_SUCCESS);
+			}
+			if (!empty($errorLines)) {
+				$this->addMessage('Error with points: ' . implode(',', $errorLines), self::MESSAGE_ERROR);
+			}
+
+			return $this->redirect($this->getListPageLinkWithState());
 		}
 
-		return $this->redirect($this->listPagePath);
+		$pageTitle = 'CSV upload '.$this->getEntityName(true);
+
+		//Find some enums for upload
+		$query = (new Select())
+			->select($this->queriesClass::$tableName . '.operatorid')
+			->from($this->queriesClass::$tableName);
+		$this->modifyListQuery($query);
+		$operators = $query->run();
+		$operators = array_combine(array_column($operators, 'operatorid'), array_column($operators, 'operator'));
+
+		$enums = array_merge(
+			[
+				['title' => 'Operators', 'options' => $operators],
+				['title' => 'Observed properties', 'options' => $this->getObservedPropertyQueriesClass()::getOptionList('description', 'symbol')]
+			],
+			$this->getCsvEnums()
+		);
+
+		$csvColumns = array_filter(array_map(function ($config) {
+			return is_string($config) ? $config : $config['title'] ?? null;
+		}, $this->getCsvColumns()));
+
+		return $this->render($this->csvUploadTemplate, compact('pageTitle', 'enums', 'csvColumns'));
+	}
+
+
+	/**
+	 * Download CSV of current monitoring points
+	 *
+	 * @throws QueryException
+	 */
+	public function csvDownload() {
+		//Base query with joins and conditions
+		$query = (new Select())
+			->select($this->queriesClass::$tableName . '.*')
+			->from($this->queriesClass::$tableName);
+
+		//Filter to allowed points
+		$this->modifyListQuery($query);
+		$query->orderBy($this->getGlobalIdName(), 'ASC');
+		$records = $query->run();
+
+		//Generate CSV
+		$csv = fopen('php://temp', 'r+');
+		$csvColumns = $this->getCsvColumns();
+		fputcsv($csv, array_keys($csvColumns));
+		foreach ($records as $record) {
+			$line = [];
+			foreach ($csvColumns as $field => $titleOrConfig) {
+				if ($field === $this->observedPropertiesCsvColumn) {
+					//Observed property special column
+					$line[$field] = implode(' ', $this->getObservedPropertyQueriesClass()::getSymbolsByPoint($record['id']));
+				} else {
+					//Add colum with field, or custom field mapping
+					$outField = (is_array($titleOrConfig) && isset($titleOrConfig['outField'])) ? $titleOrConfig['outField'] : $field;
+					$line[$field] = $record[$outField] ?? null;
+				}
+			}
+
+			fputcsv($csv, $line);
+		}
+		rewind($csv);
+
+		$response = new Response(stream_get_contents($csv));
+		fclose($csv);
+
+		$response->addHeader('Content-Type: text/csv');
+		$fileName = str_replace(' ', '_', $this->getEntityName(true));
+		$response->addHeader('Content-Disposition: attachment; filename="'.$fileName.'.csv"');
+
+		return $response;
 	}
 
 

@@ -45,8 +45,14 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 */
 	protected $listPagePath = '/admin/hydro/monitoring-points';
 
+	/**
+	 * @var string
+	 */
 	protected $readOwnPermissionName = 'admin.hydro.monitoringpoints.readown';
 
+	/**
+	 * @var string
+	 */
 	protected $updateOwnPermissionName = 'admin.hydro.monitoringpoints.updateown';
 
 
@@ -55,14 +61,6 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 */
 	public function getObservedPropertyQueriesClass(): string {
 		return HydroObservedPropertyQueries::class;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getObservedPropertiesCsvColumn(): string {
-		return 'observed_properties';
 	}
 
 
@@ -100,13 +98,46 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 			$this->addMessage('Monitoring point name is empty, or format is invalid', self::MESSAGE_ERROR);
 			$valid = false;
 		}
-		
+
 		if (!empty($data['country']) && strlen($data['country']) > 2) {
 			$this->addMessage('County field expects a two letter country code', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 
 		return $valid;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getCsvColumns(): array {
+		$columns = parent::getCsvColumns();
+
+		return array_merge(
+			[
+				'ncd_wgst' => 'NCD WGST [text]'
+			],
+			$columns,
+			[
+				'classification' => ['title' => 'Station classification ID [ID]', 'outField' => 'station_classificationid'],
+				'river_kilometer' => 'River kilometer [number]',
+				'catchment_area'  => 'Catchment area [number]',
+				'gauge_zero'      => 'Gauge zero [number]',
+			]
+		);
+	}
+
+
+	/**
+	 * @return array
+	 */
+	protected function getCsvEnums(): array {
+		return [
+			['title' => 'Station classifications', 'options' => HydroStationClassificationQueries::getOptionList('value')],
+			['title' => 'Riverbanks', 'options' => RiverbankQueries::getOptionList('value')],
+			['title' => 'Waterbodies', 'options' => WaterbodyQueries::getOptionList('cname', 'european_river_code')]
+		];
 	}
 
 
