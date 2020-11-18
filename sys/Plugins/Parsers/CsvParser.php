@@ -9,6 +9,7 @@ use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\ParserInterface;
 use Environet\Sys\Plugins\Resource;
+use Environet\Sys\Plugins\WithConversionsConfigTrait;
 use Environet\Sys\Xml\CreateInputXml;
 use Environet\Sys\Xml\Exceptions\CreateInputXmlException;
 use Environet\Sys\Xml\Model\InputXmlData;
@@ -25,6 +26,8 @@ use SimpleXMLElement;
  * @author  SRG Group <dev@srg.hu>
  */
 class CsvParser extends AbstractParser implements BuilderLayerInterface {
+
+	use WithConversionsConfigTrait;
 
 	const API_TIME_FORMAT_STRING = 'Y-m-d\TH:i:sP';
 
@@ -129,6 +132,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::meteringPointInputXmlsFromArray()
 	 */
 	public function parse(Resource $resource): array {
+		$propertiesOriginal = $this->propertySymbolsToColumns;
 		$properties = $this->propertySymbolsToColumns;
 		if ($resource->meta) {
 			// Delete observed properties which are not requested.
@@ -148,7 +152,11 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 
 		$dataArray = $this->mPointDataArrayFromCSV($resource);
 
-		return $this->meteringPointInputXmlsFromArray($dataArray);
+		$result = $this->meteringPointInputXmlsFromArray($dataArray);
+
+		$this->propertySymbolsToColumns = $propertiesOriginal;
+
+		return $result;
 	}
 
 
@@ -159,6 +167,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	 * @param Resource $resource
 	 *
 	 * @return array
+	 * @throws Exception
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::parseResultLine()
 	 */
 	private function mPointDataArrayFromCSV(Resource $resource): array {
@@ -190,36 +199,60 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 			$skipValues[] = $this->skipValue;
 		}
 
+		$fixedMPoint = null;
+		$fixedObservedProperty = null;
 		$lineCount = 0;
 		foreach ($lines as $line) {
 			++ $lineCount;
+
+			//parse or skip header
 			if ($lineCount <= $this->nHeaderSkip) {
+				//Process header
+				$values = array_map('trim', explode($this->csvDelimiter, $line));
+				if (count($values) < 2) {
+					//Not a separated header, skip it
+					continue;
+				}
+				//Find a header keyword in the line
+				$prop = $this->getHeaderKeyword($values[0]);
+				if ($prop === 'OBS') {
+					//Observed property header found, set fixed property
+					$fixedObservedProperty = $this->mapToDistributionSymbol($values[1]);
+				}
+				if ($prop === 'MPID') {
+					//Monitoring point header found, set fixed mpoint id
+					$fixedMPoint = $values[1];
+				}
 				continue;
 			}
-			$resultLine = $this->parseResultLine($line, $globalTime);
+
+			if (empty($line)) {
+				continue;
+			}
+			$resultLine = $this->parseResultLine($line, $globalTime, $fixedMPoint);
 			if (empty($resultLine)) {
 				continue;
 			}
 
-			if (!array_key_exists($resultLine['mPointId'], $resultArray)) {
-				$resultArray[$resultLine['mPointId']] = [];
-			}
-
-			// Initialize time series for properties with an empty array
 			foreach ($this->propertySymbolsToColumns as $property) {
+				if (!is_null($fixedObservedProperty) && $property['symbol'] !== $fixedObservedProperty) {
+					continue;
+				}
 				if ($this->isSkipValue($resultLine, $property['symbol'], $skipValues)) {
 					continue;
 				}
+
+				//Init mpoint property in resultArray
+				if (!array_key_exists($resultLine['mPointId'], $resultArray)) {
+					$resultArray[$resultLine['mPointId']] = [];
+				}
+
+				//Init symbol property in resultArray
 				if (!array_key_exists($property['symbol'], $resultArray[$resultLine['mPointId']])) {
 					$resultArray[$resultLine['mPointId']][$property['symbol']] = [];
 				}
-			}
 
-			foreach ($this->propertySymbolsToColumns as $property) {
-				if ($this->isSkipValue($resultLine, $property['symbol'], $skipValues)) {
-					continue;
-				}
-
+				//Add values
 				$resultArray[$resultLine['mPointId']][$property['symbol']] = array_merge(
 					$resultArray[$resultLine['mPointId']][$property['symbol']],
 					[
@@ -231,7 +264,6 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 				);
 			}
 		}
-
 		return $resultArray;
 	}
 
@@ -277,10 +309,12 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	 *
 	 * @param                        $line
 	 * @param DateTimeInterface|null $time A global time for the whole file
+	 * @param string|null            $mPointId A pre-defined, fixed mpoint id
 	 *
 	 * @return array
+	 * @throws Exception
 	 */
-	private function parseResultLine($line, ?DateTimeInterface $time = null): array {
+	private function parseResultLine($line, ?DateTimeInterface $time = null, string $mPointId = null): array {
 		$values = array_map('trim', explode($this->csvDelimiter, $line));
 
 		if (!$time) {
@@ -302,12 +336,12 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		//Set timezone to UTC
 		$time->setTimezone(new DateTimeZone('UTC'));
 
-		if (!array_key_exists($this->mPointIdCol, $values) || $values[$this->mPointIdCol] === '') {
+		if (is_null($mPointId) && !array_key_exists($this->mPointIdCol, $values) || $values[$this->mPointIdCol] === '') {
 			return [];
 		}
 
 		$data = [
-			'mPointId' => $values[$this->mPointIdCol],
+			'mPointId' => $mPointId ?: $values[$this->mPointIdCol],
 			'time' => $time->format(self::API_TIME_FORMAT_STRING)
 		];
 
@@ -330,11 +364,18 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	}
 
 
-	private function mapToDistributionSymbol($symbol) {
+	/**
+	 * Map symbol name based on conversions config
+	 *
+	 * @param $symbol
+	 *
+	 * @return string
+	 * @throws Exception
+	 */
+	private function mapToDistributionSymbol(string $symbol): string {
 		if ($this->conversionsFilename) {
-			$conversions = JSON_decode(file_get_contents(SRC_PATH . '/conf/plugins/configurations/' . $this->conversionsFilename), true);
-
-			foreach ($conversions['observedPropertyConversions'] as $key => $value) {
+			$conversionsConfig = $this->getConversionsConfig();
+			foreach ($conversionsConfig['observedPropertyConversions'] as $key => $value) {
 				if ($value == $symbol) {
 					return $key;
 				}
@@ -342,6 +383,28 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		}
 
 		return $symbol;
+	}
+
+
+	/**
+	 * Get information from a CSV header row
+	 *
+	 * @param string $keyword
+	 *
+	 * @return string
+	 * @throws Exception
+	 */
+	private function getHeaderKeyword(string $keyword): ?string {
+		if ($this->conversionsFilename) {
+			$conversionsConfig = $this->getConversionsConfig();
+			foreach ($conversionsConfig['header'] ?? [] as $key => $value) {
+				if ($value == $keyword) {
+					return $key;
+				}
+			}
+		}
+
+		return null;
 	}
 
 

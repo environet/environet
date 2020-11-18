@@ -3,6 +3,8 @@
 
 namespace Environet\Sys\Plugins;
 
+use Environet\Sys\Commands\Console;
+
 /**
  * Interface TransportInterface
  *
@@ -16,9 +18,12 @@ interface TransportInterface {
 
 	/**
 	 * Get a list of resources
+	 *
+	 * @param Console $console
+	 *
 	 * @return Resource[]
 	 */
-	public function get(): array;
+	public function get(Console $console): array;
 
 
 }

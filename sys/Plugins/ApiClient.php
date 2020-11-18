@@ -157,8 +157,16 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 		return $pkiLib->authHeaderWithSignature($signature, $username);
 	}
 
+
+	/**
+	 * Get monitoring points from distribution node
+	 *
+	 * @return array
+	 * @throws HttpClientException
+	 * @throws Exception
+	 */
 	public function requestMonitoringPoints() : array {
-		$token =  random_bytes(128);
+		$token = random_bytes(128);
 
 		// Create a request
 		$request = new Request(
@@ -170,18 +178,17 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 		);
 		$request->setMethod('GET');
 
-		//$request->addHeader('Accept', 'application/json');
 		// Add generated auth header with signature
 		$request->addHeader('Authorization', $this->generateSignatureHeaderFromToken($token, $this->apiUsername));
 		// Send request
 		$client = new HttpClient();
 
-		$response = $client->sendRequest($request);	
+		$response = $client->sendRequest($request);
 		if ($response->getStatusCode() !== 200) {
 			throw new Exception($response->getBody());
 		}
 
-		return json_decode($response->getBody(), TRUE);
+		return json_decode($response->getBody(), true);
 	}
 
 

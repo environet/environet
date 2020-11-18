@@ -59,7 +59,7 @@ function NCSRandStr($length = 20) {
  */
 function observedPropertyTypeOptions() {
 	return [
-		PROPERTY_TYPE_REALTIME => 'Real time data',
+		PROPERTY_TYPE_REALTIME  => 'Real time data',
 		PROPERTY_TYPE_PROCESSED => 'Processed data'
 	];
 }
@@ -327,9 +327,34 @@ function dateFormatToRegex(string $dateFormat): string {
 		} elseif (in_array($letter, ['i', 's'], true)) {
 			return '[0-5][0-9]';
 		} else {
-			throw new Exception('This date format part for regex convert not supported: '.$letter);
+			throw new Exception('This date format part for regex convert not supported: ' . $letter);
 		}
 	}, $letters);
 
 	return implode('', $regexParts);
+}
+
+/**
+ * Delete directory recursively
+ *
+ * @param $dir
+ *
+ * @codeCoverageIngore
+ */
+function rrmdir($dir) {
+	if (is_dir($dir)) {
+		$objects = scandir($dir);
+		foreach ($objects as $object) {
+			if ($object != "." && $object != "..") {
+				if (filetype($dir . "/" . $object) == "dir") {
+					rrmdir($dir . "/" . $object);
+				} else {
+					unlink($dir . "/" . $object);
+				}
+			}
+		}
+
+		reset($objects);
+		rmdir($dir);
+	}
 }
