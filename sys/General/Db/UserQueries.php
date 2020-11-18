@@ -241,6 +241,7 @@ class UserQueries extends BaseQueries {
 
 	/**
 	 * Check if a user of a given id belongs to any operators
+	 *
 	 * @param int $userId Id of user
 	 *
 	 * @return bool
@@ -254,12 +255,27 @@ class UserQueries extends BaseQueries {
 
 	/**
 	 * @param int $userId
+	 *
 	 * @return array
 	 * @throws QueryException
 	 */
 	public static function getOperatorsOfUser(int $userId) {
 		$groups = static::getUserGroups($userId);
+
 		return static::getMergedOperatorsOfUser($userId, array_column($groups, 'id'));
+	}
+
+
+	/**
+	 * @param int $userId
+	 *
+	 * @return array
+	 * @throws QueryException
+	 */
+	public static function getOperatorListOfUser(int $userId) {
+		$operators = UserQueries::getOperatorsOfUser($userId);
+
+		return array_combine(array_column($operators, 'id'), array_column($operators, 'name'));
 	}
 
 

@@ -3,6 +3,7 @@
 namespace Environet\Sys\Admin\Pages\MonitoringPoint;
 
 use Environet\Sys\Admin\Pages\CrudPage;
+use Environet\Sys\General\Db\OperatorQueries;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\UserQueries;
@@ -38,6 +39,11 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	/**
 	 * @var string
 	 */
+	protected $createOwnPermissionName;
+
+	/**
+	 * @var string
+	 */
 	protected $updateOwnPermissionName;
 
 
@@ -48,6 +54,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 */
 	protected function getEntityName(bool $plural = false): string {
 		$typePrefix = ($this instanceof \Environet\Sys\Admin\Pages\Meteo\MonitoringPointCrud) ? 'meteo' : 'hydro';
+
 		return $plural ? "$typePrefix monitoring points" : "$typePrefix monitoring point";
 	}
 
@@ -120,6 +127,20 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 		}
 
 		return true;
+	}
+
+
+	/**
+	 * @return array
+	 * @throws QueryException
+	 */
+	protected function getOperatorList(): array {
+		if (in_array($this->updateOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions()) ||
+			in_array($this->createOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())) {
+			return UserQueries::getOperatorListOfUser($this->request->getIdentity()->getId());
+		}
+
+		return OperatorQueries::getOptionList();
 	}
 
 
