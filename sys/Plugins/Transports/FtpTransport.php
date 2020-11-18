@@ -6,6 +6,8 @@ use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Plugins\TransportInterface;
+use Environet\Sys\Plugins\WithConversionsConfigTrait;
+use Exception;
 
 /**
  * Class FtpTransport
@@ -16,6 +18,8 @@ use Environet\Sys\Plugins\TransportInterface;
  * @author  SRG Group <dev@srg.hu>
  */
 class FtpTransport implements TransportInterface, BuilderLayerInterface {
+
+	use WithConversionsConfigTrait;
 
 	/**
 	 * @var bool
@@ -52,6 +56,11 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 	 */
 	private $newestFileOnly;
 
+	/**
+	 * @var string
+	 */
+	private $conversionsFilename;
+
 
 	/**
 	 * @inheritDoc
@@ -84,14 +93,24 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		$console->write('Enter 1 if only the newest of all matching files should be used:');
 		$newestFileOnly = $console->askWithDefault('', false);
 
+		$console->writeLine('Do you want to user a conversion specification?');
+		$console->write('Enter 1 if to specify the conversion specification file:');
+		$withConversions = $console->askWithDefault('', '0');
+
+		$conversionsFilename = null;
+		if ($withConversions == 1) {
+			$conversionsFilename = $console->ask('Filename of conversion specifications');
+		}
+
 		$config = [
-			'host' => $host,
-			'secure' => $secure,
-			'username' => $username,
-			'password' => $password,
-			'path' => $path,
+			'host'            => $host,
+			'secure'          => $secure,
+			'username'        => $username,
+			'password'        => $password,
+			'path'            => $path,
 			'filenamePattern' => $filenamePattern,
-			'newestFileOnly' => $newestFileOnly,
+			'newestFileOnly'  => $newestFileOnly,
+			'conversionsFilename' => $conversionsFilename
 		];
 
 		return new self($config);
@@ -103,12 +122,13 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 	 */
 	public function serializeConfiguration(): string {
 		return 'host = "' . $this->host . '"' . "\n"
-			. 'secure = "' . $this->secure .'"' . "\n"
-			. 'username = "' . $this->username . '"' . "\n"
-			. 'password = "' . $this->password . '"' . "\n"
-			. 'path = "' . $this->path . '"' . "\n"
-			. 'filenamePattern = "' . $this->filenamePattern . '"' . "\n"
-			. 'newestFileOnly = "' . $this->newestFileOnly . '"' . "\n";
+			   . 'secure = "' . $this->secure . '"' . "\n"
+			   . 'username = "' . $this->username . '"' . "\n"
+			   . 'password = "' . $this->password . '"' . "\n"
+			   . 'path = "' . $this->path . '"' . "\n"
+			   . 'filenamePattern = "' . $this->filenamePattern . '"' . "\n"
+			   . 'newestFileOnly = "' . $this->newestFileOnly . '"' . "\n"
+			   . 'conversionsFilename = "' . $this->conversionsFilename . '"' . "\n";
 	}
 
 
@@ -122,48 +142,28 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		$this->secure = $config['secure'];
 		$this->username = $config['username'];
 		$this->password = $config['password'];
-		$this->path = $config['path'];
+		$this->path = rtrim($config['path'], '/');
 		$this->filenamePattern = $config['filenamePattern'];
 		$this->newestFileOnly = $config['newestFileOnly'];
-	}
-
-
-	public function newestFile(array $files) {
-		$out = [];
-		$newest = 0;
-		foreach ($files as $entry) {
-			if ($this->filenamePattern !== '' && !fnmatch($this->filenamePattern, $entry['name'])) {
-				continue;
-			}
-			if (count($out) > 0 && $entry['modify'] < $newest) {
-				continue;
-			}
-			if (count($out) == 0) {
-				array_push($out, $entry);
-			} else {
-				$out[0] = $entry;
-			}
-			$newest = $entry['modify'];
-		}
-		return $out;
+		$this->conversionsFilename = $config['conversionsFilename'];
 	}
 
 
 	/**
 	 * @inheritDoc
+	 * @throws Exception
 	 * @see Resource
 	 */
-	public function get(): array {
-		$console = Console::getInstance();
-		$localFileDir = SRC_PATH . '/data/plugin_input_files/';
-		$localCopyPath = $localFileDir . $this->path;
+	public function get(Console $console): array {
+		$localFileDir = SRC_PATH . '/data/plugin_input_files';
+		$localCopyPath = rtrim($localFileDir . '/' . $this->path, '/');
 
 		if (!file_exists($localCopyPath)) {
+			//Create local dir if doesn't exist
 			mkdir($localCopyPath, 0755, true);
 		}
 
-		$results = [];
-		
+		//Connect to FTP with username and password
 		$conn = $this->secure ? ftp_ssl_connect($this->host) : ftp_connect($this->host);
 
 		$login_result = ftp_login($conn, $this->username, $this->password);
@@ -172,73 +172,89 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 			$console->writeLine('Logged in to ftp server', Console::COLOR_YELLOW);
 		}
 
-		//ftp_chdir($conn, $this->path);
+		//Get list of files under directory
+		$files = $this->getListOfFiles($conn, $this->path);
 
-		$path = $this->path;
-		if ($path !== '' && substr($path, -1) !== '/') {
-			$path .= "/";
+		//Filter to filename pattern
+		if (!empty($files) && $this->filenamePattern) {
+			$files = array_filter($files, function ($file) {
+				return fnmatch($this->filenamePattern, $file['name']);
+			});
 		}
 
-		$contentsAll = ftp_mlsd($conn, $this->path);
-		//$count = 0;
-		if ($contentsAll === false) {
-			$contentsNames = ftp_nlist($conn, $this->path);
-			$contentsAll = [];
-			foreach ($contentsNames as $name) {
-				$entry = [];
-				$entry['name'] = $name;
-				$entry['type'] = 'file';
-				//$mtime = filemtime("ftp://". $this->username . ":" . $this->password . "@" . $this->host . "/" . $name);
-				$mtime = ftp_mdtm($conn, $name);
-				$entry['modify'] = $mtime;
-				array_push($contentsAll, $entry);
-				echo $name . " - Timestamp " . $mtime . "\n";
-				//++$count;
-				//if ($count > 5) break;
-			}
-			$path = '';	// Do not prepend path
-		}
-		
-		//die(var_dump($contentsAll));
+		//Filter to newest file only
+		if (!empty($files) && $this->newestFileOnly) {
+			usort($files, function ($a, $b) {
+				if (!empty($a['modify']) && !empty($b['modify'])) {
+					return $a['modify'] > $b['modify'] ? - 1 : 1;
+				}
 
-		// take only files
-		foreach ($contentsAll as $key => &$entry) {
-			if ($entry['type'] !== 'file') {
-				unset($contentsAll[$key]);
-			}
+				return 0;
+			});
+			$files = [$files[0]];
 		}
 
-		if ($this->newestFileOnly) {
-			$contentsAll = $this->newestFile($contentsAll);
-		}
+		//Prepend path the filename
+		$files = array_map(function ($file) {
+			return $this->path . '/' . $file['name'];
+		}, $files);
 
-		// Take only files which meet the filename pattern
-		$contents = [];
-		foreach ($contentsAll as $entry) {
-			if ($this->filenamePattern !== '' && !fnmatch($this->filenamePattern, $entry['name'])) {
-				continue;
-			}
-			array_push($contents, $path . $entry['name']);
-		}
-
-		//die(var_dump($contents));
-		//$console->writeLine('There are ' . count($contents) . ' files inside the folder', Console::COLOR_YELLOW);
-
-		foreach ($contents as $content) {
-			ftp_get($conn, $localCopyPath . end(explode('/', $content)), $content);
+		//Create resources base on files
+		$results = [];
+		foreach ($files as $file) {
+			$filename = basename($file);
+			ftp_get($conn, $localCopyPath . '/' . $filename, $file);
 			$resource = new Resource();
-			$resource->name = end(explode('/', $content));
-			$resource->contents = file_get_contents($localCopyPath . end(explode('/', $content)));
-			/*$resource->meta = [
-				"MonitoringPointNCDs" => [],
-				"ObservedPropertySymbols" => [],
-				"observedPropertyConversions" => [],
-			];*/
+			$resource->name = $filename;
+			$resource->contents = file_get_contents($localCopyPath . '/' . $filename);
+
+			if ($this->conversionsFilename) {
+				//Add some meta information if a conversion filename is specified
+				$resource->meta = [
+					"MonitoringPointNCDs" => [],
+					"ObservedPropertySymbols" => [],
+					"observedPropertyConversions" => $this->getConversionsConfig()['observedPropertyConversions'] ?? [],
+					"keepExtraData" => true,
+				];
+			}
+
 			$results[] = $resource;
 		}
 
-		//die(var_dump($results));
 		return $results;
+	}
+
+
+	/**
+	 * Get list of files with MLSD or NLIST
+	 *
+	 * @param        $connection
+	 * @param string $path
+	 *
+	 * @return array|array[]
+	 */
+	protected function getListOfFiles($connection, string $path): array {
+		//Try with MLSD
+		$files = ftp_mlsd($connection, $path);
+
+		if ($files === false) {
+			//FTP server is not compatible with MLSD, try with NLIST, and create a "compatible" array for each item
+			$files = ftp_nlist($connection, $path);
+			$files = array_map(function ($filename) use ($connection, $path) {
+				return [
+					'name'   => basename($filename),
+					'type'   => 'file',
+					'modify' => ftp_mdtm($connection, $filename)
+				];
+			}, $files);
+		}
+
+		//Filter only files
+		$files = array_filter($files, function ($file) {
+			return isset($file['type']) && $file['type'] === 'file';
+		});
+
+		return $files;
 	}
 
 

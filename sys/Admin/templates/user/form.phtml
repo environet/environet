@@ -1,7 +1,8 @@
 <?php include __DIR__ . '../../layouts/before_app.phtml'; ?>
+<?php $editMode = isset($record) && !empty($record['id']); ?>
 
-<div class="card">
-	<h1><?= __(($record && $record['id']) ? 'Edit user (id: ' . $record['id'] . ')': 'Add user'); ?></h1>
+<div class="card formPage">
+	<?=includeTemplatePart('crud_show_header.phtml', get_defined_vars());?>
 	<form method="post">
 		<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
 
@@ -13,24 +14,24 @@
 			<label for="userEmail"><?=__('E-mail');?></label>
 			<input type="text" name="email" id="userEmail" class="form-control" value="<?=formFieldValue('email', $record);?>" />
 		</div>
-		<?php if (!isset($record)): ?>
+		<?php if (!$editMode): ?>
 		<div class="form-group">
-			<label for="dataProviderUsername"><?=__('Username')?></label>
-			<input type="text" name="username" id="dataProviderUsername" class="form-control" value="<?=formFieldValue('username', $record);?>" />
+			<label for="operatorUsername"><?=__('Username')?></label>
+			<input type="text" name="username" id="operatorUsername" class="form-control" value="<?=formFieldValue('username', $record);?>" />
 		</div>
 		<?php endif; ?>
 		<div class="form-group">
-			<label for="userPassword">Password</label>
+			<label for="userPassword"><?=$editMode ? 'New password' : 'Password';?></label>
 			<input type="password" name="password" id="userPassword" class="form-control"  />
 		</div>
-		<?php if (isset($record)): ?>
+		<?php if ($editMode): ?>
 		<div class="form-group">
-			<label for="userPasswordConfirm">Password</label>
+			<label for="userPasswordConfirm"><?=$editMode ? 'New password confirm' : 'Password confirm';?></label>
 			<input type="password" name="password_confirm" id="userPasswordConfirm" class="form-control"  />
 		</div>
 		<?php endif; ?>
 		<div class="form-group">
-			<label for="publicKey">Public keys</label>
+			<label for="publicKey"><?=$editMode ? 'Set new public key' : 'Public key';?></label>
 			<textarea name="public_key" id="publicKey" class="form-control"><?=formFieldValue('public_key', $record);?></textarea>
 		</div>
 

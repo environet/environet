@@ -1,6 +1,7 @@
 <?php include __DIR__.'/before_content.phtml';?>
 <header id="siteHeader">
     <a href="#" id="sidebarToggle"><i class="fas fa-bars"></i></a>
+	<span class="header-title">DAREFFORT - Environet</span>
     <div id="identity">
 		<span style="margin-right: 0.5em"><?php echo $identity['name'] ?></span>
 
@@ -14,6 +15,7 @@
         <!-- </div> -->
     </div>
 </header>
+<!--main content container-->
 <section id="container">
     <!--sidebar start-->
     <aside id="sidebar">
@@ -35,9 +37,9 @@
                 </li>
             <?php endif; ?>
 
-            <?php if($request->getIdentity()->hasPermissions(['admin.providers.read']) || $request->getIdentity()->hasPermissions(['admin.providers.readown'])): ?>
+            <?php if($request->getIdentity()->hasPermissions(['admin.operators.read']) || $request->getIdentity()->hasPermissions(['admin.operators.readown'])): ?>
                 <li>
-                    <?= includeTemplatePart('menuitem.phtml', ['title' => 'Operators', 'route' => '/admin/data-providers', 'icon' => 'address-book', 'matchExtra' => 1]) ?>
+                    <?= includeTemplatePart('menuitem.phtml', ['title' => 'Operators', 'route' => '/admin/operators', 'icon' => 'address-book', 'matchExtra' => 1]) ?>
                 </li>
 			<?php endif; ?>
 
@@ -135,6 +137,7 @@
                 </li>
 			<?php endif; ?>
         </ul>
+		<div class="logo"><img src="/img/dareffort_logo.png" alt="DAREFFORT"></div>
         <!-- sidebar menu end-->
     </aside>
     <!--sidebar end-->

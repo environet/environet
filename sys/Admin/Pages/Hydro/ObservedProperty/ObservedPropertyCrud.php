@@ -50,6 +50,16 @@ class ObservedPropertyCrud extends CrudPage {
 
 
 	/**
+	 * @param bool $plural
+	 *
+	 * @return string
+	 */
+	protected function getEntityName(bool $plural = false): string {
+		return $plural ? 'hydro observed properties' : 'hydro observed property';
+	}
+
+
+	/**
 	 * @inheritDoc
 	 */
 	protected function validateData(array $data): bool {

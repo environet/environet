@@ -23,14 +23,6 @@ interface MonitoringPointCSVMapInterface {
 
 
 	/**
-	 * Get the column name of the observed properties in the input CSV.
-	 *
-	 * @return string
-	 */
-	public function getObservedPropertiesCsvColumn(): string;
-
-
-	/**
 	 * Get the international identification key's name.
 	 *
 	 * @return string

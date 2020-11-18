@@ -1,0 +1,70 @@
+<?php include __DIR__ . '../../layouts/before_app.phtml'; ?>
+
+<div class="card formPage">
+	<?=includeTemplatePart('crud_show_header.phtml', get_defined_vars());?>
+	<form action="" method="POST">
+		<input type="hidden" name="__csrf" value="<?=$csrf;?>" />
+
+		<fieldset>
+			<legend><?=__('Operator data');?></legend>
+			<div class="form-group">
+				<label for="operatorName"><?=__('Name');?></label>
+				<input type="text" name="name" id="operatorName" class="form-control" value="<?=formFieldValue('name', $record);?>" />
+			</div>
+			<div class="form-group">
+				<label for="operatorAddress"><?=__('Address');?></label>
+				<textarea name="address" id="operatorAddress" class="form-control"><?=formFieldValue('address', $record);?></textarea>
+			</div>
+			<div class="form-group">
+				<label for="operatorPhone"><?=__('Phone');?></label>
+				<input type="tel" name="phone" id="operatorPhone" class="form-control" value="<?=formFieldValue('phone', $record);?>" />
+			</div>
+			<div class="form-group">
+				<label for="operatorEmail"><?=__('E-mail');?></label>
+				<input type="email" name="email" id="operatorEmail" class="form-control" value="<?=formFieldValue('email', $record);?>" />
+			</div>
+			<div class="form-group">
+				<label for="operatorUrl"><?=__('URL');?></label>
+				<input type="url" name="url" id="operatorUrl" class="form-control" value="<?=formFieldValue('url', $record);?>" />
+				<small class="help-block text-muted">Full url, e.g. https://example.com</small>
+			</div>
+			<div class="form-group">
+				<label for="operatorOtherInfo"><?=__('Other info');?></label>
+				<input type="text" name="other_info" id="operatorOtherInfo" class="form-control"
+					   value="<?=formFieldValue('other_info', $record);?>" />
+			</div>
+		</fieldset>
+
+		<fieldset class="form-group">
+			<legend><?=__('Users');?></legend>
+			<?php $selectedUsers = array_filter(formFieldValue('form_users', $record) ?: []); ?>
+			<?php for ($i = 0; $i <= count($selectedUsers); $i ++) { ?>
+				<div class="field">
+					<select name="form_users[]">
+						<?=selectOptions($users, $selectedUsers[$i] ?? null, ' - ' . __('No user') . ' - ');?>
+					</select>
+				</div>
+			<?php } ?>
+		</fieldset>
+
+		<fieldset class="form-group">
+			<legend><?=__('Groups');?></legend>
+			<?php $selectedGroups = array_filter(formFieldValue('form_groups', $record) ?: []); ?>
+			<?php for ($i = 0; $i <= count($selectedGroups); $i ++) { ?>
+				<div class="field">
+					<select name="form_groups[]">
+						<?=selectOptions($groups, $selectedGroups[$i] ?? null, ' - ' . __('No group') . ' - ');?>
+					</select>
+				</div>
+			<?php } ?>
+		</fieldset>
+
+
+		<div class="field">
+			<input type="submit" class="btn btn-primary" value="<?=__('Save');?>" />
+		</div>
+
+
+	</form>
+</div>
+<?php include __DIR__ . '../../layouts/after_app.phtml'; ?>

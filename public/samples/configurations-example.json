@@ -1,0 +1,23 @@
+{
+  "generalInformation": {
+    "URLPattern": "https://example.com/[VAR1]/[VAR2].zip|subfile_[VAR1]_[VAR2]_*_[VAR3].csv",
+    "monitoringPointType": "hydro"
+  },
+  "monitoringPointConversions": {
+    "MPID1": "#####",
+    "MPID2": "#"
+  },
+  "observedPropertyConversions": {
+    "P_total_hourly": {
+      "OBS1": "property1",
+      "OBS2": "property2",
+      "INT1": "interval1",
+      "INT2": "interval2",
+    },
+    "ta": {
+      "OBS1": "property1",
+      "INT1": "interval1",
+    }
+  }
+}
+

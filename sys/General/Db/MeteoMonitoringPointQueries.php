@@ -37,12 +37,13 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 
 	/**
 	 * @param array $operatorIds
+	 *
 	 * @return array
 	 * @throws QueryException
 	 */
 	public static function all(array $operatorIds = null) {
 		$query = (new Select())
-			->select(static::$tableName. '.*')
+			->select(static::$tableName . '.*')
 			->from(static::$tableName);
 
 		if (!is_null($operatorIds)) {
@@ -153,42 +154,74 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 	 * @inheritDoc
 	 */
 	public static function prepareData(array $data): array {
-		return [
+		$mapKeys = [
+			'meteostation_classificationid' => 'classification',
+			'operatorid'                    => 'operator',
+		];
+		foreach ($mapKeys as $toKey => $fromKey) {
+			if (array_key_exists($fromKey, $data)) {
+				$data[$toKey] = $data[$fromKey];
+				unset($data[$fromKey]);
+			}
+		}
+
+		$returnData = [
 			//strings
-			'name'                          => $data['name'],
-			'eucd_pst'                      => $data['eucd_pst'],
-			'ncd_pst'                       => $data['ncd_pst'],
-			'country'                       => $data['country'],
+			'name'                          => $data['name'] ?? null,
+			'ncd_pst'                       => $data['ncd_pst'] ?? null,
+			'country'                       => $data['country'] ?? null,
 			'location'                      => $data['location'] ?? null,
 			'river_basin'                   => $data['river_basin'] ?? null,
 			'vertical_reference'            => $data['vertical_reference'] ?? null,
 
 			// numbers
-			'long'                          => isset($data['long']) ? (float) $data['long'] : null,
-			'lat'                           => isset($data['lat']) ? (float) $data['lat'] : null,
-			'z'                             => isset($data['z']) ? (float) $data['z'] : null,
-			'maplat'                        => isset($data['maplat']) ? (float) $data['maplat'] : null,
-			'maplong'                       => isset($data['maplong']) ? (float) $data['maplong'] : null,
-			'altitude'                      => isset($data['altitude']) ? (float) $data['altitude'] : null,
+			'long'                          => isset($data['long']) && $data['long'] !== '' ? (float) $data['long'] : null,
+			'lat'                           => isset($data['lat']) && $data['lat'] !== '' ? (float) $data['lat'] : null,
+			'z'                             => isset($data['z']) && $data['z'] !== '' ? (float) $data['z'] : null,
+			'maplat'                        => isset($data['maplat']) && $data['maplat'] !== '' ? (float) $data['maplat'] : null,
+			'maplong'                       => isset($data['maplong']) && $data['maplong'] !== '' ? (float) $data['maplong'] : null,
+			'altitude'                      => isset($data['altitude']) && $data['altitude'] !== '' ? (float) $data['altitude'] : null,
+			'utc_offset'                    => isset($data['utc_offset']) && $data['utc_offset'] !== '' ? (int) $data['utc_offset'] : null,
 
 			// foreign keys
-			'meteostation_classificationid' => isset($data['classification']) ? $data['classification'] ?: null : null,
-			'operatorid'                    => isset($data['operator']) ? $data['operator'] ?: null : null,
+			'meteostation_classificationid' => isset($data['meteostation_classificationid']) ? $data['meteostation_classificationid'] ?: null : null,
+			'operatorid'                    => isset($data['operatorid']) ? $data['operatorid'] ?: null : null,
 
 			// dates
-			'start_time'                   => !empty($data['start_time']) ? $data['start_time'] : null,
-			'end_time'                     => !empty($data['end_time']) ? $data['end_time'] : null,
-
-			// hidden
-			'utc_offset'                    => 0,
-
+			'start_time'                    => !empty($data['start_time']) ? $data['start_time'] : null,
+			'end_time'                      => !empty($data['end_time']) ? $data['end_time'] : null,
 		];
+
+		//Save only fields which have been provided in data array
+		$returnData = array_filter($returnData, function ($key) use ($data) {
+			return array_key_exists($key, $data);
+		}, ARRAY_FILTER_USE_KEY);
+
+		if (!empty($returnData['ncd_pst']) && !empty($returnData['country'])) {
+			$returnData['eucd_pst'] = self::generateEUCD($returnData['ncd_pst'], $returnData['country']);
+		}
+
+		return $returnData;
 	}
-	
+
+
 	/**
 	 * @inheritDoc
 	 */
 	public static function getDeleteEventType(): string {
 		return EventLogger::EVENT_TYPE_METEO_MP_DELETE;
 	}
+
+
+	/**
+	 * @param string $ncd
+	 * @param string $country
+	 *
+	 * @return string
+	 */
+	public static function generateEUCD(string $ncd, string $country): string {
+		return $country . $ncd . '_HYDRO';
+	}
+
+
 }

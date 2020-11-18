@@ -2,12 +2,10 @@
 
 namespace Environet\Sys\Admin\Pages\Hydro;
 
-use Environet\Sys\Admin\Pages\CrudPage;
+use Environet\Sys\Admin\Pages\Results\MonitoringPointResultsCrud;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\QueryException;
-use Environet\Sys\General\Exceptions\RenderException;
-use Environet\Sys\General\Response;
 
 /**
  * Class ResultsCrud
@@ -17,69 +15,72 @@ use Environet\Sys\General\Response;
  * @package Environet\Sys\Admin\Pages\Hydro
  * @author  SRG Group <dev@srg.hu>
  */
-class ResultsCrud extends CrudPage {
+class ResultsCrud extends MonitoringPointResultsCrud {
 
 
 	/**
-	 * List page action for hydropoint measurement results.
+	 * @param bool $plural
 	 *
-	 * @return Response
-	 * @throws RenderException
+	 * @return string
 	 */
-	public function list(): Response {
-		try {
-			// get search param from query string
-			$searchString = $this->request->getQueryParam('search');
+	protected function getEntityName(bool $plural = false): string {
+		return $plural ? 'hydro results' : 'hydro result';
+	}
 
-			//Base query with joins and conditions
-			$query = (new Select())->from('hydro_result hr')
-								   ->join('hydro_time_series hts', 'hts.id = hr.time_seriesid', Query::JOIN_LEFT)
-								   ->join('hydropoint hp', 'hp.id = hts.mpointid', Query::JOIN_LEFT)
-								   ->join('hydro_observed_property hop', 'hop.id = hts.observed_propertyid', Query::JOIN_LEFT)
-								   ->orderBy('hr.time', Query::DIR_DESC)
-								   ->select([
-									   'hp.name',
-									   'hop.symbol',
-									   'hr.value',
-									   'hr.time',
-									   'hts.phenomenon_time_begin',
-									   'hts.phenomenon_time_end',
-									   'hts.result_time',
-								   ]);
 
-			if (!is_null($searchString)) {
-				$query->search(
-					explode(' ', urldecode($searchString)),
-					[
-						'hp.name',
-						'hop.symbol',
-					]
-				);
-			}
+	/**
+	 * @return Select
+	 */
+	protected function getBaseQuery(): Select {
+		return (new Select())->from('hydro_result r')
+			->join('hydro_time_series ts', 'ts.id = r.time_seriesid', Query::JOIN_LEFT)
+			->join('hydropoint p', 'p.id = ts.mpointid', Query::JOIN_LEFT)
+			->join('hydro_observed_property op', 'op.id = ts.observed_propertyid', Query::JOIN_LEFT)
+			->orderBy('hr.time', Query::DIR_DESC)
+			->select([
+				'p.name',
+				'op.symbol',
+				'r.value',
+				'r.time',
+				'r.created_at',
+				'ts.phenomenon_time_begin',
+				'ts.phenomenon_time_end',
+				'ts.result_time',
+			]);
+	}
 
-			//Add pagination options to query, and get the page info (count, pages)
-			$currentPage = $this->request->getQueryParam('page', 1);
-			$query->paginate(
-				self::PAGE_SIZE,
-				$currentPage,
-				$totalCount,
-				$maxPage
-			);
 
-			//Add order by query condition
-			$query->clearOrderBy();
-			$query->sort(
-				$this->request->getQueryParam('order_by'),
-				$this->request->getQueryParam('order_dir', 'ASC')
-			);
+	/**
+	 * @return string
+	 */
+	protected function getTemplate(): string {
+		return '/hydro/results/index.phtml';
+	}
 
-			//Run query
-			$results = $query->run();
-		} catch (QueryException $exception) {
-			$results = [];
-		}
 
-		return $this->render('/hydro/results/index.phtml', compact('results', 'totalCount', 'currentPage', 'maxPage', 'searchString'));
+	/**
+	 * @return array
+	 * @throws QueryException
+	 */
+	protected function getCountries(): array {
+		return array_filter((new Select())
+			->select('DISTINCT(country)')
+			->from('hydropoint')
+			->orderBy('country', 'ASC')
+			->run(Query::FETCH_COLUMN));
+	}
+
+
+	/**
+	 * @return array
+	 * @throws QueryException
+	 */
+	protected function getObservedProperties(): array {
+		return array_filter((new Select())
+			->select(['id', 'symbol as label'])
+			->from('hydro_observed_property')
+			->orderBy('symbol', 'ASC')
+			->run());
 	}
 
 

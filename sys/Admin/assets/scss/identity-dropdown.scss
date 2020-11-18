@@ -2,21 +2,22 @@
 @use 'variables';
 
 #identity {
-  .summary {
-    display: flex;
-    padding: .3em;
-  }
+	.summary {
+		display: flex;
+		padding: .3em;
+	}
 
-  .dropdown-toggle {
-    margin: .1em .4em;
-  }
+	.dropdown-toggle {
+		margin: .1em .4em;
+	}
 
-  .dropdown-menu {
-    background-color: $header-background-color;
-    color: white;
-    padding: 1em $content-padding-horizontal;
-    a {
-      color: inherit;
-    }
-  }
+	.dropdown-menu {
+		background-color: $header-background-color;
+		color: white;
+		padding: 1em $content-padding-horizontal;
+
+		a {
+			color: inherit;
+		}
+	}
 }

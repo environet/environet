@@ -1,0 +1,61 @@
+html {
+	height: 100%;
+}
+
+body {
+	color: $gray69;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	background: $gray238;
+}
+
+img {
+	height: auto !important;
+	max-width: 100%;
+}
+
+a {
+	color: $primary-color;
+}
+
+a, a:hover, a:focus {
+	text-decoration: none;
+	outline: none;
+	outline: 0;
+}
+
+ul li {
+	list-style: none;
+}
+
+table {
+	th {
+		&.actions {
+			@include fitColumnToContent;
+		}
+		span.sort-icon {
+			margin-left: .3em;
+
+			&.fa-sort {
+				color: $text-muted
+			}
+		}
+	}
+
+	td.actions {
+		@include fitColumnToContent;
+
+		a {
+			margin: 0 .1em;
+		}
+	}
+}
+
+.fit-content {
+	@include fitColumnToContent;
+}
+
+.container.error-page {
+	padding-top: 1em;
+}

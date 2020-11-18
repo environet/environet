@@ -35,7 +35,6 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 			->addParameter(':id', $id)
 			->run();
 
-
 		if (count($groupConnections)) {
 			$record['groups'] = array_column($groupConnections, 'group_id');
 			$record['interval'] = array_column($groupConnections, 'interval')[0];
@@ -45,6 +44,11 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 	}
 
 
+	/**
+	 * @param array $data
+	 *
+	 * @return array
+	 */
 	public static function prepareData(array $data): array {
 		if (is_array(($monitoringPointSelector = $data['monitoringpoint_selector'] ?? null))) {
 			$monitoringPointSelector = array_search('*', $monitoringPointSelector) !== false ? '*' : implode(',', array_unique(array_filter($monitoringPointSelector)));

@@ -19,6 +19,7 @@ use Environet\Sys\Plugins\Resource;
  *
  * @package Environet\Sys\Plugins\Transports
  * @author  SRG Group <dev@srg.hu>, STASA <info@stasa.de>
+ * @deprecated All functionalities are moved the original HTTP transport
  */
 class HttpTransportExtended implements TransportInterface, BuilderLayerInterface {
 
@@ -48,6 +49,11 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	private $url;
 
 	/**
+	 * @var string Which stations to query: "hydro" or "meteo". Query both, if not one of these or if not specified
+	 */
+	private $monitoringPointType;
+
+	/**
 	 * @var array List of monitoring point conversions
 	 */
 	private $monitoringPointConversions;
@@ -68,8 +74,13 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		$this->conversionsFilename = $config['conversionsFilename'];
 
 		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
-		$conversions = file_get_contents($configurationsPath . $this->conversionsFilename);
+		$conversionsPathname = $configurationsPath . $this->conversionsFilename;
+		$conversions = file_get_contents($conversionsPathname);
 		$conversions = JSON_decode($conversions, true);
+		if (!$conversions) {
+			throw new \Exception("Syntax error in json string of conversions configuration file '$conversionsPathname'.");
+		}
+
 		$this->url = $conversions["generalInformation"]["URLPattern"];
 		$this->monitoringPointConversions = $conversions["monitoringPointConversions"];
 		$this->observedPropertyConversions = $conversions["observedPropertyConversions"];
@@ -77,6 +88,11 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		$this->username = $config['username'];
 		$this->password = $config['password'];
 
+		if (array_key_exists('monitoringPointType', $config)) {
+			$this->monitoringPointType = $config['monitoringPointType'];
+		} else {
+			$this->monitoringPointType = 'both';
+		}
 
 		if (sizeof($pluginConfig)>0) {
 			$this->apiClient = new ApiClient($pluginConfig['apiClient']);
@@ -95,11 +111,13 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		$conversionsFilename = $console->ask("Filename of conversion specifications", 2000);
 		$username = $console->ask("Username to access Web-API, if needed", 64);
 		$password = $console->ask("Password to access Web-API, if needed", 64);
+		$monitoringPointType = $console->ask("Type of monitoring points to query: 'hydro', 'meteo' or else both", 64);
 
 		$config = [
 			'conversionsFilename' => $conversionsFilename,
 			'username' => $username,
-			'password' => $password
+			'password' => $password,
+			'monitoringPointType' => $monitoringPointType
 		];
 
 		return new self($config);
@@ -112,7 +130,8 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	public function serializeConfiguration(): string {
 		return 'conversionsFilename = "' . $this->conversionsFilename . '"' . "\n"
 			. 'username = "' . $this->username . '"' . "\n"
-			. 'password = "' . $this->password . '"' . "\n";
+			. 'password = "' . $this->password . '"' . "\n"
+			. 'monitoringPointType = "' . $this->monitoringPointType . '"' . "\n";
 	}
 
 
@@ -160,7 +179,7 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 	 * @inheritDoc
 	 * @throws HttpClientException
 	 */
-	public function get(): array {
+	public function get(Console $console): array {
 
 		// Query distribution node to get list of monitoring points and observed properties
 		$sMonitoringPoints = $this->apiClient->requestMonitoringPoints();
@@ -173,19 +192,23 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 		$allObservedProperties = [];
 		$allNCDs = [];
 		$monitoringPoints = [];
-		foreach ($sMonitoringPoints['hydro'] as $item) {
-			$item["NCD"] = $item["ncd_wgst"];
-			$item["EUCD"] = $item["eucd_wgst"];
-			array_push($monitoringPoints, $item);
-			array_push($allNCDs, $item["NCD"]);
-			$allObservedProperties = array_merge($item["observed_properties"]);
+		if ($this->monitoringPointType !== 'meteo') {
+			foreach ($sMonitoringPoints['hydro'] as $item) {
+				$item["NCD"] = $item["ncd_wgst"];
+				$item["EUCD"] = $item["eucd_wgst"];
+				array_push($monitoringPoints, $item);
+				array_push($allNCDs, $item["NCD"]);
+				$allObservedProperties = array_merge($allObservedProperties, $item["observed_properties"]);
+			}
 		}
-		foreach ($sMonitoringPoints['meteo'] as $item) {
-			$item["NCD"] = $item["ncd_pst"];
-			$item["EUCD"] = $item["eucd_pst"];
-			array_push($monitoringPoints, $item);
-			array_push($allNCDs, $item["NCD"]);
-			$allObservedProperties = array_merge($item["observed_properties"]);
+		if ($this->monitoringPointType !== 'hydro') {
+			foreach ($sMonitoringPoints['meteo'] as $item) {
+				$item["NCD"] = $item["ncd_pst"];
+				$item["EUCD"] = $item["eucd_pst"];
+				array_push($monitoringPoints, $item);
+				array_push($allNCDs, $item["NCD"]);
+				$allObservedProperties = array_merge($allObservedProperties, $item["observed_properties"]);
+			}
 		}
 		$allObservedProperties = array_unique($allObservedProperties);
 
@@ -236,9 +259,9 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 					// contains pipe symbol, decode zip
 					$ext = pathinfo($url, PATHINFO_EXTENSION);
 					$temp = tempnam(sys_get_temp_dir(), $ext);
-					
+
 					copy($url, $temp);
-					
+
 					$zip = new \ZipArchive;
 					$zip->open($temp);
 					$found = false;
@@ -258,7 +281,7 @@ class HttpTransportExtended implements TransportInterface, BuilderLayerInterface
 					$resource->contents = (new HttpClient())->sendRequest(new Request($url))->getBody();
 				}
 				$resource->meta = [
-					"MonitoringPointNCDs" => $allMonitoringPointsInOneFile ? $allNCDs : [ $monitoringPoint["NCD"] ], 
+					"MonitoringPointNCDs" => $allMonitoringPointsInOneFile ? $allNCDs : [ $monitoringPoint["NCD"] ],
 					"ObservedPropertySymbols" => $allObservedPropertyInOneFile ? $allObservedProperties : [ $observedProperty ],
 					"observedPropertyConversions" => $this->observedPropertyConversions,
 				];

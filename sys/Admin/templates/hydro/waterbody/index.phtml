@@ -1,21 +1,15 @@
 <?php include __DIR__ . '../../../layouts/before_app.phtml'; ?>
 <div class="card">
-    <div class="d-flex w-100">
-		<div class="mr-auto form-group">
-			<a href="/admin/hydro/waterbodies/add" class="btn btn-primary" >Add waterbody</a>
-		</div>
-		<div class="form-group">
-			<form method="get">
-				<input type="search" name="search" class="form-control" placeholder="<?=__('Search')?>" value="<?=htmlspecialchars(urldecode($searchString))?>">
-			</form>
-		</div>
-	</div>
+	<?=includeTemplatePart('crud_list_header.phtml', get_defined_vars() + [
+		'addUrl' => '/admin/hydro/waterbodies/add',
+		'addTitle' => 'Add waterbody'
+	]);?>
     <table class="table table-striped table-bordered">
         <thead>
             <tr>
                 <th><?=sortableColumn('Code', 'european_river_code');?></th>
                 <th><?=sortableColumn('Cname', 'cname');?></th>
-                <th>Actions</th>
+                <th class="actions">Actions</th>
             </tr>
         </thead>
         <tbody>

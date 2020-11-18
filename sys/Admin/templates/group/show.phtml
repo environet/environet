@@ -1,0 +1,39 @@
+<?php include __DIR__ . '../../layouts/before_app.phtml'; ?>
+<div class="card showPage">
+	<?=includeTemplatePart('crud_show_header.phtml', get_defined_vars() + [
+		'editUrl' => '/admin/groups/edit?id='.$record['id'],
+	]);?>
+
+	<dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">#<?=$record['id'] ?? '';?></dd>
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9"><?=$record['name'] ?? '';?></dd>
+        <dt class="col-sm-3">Operators</dt>
+        <dd class="col-sm-9">
+            <ul>
+            <?php foreach ($record['operators'] ?: [] as $operator) { ?>
+                <li>
+                    <a href="/admin/operators/show?id=<?=$operator['id'];?>">#<?=$operator['id'] ?? null;?></a>
+                    -
+                    <span><?=$operator['name'] ?? null;?></span>
+                </li>
+            <?php } ?>
+            </ul>
+        </dd>
+        <dt class="col-sm-3">Users</dt>
+        <dd class="col-sm-9">
+            <ul>
+            <?php foreach ($record['operators'] ?: [] as $user) { ?>
+				<li>
+					<a href="/admin/users/show?id=<?=$user['id'];?>">#<?=$user['id'] ?? null;?></a>
+					-
+					<span><?=$user['name'] ?? null;?></span>
+				</li>
+            <?php } ?>
+            </ul>
+        </dd>
+    </dl>
+</div>
+<?php include __DIR__ . '../../layouts/after_app.phtml'; ?>
+6 méylréz, 7 tromibta, dmoll tokkátat, dixie king

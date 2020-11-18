@@ -17,7 +17,7 @@ This document is the documentation of the Environet system.
         * [Dashboard](25_3_dashboard.md)
         * [Users](25_4_users.md)
         * [Groups](25_5_groups.md)
-        * [Data providers](25_6_data_providers.md)
+        * [Operators](25_6_operators.md)
         * [Hydro](25_7_1_hydro.md)
             * [Hydro monitoring points](25_7_2_hydro_monitoring_point.md)
             * [Hydro observed properties](25_7_3_hydro_observed_properties.md)

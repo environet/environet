@@ -215,10 +215,10 @@ class UserQueries extends BaseQueries {
 			$result[] = $row['permission'];
 		}
 
-		if (static::isDataProviderUser($userId)) {
+		if (static::isOperatorUser($userId)) {
 			$result = array_merge($result, [
-				'admin.providers.readown',
-				'admin.providers.updateown',
+				'admin.operators.readown',
+				'admin.operators.updateown',
 				'admin.hydro.monitoringpoints.readown',
 				'admin.hydro.monitoringpoints.updateown',
 				'admin.hydro.monitoringpoints.createown',
@@ -241,25 +241,41 @@ class UserQueries extends BaseQueries {
 
 	/**
 	 * Check if a user of a given id belongs to any operators
+	 *
 	 * @param int $userId Id of user
 	 *
 	 * @return bool
 	 * @throws QueryException
 	 * @uses \Environet\Sys\General\Db\Query\Select::run()
 	 */
-	public static function isDataProviderUser(int $userId): bool {
+	public static function isOperatorUser(int $userId): bool {
 		return count(static::getOperatorsOfUser($userId));
 	}
 
 
 	/**
 	 * @param int $userId
+	 *
 	 * @return array
 	 * @throws QueryException
 	 */
 	public static function getOperatorsOfUser(int $userId) {
 		$groups = static::getUserGroups($userId);
+
 		return static::getMergedOperatorsOfUser($userId, array_column($groups, 'id'));
+	}
+
+
+	/**
+	 * @param int $userId
+	 *
+	 * @return array
+	 * @throws QueryException
+	 */
+	public static function getOperatorListOfUser(int $userId) {
+		$operators = UserQueries::getOperatorsOfUser($userId);
+
+		return array_combine(array_column($operators, 'id'), array_column($operators, 'name'));
 	}
 
 
@@ -345,6 +361,7 @@ class UserQueries extends BaseQueries {
 		$record['show_publicKeys'] = (new Select())
 			->from('public_keys')
 			->where('usersid = :userId')
+			->where('revoked = FALSE')
 			->addParameter(':userId', $record['id'])
 			->run();
 
