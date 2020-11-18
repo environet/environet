@@ -42,12 +42,27 @@ class GroupCrud extends CrudPage {
 	/**
 	 * @inheritdoc
 	 */
+	protected $showTemplate = '/group/show.phtml';
+
+	/**
+	 * @inheritdoc
+	 */
 	protected $listPagePath = '/admin/groups';
 
 	/**
 	 * @inheritdoc
 	 */
 	protected $successAddMessage = 'Group successfully saved';
+
+
+	/**
+	 * @param bool $plural
+	 *
+	 * @return string
+	 */
+	protected function getEntityName(bool $plural = false): string {
+		return $plural ? 'groups' : 'group';
+	}
 
 
 	/**

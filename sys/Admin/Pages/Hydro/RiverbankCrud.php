@@ -48,6 +48,16 @@ class RiverbankCrud extends CrudPage {
 
 
 	/**
+	 * @param bool $plural
+	 *
+	 * @return string
+	 */
+	protected function getEntityName(bool $plural = false): string {
+		return $plural ? 'riverbanks' : 'riverbank';
+	}
+
+
+	/**
 	 * @inheritDoc
 	 */
 	protected function validateData(array $data): bool {

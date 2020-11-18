@@ -47,6 +47,16 @@ class StationClassificationCrud extends CrudPage {
 
 
 	/**
+	 * @param bool $plural
+	 *
+	 * @return string
+	 */
+	protected function getEntityName(bool $plural = false): string {
+		return $plural ? 'meteo station classifications' : 'meteo station classification';
+	}
+
+
+	/**
 	 * @inheritDoc
 	 */
 	protected function validateData(array $data): bool {

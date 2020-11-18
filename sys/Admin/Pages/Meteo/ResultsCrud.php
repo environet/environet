@@ -2,12 +2,10 @@
 
 namespace Environet\Sys\Admin\Pages\Meteo;
 
-use Environet\Sys\Admin\Pages\CrudPage;
+use Environet\Sys\Admin\Pages\Results\MonitoringPointResultsCrud;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\QueryException;
-use Environet\Sys\General\Exceptions\RenderException;
-use Environet\Sys\General\Response;
 
 /**
  * Class ResultsCrud
@@ -17,69 +15,72 @@ use Environet\Sys\General\Response;
  * @package Environet\Sys\Admin\Pages\Meteo
  * @author  SRG Group <dev@srg.hu>
  */
-class ResultsCrud extends CrudPage {
+class ResultsCrud extends MonitoringPointResultsCrud {
 
 
 	/**
-	 * List page action for meteopoint measurement results.
+	 * @param bool $plural
 	 *
-	 * @return Response
-	 * @throws RenderException
+	 * @return string
 	 */
-	public function list(): Response {
-		try {
-			// get search param from query string
-			$searchString = $this->request->getQueryParam('search');
+	protected function getEntityName(bool $plural = false): string {
+		return $plural ? 'meteo results' : 'meteo result';
+	}
 
-			//Base query with joins and conditions
-			$query = (new Select())->from('meteo_result mr')
-								   ->join('meteo_time_series mts', 'mts.id = mr.meteo_time_seriesid', Query::JOIN_LEFT)
-								   ->join('meteopoint mp', 'mp.id = mts.meteopointid', Query::JOIN_LEFT)
-								   ->join('meteo_observed_property mop', 'mop.id = mts.meteo_observed_propertyid', Query::JOIN_LEFT)
-								   ->orderBy('mr.time', Query::DIR_DESC)
-								   ->select([
-									   'mp.name',
-									   'mop.symbol',
-									   'mr.value',
-									   'mr.time',
-									   'mts.phenomenon_time_begin',
-									   'mts.phenomenon_time_end',
-									   'mts.result_time',
-								   ]);
 
-			if (!is_null($searchString)) {
-				$query->search(
-					explode(' ', urldecode($searchString)),
-					[
-						'mp.name',
-						'mop.symbol',
-					]
-				);
-			}
+	/**
+	 * @return Select
+	 */
+	protected function getBaseQuery(): Select {
+		return (new Select())->from('meteo_result r')
+			->join('meteo_time_series ts', 'ts.id = r.meteo_time_seriesid', Query::JOIN_LEFT)
+			->join('meteopoint p', 'p.id = ts.meteopointid', Query::JOIN_LEFT)
+			->join('meteo_observed_property op', 'op.id = ts.meteo_observed_propertyid', Query::JOIN_LEFT)
+			->orderBy('mr.time', Query::DIR_DESC)
+			->select([
+				'p.name',
+				'op.symbol',
+				'r.value',
+				'r.time',
+				'r.created_at',
+				'ts.phenomenon_time_begin',
+				'ts.phenomenon_time_end',
+				'ts.result_time'
+			]);
+	}
 
-			//Add pagination options to query, and get the page info (count, pages)
-			$currentPage = $this->request->getQueryParam('page', 1);
-			$query->paginate(
-				self::PAGE_SIZE,
-				$currentPage,
-				$totalCount,
-				$maxPage
-			);
 
-			//Add order by query condition
-			$query->clearOrderBy();
-			$query->sort(
-				$this->request->getQueryParam('order_by'),
-				$this->request->getQueryParam('order_dir', 'ASC')
-			);
+	/**
+	 * @return string
+	 */
+	protected function getTemplate(): string {
+		return '/meteo/results/index.phtml';
+	}
 
-			//Run query
-			$results = $query->run();
-		} catch (QueryException $exception) {
-			$results = [];
-		}
 
-		return $this->render('/meteo/results/index.phtml', compact('results', 'totalCount', 'currentPage', 'maxPage', 'searchString'));
+	/**
+	 * @return array
+	 * @throws QueryException
+	 */
+	protected function getCountries(): array {
+		return array_filter((new Select())
+			->select('DISTINCT(country)')
+			->from('meteopoint')
+			->orderBy('country', 'ASC')
+			->run(Query::FETCH_COLUMN));
+	}
+
+
+	/**
+	 * @return array
+	 * @throws QueryException
+	 */
+	protected function getObservedProperties(): array {
+		return array_filter((new Select())
+			->select(['id', 'symbol as label'])
+			->from('meteo_observed_property')
+			->orderBy('symbol', 'ASC')
+			->run());
 	}
 
 

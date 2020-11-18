@@ -54,6 +54,7 @@ class MigrateDb extends DbCommand {
 			'createUploadPermissions',
 			'createRiverbankPermissions',
 			'createResultUniqueIndexesDeleteDuplicates',
+			'renameDataProviderPermissions'
 		];
 		ini_set('memory_limit', - 1);
 
@@ -227,6 +228,29 @@ class MigrateDb extends DbCommand {
 		}
 
 		return $return;
+	}
+
+
+	/**
+	 * Create riverbank permissions
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function renameDataProviderPermissions(array &$output): int {
+
+		$count = $this->connection->runQuery(
+			'SELECT COUNT(*) FROM public.permissions WHERE name like :providerPermission',
+			['providerPermission' => 'admin.providers%']
+		)->fetch(PDO::FETCH_COLUMN);
+		if ($count === 0) {
+			return - 1;
+		}
+		$schemaPath = SRC_PATH . '/database/rename_data_provider_permissions.sql';
+
+		return $this->runSqlFile($schemaPath, $output);
 	}
 
 

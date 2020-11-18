@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>Documentation</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="../css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="../js/html5.js"></script>
+    <![endif]-->
+    <script src="../js/jquery-1.11.0.min.js"></script>
+    <script src="../js/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+        <script type="text/javascript">
+        function loadExternalCodeSnippets() {
+            Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+                var src = pre.getAttribute('data-src').replace( /\\/g, '/');
+                var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+                var language = 'php';
+
+                var code = document.createElement('code');
+                code.className = 'language-' + language;
+
+                pre.textContent = '';
+
+                code.textContent = 'Loading…';
+
+                pre.appendChild(code);
+
+                var xhr = new XMLHttpRequest();
+
+                xhr.open('GET', src, true);
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4) {
+
+                        if (xhr.status < 400 && xhr.responseText) {
+                            code.textContent = xhr.responseText;
+
+                            Prism.highlightElement(code);
+                        }
+                        else if (xhr.status >= 400) {
+                            code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                        }
+                        else {
+                            code.textContent = '✖ Error: File does not exist, is empty or trying to view from localhost';
+                        }
+                    }
+                };
+
+                xhr.send(null);
+            });
+        }
+
+        $(document).ready(function(){
+            loadExternalCodeSnippets();
+        });
+        $('#source-view').on('shown', function () {
+            loadExternalCodeSnippets();
+        })
+    </script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                                        <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                        <li><a href="../namespaces/environet.html"><abbr title="\Environet">Environet</abbr></a></li>
+                                                    </ul>
+                    </li>
+                                        <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">4</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/deprecated.html">
+                                                                                                            <i class="icon-list-alt"></i>&#160;Deprecated <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-776520558"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-776520558" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-515420713"></a>
+                                <a href="../namespaces/environet.html" style="margin-left: 30px; padding-left: 0">Environet</a>
+            </div>
+            <div id="namespace-515420713" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-786625528"></a>
+                                <a href="../namespaces/environet-sys.html" style="margin-left: 30px; padding-left: 0">Sys</a>
+            </div>
+            <div id="namespace-786625528" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-626395934"></a>
+                                <a href="../namespaces/environet-sys-admin.html" style="margin-left: 30px; padding-left: 0">Admin</a>
+            </div>
+            <div id="namespace-626395934" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1133816793"></a>
+                                <a href="../namespaces/environet-sys-admin-pages.html" style="margin-left: 30px; padding-left: 0">Pages</a>
+            </div>
+            <div id="namespace-1133816793" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-568920872"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-group.html" style="margin-left: 30px; padding-left: 0">Group</a>
+            </div>
+            <div id="namespace-568920872" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Group-GroupCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Group\GroupCrud">GroupCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1000978032"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-hydro.html" style="margin-left: 30px; padding-left: 0">Hydro</a>
+            </div>
+            <div id="namespace-1000978032" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-676047972"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-hydro-observedproperty.html" style="margin-left: 30px; padding-left: 0">ObservedProperty</a>
+            </div>
+            <div id="namespace-676047972" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Hydro-ObservedProperty-ObservedPropertyCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Hydro\ObservedProperty\ObservedPropertyCrud">ObservedPropertyCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1903489287"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-hydro-waterbody.html" style="margin-left: 30px; padding-left: 0">Waterbody</a>
+            </div>
+            <div id="namespace-1903489287" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Hydro-Waterbody-WaterbodyCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Hydro\Waterbody\WaterbodyCrud">WaterbodyCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Hydro-MonitoringPointCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Hydro\MonitoringPointCrud">MonitoringPointCrud</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Hydro-ResultsCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Hydro\ResultsCrud">ResultsCrud</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Hydro-RiverbankCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Hydro\RiverbankCrud">RiverbankCrud</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Hydro-StationClassificationCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Hydro\StationClassificationCrud">StationClassificationCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-960979548"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-measurementaccessrule.html" style="margin-left: 30px; padding-left: 0">MeasurementAccessRule</a>
+            </div>
+            <div id="namespace-960979548" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-MeasurementAccessRule-MeasurementAccessRuleCrud.html"><abbr title="\Environet\Sys\Admin\Pages\MeasurementAccessRule\MeasurementAccessRuleCrud">MeasurementAccessRuleCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1172729001"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-meteo.html" style="margin-left: 30px; padding-left: 0">Meteo</a>
+            </div>
+            <div id="namespace-1172729001" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Meteo-MonitoringPointCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Meteo\MonitoringPointCrud">MonitoringPointCrud</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Meteo-ObservedPropertyCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Meteo\ObservedPropertyCrud">ObservedPropertyCrud</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Meteo-ResultsCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Meteo\ResultsCrud">ResultsCrud</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Meteo-StationClassificationCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Meteo\StationClassificationCrud">StationClassificationCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-660035350"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-monitoringpoint.html" style="margin-left: 30px; padding-left: 0">MonitoringPoint</a>
+            </div>
+            <div id="namespace-660035350" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Admin-Pages-MonitoringPoint-MonitoringPointCSVMapInterface.html"><abbr title="\Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCSVMapInterface">MonitoringPointCSVMapInterface</abbr></a></li>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-MonitoringPoint-MonitoringPointCrud.html"><abbr title="\Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud">MonitoringPointCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-939358788"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-operator.html" style="margin-left: 30px; padding-left: 0">Operator</a>
+            </div>
+            <div id="namespace-939358788" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Operator-OperatorCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Operator\OperatorCrud">OperatorCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1695056116"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-results.html" style="margin-left: 30px; padding-left: 0">Results</a>
+            </div>
+            <div id="namespace-1695056116" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Results-MonitoringPointResultsCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Results\MonitoringPointResultsCrud">MonitoringPointResultsCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-755133064"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-uploaddata.html" style="margin-left: 30px; padding-left: 0">UploadData</a>
+            </div>
+            <div id="namespace-755133064" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-UploadData-AbstractUploadDataPage.html"><abbr title="\Environet\Sys\Admin\Pages\UploadData\AbstractUploadDataPage">AbstractUploadDataPage</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-UploadData-MissingData.html"><abbr title="\Environet\Sys\Admin\Pages\UploadData\MissingData">MissingData</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-UploadData-ProcessedData.html"><abbr title="\Environet\Sys\Admin\Pages\UploadData\ProcessedData">ProcessedData</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-688120050"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-user.html" style="margin-left: 30px; padding-left: 0">User</a>
+            </div>
+            <div id="namespace-688120050" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-User-UserCrud.html"><abbr title="\Environet\Sys\Admin\Pages\User\UserCrud">UserCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-BasePage.html"><abbr title="\Environet\Sys\Admin\Pages\BasePage">BasePage</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-CrudPage.html"><abbr title="\Environet\Sys\Admin\Pages\CrudPage">CrudPage</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Dashboard.html"><abbr title="\Environet\Sys\Admin\Pages\Dashboard">Dashboard</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-DownloadTest.html"><abbr title="\Environet\Sys\Admin\Pages\DownloadTest">DownloadTest</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Login.html"><abbr title="\Environet\Sys\Admin\Pages\Login">Login</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Logout.html"><abbr title="\Environet\Sys\Admin\Pages\Logout">Logout</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-UploadTest.html"><abbr title="\Environet\Sys\Admin\Pages\UploadTest">UploadTest</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-AdminHandler.html"><abbr title="\Environet\Sys\Admin\AdminHandler">AdminHandler</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-653594690"></a>
+                                <a href="../namespaces/environet-sys-api.html" style="margin-left: 30px; padding-left: 0">Api</a>
+            </div>
+            <div id="namespace-653594690" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Api-JsonApiHandler.html"><abbr title="\Environet\Sys\Api\JsonApiHandler">JsonApiHandler</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-697044819"></a>
+                                <a href="../namespaces/environet-sys-commands.html" style="margin-left: 30px; padding-left: 0">Commands</a>
+            </div>
+            <div id="namespace-697044819" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-831652390"></a>
+                                <a href="../namespaces/environet-sys-commands-datanode.html" style="margin-left: 30px; padding-left: 0">DataNode</a>
+            </div>
+            <div id="namespace-831652390" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DataNode-Install.html"><abbr title="\Environet\Sys\Commands\DataNode\Install">Install</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DataNode-PluginCreate.html"><abbr title="\Environet\Sys\Commands\DataNode\PluginCreate">PluginCreate</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DataNode-PluginRun.html"><abbr title="\Environet\Sys\Commands\DataNode\PluginRun">PluginRun</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1464411504"></a>
+                                <a href="../namespaces/environet-sys-commands-distnode.html" style="margin-left: 30px; padding-left: 0">DistNode</a>
+            </div>
+            <div id="namespace-1464411504" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DistNode-DbCommand.html"><abbr title="\Environet\Sys\Commands\DistNode\DbCommand">DbCommand</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DistNode-InitDb.html"><abbr title="\Environet\Sys\Commands\DistNode\InitDb">InitDb</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DistNode-Install.html"><abbr title="\Environet\Sys\Commands\DistNode\Install">Install</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DistNode-MigrateDb.html"><abbr title="\Environet\Sys\Commands\DistNode\MigrateDb">MigrateDb</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1045978023"></a>
+                                <a href="../namespaces/environet-sys-commands-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-1045978023" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-Exceptions-CommandException.html"><abbr title="\Environet\Sys\Commands\Exceptions\CommandException">CommandException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1944332362"></a>
+                                <a href="../namespaces/environet-sys-commands-tools.html" style="margin-left: 30px; padding-left: 0">Tools</a>
+            </div>
+            <div id="namespace-1944332362" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-Tools-GenerateKeys.html"><abbr title="\Environet\Sys\Commands\Tools\GenerateKeys">GenerateKeys</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-Tools-GenerateSignature.html"><abbr title="\Environet\Sys\Commands\Tools\GenerateSignature">GenerateSignature</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-BaseCommand.html"><abbr title="\Environet\Sys\Commands\BaseCommand">BaseCommand</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-Console.html"><abbr title="\Environet\Sys\Commands\Console">Console</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1668445776"></a>
+                                <a href="../namespaces/environet-sys-datanode.html" style="margin-left: 30px; padding-left: 0">DataNode</a>
+            </div>
+            <div id="namespace-1668445776" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1057200784"></a>
+                                <a href="../namespaces/environet-sys-datanode-interfaces.html" style="margin-left: 30px; padding-left: 0">Interfaces</a>
+            </div>
+            <div id="namespace-1057200784" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-DataNode-Interfaces-UploaderInterface.html"><abbr title="\Environet\Sys\DataNode\Interfaces\UploaderInterface">UploaderInterface</abbr></a></li>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-221610467"></a>
+                                <a href="../namespaces/environet-sys-download.html" style="margin-left: 30px; padding-left: 0">Download</a>
+            </div>
+            <div id="namespace-221610467" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-823906447"></a>
+                                <a href="../namespaces/environet-sys-download-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-823906447" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Download-Exceptions-DownloadException.html"><abbr title="\Environet\Sys\Download\Exceptions\DownloadException">DownloadException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Download-DownloadHandler.html"><abbr title="\Environet\Sys\Download\DownloadHandler">DownloadHandler</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-81219257"></a>
+                                <a href="../namespaces/environet-sys-general.html" style="margin-left: 30px; padding-left: 0">General</a>
+            </div>
+            <div id="namespace-81219257" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-382704616"></a>
+                                <a href="../namespaces/environet-sys-general-db.html" style="margin-left: 30px; padding-left: 0">Db</a>
+            </div>
+            <div id="namespace-382704616" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-430499742"></a>
+                                <a href="../namespaces/environet-sys-general-db-query.html" style="margin-left: 30px; padding-left: 0">Query</a>
+            </div>
+            <div id="namespace-430499742" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1370234092"></a>
+                                <a href="../namespaces/environet-sys-general-db-query-traits.html" style="margin-left: 30px; padding-left: 0">Traits</a>
+            </div>
+            <div id="namespace-1370234092" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                            <li class="trait"><a href="../classes/Environet-Sys-General-Db-Query-Traits-JoinTrait.html"><abbr title="\Environet\Sys\General\Db\Query\Traits\JoinTrait">JoinTrait</abbr></a></li>
+                                                    <li class="trait"><a href="../classes/Environet-Sys-General-Db-Query-Traits-WhereTrait.html"><abbr title="\Environet\Sys\General\Db\Query\Traits\WhereTrait">WhereTrait</abbr></a></li>
+                                                                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Query-Delete.html"><abbr title="\Environet\Sys\General\Db\Query\Delete">Delete</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Query-Insert.html"><abbr title="\Environet\Sys\General\Db\Query\Insert">Insert</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Query-Query.html"><abbr title="\Environet\Sys\General\Db\Query\Query">Query</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Query-Select.html"><abbr title="\Environet\Sys\General\Db\Query\Select">Select</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Query-Update.html"><abbr title="\Environet\Sys\General\Db\Query\Update">Update</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1680182264"></a>
+                                <a href="../namespaces/environet-sys-general-db-selectors.html" style="margin-left: 30px; padding-left: 0">Selectors</a>
+            </div>
+            <div id="namespace-1680182264" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Selectors-BaseAccessSelector.html"><abbr title="\Environet\Sys\General\Db\Selectors\BaseAccessSelector">BaseAccessSelector</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Selectors-MonitoringPointSelector.html"><abbr title="\Environet\Sys\General\Db\Selectors\MonitoringPointSelector">MonitoringPointSelector</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Selectors-ObservedPropertySelector.html"><abbr title="\Environet\Sys\General\Db\Selectors\ObservedPropertySelector">ObservedPropertySelector</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Selectors-Selector.html"><abbr title="\Environet\Sys\General\Db\Selectors\Selector">Selector</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-BaseQueries.html"><abbr title="\Environet\Sys\General\Db\BaseQueries">BaseQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Connection.html"><abbr title="\Environet\Sys\General\Db\Connection">Connection</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-GroupQueries.html"><abbr title="\Environet\Sys\General\Db\GroupQueries">GroupQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-HydroMonitoringPointQueries.html"><abbr title="\Environet\Sys\General\Db\HydroMonitoringPointQueries">HydroMonitoringPointQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-HydroObservedPropertyQueries.html"><abbr title="\Environet\Sys\General\Db\HydroObservedPropertyQueries">HydroObservedPropertyQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-HydroStationClassificationQueries.html"><abbr title="\Environet\Sys\General\Db\HydroStationClassificationQueries">HydroStationClassificationQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-MeasurementAccessRuleQueries.html"><abbr title="\Environet\Sys\General\Db\MeasurementAccessRuleQueries">MeasurementAccessRuleQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-MeteoMonitoringPointQueries.html"><abbr title="\Environet\Sys\General\Db\MeteoMonitoringPointQueries">MeteoMonitoringPointQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-MeteoObservedPropertyQueries.html"><abbr title="\Environet\Sys\General\Db\MeteoObservedPropertyQueries">MeteoObservedPropertyQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-MeteoStationClassificationQueries.html"><abbr title="\Environet\Sys\General\Db\MeteoStationClassificationQueries">MeteoStationClassificationQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-MonitoringPointQueries.html"><abbr title="\Environet\Sys\General\Db\MonitoringPointQueries">MonitoringPointQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-OperatorQueries.html"><abbr title="\Environet\Sys\General\Db\OperatorQueries">OperatorQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-PermissionQueries.html"><abbr title="\Environet\Sys\General\Db\PermissionQueries">PermissionQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-RiverbankQueries.html"><abbr title="\Environet\Sys\General\Db\RiverbankQueries">RiverbankQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-UserQueries.html"><abbr title="\Environet\Sys\General\Db\UserQueries">UserQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-WaterbodyQueries.html"><abbr title="\Environet\Sys\General\Db\WaterbodyQueries">WaterbodyQueries</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-360636023"></a>
+                                <a href="../namespaces/environet-sys-general-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-360636023" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-AccessRuleException.html"><abbr title="\Environet\Sys\General\Exceptions\AccessRuleException">AccessRuleException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-ApiException.html"><abbr title="\Environet\Sys\General\Exceptions\ApiException">ApiException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-HttpBadRequestException.html"><abbr title="\Environet\Sys\General\Exceptions\HttpBadRequestException">HttpBadRequestException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-HttpNotAuthenticatedException.html"><abbr title="\Environet\Sys\General\Exceptions\HttpNotAuthenticatedException">HttpNotAuthenticatedException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-HttpNotFoundException.html"><abbr title="\Environet\Sys\General\Exceptions\HttpNotFoundException">HttpNotFoundException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-InvalidConfigurationException.html"><abbr title="\Environet\Sys\General\Exceptions\InvalidConfigurationException">InvalidConfigurationException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-MissingEventTypeException.html"><abbr title="\Environet\Sys\General\Exceptions\MissingEventTypeException">MissingEventTypeException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-PermissionException.html"><abbr title="\Environet\Sys\General\Exceptions\PermissionException">PermissionException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-PKIException.html"><abbr title="\Environet\Sys\General\Exceptions\PKIException">PKIException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-QueryException.html"><abbr title="\Environet\Sys\General\Exceptions\QueryException">QueryException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-RenderException.html"><abbr title="\Environet\Sys\General\Exceptions\RenderException">RenderException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-UniqueConstraintQueryException.html"><abbr title="\Environet\Sys\General\Exceptions\UniqueConstraintQueryException">UniqueConstraintQueryException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-989883335"></a>
+                                <a href="../namespaces/environet-sys-general-httpclient.html" style="margin-left: 30px; padding-left: 0">HttpClient</a>
+            </div>
+            <div id="namespace-989883335" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2120855282"></a>
+                                <a href="../namespaces/environet-sys-general-httpclient-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-2120855282" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-Exceptions-HttpClientException.html"><abbr title="\Environet\Sys\General\HttpClient\Exceptions\HttpClientException">HttpClientException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-General-HttpClient-RequestHandlerInterface.html"><abbr title="\Environet\Sys\General\HttpClient\RequestHandlerInterface">RequestHandlerInterface</abbr></a></li>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-ApiHandler.html"><abbr title="\Environet\Sys\General\HttpClient\ApiHandler">ApiHandler</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-BaseHandler.html"><abbr title="\Environet\Sys\General\HttpClient\BaseHandler">BaseHandler</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-HttpClient.html"><abbr title="\Environet\Sys\General\HttpClient\HttpClient">HttpClient</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-Request.html"><abbr title="\Environet\Sys\General\HttpClient\Request">Request</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-Response.html"><abbr title="\Environet\Sys\General\HttpClient\Response">Response</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-330608123"></a>
+                                <a href="../namespaces/environet-sys-general-view.html" style="margin-left: 30px; padding-left: 0">View</a>
+            </div>
+            <div id="namespace-330608123" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-View-Renderer.html"><abbr title="\Environet\Sys\General\View\Renderer">Renderer</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-EventLogger.html"><abbr title="\Environet\Sys\General\EventLogger">EventLogger</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Identity.html"><abbr title="\Environet\Sys\General\Identity">Identity</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-PKI.html"><abbr title="\Environet\Sys\General\PKI">PKI</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Request.html"><abbr title="\Environet\Sys\General\Request">Request</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Response.html"><abbr title="\Environet\Sys\General\Response">Response</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-SysIdentity.html"><abbr title="\Environet\Sys\General\SysIdentity">SysIdentity</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1744606371"></a>
+                                <a href="../namespaces/environet-sys-plugins.html" style="margin-left: 30px; padding-left: 0">Plugins</a>
+            </div>
+            <div id="namespace-1744606371" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-254723853"></a>
+                                <a href="../namespaces/environet-sys-plugins-parsers.html" style="margin-left: 30px; padding-left: 0">Parsers</a>
+            </div>
+            <div id="namespace-254723853" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Parsers-AbstractParser.html"><abbr title="\Environet\Sys\Plugins\Parsers\AbstractParser">AbstractParser</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Parsers-CsvParser.html"><abbr title="\Environet\Sys\Plugins\Parsers\CsvParser">CsvParser</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Parsers-JsonParser.html"><abbr title="\Environet\Sys\Plugins\Parsers\JsonParser">JsonParser</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><abbr title="\Environet\Sys\Plugins\Parsers\XmlParser">XmlParser</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1488881401"></a>
+                                <a href="../namespaces/environet-sys-plugins-transports.html" style="margin-left: 30px; padding-left: 0">Transports</a>
+            </div>
+            <div id="namespace-1488881401" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Transports-FtpTransport.html"><abbr title="\Environet\Sys\Plugins\Transports\FtpTransport">FtpTransport</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Transports-HttpTransport.html"><abbr title="\Environet\Sys\Plugins\Transports\HttpTransport">HttpTransport</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Transports-HttpTransportExtended.html"><abbr title="\Environet\Sys\Plugins\Transports\HttpTransportExtended">HttpTransportExtended</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Transports-LocalDirectoryTransport.html"><abbr title="\Environet\Sys\Plugins\Transports\LocalDirectoryTransport">LocalDirectoryTransport</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Transports-LocalFileTransport.html"><abbr title="\Environet\Sys\Plugins\Transports\LocalFileTransport">LocalFileTransport</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Plugins-ApiClientInterface.html"><abbr title="\Environet\Sys\Plugins\ApiClientInterface">ApiClientInterface</abbr></a></li>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Plugins-BuilderLayerInterface.html"><abbr title="\Environet\Sys\Plugins\BuilderLayerInterface">BuilderLayerInterface</abbr></a></li>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Plugins-ParserInterface.html"><abbr title="\Environet\Sys\Plugins\ParserInterface">ParserInterface</abbr></a></li>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Plugins-TransportInterface.html"><abbr title="\Environet\Sys\Plugins\TransportInterface">TransportInterface</abbr></a></li>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-ApiClient.html"><abbr title="\Environet\Sys\Plugins\ApiClient">ApiClient</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Plugin.html"><abbr title="\Environet\Sys\Plugins\Plugin">Plugin</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-PluginBuilder.html"><abbr title="\Environet\Sys\Plugins\PluginBuilder">PluginBuilder</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-PluginLayer.html"><abbr title="\Environet\Sys\Plugins\PluginLayer">PluginLayer</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Resource.html"><abbr title="\Environet\Sys\Plugins\Resource">Resource</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1689160232"></a>
+                                <a href="../namespaces/environet-sys-upload.html" style="margin-left: 30px; padding-left: 0">Upload</a>
+            </div>
+            <div id="namespace-1689160232" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-802711691"></a>
+                                <a href="../namespaces/environet-sys-upload-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-802711691" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Upload-Exceptions-UploadException.html"><abbr title="\Environet\Sys\Upload\Exceptions\UploadException">UploadException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Upload-UploadHandler.html"><abbr title="\Environet\Sys\Upload\UploadHandler">UploadHandler</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-353071740"></a>
+                                <a href="../namespaces/environet-sys-xml.html" style="margin-left: 30px; padding-left: 0">Xml</a>
+            </div>
+            <div id="namespace-353071740" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1622967554"></a>
+                                <a href="../namespaces/environet-sys-xml-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-1622967554" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Exceptions-CreateInputXmlException.html"><abbr title="\Environet\Sys\Xml\Exceptions\CreateInputXmlException">CreateInputXmlException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Exceptions-InputProcessorException.html"><abbr title="\Environet\Sys\Xml\Exceptions\InputProcessorException">InputProcessorException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Exceptions-InputXmlProcessException.html"><abbr title="\Environet\Sys\Xml\Exceptions\InputXmlProcessException">InputXmlProcessException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Exceptions-SchemaInvalidException.html"><abbr title="\Environet\Sys\Xml\Exceptions\SchemaInvalidException">SchemaInvalidException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2085293690"></a>
+                                <a href="../namespaces/environet-sys-xml-inputprocessor.html" style="margin-left: 30px; padding-left: 0">InputProcessor</a>
+            </div>
+            <div id="namespace-2085293690" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-InputProcessor-AbstractInputXmlProcessor.html"><abbr title="\Environet\Sys\Xml\InputProcessor\AbstractInputXmlProcessor">AbstractInputXmlProcessor</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-InputProcessor-HydroInputXmlProcessor.html"><abbr title="\Environet\Sys\Xml\InputProcessor\HydroInputXmlProcessor">HydroInputXmlProcessor</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-InputProcessor-MeteoInputXmlProcessor.html"><abbr title="\Environet\Sys\Xml\InputProcessor\MeteoInputXmlProcessor">MeteoInputXmlProcessor</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1835162843"></a>
+                                <a href="../namespaces/environet-sys-xml-model.html" style="margin-left: 30px; padding-left: 0">Model</a>
+            </div>
+            <div id="namespace-1835162843" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Model-ErrorXmlData.html"><abbr title="\Environet\Sys\Xml\Model\ErrorXmlData">ErrorXmlData</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Model-InputXmlData.html"><abbr title="\Environet\Sys\Xml\Model\InputXmlData">InputXmlData</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Model-InputXmlPropertyData.html"><abbr title="\Environet\Sys\Xml\Model\InputXmlPropertyData">InputXmlPropertyData</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Model-OutputXmlData.html"><abbr title="\Environet\Sys\Xml\Model\OutputXmlData">OutputXmlData</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Model-OutputXmlObservationMember.html"><abbr title="\Environet\Sys\Xml\Model\OutputXmlObservationMember">OutputXmlObservationMember</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Xml-XmlRenderable.html"><abbr title="\Environet\Sys\Xml\XmlRenderable">XmlRenderable</abbr></a></li>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-CreateErrorXml.html"><abbr title="\Environet\Sys\Xml\CreateErrorXml">CreateErrorXml</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-CreateInputXml.html"><abbr title="\Environet\Sys\Xml\CreateInputXml">CreateInputXml</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-CreateOutputXml.html"><abbr title="\Environet\Sys\Xml\CreateOutputXml">CreateOutputXml</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-SchemaValidator.html"><abbr title="\Environet\Sys\Xml\SchemaValidator">SchemaValidator</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Config.html"><abbr title="\Environet\Sys\Config">Config</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/EN-AsyncExecute.html"><abbr title="\EN_AsyncExecute">EN_AsyncExecute</abbr></a></li>
+                                                    <li class="class"><a href="../classes/ENThread.html"><abbr title="\ENThread">ENThread</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Loader.html"><abbr title="\Loader">Loader</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content file">
+                    <nav>
+                                                                    </nav>
+
+                                        <h1><small>General/Db/Selectors</small>BaseAccessSelector.php</h1>
+                    <p><em></em></p>
+                    
+
+                    
+                    
+                                        <h2>Classes</h2>
+                    <table class="table table-hover">
+                                            <tr>
+                            <td><a href="../classes/Environet-Sys-General-Db-Selectors-BaseAccessSelector.html"><abbr title="\Environet\Sys\General\Db\Selectors\BaseAccessSelector">BaseAccessSelector</abbr></a></td>
+                            <td><em>Class BaseAccessSelector</em></td>
+                        </tr>
+                                        </table>
+                                    </div>
+
+                <aside class="span4 detailsbar">
+                    <dl>
+                                                    <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">\Default</div></dd>
+                        
+                        
+                    </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                                            </table>
+
+                </aside>
+            </div>
+
+            
+            
+        </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label"></h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/General/Db/Selectors/BaseAccessSelector.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                            <li><a href="../namespaces/environet.html"><abbr title="\Environet">Environet</abbr></a></li>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../reports/errors.html">Errors</a></li>
+                                    <li><a href="../reports/markers.html">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="https://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on November 17th, 2020 at 15:40.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>

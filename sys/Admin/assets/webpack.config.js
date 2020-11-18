@@ -19,7 +19,6 @@ module.exports = (env, argv) => {
             filename: 'css/[name].css',
             chunkFilename: 'css/[id].css',
         })],
-        watch: true,
         module: {
             rules: [
                 {

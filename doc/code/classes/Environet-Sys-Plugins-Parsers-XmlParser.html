@@ -1,0 +1,2496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>Documentation</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="../css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="../js/html5.js"></script>
+    <![endif]-->
+    <script src="../js/jquery-1.11.0.min.js"></script>
+    <script src="../js/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src').replace( /\\/g, '/');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
+
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
+
+            pre.textContent = '';
+
+            code.textContent = 'Loading…';
+
+            pre.appendChild(code);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', src, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
+
+                        Prism.highlightElement(code);
+                    }
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist, is empty or trying to view from localhost';
+                    }
+                }
+            };
+
+            xhr.send(null);
+        });
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                                        <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                        <li><a href="../namespaces/environet.html"><abbr title="\Environet">Environet</abbr></a></li>
+                                                    </ul>
+                    </li>
+                                        <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">4</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/deprecated.html">
+                                                                                                            <i class="icon-list-alt"></i>&#160;Deprecated <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-549205542"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-549205542" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1574256452"></a>
+                                <a href="../namespaces/environet.html" style="margin-left: 30px; padding-left: 0">Environet</a>
+            </div>
+            <div id="namespace-1574256452" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-757036053"></a>
+                                <a href="../namespaces/environet-sys.html" style="margin-left: 30px; padding-left: 0">Sys</a>
+            </div>
+            <div id="namespace-757036053" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-225343064"></a>
+                                <a href="../namespaces/environet-sys-admin.html" style="margin-left: 30px; padding-left: 0">Admin</a>
+            </div>
+            <div id="namespace-225343064" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1063491796"></a>
+                                <a href="../namespaces/environet-sys-admin-pages.html" style="margin-left: 30px; padding-left: 0">Pages</a>
+            </div>
+            <div id="namespace-1063491796" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1696061574"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-group.html" style="margin-left: 30px; padding-left: 0">Group</a>
+            </div>
+            <div id="namespace-1696061574" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Group-GroupCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Group\GroupCrud">GroupCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1792657870"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-hydro.html" style="margin-left: 30px; padding-left: 0">Hydro</a>
+            </div>
+            <div id="namespace-1792657870" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1498695947"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-hydro-observedproperty.html" style="margin-left: 30px; padding-left: 0">ObservedProperty</a>
+            </div>
+            <div id="namespace-1498695947" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Hydro-ObservedProperty-ObservedPropertyCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Hydro\ObservedProperty\ObservedPropertyCrud">ObservedPropertyCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1740559432"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-hydro-waterbody.html" style="margin-left: 30px; padding-left: 0">Waterbody</a>
+            </div>
+            <div id="namespace-1740559432" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Hydro-Waterbody-WaterbodyCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Hydro\Waterbody\WaterbodyCrud">WaterbodyCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Hydro-MonitoringPointCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Hydro\MonitoringPointCrud">MonitoringPointCrud</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Hydro-ResultsCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Hydro\ResultsCrud">ResultsCrud</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Hydro-RiverbankCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Hydro\RiverbankCrud">RiverbankCrud</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Hydro-StationClassificationCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Hydro\StationClassificationCrud">StationClassificationCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-75480983"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-measurementaccessrule.html" style="margin-left: 30px; padding-left: 0">MeasurementAccessRule</a>
+            </div>
+            <div id="namespace-75480983" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-MeasurementAccessRule-MeasurementAccessRuleCrud.html"><abbr title="\Environet\Sys\Admin\Pages\MeasurementAccessRule\MeasurementAccessRuleCrud">MeasurementAccessRuleCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2087233831"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-meteo.html" style="margin-left: 30px; padding-left: 0">Meteo</a>
+            </div>
+            <div id="namespace-2087233831" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Meteo-MonitoringPointCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Meteo\MonitoringPointCrud">MonitoringPointCrud</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Meteo-ObservedPropertyCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Meteo\ObservedPropertyCrud">ObservedPropertyCrud</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Meteo-ResultsCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Meteo\ResultsCrud">ResultsCrud</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Meteo-StationClassificationCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Meteo\StationClassificationCrud">StationClassificationCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1395487886"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-monitoringpoint.html" style="margin-left: 30px; padding-left: 0">MonitoringPoint</a>
+            </div>
+            <div id="namespace-1395487886" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Admin-Pages-MonitoringPoint-MonitoringPointCSVMapInterface.html"><abbr title="\Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCSVMapInterface">MonitoringPointCSVMapInterface</abbr></a></li>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-MonitoringPoint-MonitoringPointCrud.html"><abbr title="\Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud">MonitoringPointCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1168128745"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-operator.html" style="margin-left: 30px; padding-left: 0">Operator</a>
+            </div>
+            <div id="namespace-1168128745" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Operator-OperatorCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Operator\OperatorCrud">OperatorCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1155131420"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-results.html" style="margin-left: 30px; padding-left: 0">Results</a>
+            </div>
+            <div id="namespace-1155131420" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Results-MonitoringPointResultsCrud.html"><abbr title="\Environet\Sys\Admin\Pages\Results\MonitoringPointResultsCrud">MonitoringPointResultsCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2103085681"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-uploaddata.html" style="margin-left: 30px; padding-left: 0">UploadData</a>
+            </div>
+            <div id="namespace-2103085681" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-UploadData-AbstractUploadDataPage.html"><abbr title="\Environet\Sys\Admin\Pages\UploadData\AbstractUploadDataPage">AbstractUploadDataPage</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-UploadData-MissingData.html"><abbr title="\Environet\Sys\Admin\Pages\UploadData\MissingData">MissingData</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-UploadData-ProcessedData.html"><abbr title="\Environet\Sys\Admin\Pages\UploadData\ProcessedData">ProcessedData</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-7054412"></a>
+                                <a href="../namespaces/environet-sys-admin-pages-user.html" style="margin-left: 30px; padding-left: 0">User</a>
+            </div>
+            <div id="namespace-7054412" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-User-UserCrud.html"><abbr title="\Environet\Sys\Admin\Pages\User\UserCrud">UserCrud</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-BasePage.html"><abbr title="\Environet\Sys\Admin\Pages\BasePage">BasePage</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-CrudPage.html"><abbr title="\Environet\Sys\Admin\Pages\CrudPage">CrudPage</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Dashboard.html"><abbr title="\Environet\Sys\Admin\Pages\Dashboard">Dashboard</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-DownloadTest.html"><abbr title="\Environet\Sys\Admin\Pages\DownloadTest">DownloadTest</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Login.html"><abbr title="\Environet\Sys\Admin\Pages\Login">Login</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-Logout.html"><abbr title="\Environet\Sys\Admin\Pages\Logout">Logout</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-Pages-UploadTest.html"><abbr title="\Environet\Sys\Admin\Pages\UploadTest">UploadTest</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Admin-AdminHandler.html"><abbr title="\Environet\Sys\Admin\AdminHandler">AdminHandler</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1736054812"></a>
+                                <a href="../namespaces/environet-sys-api.html" style="margin-left: 30px; padding-left: 0">Api</a>
+            </div>
+            <div id="namespace-1736054812" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Api-JsonApiHandler.html"><abbr title="\Environet\Sys\Api\JsonApiHandler">JsonApiHandler</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-55851871"></a>
+                                <a href="../namespaces/environet-sys-commands.html" style="margin-left: 30px; padding-left: 0">Commands</a>
+            </div>
+            <div id="namespace-55851871" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-306070505"></a>
+                                <a href="../namespaces/environet-sys-commands-datanode.html" style="margin-left: 30px; padding-left: 0">DataNode</a>
+            </div>
+            <div id="namespace-306070505" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DataNode-Install.html"><abbr title="\Environet\Sys\Commands\DataNode\Install">Install</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DataNode-PluginCreate.html"><abbr title="\Environet\Sys\Commands\DataNode\PluginCreate">PluginCreate</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DataNode-PluginRun.html"><abbr title="\Environet\Sys\Commands\DataNode\PluginRun">PluginRun</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1034802876"></a>
+                                <a href="../namespaces/environet-sys-commands-distnode.html" style="margin-left: 30px; padding-left: 0">DistNode</a>
+            </div>
+            <div id="namespace-1034802876" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DistNode-DbCommand.html"><abbr title="\Environet\Sys\Commands\DistNode\DbCommand">DbCommand</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DistNode-InitDb.html"><abbr title="\Environet\Sys\Commands\DistNode\InitDb">InitDb</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DistNode-Install.html"><abbr title="\Environet\Sys\Commands\DistNode\Install">Install</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-DistNode-MigrateDb.html"><abbr title="\Environet\Sys\Commands\DistNode\MigrateDb">MigrateDb</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-263642122"></a>
+                                <a href="../namespaces/environet-sys-commands-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-263642122" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-Exceptions-CommandException.html"><abbr title="\Environet\Sys\Commands\Exceptions\CommandException">CommandException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-460500853"></a>
+                                <a href="../namespaces/environet-sys-commands-tools.html" style="margin-left: 30px; padding-left: 0">Tools</a>
+            </div>
+            <div id="namespace-460500853" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-Tools-GenerateKeys.html"><abbr title="\Environet\Sys\Commands\Tools\GenerateKeys">GenerateKeys</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-Tools-GenerateSignature.html"><abbr title="\Environet\Sys\Commands\Tools\GenerateSignature">GenerateSignature</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-BaseCommand.html"><abbr title="\Environet\Sys\Commands\BaseCommand">BaseCommand</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Commands-Console.html"><abbr title="\Environet\Sys\Commands\Console">Console</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-195969770"></a>
+                                <a href="../namespaces/environet-sys-datanode.html" style="margin-left: 30px; padding-left: 0">DataNode</a>
+            </div>
+            <div id="namespace-195969770" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1038736485"></a>
+                                <a href="../namespaces/environet-sys-datanode-interfaces.html" style="margin-left: 30px; padding-left: 0">Interfaces</a>
+            </div>
+            <div id="namespace-1038736485" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-DataNode-Interfaces-UploaderInterface.html"><abbr title="\Environet\Sys\DataNode\Interfaces\UploaderInterface">UploaderInterface</abbr></a></li>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-751858507"></a>
+                                <a href="../namespaces/environet-sys-download.html" style="margin-left: 30px; padding-left: 0">Download</a>
+            </div>
+            <div id="namespace-751858507" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2126383161"></a>
+                                <a href="../namespaces/environet-sys-download-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-2126383161" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Download-Exceptions-DownloadException.html"><abbr title="\Environet\Sys\Download\Exceptions\DownloadException">DownloadException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Download-DownloadHandler.html"><abbr title="\Environet\Sys\Download\DownloadHandler">DownloadHandler</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-294325603"></a>
+                                <a href="../namespaces/environet-sys-general.html" style="margin-left: 30px; padding-left: 0">General</a>
+            </div>
+            <div id="namespace-294325603" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1414124610"></a>
+                                <a href="../namespaces/environet-sys-general-db.html" style="margin-left: 30px; padding-left: 0">Db</a>
+            </div>
+            <div id="namespace-1414124610" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1105567257"></a>
+                                <a href="../namespaces/environet-sys-general-db-query.html" style="margin-left: 30px; padding-left: 0">Query</a>
+            </div>
+            <div id="namespace-1105567257" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1359603139"></a>
+                                <a href="../namespaces/environet-sys-general-db-query-traits.html" style="margin-left: 30px; padding-left: 0">Traits</a>
+            </div>
+            <div id="namespace-1359603139" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                            <li class="trait"><a href="../classes/Environet-Sys-General-Db-Query-Traits-JoinTrait.html"><abbr title="\Environet\Sys\General\Db\Query\Traits\JoinTrait">JoinTrait</abbr></a></li>
+                                                    <li class="trait"><a href="../classes/Environet-Sys-General-Db-Query-Traits-WhereTrait.html"><abbr title="\Environet\Sys\General\Db\Query\Traits\WhereTrait">WhereTrait</abbr></a></li>
+                                                                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Query-Delete.html"><abbr title="\Environet\Sys\General\Db\Query\Delete">Delete</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Query-Insert.html"><abbr title="\Environet\Sys\General\Db\Query\Insert">Insert</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Query-Query.html"><abbr title="\Environet\Sys\General\Db\Query\Query">Query</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Query-Select.html"><abbr title="\Environet\Sys\General\Db\Query\Select">Select</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Query-Update.html"><abbr title="\Environet\Sys\General\Db\Query\Update">Update</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1323444493"></a>
+                                <a href="../namespaces/environet-sys-general-db-selectors.html" style="margin-left: 30px; padding-left: 0">Selectors</a>
+            </div>
+            <div id="namespace-1323444493" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Selectors-BaseAccessSelector.html"><abbr title="\Environet\Sys\General\Db\Selectors\BaseAccessSelector">BaseAccessSelector</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Selectors-MonitoringPointSelector.html"><abbr title="\Environet\Sys\General\Db\Selectors\MonitoringPointSelector">MonitoringPointSelector</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Selectors-ObservedPropertySelector.html"><abbr title="\Environet\Sys\General\Db\Selectors\ObservedPropertySelector">ObservedPropertySelector</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Selectors-Selector.html"><abbr title="\Environet\Sys\General\Db\Selectors\Selector">Selector</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-BaseQueries.html"><abbr title="\Environet\Sys\General\Db\BaseQueries">BaseQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-Connection.html"><abbr title="\Environet\Sys\General\Db\Connection">Connection</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-GroupQueries.html"><abbr title="\Environet\Sys\General\Db\GroupQueries">GroupQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-HydroMonitoringPointQueries.html"><abbr title="\Environet\Sys\General\Db\HydroMonitoringPointQueries">HydroMonitoringPointQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-HydroObservedPropertyQueries.html"><abbr title="\Environet\Sys\General\Db\HydroObservedPropertyQueries">HydroObservedPropertyQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-HydroStationClassificationQueries.html"><abbr title="\Environet\Sys\General\Db\HydroStationClassificationQueries">HydroStationClassificationQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-MeasurementAccessRuleQueries.html"><abbr title="\Environet\Sys\General\Db\MeasurementAccessRuleQueries">MeasurementAccessRuleQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-MeteoMonitoringPointQueries.html"><abbr title="\Environet\Sys\General\Db\MeteoMonitoringPointQueries">MeteoMonitoringPointQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-MeteoObservedPropertyQueries.html"><abbr title="\Environet\Sys\General\Db\MeteoObservedPropertyQueries">MeteoObservedPropertyQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-MeteoStationClassificationQueries.html"><abbr title="\Environet\Sys\General\Db\MeteoStationClassificationQueries">MeteoStationClassificationQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-MonitoringPointQueries.html"><abbr title="\Environet\Sys\General\Db\MonitoringPointQueries">MonitoringPointQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-OperatorQueries.html"><abbr title="\Environet\Sys\General\Db\OperatorQueries">OperatorQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-PermissionQueries.html"><abbr title="\Environet\Sys\General\Db\PermissionQueries">PermissionQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-RiverbankQueries.html"><abbr title="\Environet\Sys\General\Db\RiverbankQueries">RiverbankQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-UserQueries.html"><abbr title="\Environet\Sys\General\Db\UserQueries">UserQueries</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Db-WaterbodyQueries.html"><abbr title="\Environet\Sys\General\Db\WaterbodyQueries">WaterbodyQueries</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-206799010"></a>
+                                <a href="../namespaces/environet-sys-general-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-206799010" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-AccessRuleException.html"><abbr title="\Environet\Sys\General\Exceptions\AccessRuleException">AccessRuleException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-ApiException.html"><abbr title="\Environet\Sys\General\Exceptions\ApiException">ApiException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-HttpBadRequestException.html"><abbr title="\Environet\Sys\General\Exceptions\HttpBadRequestException">HttpBadRequestException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-HttpNotAuthenticatedException.html"><abbr title="\Environet\Sys\General\Exceptions\HttpNotAuthenticatedException">HttpNotAuthenticatedException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-HttpNotFoundException.html"><abbr title="\Environet\Sys\General\Exceptions\HttpNotFoundException">HttpNotFoundException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-InvalidConfigurationException.html"><abbr title="\Environet\Sys\General\Exceptions\InvalidConfigurationException">InvalidConfigurationException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-MissingEventTypeException.html"><abbr title="\Environet\Sys\General\Exceptions\MissingEventTypeException">MissingEventTypeException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-PermissionException.html"><abbr title="\Environet\Sys\General\Exceptions\PermissionException">PermissionException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-PKIException.html"><abbr title="\Environet\Sys\General\Exceptions\PKIException">PKIException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-QueryException.html"><abbr title="\Environet\Sys\General\Exceptions\QueryException">QueryException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-RenderException.html"><abbr title="\Environet\Sys\General\Exceptions\RenderException">RenderException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Exceptions-UniqueConstraintQueryException.html"><abbr title="\Environet\Sys\General\Exceptions\UniqueConstraintQueryException">UniqueConstraintQueryException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-697218977"></a>
+                                <a href="../namespaces/environet-sys-general-httpclient.html" style="margin-left: 30px; padding-left: 0">HttpClient</a>
+            </div>
+            <div id="namespace-697218977" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-115160048"></a>
+                                <a href="../namespaces/environet-sys-general-httpclient-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-115160048" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-Exceptions-HttpClientException.html"><abbr title="\Environet\Sys\General\HttpClient\Exceptions\HttpClientException">HttpClientException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-General-HttpClient-RequestHandlerInterface.html"><abbr title="\Environet\Sys\General\HttpClient\RequestHandlerInterface">RequestHandlerInterface</abbr></a></li>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-ApiHandler.html"><abbr title="\Environet\Sys\General\HttpClient\ApiHandler">ApiHandler</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-BaseHandler.html"><abbr title="\Environet\Sys\General\HttpClient\BaseHandler">BaseHandler</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-HttpClient.html"><abbr title="\Environet\Sys\General\HttpClient\HttpClient">HttpClient</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-Request.html"><abbr title="\Environet\Sys\General\HttpClient\Request">Request</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-HttpClient-Response.html"><abbr title="\Environet\Sys\General\HttpClient\Response">Response</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-333909913"></a>
+                                <a href="../namespaces/environet-sys-general-view.html" style="margin-left: 30px; padding-left: 0">View</a>
+            </div>
+            <div id="namespace-333909913" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-View-Renderer.html"><abbr title="\Environet\Sys\General\View\Renderer">Renderer</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-General-EventLogger.html"><abbr title="\Environet\Sys\General\EventLogger">EventLogger</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Identity.html"><abbr title="\Environet\Sys\General\Identity">Identity</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-PKI.html"><abbr title="\Environet\Sys\General\PKI">PKI</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Request.html"><abbr title="\Environet\Sys\General\Request">Request</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-Response.html"><abbr title="\Environet\Sys\General\Response">Response</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-General-SysIdentity.html"><abbr title="\Environet\Sys\General\SysIdentity">SysIdentity</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-169635082"></a>
+                                <a href="../namespaces/environet-sys-plugins.html" style="margin-left: 30px; padding-left: 0">Plugins</a>
+            </div>
+            <div id="namespace-169635082" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-611763139"></a>
+                                <a href="../namespaces/environet-sys-plugins-parsers.html" style="margin-left: 30px; padding-left: 0">Parsers</a>
+            </div>
+            <div id="namespace-611763139" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Parsers-AbstractParser.html"><abbr title="\Environet\Sys\Plugins\Parsers\AbstractParser">AbstractParser</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Parsers-CsvParser.html"><abbr title="\Environet\Sys\Plugins\Parsers\CsvParser">CsvParser</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Parsers-JsonParser.html"><abbr title="\Environet\Sys\Plugins\Parsers\JsonParser">JsonParser</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><abbr title="\Environet\Sys\Plugins\Parsers\XmlParser">XmlParser</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1519497664"></a>
+                                <a href="../namespaces/environet-sys-plugins-transports.html" style="margin-left: 30px; padding-left: 0">Transports</a>
+            </div>
+            <div id="namespace-1519497664" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Transports-FtpTransport.html"><abbr title="\Environet\Sys\Plugins\Transports\FtpTransport">FtpTransport</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Transports-HttpTransport.html"><abbr title="\Environet\Sys\Plugins\Transports\HttpTransport">HttpTransport</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Transports-HttpTransportExtended.html"><abbr title="\Environet\Sys\Plugins\Transports\HttpTransportExtended">HttpTransportExtended</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Transports-LocalDirectoryTransport.html"><abbr title="\Environet\Sys\Plugins\Transports\LocalDirectoryTransport">LocalDirectoryTransport</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Transports-LocalFileTransport.html"><abbr title="\Environet\Sys\Plugins\Transports\LocalFileTransport">LocalFileTransport</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Plugins-ApiClientInterface.html"><abbr title="\Environet\Sys\Plugins\ApiClientInterface">ApiClientInterface</abbr></a></li>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Plugins-BuilderLayerInterface.html"><abbr title="\Environet\Sys\Plugins\BuilderLayerInterface">BuilderLayerInterface</abbr></a></li>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Plugins-ParserInterface.html"><abbr title="\Environet\Sys\Plugins\ParserInterface">ParserInterface</abbr></a></li>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Plugins-TransportInterface.html"><abbr title="\Environet\Sys\Plugins\TransportInterface">TransportInterface</abbr></a></li>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-ApiClient.html"><abbr title="\Environet\Sys\Plugins\ApiClient">ApiClient</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Plugin.html"><abbr title="\Environet\Sys\Plugins\Plugin">Plugin</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-PluginBuilder.html"><abbr title="\Environet\Sys\Plugins\PluginBuilder">PluginBuilder</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-PluginLayer.html"><abbr title="\Environet\Sys\Plugins\PluginLayer">PluginLayer</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Plugins-Resource.html"><abbr title="\Environet\Sys\Plugins\Resource">Resource</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1326057203"></a>
+                                <a href="../namespaces/environet-sys-upload.html" style="margin-left: 30px; padding-left: 0">Upload</a>
+            </div>
+            <div id="namespace-1326057203" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1813998065"></a>
+                                <a href="../namespaces/environet-sys-upload-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-1813998065" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Upload-Exceptions-UploadException.html"><abbr title="\Environet\Sys\Upload\Exceptions\UploadException">UploadException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Upload-UploadHandler.html"><abbr title="\Environet\Sys\Upload\UploadHandler">UploadHandler</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-347636751"></a>
+                                <a href="../namespaces/environet-sys-xml.html" style="margin-left: 30px; padding-left: 0">Xml</a>
+            </div>
+            <div id="namespace-347636751" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-551172398"></a>
+                                <a href="../namespaces/environet-sys-xml-exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-551172398" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Exceptions-CreateInputXmlException.html"><abbr title="\Environet\Sys\Xml\Exceptions\CreateInputXmlException">CreateInputXmlException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Exceptions-InputProcessorException.html"><abbr title="\Environet\Sys\Xml\Exceptions\InputProcessorException">InputProcessorException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Exceptions-InputXmlProcessException.html"><abbr title="\Environet\Sys\Xml\Exceptions\InputXmlProcessException">InputXmlProcessException</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Exceptions-SchemaInvalidException.html"><abbr title="\Environet\Sys\Xml\Exceptions\SchemaInvalidException">SchemaInvalidException</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-915543071"></a>
+                                <a href="../namespaces/environet-sys-xml-inputprocessor.html" style="margin-left: 30px; padding-left: 0">InputProcessor</a>
+            </div>
+            <div id="namespace-915543071" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-InputProcessor-AbstractInputXmlProcessor.html"><abbr title="\Environet\Sys\Xml\InputProcessor\AbstractInputXmlProcessor">AbstractInputXmlProcessor</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-InputProcessor-HydroInputXmlProcessor.html"><abbr title="\Environet\Sys\Xml\InputProcessor\HydroInputXmlProcessor">HydroInputXmlProcessor</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-InputProcessor-MeteoInputXmlProcessor.html"><abbr title="\Environet\Sys\Xml\InputProcessor\MeteoInputXmlProcessor">MeteoInputXmlProcessor</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1017343492"></a>
+                                <a href="../namespaces/environet-sys-xml-model.html" style="margin-left: 30px; padding-left: 0">Model</a>
+            </div>
+            <div id="namespace-1017343492" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Model-ErrorXmlData.html"><abbr title="\Environet\Sys\Xml\Model\ErrorXmlData">ErrorXmlData</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Model-InputXmlData.html"><abbr title="\Environet\Sys\Xml\Model\InputXmlData">InputXmlData</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Model-InputXmlPropertyData.html"><abbr title="\Environet\Sys\Xml\Model\InputXmlPropertyData">InputXmlPropertyData</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Model-OutputXmlData.html"><abbr title="\Environet\Sys\Xml\Model\OutputXmlData">OutputXmlData</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-Model-OutputXmlObservationMember.html"><abbr title="\Environet\Sys\Xml\Model\OutputXmlObservationMember">OutputXmlObservationMember</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/Environet-Sys-Xml-XmlRenderable.html"><abbr title="\Environet\Sys\Xml\XmlRenderable">XmlRenderable</abbr></a></li>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-CreateErrorXml.html"><abbr title="\Environet\Sys\Xml\CreateErrorXml">CreateErrorXml</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-CreateInputXml.html"><abbr title="\Environet\Sys\Xml\CreateInputXml">CreateInputXml</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-CreateOutputXml.html"><abbr title="\Environet\Sys\Xml\CreateOutputXml">CreateOutputXml</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Environet-Sys-Xml-SchemaValidator.html"><abbr title="\Environet\Sys\Xml\SchemaValidator">SchemaValidator</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Environet-Sys-Config.html"><abbr title="\Environet\Sys\Config">Config</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/EN-AsyncExecute.html"><abbr title="\EN_AsyncExecute">EN_AsyncExecute</abbr></a></li>
+                                                    <li class="class"><a href="../classes/ENThread.html"><abbr title="\ENThread">ENThread</abbr></a></li>
+                                                    <li class="class"><a href="../classes/Loader.html"><abbr title="\Loader">Loader</abbr></a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/environet-sys-plugins-parsers.html"><abbr title="\Environet\Sys\Plugins\Parsers">Parsers</abbr></a> <i class="icon-level-up"></i>
+                                            </nav>
+                    
+                    <h1><small>\Environet\Sys\Plugins\Parsers</small>XmlParser</h1>
+                    <p><em>Class XMLParser</em></p>
+                    <p>Parser layer for XML files</p>
+
+                    
+                                        
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method___construct" class="">__construct()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-AbstractParser.html#method_createTimeZoneConfig" class="">createTimeZoneConfig()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-AbstractParser.html#method_createTimeInFilenameConfig" class="">createTimeInFilenameConfig()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_parse" class="">parse()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_create" class="">create()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_serializeConfiguration" class="">serializeConfiguration()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_getName" class="">getName()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_getHelp" class="">getHelp()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No public properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#constant_API_TIME_FORMAT_STRING" class="">API_TIME_FORMAT_STRING</a><br />
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-AbstractParser.html#method_getTimeZone" class="">getTimeZone()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-AbstractParser.html#property_timeZone" class="">$timeZone</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-AbstractParser.html#property_timeInFilenameFormat" class="">$timeInFilenameFormat</a><br />
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_convertUnitToBaseUnit" class="">convertUnitToBaseUnit()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_getAndStripOneCommonElement" class="">getAndStripOneCommonElement()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_parseIntoHierarchy" class="">parseIntoHierarchy()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_getInternalObservedPropertySymbol" class="">getInternalObservedPropertySymbol()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_getParameter" class="">getParameter()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_delete" class="">delete()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_exists" class="">exists()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_assembleDate" class="">assembleDate()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_assembleDates" class="">assembleDates()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_convertValue" class="">convertValue()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_convertValues" class="">convertValues()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_meteringPointInputXmlsFromArray" class="">meteringPointInputXmlsFromArray()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_inputXmlDataFromArray" class="">inputXmlDataFromArray()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_getExampleXMLBMLRT" class="">getExampleXMLBMLRT()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_getExampleXMLLfU" class="">getExampleXMLLfU()</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#method_getExampleXMLARSO" class="">getExampleXMLARSO()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#property_separatorThousands" class="">$separatorThousands</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#property_separatorDecimals" class="">$separatorDecimals</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#property_formatsFilename" class="">$formatsFilename</a><br />
+                                                                    <a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html#property_formats" class="">$formats</a><br />
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        
+                    
+                    <dl>
+                        <dt>File</dt>
+                            <dd><a href="../files/plugins-parsers-xmlparser.html"><div class="path-wrapper">Plugins/Parsers/XmlParser.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">Plugins\Parsers</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                                                                                                                                                
+                                        <div class="namespace-wrapper"><a href="../classes/Environet-Sys-Plugins-Parsers-AbstractParser.html"><abbr title="\Environet\Sys\Plugins\Parsers\AbstractParser">AbstractParser</abbr></a></div>
+                                                                                                    <div class="namespace-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div>
+                            </dd>
+
+                                                                            <dt>Implements</dt>
+                                                        <dd><a href="../classes/Environet-Sys-Plugins-BuilderLayerInterface.html"><div class="namespace-wrapper">\Environet\Sys\Plugins\BuilderLayerInterface</div></a></dd>
+                        
+                        
+                        
+                                                
+                                                                        </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr>
+                            <th>
+                                author
+                            </th>
+                            <td>
+                                                                                                        <p>SRG Group <a href="mailto:dev@srg.hu">dev@srg.hu</a>, STASA <a href="mailto:info@stasa.de">info@stasa.de</a></p>
+
+                                                            </td>
+                        </tr>
+                                        </table>
+                </aside>
+            </div>
+
+                                    <a id="constants" name="constants"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Constants</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="constant_API_TIME_FORMAT_STRING" name="constant_API_TIME_FORMAT_STRING" class="anchor"></a>
+            <article id="constant_API_TIME_FORMAT_STRING" class="constant">
+                <h3 class="">API_TIME_FORMAT_STRING</h3>
+                <pre class="signature">API_TIME_FORMAT_STRING = &#039;Y-m-d\TH:i:sP&#039;</pre>
+                <p><em></em></p>
+                
+            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                            
+                                    <a id="properties" name="properties"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Properties</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_timeZone" name="property_timeZone" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$timeZone</h3>
+                <pre class="signature">$timeZone : string</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                <a href="../string"><abbr title="string">string</abbr></a>
+                &mdash;                             </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-AbstractParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\AbstractParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_timeInFilenameFormat" name="property_timeInFilenameFormat" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$timeInFilenameFormat</h3>
+                <pre class="signature">$timeInFilenameFormat : string</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                <a href="../string"><abbr title="string">string</abbr></a>
+                &mdash;                             </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-AbstractParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\AbstractParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_separatorThousands" name="property_separatorThousands" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$separatorThousands</h3>
+                <pre class="signature">$separatorThousands : string</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                <a href="../string"><abbr title="string">string</abbr></a>
+                &mdash; Separator to group thousands in values. May be &quot;&quot;                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_separatorDecimals" name="property_separatorDecimals" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$separatorDecimals</h3>
+                <pre class="signature">$separatorDecimals : string</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                <a href="../string"><abbr title="string">string</abbr></a>
+                &mdash; Separator for decimals.                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_formatsFilename" name="property_formatsFilename" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$formatsFilename</h3>
+                <pre class="signature">$formatsFilename : string</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                <a href="../string"><abbr title="string">string</abbr></a>
+                &mdash; Filename of JSON file which contains formats for xml                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_formats" name="property_formats" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$formats</h3>
+                <pre class="signature">$formats : array</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                <a href="../array"><abbr title="array">array</abbr></a>
+                &mdash; Format specifications, where to find which information in xml file                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                            
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___construct" name="method___construct" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__construct()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__construct(array  <span class="argument">$config</span>) : mixed</pre>
+                <p><em>XMLParser constructor.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$config </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; 
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_createTimeZoneConfig" name="method_createTimeZoneConfig" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">createTimeZoneConfig()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">createTimeZoneConfig(\Environet\Sys\Commands\Console  <span class="argument">$console</span>) : mixed</pre>
+                <p><em></em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>\Environet\Sys\Commands\Console</td>
+                                <td>$console </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; 
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-AbstractParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\AbstractParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_createTimeInFilenameConfig" name="method_createTimeInFilenameConfig" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">createTimeInFilenameConfig()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">createTimeInFilenameConfig(\Environet\Sys\Commands\Console  <span class="argument">$console</span>) : mixed</pre>
+                <p><em>Create settings for dates in file&#039;s name</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>\Environet\Sys\Commands\Console</td>
+                                <td>$console </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; 
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-AbstractParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\AbstractParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_parse" name="method_parse" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">parse()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">parse(\Environet\Sys\Plugins\Resource  <span class="argument">$resource</span>) : array</pre>
+                <p><em></em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>\Environet\Sys\Plugins\Resource</td>
+                                <td>$resource </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Environet\Sys\Xml\Exceptions\CreateInputXmlException</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    array
+                                            &mdash; 
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            inheritDoc
+                        </th>
+                        <td>
+                                                                                            
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_create" name="method_create" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">create()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">create(\Environet\Sys\Commands\Console  <span class="argument">$console</span>) : mixed</pre>
+                <p><em>Create an instance during plugin creation</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>\Environet\Sys\Commands\Console</td>
+                                <td>$console </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; 
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                                                            <dt>Uses</dt>
+                                                                <dd><a href="../classes/Environet-Sys-Plugins-Parsers-CsvParser.html#method_serializePropertyConfiguration"><span class="namespace-wrapper"></span></a></dd>
+                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            inheritDoc
+                        </th>
+                        <td>
+                                                                                            
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_serializeConfiguration" name="method_serializeConfiguration" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">serializeConfiguration()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">serializeConfiguration() : string</pre>
+                <p><em>Serialize configuration for the ini file</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; 
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                                                            <dt>Uses</dt>
+                                                                <dd><a href="../classes/Environet-Sys-Plugins-Parsers-CsvParser.html#method_serializePropertyConfiguration"><span class="namespace-wrapper"></span></a></dd>
+                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            inheritDoc
+                        </th>
+                        <td>
+                                                                                            
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getName" name="method_getName" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getName()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getName() : string</pre>
+                <p><em>Get a human friendly name to identify the layer implementation</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; 
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            inheritDoc
+                        </th>
+                        <td>
+                                                                                            
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getHelp" name="method_getHelp" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getHelp()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getHelp() : string</pre>
+                <p><em>Get a description of the layer implementation</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; 
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            inheritDoc
+                        </th>
+                        <td>
+                                                                                            
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getTimeZone" name="method_getTimeZone" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">getTimeZone()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getTimeZone() : \DateTimeZone</pre>
+                <p><em>Get timezone of plugin</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    \DateTimeZone
+                                            &mdash; 
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-AbstractParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\AbstractParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_convertUnitToBaseUnit" name="method_convertUnitToBaseUnit" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">convertUnitToBaseUnit()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">convertUnitToBaseUnit(float  <span class="argument">$value</span>, string  <span class="argument">$symbol</span>, string  <span class="argument">$unit</span>) : mixed</pre>
+                <p><em>Convert a given unit to base unit for observed property.</em></p>
+                <p>Default units are:
+water level h: cm
+river discharge Q: m3/s
+water temperature tw: °C
+precipitation P: mm
+air temperature ta: °C</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>float</td>
+                                <td>$value </td>
+                                <td><p>measured value to convert</p>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$symbol </td>
+                                <td><p>internal symbol for observed property</p>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$unit </td>
+                                <td><p>unit in which $value is given</p>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; 
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getAndStripOneCommonElement" name="method_getAndStripOneCommonElement" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">getAndStripOneCommonElement()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getAndStripOneCommonElement(array  <span class="argument">$formats</span>) : string</pre>
+                <p><em>Returns one common element from xml tag hierarchy and strips it from format information which describes xml format.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$formats </td>
+                                <td><p>format information, including tag hierarchies for different parameters, which should be read from xml</p>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>The first common element of tag hierarchy, if any. If there is none, &quot;&quot; is returned.</p>
+
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_parseIntoHierarchy" name="method_parseIntoHierarchy" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">parseIntoHierarchy()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">parseIntoHierarchy(\SimpleXMLElement  <span class="argument">$xml</span>, array  <span class="argument">$formats</span>, array  <span class="argument">$resolved</span>, int  <span class="argument">$hierarchyCounter</span>) : array</pre>
+                <p><em>Recursive function to parse a xml tree to acquire values for given parameters from xml tree</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>\SimpleXMLElement</td>
+                                <td>$xml </td>
+                                <td><p>xml element to parse</p>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$formats </td>
+                                <td><p>format of information to be gathered from xml, including tag hierarchies for different parameters</p>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$resolved </td>
+                                <td><p>table of information found. 1st index is the entry if there are multiple, 2nd index is information, call with &quot;[]&quot;</p>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td>int</td>
+                                <td>$hierarchyCounter </td>
+                                <td><p>level of hierarchy, call with &quot;0&quot;</p>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                            &mdash; <p>list of information gathered from xml</p>
+
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getInternalObservedPropertySymbol" name="method_getInternalObservedPropertySymbol" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">getInternalObservedPropertySymbol()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getInternalObservedPropertySymbol(array  <span class="argument">$observedPropertyConversions</span>, string  <span class="argument">$variableName</span>, string  <span class="argument">$symbol</span>) : string</pre>
+                <p><em>Get internal symbol for observed property from external symbol. Conversion between symbols is given by
+variable conversion information.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$observedPropertyConversions </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$variableName </td>
+                                <td><p>name of variable definition for observed property. E.g. &quot;OBS&quot;</p>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$symbol </td>
+                                <td><p>external symbol for observed property</p>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>internal symbol for observed property</p>
+
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getParameter" name="method_getParameter" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">getParameter()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getParameter(array  <span class="argument">$list</span>, string  <span class="argument">$parameterName</span>, string  <span class="argument">$parameterValue</span>) : array</pre>
+                <p><em>Get item from list, for which parameter name has a certain value. List item is an associative array in which parameter names are keys.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$list </td>
+                                <td><p>list of items.</p>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$parameterName </td>
+                                <td><p>name of parameter</p>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$parameterValue </td>
+                                <td><p>value of parameter</p>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                            &mdash; <p>items found, &quot;[]&quot; if none found.</p>
+
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_delete" name="method_delete" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">delete()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">delete(array  <span class="argument">$list</span>, string  <span class="argument">$parameterName</span>, string  <span class="argument">$parameterValue</span>) : mixed</pre>
+                <p><em>Deletes item from list for specified parameter and value. List item is an associative array in which parameter names are keys.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$list </td>
+                                <td><p>list to delete items from</p>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$parameterName </td>
+                                <td><p>name of parameter</p>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$parameterValue </td>
+                                <td><p>value for parameter</p>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; 
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_exists" name="method_exists" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">exists()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">exists(array  <span class="argument">$list</span>, string  <span class="argument">$parameterName</span>, string  <span class="argument">$parameterValue</span>) : bool</pre>
+                <p><em>Check whether a given value for a parameter exists in list. List item is an associative array in which parameter names are keys.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$list </td>
+                                <td><p>list to check</p>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$parameterName </td>
+                                <td><p>name of parameter</p>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$parameterValue </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                            &mdash; <p>true, if item is existing in list</p>
+
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_assembleDate" name="method_assembleDate" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">assembleDate()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">assembleDate(array  <span class="argument">$entry</span>) : mixed</pre>
+                <p><em>Assembles date from componentes like day, month, year, hour and minute</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$entry </td>
+                                <td><p>list of parsed properties, in which separate items for day, month, etc... may occur. Separate items are joined to a
+&quot;DateTime&quot; item and deleted from $entry. &quot;DateTime&quot; has time format as given by API_TIME_FORMAT_STRING</p>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; 
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_assembleDates" name="method_assembleDates" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">assembleDates()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">assembleDates(array  <span class="argument">$flatList</span>) : mixed</pre>
+                <p><em>Assemble dates in whole list of entries.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$flatList </td>
+                                <td><p>list of parsed information. Entries are themselve lists of parsed parameters.</p>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; 
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                                            <dt>See also</dt>
+                                                                <dd><a href="\Environet\Sys\Plugins\Parsers\assembleDate"><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_convertValue" name="method_convertValue" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">convertValue()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">convertValue(array  <span class="argument">$entry</span>) : bool</pre>
+                <p><em>Convert value parameters in entry: Remove thousands separator, change decimal separator to &quot;.&quot;,
+add entry for unit if not available and convert values to
+base units.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$entry </td>
+                                <td><p>entry with parsed information</p>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                            &mdash; <p>returns true, if value is valid. Value may be empty string if not available. In this case value is invalid.</p>
+
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_convertValues" name="method_convertValues" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">convertValues()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">convertValues(array  <span class="argument">$flatList</span>) : mixed</pre>
+                <p><em>Convert value parameters for whole list and deletes entries if value is not valid.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$flatList </td>
+                                <td><p>list of parsed information</p>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; 
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                                            <dt>See also</dt>
+                                                                <dd><a href="\Environet\Sys\Plugins\Parsers\convertValue"><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_meteringPointInputXmlsFromArray" name="method_meteringPointInputXmlsFromArray" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">meteringPointInputXmlsFromArray()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">meteringPointInputXmlsFromArray(array  <span class="argument">$mPointsArray</span>) : \SimpleXMLElement[]</pre>
+                <p><em>Create XML data from the monitoring point input array.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$mPointsArray </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Environet\Sys\Xml\Exceptions\CreateInputXmlException</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    \SimpleXMLElement[]
+                                            &mdash; 
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                                            <dt>See also</dt>
+                                                                <dd><a href="../classes/Environet-Sys-Xml-CreateInputXml.html"><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href="../classes/Environet-Sys-Xml-Model-InputXmlData.html"><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_inputXmlDataFromArray" name="method_inputXmlDataFromArray" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">inputXmlDataFromArray()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">inputXmlDataFromArray(array  <span class="argument">$propertiesArray</span>) : array</pre>
+                <p><em>Create XML data from the observation properties input array.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$propertiesArray </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                            &mdash; 
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                                            <dt>See also</dt>
+                                                                <dd><a href="../classes/Environet-Sys-Xml-Model-InputXmlPropertyData.html"><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getExampleXMLBMLRT" name="method_getExampleXMLBMLRT" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">getExampleXMLBMLRT()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getExampleXMLBMLRT() : string</pre>
+                <p><em>Return an example xml file for operator &quot;BMLRT&quot; (Austrian hydrological service)</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>example xml</p>
+
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getExampleXMLLfU" name="method_getExampleXMLLfU" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">getExampleXMLLfU()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getExampleXMLLfU() : string</pre>
+                <p><em>Return an example xml file for operator &quot;LfU&quot; (German hydrological service)</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>example xml</p>
+
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getExampleXMLARSO" name="method_getExampleXMLARSO" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">getExampleXMLARSO()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getExampleXMLARSO() : string</pre>
+                <p><em>Return an example xml file for operator &quot;ARSO&quot; (Slowenian hydrological and meteorological service)</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>example xml</p>
+
+                                    
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/Environet-Sys-Plugins-Parsers-XmlParser.html"><div class="path-wrapper">\Environet\Sys\Plugins\Parsers\XmlParser</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">XmlParser.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/Plugins/Parsers/XmlParser.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                            <li><a href="../namespaces/environet.html"><abbr title="\Environet">Environet</abbr></a></li>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../reports/errors.html">Errors</a></li>
+                                    <li><a href="../reports/markers.html">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="https://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on November 17th, 2020 at 15:40.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>

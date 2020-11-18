@@ -54,6 +54,16 @@ class UserCrud extends CrudPage {
 
 
 	/**
+	 * @param bool $plural
+	 *
+	 * @return string
+	 */
+	protected function getEntityName(bool $plural = false): string {
+		return $plural ? 'users' : 'user';
+	}
+
+
+	/**
 	 * List page action for users.
 	 *
 	 * @return Response
@@ -102,7 +112,10 @@ class UserCrud extends CrudPage {
 			$records = [];
 		}
 
-		return $this->render('/user/index.phtml', compact('records', 'totalCount', 'currentPage', 'maxPage', 'searchString'));
+		$this->updateListPageState();
+		$pageTitle = $this->getTitle(self::PAGE_LIST);
+
+		return $this->render('/user/index.phtml', compact('records', 'totalCount', 'currentPage', 'maxPage', 'searchString', 'pageTitle'));
 	}
 
 
@@ -141,7 +154,7 @@ class UserCrud extends CrudPage {
 				}
 				if ($data['password'] != $data['password_confirm']) {
 					// if the password confirmation failed
-					$this->addMessage('The passwords, aren\'t match.', self::MESSAGE_ERROR);
+					$this->addMessage('Password confirmation is invalid', self::MESSAGE_ERROR);
 					$valid = false;
 				}
 			}

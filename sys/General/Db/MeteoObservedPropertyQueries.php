@@ -2,7 +2,10 @@
 
 namespace Environet\Sys\General\Db;
 
+use Environet\Sys\General\Db\Query\Query;
+use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\EventLogger;
+use Environet\Sys\General\Exceptions\QueryException;
 
 /**
  * Class MeteoObservedPropertyQueries
@@ -55,12 +58,29 @@ class MeteoObservedPropertyQueries extends BaseQueries {
 	public static function getInsertEventType(): string {
 		return EventLogger::EVENT_TYPE_METEO_OP_ADD;
 	}
-	
+
 	/**
 	 * @inheritDoc
 	 */
 	public static function getDeleteEventType(): string {
 		return EventLogger::EVENT_TYPE_METEO_OP_DELETE;
+	}
+
+
+	/**
+	 * @param int $pointId
+	 *
+	 * @return array
+	 * @throws QueryException
+	 */
+	public static function getSymbolsByPoint(int $pointId): array {
+		return (new Select())
+			->from('meteo_observed_property')
+			->join('meteopoint_observed_property', 'meteopoint_observed_property.meteo_observed_propertyid = meteo_observed_property.id')
+			->select('meteo_observed_property.symbol')
+			->where('meteopoint_observed_property.meteopointid = :pointId')
+			->addParameter('pointId', $pointId)
+			->run(Query::FETCH_COLUMN) ?: [];
 	}
 
 

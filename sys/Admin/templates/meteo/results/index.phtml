@@ -1,24 +1,14 @@
 <?php include __DIR__ . '../../../layouts/before_app.phtml'; ?>
 <div class="card">
-	<h1>Meteo time series results</h1>
-	<div class="d-flex w-100">
-		<div class="mr-auto form-group"></div>
-		<div class="form-group">
-			<form method="get">
-				<input type="search" name="search" class="form-control" placeholder="<?=__('Search')?>" value="<?=htmlspecialchars(urldecode($searchString))?>">
-			</form>
-		</div>
-	</div>
+	<?=includeTemplatePart('crud_list_header.phtml', get_defined_vars());?>
 	<table class="table table-striped table-bordered">
 		<thead>
 		<tr>
-			<th><?=sortableColumn('Meteopoint name', 'mp.name');?></th>
-			<th><?=sortableColumn('Property', 'mop.symbol');?></th>
-			<th><?=sortableColumn('Phenomenon time begin', 'mts.phenomenon_time_begin');?></th>
-			<th><?=sortableColumn('Phenomenon time end', 'mts.phenomenon_time_end');?></th>
-			<th><?=sortableColumn('Result time', 'mts.result_time');?></th>
-			<th><?=sortableColumn('Time', 'mr.time');?></th>
-			<th><?=sortableColumn('Value', 'mr.value');?></th>
+			<th><?=sortableColumn('Meteopoint name', 'p.name');?></th>
+			<th><?=sortableColumn('Property', 'op.symbol');?></th>
+			<th class="text-right"><?=sortableColumn('Result time', 'r.time');?></th>
+			<th class="text-right"><?=sortableColumn('Created at', 'r.created_at');?></th>
+			<th class="text-right"><?=sortableColumn('Value', 'r.value');?></th>
 		</tr>
 		</thead>
 		<tbody>
@@ -29,11 +19,9 @@
 			<tr>
 				<td><?=$result['name'] ?? null;?></td>
 				<td><?=$result['symbol'] ?? null;?></td>
-				<td><?=$result['phenomenon_time_begin'] ?? null;?></td>
-				<td><?=$result['phenomenon_time_end'] ?? null;?></td>
-				<td><?=$result['result_time'] ?? null;?></td>
-				<td><?=$result['time'] ?? null;?></td>
-				<td><?=$result['value'] ?? null;?></td>
+				<td class="text-right text-monospace"><?=$result['time'] ?? null;?></td>
+				<td class="text-right text-monospace"><?=$result['created_at'] ?? null;?></td>
+				<td class="text-right text-monospace"><?=isset($result['value']) ? number_format((float) $result['value'], $precision, '.', ' ') : null;?></td>
 			</tr>
 			<?php
 					endforeach;
@@ -44,7 +32,7 @@
 							There is no record to show.
 						</td>
 					</tr>
-			<?
+			<?php
 				endif;
             ?>
 		</tbody>

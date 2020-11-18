@@ -7,6 +7,8 @@ use Environet\Sys\General\Db\MeteoObservedPropertyQueries;
 use Environet\Sys\General\Db\MeteoStationClassificationQueries;
 use Environet\Sys\General\Db\OperatorQueries;
 use Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud as MonitoringPointCrudBase;
+use Environet\Sys\General\Db\UserQueries;
+use Environet\Sys\General\Exceptions\QueryException;
 
 /**
  * Class MonitoringPointCrud
@@ -43,8 +45,19 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 */
 	protected $listPagePath = '/admin/meteo/monitoring-points';
 
+	/**
+	 * @var string
+	 */
 	protected $readOwnPermissionName = 'admin.meteo.monitoringpoints.readown';
 
+	/**
+	 * @var string
+	 */
+	protected $createOwnPermissionName = 'admin.meteo.monitoringpoints.createown';
+
+	/**
+	 * @var string
+	 */
 	protected $updateOwnPermissionName = 'admin.meteo.monitoringpoints.updateown';
 
 
@@ -53,14 +66,6 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 */
 	public function getObservedPropertyQueriesClass(): string {
 		return MeteoObservedPropertyQueries::class;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getObservedPropertiesCsvColumn(): string {
-		return 'observed_properties';
 	}
 
 
@@ -76,11 +81,12 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 * @inheritDoc
 	 *
 	 * @return array
+	 * @throws QueryException
 	 */
 	protected function formContext(): array {
 		return [
 			'classifications'    => MeteoStationClassificationQueries::getOptionList('value'),
-			'operators'          => OperatorQueries::getOptionList('name'),
+			'operators'          => $this->getOperatorList(),
 			'observedProperties' => MeteoObservedPropertyQueries::getOptionList('symbol')
 		];
 	}
@@ -96,13 +102,42 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 			$this->addMessage('Monitoring point name is empty, or format is invalid', self::MESSAGE_ERROR);
 			$valid = false;
 		}
-		
+
 		if (!empty($data['country']) && strlen($data['country']) > 2) {
 			$this->addMessage('County field expects a two letter country code', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 
 		return $valid;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getCsvColumns(): array {
+		$columns = parent::getCsvColumns();
+
+		return array_merge(
+			[
+				'ncd_pst' => 'NCD PST [text]',
+			],
+			$columns,
+			[
+				'classification' => ['title' => 'Station classification ID [ID]', 'outField' => 'meteostation_classificationid'],
+				'altitude'       => 'Altitue [number]',
+			]
+		);
+	}
+
+
+	/**
+	 * @return array
+	 */
+	protected function getCsvEnums(): array {
+		return [
+			['title' => 'Station classifications', 'options' => MeteoStationClassificationQueries::getOptionList('value')]
+		];
 	}
 
 

@@ -783,7 +783,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 
 	/**
-	 * Return an example xml file for data provider "BMLRT" (Austrian hydrological service)
+	 * Return an example xml file for operator "BMLRT" (Austrian hydrological service)
 	 *
 	 * @return string example xml
 	 */
@@ -880,7 +880,7 @@ XML;
 
 
 	/**
-	 * Return an example xml file for data provider "LfU" (German hydrological service)
+	 * Return an example xml file for operator "LfU" (German hydrological service)
 	 *
 	 * @return string example xml
 	 */
@@ -939,7 +939,7 @@ XML;
 
 
 	/**
-	 * Return an example xml file for data provider "ARSO" (Slowenian hydrological and meteorological service)
+	 * Return an example xml file for operator "ARSO" (Slowenian hydrological and meteorological service)
 	 *
 	 * @return string example xml
 	 */

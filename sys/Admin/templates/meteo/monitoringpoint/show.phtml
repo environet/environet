@@ -1,6 +1,9 @@
 <?php include __DIR__ . '../../../layouts/before_app.phtml'; ?>
-<div class="card">
-    <h1>Meteo monitoring point</h1>
+<div class="card showPage">
+	<?=includeTemplatePart('crud_show_header.phtml', get_defined_vars() + [
+		'editUrl' => '/admin/meteo/monitoring-points/edit?id='.$record['id'],
+	]);?>
+
     <dl class="row">
         <dt class="col-sm-3">ID</dt>
         <dd class="col-sm-9">#<?=$record['id'] ?? '';?></dd>
@@ -8,50 +11,58 @@
         <dt class="col-sm-3">Name</dt>
         <dd class="col-sm-9"><?=$record['name'] ?? '';?></dd>
 
-        <dt class="col-sm-3">eucd_pst</dt>
+        <dt class="col-sm-3">EUCD PSD</dt>
         <dd class="col-sm-9"><?=$record['eucd_pst'] ?? '';?></dd>
 
-        <dt class="col-sm-3">ncd_pst</dt>
+        <dt class="col-sm-3">NCD PST</dt>
         <dd class="col-sm-9"><?=$record['ncd_pst'] ?? '';?></dd>
 
-        <dt class="col-sm-3">lat</dt>
+		<dt class="col-sm-3">Operator</dt>
+		<dd class="col-sm-9">
+		    <?php if(!empty($record['operator'])): ?>
+				<a href="/admin/operators?id=<?= $record['operator']['id'] ;?>">#<?= $record['operator']['id'] ?></a>
+				<span><?=$record['operator']['name'] ?? null;?></span>
+		    <?php endif; ?>
+		</dd>
+
+		<dt class="col-sm-3">Country</dt>
+		<dd class="col-sm-9"><?=$record['country'] ?? '';?></dd>
+
+		<dt class="col-sm-3">Location</dt>
+		<dd class="col-sm-9"><?=$record['location'] ?? '';?></dd>
+
+		<dt class="col-sm-3">River basin</dt>
+		<dd class="col-sm-9"><?=$record['river_basin'] ?? '';?></dd>
+
+        <dt class="col-sm-3">Latitude coordinate</dt>
         <dd class="col-sm-9"><?=$record['lat'] ?? '';?></dd>
 
-        <dt class="col-sm-3">long</dt>
+        <dt class="col-sm-3">Longitude coordinate</dt>
         <dd class="col-sm-9"><?=$record['long'] ?? '';?></dd>
 
-        <dt class="col-sm-3">z</dt>
+        <dt class="col-sm-3">Z coordinate</dt>
         <dd class="col-sm-9"><?=$record['z'] ?? '';?></dd>
 
-        <dt class="col-sm-3">altitude</dt>
+        <dt class="col-sm-3">Altitude</dt>
         <dd class="col-sm-9"><?=$record['altitude'] ?? '';?></dd>
 
-        <dt class="col-sm-3">maplat</dt>
+        <dt class="col-sm-3">Map Latitude coordinate</dt>
         <dd class="col-sm-9"><?=$record['maplat'] ?? '';?></dd>
 
-        <dt class="col-sm-3">maplong</dt>
+        <dt class="col-sm-3">Map Longitude coordinate</dt>
         <dd class="col-sm-9"><?=$record['maplong'] ?? '';?></dd>
 
-        <dt class="col-sm-3">river_basin</dt>
-        <dd class="col-sm-9"><?=$record['river_basin'] ?? '';?></dd>
-
-        <dt class="col-sm-3">start_time</dt>
+        <dt class="col-sm-3">Start time</dt>
         <dd class="col-sm-9"><?=$record['start_time'] ?? '';?></dd>
 
-        <dt class="col-sm-3">end_time</dt>
+        <dt class="col-sm-3">End time</dt>
         <dd class="col-sm-9"><?=$record['end_time'] ?? '';?></dd>
 
-        <dt class="col-sm-3">utc_offset</dt>
+        <dt class="col-sm-3">UTC Offset</dt>
         <dd class="col-sm-9"><?=$record['utc_offset'] ?? '';?></dd>
 
-        <dt class="col-sm-3">vertical_reference</dt>
+        <dt class="col-sm-3">Vertical reference</dt>
         <dd class="col-sm-9"><?=$record['vertical_reference'] ?? '';?></dd>
-
-        <dt class="col-sm-3">country</dt>
-        <dd class="col-sm-9"><?=$record['country'] ?? '';?></dd>
-
-        <dt class="col-sm-3">location</dt>
-        <dd class="col-sm-9"><?=$record['location'] ?? '';?></dd>
 
         <dt class="col-sm-3">Station classification</dt>
         <dd class="col-sm-9">
@@ -59,14 +70,6 @@
                 <a href="/admin/meteo/station-classifications?id=<?= $record['classification']['id'] ;?>">#<?= $record['classification']['id'] ?></a>
                 <span><?=$record['classification']['value'] ?? null;?></span>
             <?php endif; ?>
-        </dd>
-
-        <dt class="col-sm-3">Operator</dt>
-        <dd class="col-sm-9">
-			<?php if(!empty($record['operator'])): ?>
-                <a href="/admin/data-providers?id=<?= $record['operator']['id'] ;?>">#<?= $record['operator']['id'] ?></a>
-                <span><?=$record['operator']['name'] ?? null;?></span>
-			<?php endif; ?>
         </dd>
 
 		<dt class="col-sm-3">Observerd properties</dt>

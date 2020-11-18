@@ -24,6 +24,11 @@ use Exception;
  */
 abstract class CrudPage extends BasePage {
 
+	const PAGE_LIST = 'list';
+	const PAGE_ADD = 'add';
+	const PAGE_EDIT = 'edit';
+	const PAGE_SHOW = 'show';
+
 	/**
 	 * Relative path to the index template file.
 	 * @var string
@@ -59,6 +64,47 @@ abstract class CrudPage extends BasePage {
 	 * @var string
 	 */
 	protected $listPagePath;
+
+
+	/**
+	 * @param bool $plural
+	 *
+	 * @return string|null
+	 */
+	abstract protected function getEntityName(bool $plural = false): string;
+
+
+	/**
+	 * Build the title of the page
+	 *
+	 * @param string     $pageType
+	 * @param array|null $record
+	 *
+	 * @return string
+	 */
+	protected function getTitle(string $pageType, ?array $record = null) {
+		$recordTitle = [];
+		if ($record) {
+			if (!empty($record['id'])) {
+				$recordTitle[] = '#'.$record['id'];
+			}
+			if (!empty($record['name'])) {
+				$recordTitle[] = $record['name'];
+			}
+		}
+		$recordTitle = implode(' - ', $recordTitle);
+		switch ($pageType) {
+			case self::PAGE_LIST:
+				return ucfirst($this->getEntityName(true));
+			case self::PAGE_ADD:
+				return 'Add '.$this->getEntityName();
+			case self::PAGE_SHOW:
+				$name = ucfirst($this->getEntityName());
+				return "$name: $recordTitle";
+			case self::PAGE_EDIT:
+				return "Edit {$this->getEntityName()}: $recordTitle";
+		}
+	}
 
 
 	/**
@@ -107,7 +153,12 @@ abstract class CrudPage extends BasePage {
 			$records = [];
 		}
 
-		return $this->render($this->indexTemplate, compact('records', 'totalCount', 'currentPage', 'maxPage', 'searchString'));
+		$this->updateListPageState();
+
+		$listFilters = $this->getListFilters();
+		$pageTitle = $this->getTitle(self::PAGE_LIST);
+
+		return $this->render($this->indexTemplate, compact('records', 'totalCount', 'currentPage', 'maxPage', 'searchString', 'listFilters', 'pageTitle'));
 	}
 
 
@@ -138,7 +189,9 @@ abstract class CrudPage extends BasePage {
 			throw new PermissionException("You don't have permission to view record with id: '$id'");
 		}
 
-		return $this->render($this->showTemplate, compact('record'));
+		$listPage = $this->getListPageLinkWithState();
+		$pageTitle = $this->getTitle(self::PAGE_SHOW, $record);
+		return $this->render($this->showTemplate, compact('record', 'listPage', 'pageTitle'));
 	}
 
 
@@ -172,7 +225,7 @@ abstract class CrudPage extends BasePage {
 		$this->queriesClass::save($postData, $id);
 		$this->addMessage($this->successAddMessage, self::MESSAGE_SUCCESS);
 
-		return $this->redirect($this->listPagePath);
+		return $this->redirect($this->getListPageLinkWithState());
 	}
 
 
@@ -283,7 +336,7 @@ abstract class CrudPage extends BasePage {
 			$this->addMessage($exception->getMessage(), self::MESSAGE_ERROR);
 		}
 
-		return $this->redirect($this->listPagePath);
+		return $this->redirect($this->getListPageLinkWithState());
 	}
 
 
@@ -296,9 +349,67 @@ abstract class CrudPage extends BasePage {
 	 * @throws RenderException
 	 */
 	protected function renderForm(array $record = null): Response {
-		$context = array_merge(['record' => $record], $this->formContext());
+		$pageTitle = $this->getTitle($record ? self::PAGE_EDIT : self::PAGE_ADD, $record);
+
+		$context = array_merge([
+			'record' => $record,
+			'listPage' => $this->getListPageLinkWithState(),
+			'pageTitle' => $pageTitle
+		], $this->formContext());
 
 		return $this->render($this->formTemplate, $context);
+	}
+
+
+	/**
+	 * Return key of base path of CRUD
+	 */
+	protected function getBasePathKey(): string {
+		$pathParts = $this->request->getPathParts();
+		$pathParts = array_filter($pathParts, function ($part) {
+			return !in_array($part, ['show', 'edit', 'add', 'delete']);
+		});
+		return implode('_', $pathParts);
+	}
+
+
+	/**
+	 * Read list page state from session
+	 */
+	protected function getListPageState(): ?array {
+		return $_SESSION['listPageStates'][$this->getBasePathKey()] ?? null;
+	}
+
+
+	/**
+	 * Update list page state in session
+	 */
+	protected function updateListPageState() {
+		$params = $this->request->getQueryParams();
+		$stateFields = ['page', 'order_by', 'order_dir', 'search'];
+		if (($filterFields = $this->getListFilters())) {
+			$stateFields = array_merge($stateFields, array_keys($filterFields));
+		}
+		$params = array_filter($params, function ($param) use ($stateFields) {
+			return !in_array($param, $stateFields);
+		});
+		$_SESSION['listPageStates'][$this->getBasePathKey()] = $params;
+	}
+
+
+	/**
+	 * Get url of list page with state
+	 */
+	protected function getListPageLinkWithState(): string {
+		$path = $this->listPagePath;
+		if (($listPageState = $this->getListPageState())) {
+			$separator = strpos($path, '?') !== false ? '&' : '?';
+			$listPageState = array_filter(array_map(function ($item) {
+				return urlencode($item);
+			}, $listPageState));
+			$path .= $listPageState ? $separator.http_build_query($listPageState) : '';
+		}
+		return $path;
 	}
 
 
@@ -350,6 +461,15 @@ abstract class CrudPage extends BasePage {
 
 	protected function modifyListQuery(Select $query) {
 		return true;
+	}
+
+
+	/**
+	 * Get array of filter configirations for list page
+	 * @return array|null
+	 */
+	protected function getListFilters(): ?array {
+		return null;
 	}
 
 

@@ -47,6 +47,16 @@ class StationClassificationCrud extends CrudPage {
 
 
 	/**
+	 * @param bool $plural
+	 *
+	 * @return string
+	 */
+	protected function getEntityName(bool $plural = false): string {
+		return $plural ? 'hydro station classifications' : 'hydro station classification';
+	}
+
+
+	/**
 	 * @inheritDoc
 	 */
 	protected function validateData(array $data): bool {

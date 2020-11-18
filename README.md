@@ -19,7 +19,7 @@ This document is the documentation of the Environet system.
         * [Dashboard](#25_3_dashboard)
         * [Users](#25_4_users)
         * [Groups](#25_5_groups)
-        * [Data providers](#25_6_data_providers)
+        * [Operators](#25_6_operators)
         * [Hydro](#25_7_1_hydro)
             * [Hydro monitoring points](#25_7_2_hydro_monitoring_point)
             * [Hydro observed properties](#25_7_3_hydro_observed_properties)
@@ -643,22 +643,22 @@ First time you have to detach these relations and after that you can delete the 
 
 Path: `/admin/groups/delete?id=[group identifier]`
 
-<a name="25_6_data_providers"></a>
+<a name="25_6_operators"></a>
 
-## Data providers
-Here you can handle the data providers what has already added to the  system.
+## Operators
+Here you can handle the operators what has already added to the  system.
 
-Path: `/admin/data-providers`
+Path: `/admin/operators`
 
 Searchable: name, address, email
 
-#### New data provider
+#### New operator
 
-You can add new data provider if you click the "Add data provider" button on the top left of the data provider's list page.
+You can add new operator if you click the "Add operator" button on the top left of the operator's list page.
 
-Path: `/admin/data-providers/add`
+Path: `/admin/operators/add`
 
-On the data providers creating page, you have to fill the following mandatory fields:
+On the operators creating page, you have to fill the following mandatory fields:
 
 Operator data
  - name
@@ -673,25 +673,25 @@ User data
 
 The user data is necessary because of each operator has to be assigned to at least one user.
 
-#### Updating data provider
+#### Updating operator
 
-You can select a data provider to update if you click the "Pencil" icon at the end of the specific row.
+You can select a operator to update if you click the "Pencil" icon at the end of the specific row.
 
-Path: `/admin/data-providers/edit?id=[data-provider identifier]`
+Path: `/admin/operators/edit?id=[operator identifier]`
 
-Here you can change all of operator's data and you can assign  more users or groups to the specific dataprovider.
+Here you can change all of operator's data and you can assign  more users or groups to the specific operator.
 
-#### Data provider show page
+#### Operator show page
 
-You can select a data provider to show if you click the "Eye" icon at the end of the specific row.
+You can select a operator to show if you click the "Eye" icon at the end of the specific row.
 
-Path: `/admin/data-providers/show?id=[data-provider identifier]`
+Path: `/admin/operators/show?id=[operator identifier]`
 
-Here you can see the stored data of the data providers and its relations to direction of users and groups.
+Here you can see the stored data of the operators and its relations to direction of users and groups.
 
-#### Data provider deleting
+#### Operator deleting
 
-You cannot delete any data provider.
+You cannot delete any operator.
 
 <a name="25_7_1_hydro"></a>
 
