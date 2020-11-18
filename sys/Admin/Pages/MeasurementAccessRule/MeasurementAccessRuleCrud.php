@@ -82,6 +82,7 @@ class MeasurementAccessRuleCrud extends CrudPage {
 
 	/**
 	 * @param Select $query
+	 *
 	 * @return bool|void
 	 * @throws QueryException
 	 */
@@ -104,8 +105,10 @@ class MeasurementAccessRuleCrud extends CrudPage {
 	protected function userCanView($id) {
 		if (in_array($this->readOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())) {
 			$operatorIds = UserQueries::getOperatorsOfUser($this->request->getIdentity()->getId());
+
 			return in_array($id, $operatorIds);
 		}
+
 		return true;
 	}
 
@@ -156,8 +159,8 @@ class MeasurementAccessRuleCrud extends CrudPage {
 			$meteoQuery->where('operatorid = :operatorid')->addParameter('operatorid', $operator);
 		}
 		if ($search) {
-			$hydroQuery->where('name LIKE %'.$search.'%');
-			$meteoQuery->where('name LIKE %'.$search.'%');
+			$hydroQuery->where('name LIKE %' . $search . '%');
+			$meteoQuery->where('name LIKE %' . $search . '%');
 		}
 		$meteoPoints = $meteoQuery->run();
 		$hydroPoints = $hydroQuery->run();
@@ -165,15 +168,16 @@ class MeasurementAccessRuleCrud extends CrudPage {
 		foreach ($hydroPoints as $hydroPoint) {
 			$results[] = [
 				'value' => $hydroPoint['id'],
-				'name' => $hydroPoint['name']
+				'name'  => $hydroPoint['name']
 			];
 		}
 		foreach ($meteoPoints as $meteoPoint) {
 			$results[] = [
 				'value' => $meteoPoint['id'],
-				'name' => $meteoPoint['name']
+				'name'  => $meteoPoint['name']
 			];
 		}
+
 		return new Response(json_encode($results));
 	}
 
@@ -187,11 +191,11 @@ class MeasurementAccessRuleCrud extends CrudPage {
 	public function operatorProperties() {
 		$operator = trim($this->request->getQueryParam('operator'));
 		$hydroQuery = (new Select())->select(['DISTINCT(symbol)', 'hydro_observed_property.id'])->from('hydro_observed_property')
-			->join('hydropoint_observed_property', 'hydropoint_observed_property.observed_propertyid = hydro_observed_property.id')
-			->join('hydropoint', 'hydropoint.id = hydropoint_observed_property.mpointid');
+									->join('hydropoint_observed_property', 'hydropoint_observed_property.observed_propertyid = hydro_observed_property.id')
+									->join('hydropoint', 'hydropoint.id = hydropoint_observed_property.mpointid');
 		$meteoQuery = (new Select())->select(['DISTINCT(symbol)', 'meteo_observed_property.id'])->from('meteo_observed_property')
-			->join('meteopoint_observed_property', 'meteopoint_observed_property.meteo_observed_propertyid = meteo_observed_property.id')
-			->join('meteopoint', 'meteopoint.id = meteopoint_observed_property.meteopointid');
+									->join('meteopoint_observed_property', 'meteopoint_observed_property.meteo_observed_propertyid = meteo_observed_property.id')
+									->join('meteopoint', 'meteopoint.id = meteopoint_observed_property.meteopointid');
 		if ($operator) {
 			$hydroQuery->where('hydropoint.operatorid = :operatorid')->addParameter('operatorid', $operator);
 			$meteoQuery->where('meteopoint.operatorid = :operatorid')->addParameter('operatorid', $operator);
@@ -202,13 +206,13 @@ class MeasurementAccessRuleCrud extends CrudPage {
 		foreach ($hydroProperties as $hydroProperty) {
 			$results[] = [
 				'value' => $hydroProperty['id'],
-				'name' => $hydroProperty['symbol']
+				'name'  => $hydroProperty['symbol']
 			];
 		}
 		foreach ($meteoProperties as $meteoProperty) {
 			$results[] = [
 				'value' => $meteoProperty['id'],
-				'name' => $meteoProperty['symbol']
+				'name'  => $meteoProperty['symbol']
 			];
 		}
 

@@ -7,8 +7,10 @@ use Environet\Sys\General\Db\HydroObservedPropertyQueries;
 use Environet\Sys\General\Db\HydroStationClassificationQueries;
 use Environet\Sys\General\Db\OperatorQueries;
 use Environet\Sys\General\Db\RiverbankQueries;
+use Environet\Sys\General\Db\UserQueries;
 use Environet\Sys\General\Db\WaterbodyQueries;
 use Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud as MonitoringPointCrudBase;
+use Environet\Sys\General\Exceptions\QueryException;
 
 /**
  * Class MonitoringPointCrud
@@ -53,6 +55,11 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	/**
 	 * @var string
 	 */
+	protected $createOwnPermissionName = 'admin.hydro.monitoringpoints.createown';
+
+	/**
+	 * @var string
+	 */
 	protected $updateOwnPermissionName = 'admin.hydro.monitoringpoints.updateown';
 
 
@@ -76,11 +83,12 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 * @inheritDoc
 	 *
 	 * @return array
+	 * @throws QueryException
 	 */
 	protected function formContext(): array {
 		return [
 			'classifications'    => HydroStationClassificationQueries::getOptionList('value'),
-			'operators'          => OperatorQueries::getOptionList('name'),
+			'operators'          => $this->getOperatorList(),
 			'riverbanks'         => RiverbankQueries::getOptionList('value'),
 			'waterbodies'        => WaterbodyQueries::getOptionList('cname', 'european_river_code'),
 			'observedProperties' => HydroObservedPropertyQueries::getOptionList('symbol'),

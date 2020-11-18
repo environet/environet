@@ -1,18 +1,31 @@
 <?php include 'layouts/before_content.phtml'; ?>
 
-	<form id="loginForm" action="" method="POST">
-        <?php include __DIR__.'/parts/messages.phtml'; //Render flash messages?>
-        <h1><?=__('Login');?></h1>
-        <div class="form-group">
-            <label for="username"><?=__('Username');?></label>
-            <input class="form-control" type="text" name="username"/>
-        </div>
-        <div class="form-group">
-            <label for="username"><?=__('Password');?></label>
-            <input class="form-control" type="password" name="password"/>
-        </div>
-		<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
-		<input type="submit" class="btn btn-primary" value="Login">
-	</form>
+<div class="login-page">
+	<h1 class="login-title">DAREFFORT - Environet login</h1>
+	<div class="login-container">
+		<div class="login-image">
+			<img src="/img/dareffort_bg.jpg" alt="DAREFFORT">
+		</div>
+		<div class="login-form-container">
+			<img class="dareffort-logo" src="/img/dareffort_logo.png" alt="DAREFFORT">
+			<form class="login-form" action="" method="POST">
+				<?php include __DIR__.'/parts/messages.phtml'; //Render flash messages?>
+				<div class="form-group">
+					<label for="username"><?=__('Username');?></label>
+					<input class="form-control" type="text" name="username"/>
+				</div>
+				<div class="form-group">
+					<label for="username"><?=__('Password');?></label>
+					<input class="form-control" type="password" name="password"/>
+				</div>
+				<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
+				<input type="submit" class="btn btn-primary" value="Login">
+			</form>
+		</div>
+
+	</div>
+</div>
+
+
 
 <?php include 'layouts/after_content.phtml'; ?>

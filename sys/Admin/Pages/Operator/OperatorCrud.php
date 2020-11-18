@@ -5,7 +5,6 @@ namespace Environet\Sys\Admin\Pages\Operator;
 use Environet\Sys\Admin\Pages\CrudPage;
 use Environet\Sys\General\Db\GroupQueries;
 use Environet\Sys\General\Db\OperatorQueries;
-use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\UserQueries;
 use Environet\Sys\General\Exceptions\QueryException;
@@ -192,47 +191,6 @@ class OperatorCrud extends CrudPage {
 		if (!validate($data, 'url', REGEX_URL)) {
 			$this->addMessage(__('URL format is invalid'), self::MESSAGE_ERROR);
 			$valid = false;
-		}
-
-		$id = $this->request->getQueryParam('id');
-		if (is_null($id)) {
-			// insert validation
-
-			//Validate user name - required, and pattern
-			if (!validate($data, 'user_name', REGEX_NAME, true)) {
-				$this->addMessage(__('User name is empty, or format is invalid'), self::MESSAGE_ERROR);
-				$valid = false;
-			}
-
-			//Validate user email - required and pattern
-			if (!validate($data, 'user_email', REGEX_EMAIL, true)) {
-				$this->addMessage(__('User e-mail address is empty, or format is invalid'), self::MESSAGE_ERROR);
-				$valid = false;
-			} else {
-				$userWithEmail = (new Select())->select('COUNT(*)')->from('users')
-											   ->where('email = :email')
-											   ->addParameter(':email', $data['user_email'])
-											   ->run(Query::FETCH_COUNT);
-				if ($userWithEmail > 0) {
-					$this->addMessage(__('User with this e-mail already exists'), self::MESSAGE_ERROR);
-					$valid = false;
-				}
-			}
-
-			//Validate username - required and pattern, and unique
-			if (!validate($data, 'user_username', REGEX_USERNAME, true)) {
-				$this->addMessage(__('Username is empty, or format is invalid'), self::MESSAGE_ERROR);
-				$valid = false;
-			} else {
-				$userWithUsername = (new Select())->select('COUNT(*)')->from('users')
-												  ->where('username = :username')
-												  ->addParameter(':username', $data['user_username'])
-												  ->run(Query::FETCH_COUNT);
-				if ($userWithUsername > 0) {
-					$this->addMessage(__('User with this username already exists'), self::MESSAGE_ERROR);
-					$valid = false;
-				}
-			}
 		}
 
 		return $valid;

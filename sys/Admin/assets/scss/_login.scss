@@ -1,0 +1,54 @@
+.login-page {
+	align-items: center;
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	justify-content: center;
+	width: 100%;
+}
+
+.login-title {
+	margin-bottom: 1em;
+	text-align: center;
+	width: 100%;
+}
+
+.login-container {
+	background-color: $white;
+	border: 1px solid $gray69;
+	border-radius: 10px;
+	box-shadow: 5px 5px 20px;
+	display: flex;
+	max-width: 1000px;
+	overflow: hidden;
+	width: 100%;
+}
+
+.login-image {
+	flex-basis: 70%;
+	position: relative;
+
+	img {
+		height: 100% !important;
+		object-fit: cover;
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+	}
+}
+
+.login-form-container {
+	flex-basis: 30%;
+	padding-bottom: 2em;
+	padding-top: 2em;
+}
+
+.login-form {
+	padding: 0 $content-padding-horizontal;
+	margin: 0 auto;
+
+	.dareffort-logo {
+		width: 100%;
+	}
+}

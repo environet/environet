@@ -68,10 +68,10 @@ class OperatorQueries extends BaseQueries {
 	/**
 	 * Get all users of operator.
 	 * It gets the directly attached users, and merge with the inherited (by groups) users.
-	 * A new static key will be attached to users's data, it's the 'connection_type', which can be 'direct', 'group', and 'both'.
+	 * A new static key will be attached to users' data, it's the 'connection_type', which can be 'direct', 'group', and 'both'.
 	 *
 	 * @param int   $operatorId Id of the operator
-	 * @param array $groupIds   Array of the operators's group ids
+	 * @param array $groupIds   Array of the operators' group ids
 	 *
 	 * @return array Array of merged users
 	 * @throws QueryException
@@ -194,16 +194,6 @@ class OperatorQueries extends BaseQueries {
 			self::saveUsers($data['form_users'], $id);
 			self::saveGroups($data['form_groups'], $id);
 		} else {
-			// Save user data
-			$userId = (new Insert())
-				->table('users')
-				->addSingleData([
-					'name'     => $data['user_name'] ?? null,
-					'email'    => $data['user_email'] ?? null,
-					'username' => $data['user_username'] ?? null,
-					'password' => isset($data['user_password']) ? password_hash($data['user_password'], PASSWORD_DEFAULT) : null
-				])->run();
-
 			// Save operator data
 			$operatorId = (new Insert())->table('operator')->addSingleData($operatorData)->run();
 
@@ -211,24 +201,9 @@ class OperatorQueries extends BaseQueries {
 				'id' => $operatorId
 			]));
 
-			// Connect user with operator
-			(new Insert())
-				->table('operator_users')
-				->addSingleData([
-					'usersid'    => $userId,
-					'operatorid' => $operatorId
-				])->run();
-
-			// If public key is set, create a new public key entry
-			if (!empty($data['public_key'])) {
-				(new Insert())
-					->table('public_keys')
-					->addSingleData([
-						'usersid'    => $userId,
-						'public_key' => $data['public_key'],
-						'revoked'    => false
-					])->run();
-			}
+			// Connect user and groups with operator
+			self::saveUsers($data['form_users'], $operatorId);
+			self::saveGroups($data['form_groups'], $operatorId);
 		}
 	}
 
