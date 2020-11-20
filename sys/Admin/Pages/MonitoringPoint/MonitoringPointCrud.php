@@ -118,6 +118,11 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 			$query->where('country = :country')->addParameter('country', $this->request->getQueryParam('country'));
 		}
 
+		if ($this->request->getQueryParam('is_active') !== null) {
+			$value = $this->request->getQueryParam('is_active') === '_0' ? false : true;
+			$query->where('is_active = :isActive')->addParameter('isActive', $value);
+		}
+
 		$query->join('operator', "operator.id = {$this->queriesClass::$tableName}.operatorid");
 		$query->select('operator.name as operator');
 	}
@@ -406,6 +411,11 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 			->run(Query::FETCH_COLUMN));
 
 		return [
+			'is_active' => [
+				'label'    => 'Is active',
+				'options'  => ['_0' => 'Inactive', '_1' => 'Active'],
+				'selected' => $this->request->getQueryParam('is_active') ?? null
+			],
 			'country' => [
 				'label'    => 'Country',
 				'options'  => array_combine($countries, $countries),

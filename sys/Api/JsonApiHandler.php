@@ -51,8 +51,9 @@ class JsonApiHandler extends ApiHandler {
 
 					$results = [];
 
-					$results['hydro'] = HydroMonitoringPointQueries::all($operatorIds);
-					$results['meteo'] = MeteoMonitoringPointQueries::all($operatorIds);
+					//Find active points only
+					$results['hydro'] = HydroMonitoringPointQueries::all($operatorIds, true);
+					$results['meteo'] = MeteoMonitoringPointQueries::all($operatorIds, true);
 					return $this->jsonResponse(json_encode($results), 200);
 				default:
 					throw new HttpNotFoundException('API route not found');
