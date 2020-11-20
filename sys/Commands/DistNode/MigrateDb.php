@@ -54,7 +54,8 @@ class MigrateDb extends DbCommand {
 			'createUploadPermissions',
 			'createRiverbankPermissions',
 			'createResultUniqueIndexesDeleteDuplicates',
-			'renameDataProviderPermissions'
+			'renameDataProviderPermissions',
+			'addIsActiveColumns'
 		];
 		ini_set('memory_limit', - 1);
 
@@ -251,6 +252,39 @@ class MigrateDb extends DbCommand {
 		$schemaPath = SRC_PATH . '/database/rename_data_provider_permissions.sql';
 
 		return $this->runSqlFile($schemaPath, $output);
+	}
+
+
+	/**
+	 * Add is_active column
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function addIsActiveColumns(array &$output): int {
+		$return = -1;
+
+		$count = $this->connection->runQuery(
+			'SELECT COUNT(*) FROM information_schema.columns WHERE TABLE_NAME = :tableName AND column_name = :columnName;',
+			['tableName' => 'hydropoint', 'columnName' => 'is_active']
+		)->fetch(PDO::FETCH_COLUMN);
+		if (!$count) {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE hydropoint ADD COLUMN is_active boolean DEFAULT true NOT NULL", []);
+		}
+
+		$count = $this->connection->runQuery(
+			'SELECT COUNT(*) FROM information_schema.columns WHERE TABLE_NAME = :tableName AND column_name = :columnName;',
+			['tableName' => 'meteopoint', 'columnName' => 'is_active']
+		)->fetch(PDO::FETCH_COLUMN);
+		if (!$count) {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE meteopoint ADD COLUMN is_active boolean DEFAULT true NOT NULL", []);
+		}
+
+		return $return;
 	}
 
 

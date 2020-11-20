@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.1
--- Dumped by pg_dump version 12.1
+-- Dumped from database version 12.4 (Debian 12.4-1.pgdg100+1)
+-- Dumped by pg_dump version 12.5 (Debian 12.5-1.pgdg100+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -17,7 +17,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: dareffort; Type: DATABASE; Schema: -; Owner: -
+-- Name: environet; Type: DATABASE; Schema: -; Owner: -
 --
 
 
@@ -46,6 +46,18 @@ CREATE SCHEMA IF NOT EXISTS public;
 COMMENT ON SCHEMA public IS 'standard public schema';
 
 
+--
+-- Name: discharge_measurement_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.discharge_measurement_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -55,11 +67,11 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.discharge_measurement (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('public.discharge_measurement_id_seq'::regclass) NOT NULL,
     operatorid integer NOT NULL,
     discharge_measurement_equipmentid integer NOT NULL,
     mpointid integer NOT NULL,
-    date timestamp(6) without time zone NOT NULL,
+    date timestamp without time zone NOT NULL,
     q numeric(20,10) NOT NULL,
     h numeric(20,10) NOT NULL,
     width numeric(20,10) NOT NULL,
@@ -143,11 +155,23 @@ COMMENT ON COLUMN public.discharge_measurement.temperature IS 'Water temperature
 
 
 --
+-- Name: discharge_measurement_equipment_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.discharge_measurement_equipment_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
 -- Name: discharge_measurement_equipment; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.discharge_measurement_equipment (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('public.discharge_measurement_equipment_id_seq'::regclass) NOT NULL,
     description character varying(255) NOT NULL
 );
 
@@ -160,43 +184,15 @@ COMMENT ON COLUMN public.discharge_measurement_equipment.description IS 'Descrip
 
 
 --
--- Name: discharge_measurement_equipment_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: event_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.discharge_measurement_equipment_id_seq
-    AS integer
+CREATE SEQUENCE public.event_logs_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
-
---
--- Name: discharge_measurement_equipment_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.discharge_measurement_equipment_id_seq OWNED BY public.discharge_measurement_equipment.id;
-
-
---
--- Name: discharge_measurement_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.discharge_measurement_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: discharge_measurement_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.discharge_measurement_id_seq OWNED BY public.discharge_measurement.id;
 
 
 --
@@ -204,7 +200,7 @@ ALTER SEQUENCE public.discharge_measurement_id_seq OWNED BY public.discharge_mea
 --
 
 CREATE TABLE public.event_logs (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('public.event_logs_id_seq'::regclass) NOT NULL,
     event_type character varying(50) NOT NULL,
     data text,
     created_at timestamp without time zone,
@@ -221,11 +217,10 @@ COMMENT ON COLUMN public.event_logs.event_type IS 'Identifier of event type';
 
 
 --
--- Name: event_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: group_measurement_access_rules_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.event_logs_id_seq
-    AS integer
+CREATE SEQUENCE public.group_measurement_access_rules_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -234,10 +229,15 @@ CREATE SEQUENCE public.event_logs_id_seq
 
 
 --
--- Name: event_logs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: group_measurement_access_rules; Type: TABLE; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.event_logs_id_seq OWNED BY public.event_logs.id;
+CREATE TABLE public.group_measurement_access_rules (
+    id integer DEFAULT nextval('public.group_measurement_access_rules_id_seq'::regclass) NOT NULL,
+    measurement_access_rule_id integer,
+    group_id integer,
+    "interval" interval
+);
 
 
 --
@@ -258,11 +258,23 @@ COMMENT ON TABLE public.group_permissions IS 'Enabled permissions for groups';
 
 
 --
+-- Name: groups_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.groups_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
 -- Name: groups; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.groups (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('public.groups_id_seq'::regclass) NOT NULL,
     name character varying(255) NOT NULL
 );
 
@@ -282,11 +294,10 @@ COMMENT ON COLUMN public.groups.name IS 'Unique name of group';
 
 
 --
--- Name: groups_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: hydro_observed_property_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.groups_id_seq
-    AS integer
+CREATE SEQUENCE public.hydro_observed_property_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -295,18 +306,11 @@ CREATE SEQUENCE public.groups_id_seq
 
 
 --
--- Name: groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.groups_id_seq OWNED BY public.groups.id;
-
-
---
 -- Name: hydro_observed_property; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.hydro_observed_property (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('public.hydro_observed_property_id_seq'::regclass) NOT NULL,
     symbol character varying(32) NOT NULL,
     type smallint NOT NULL,
     description character varying(64) NOT NULL,
@@ -343,11 +347,10 @@ COMMENT ON COLUMN public.hydro_observed_property.unit IS 'Unit of parameter, e.g
 
 
 --
--- Name: hydro_observed_property_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: hydro_result_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.hydro_observed_property_id_seq
-    AS integer
+CREATE SEQUENCE public.hydro_result_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -356,22 +359,15 @@ CREATE SEQUENCE public.hydro_observed_property_id_seq
 
 
 --
--- Name: hydro_observed_property_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.hydro_observed_property_id_seq OWNED BY public.hydro_observed_property.id;
-
-
---
 -- Name: hydro_result; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.hydro_result (
-    id bigint NOT NULL,
+    id bigint DEFAULT nextval('public.hydro_result_id_seq'::regclass) NOT NULL,
     time_seriesid bigint NOT NULL,
-    "time" timestamp(6) without time zone NOT NULL,
+    "time" timestamp without time zone NOT NULL,
     value numeric(20,10) NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
+    created_at timestamp without time zone NOT NULL,
     is_forecast boolean DEFAULT false NOT NULL
 );
 
@@ -391,10 +387,10 @@ COMMENT ON COLUMN public.hydro_result.value IS 'Value of the measured property, 
 
 
 --
--- Name: hydro_result_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: hydro_time_series_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.hydro_result_id_seq
+CREATE SEQUENCE public.hydro_time_series_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -403,23 +399,16 @@ CREATE SEQUENCE public.hydro_result_id_seq
 
 
 --
--- Name: hydro_result_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.hydro_result_id_seq OWNED BY public.hydro_result.id;
-
-
---
 -- Name: hydro_time_series; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.hydro_time_series (
-    id bigint NOT NULL,
+    id bigint DEFAULT nextval('public.hydro_time_series_id_seq'::regclass) NOT NULL,
     observed_propertyid integer NOT NULL,
     mpointid integer NOT NULL,
-    phenomenon_time_begin timestamp(6) without time zone,
-    phenomenon_time_end timestamp(6) without time zone,
-    result_time timestamp(6) without time zone NOT NULL
+    phenomenon_time_begin timestamp without time zone,
+    phenomenon_time_end timestamp without time zone,
+    result_time timestamp without time zone NOT NULL
 );
 
 
@@ -452,10 +441,10 @@ COMMENT ON COLUMN public.hydro_time_series.result_time IS 'Result time, when tim
 
 
 --
--- Name: hydro_time_series_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: hydropoint_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.hydro_time_series_id_seq
+CREATE SEQUENCE public.hydropoint_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -464,18 +453,11 @@ CREATE SEQUENCE public.hydro_time_series_id_seq
 
 
 --
--- Name: hydro_time_series_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.hydro_time_series_id_seq OWNED BY public.hydro_time_series.id;
-
-
---
 -- Name: hydropoint; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.hydropoint (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('public.hydropoint_id_seq'::regclass) NOT NULL,
     station_classificationid integer,
     operatorid integer,
     bankid integer,
@@ -494,10 +476,11 @@ CREATE TABLE public.hydropoint (
     river_kilometer numeric(20,10),
     catchment_area numeric(20,10),
     gauge_zero numeric(20,10),
-    start_time timestamp(6) without time zone,
-    end_time timestamp(6) without time zone,
+    start_time timestamp without time zone,
+    end_time timestamp without time zone,
     utc_offset integer,
-    river_basin character varying(64)
+    river_basin character varying(64),
+    is_active boolean DEFAULT true NOT NULL
 );
 
 
@@ -635,37 +618,17 @@ COMMENT ON COLUMN public.hydropoint.river_basin IS 'Name of river basin to which
 
 
 --
--- Name: hydropoint_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.hydropoint_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: hydropoint_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.hydropoint_id_seq OWNED BY public.hydropoint.id;
-
-
---
 -- Name: hydropoint_observed_property; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.hydropoint_observed_property (
     observed_propertyid integer NOT NULL,
     mpointid integer NOT NULL,
-    last_update timestamp(6) without time zone,
+    last_update timestamp without time zone,
     min_value numeric(20,10),
-    min_value_time timestamp(6) without time zone,
+    min_value_time timestamp without time zone,
     max_value numeric(20,10),
-    max_value_time timestamp(6) without time zone
+    max_value_time timestamp without time zone
 );
 
 
@@ -705,11 +668,23 @@ COMMENT ON COLUMN public.hydropoint_observed_property.max_value_time IS 'Time at
 
 
 --
+-- Name: hydrostation_classification_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.hydrostation_classification_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
 -- Name: hydrostation_classification; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.hydrostation_classification (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('public.hydrostation_classification_id_seq'::regclass) NOT NULL,
     value character varying(255) NOT NULL
 );
 
@@ -729,11 +704,10 @@ COMMENT ON COLUMN public.hydrostation_classification.value IS 'String to describ
 
 
 --
--- Name: hydrostation_classification_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: measurement_access_rules_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.hydrostation_classification_id_seq
-    AS integer
+CREATE SEQUENCE public.measurement_access_rules_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -742,10 +716,27 @@ CREATE SEQUENCE public.hydrostation_classification_id_seq
 
 
 --
--- Name: hydrostation_classification_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: measurement_access_rules; Type: TABLE; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.hydrostation_classification_id_seq OWNED BY public.hydrostation_classification.id;
+CREATE TABLE public.measurement_access_rules (
+    id integer DEFAULT nextval('public.measurement_access_rules_id_seq'::regclass) NOT NULL,
+    operator_id integer,
+    monitoringpoint_selector text,
+    observed_property_selector text
+);
+
+
+--
+-- Name: meteo_observed_property_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.meteo_observed_property_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
 --
@@ -753,7 +744,7 @@ ALTER SEQUENCE public.hydrostation_classification_id_seq OWNED BY public.hydrost
 --
 
 CREATE TABLE public.meteo_observed_property (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('public.meteo_observed_property_id_seq'::regclass) NOT NULL,
     symbol character varying(32) NOT NULL,
     type smallint NOT NULL,
     description character varying(64) NOT NULL,
@@ -790,11 +781,10 @@ COMMENT ON COLUMN public.meteo_observed_property.unit IS 'Unit of parameter, e.g
 
 
 --
--- Name: meteo_observed_property_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: meteo_result_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.meteo_observed_property_id_seq
-    AS integer
+CREATE SEQUENCE public.meteo_result_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -803,22 +793,15 @@ CREATE SEQUENCE public.meteo_observed_property_id_seq
 
 
 --
--- Name: meteo_observed_property_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.meteo_observed_property_id_seq OWNED BY public.meteo_observed_property.id;
-
-
---
 -- Name: meteo_result; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.meteo_result (
-    id bigint NOT NULL,
+    id bigint DEFAULT nextval('public.meteo_result_id_seq'::regclass) NOT NULL,
     meteo_time_seriesid bigint NOT NULL,
-    "time" timestamp(6) without time zone NOT NULL,
+    "time" timestamp without time zone NOT NULL,
     value double precision NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
+    created_at timestamp without time zone NOT NULL,
     is_forecast boolean DEFAULT false
 );
 
@@ -838,10 +821,10 @@ COMMENT ON COLUMN public.meteo_result.value IS 'Value of the measured property, 
 
 
 --
--- Name: meteo_result_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: meteo_time_series_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.meteo_result_id_seq
+CREATE SEQUENCE public.meteo_time_series_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -850,23 +833,16 @@ CREATE SEQUENCE public.meteo_result_id_seq
 
 
 --
--- Name: meteo_result_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.meteo_result_id_seq OWNED BY public.meteo_result.id;
-
-
---
 -- Name: meteo_time_series; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.meteo_time_series (
-    id bigint NOT NULL,
+    id bigint DEFAULT nextval('public.meteo_time_series_id_seq'::regclass) NOT NULL,
     meteopointid integer NOT NULL,
     meteo_observed_propertyid integer NOT NULL,
-    phenomenon_time_begin timestamp(6) without time zone,
-    phenomenon_time_end timestamp(6) without time zone,
-    result_time timestamp(6) without time zone NOT NULL
+    phenomenon_time_begin timestamp without time zone,
+    phenomenon_time_end timestamp without time zone,
+    result_time timestamp without time zone NOT NULL
 );
 
 
@@ -899,10 +875,10 @@ COMMENT ON COLUMN public.meteo_time_series.result_time IS 'Result time, when tim
 
 
 --
--- Name: meteo_time_series_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: meteopoint_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.meteo_time_series_id_seq
+CREATE SEQUENCE public.meteopoint_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -911,18 +887,11 @@ CREATE SEQUENCE public.meteo_time_series_id_seq
 
 
 --
--- Name: meteo_time_series_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.meteo_time_series_id_seq OWNED BY public.meteo_time_series.id;
-
-
---
 -- Name: meteopoint; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.meteopoint (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('public.meteopoint_id_seq'::regclass) NOT NULL,
     meteostation_classificationid integer,
     operatorid integer,
     eucd_pst character varying(64) NOT NULL,
@@ -937,10 +906,11 @@ CREATE TABLE public.meteopoint (
     name character varying(128) NOT NULL,
     location character varying(255),
     altitude numeric(20,10),
-    start_time timestamp(6) without time zone,
-    end_time timestamp(6) without time zone,
+    start_time timestamp without time zone,
+    end_time timestamp without time zone,
     utc_offset integer,
-    river_basin character varying(64)
+    river_basin character varying(64),
+    is_active boolean DEFAULT true NOT NULL
 );
 
 
@@ -1064,37 +1034,17 @@ COMMENT ON COLUMN public.meteopoint.river_basin IS 'Name of river basin to which
 
 
 --
--- Name: meteopoint_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.meteopoint_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: meteopoint_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.meteopoint_id_seq OWNED BY public.meteopoint.id;
-
-
---
 -- Name: meteopoint_observed_property; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.meteopoint_observed_property (
     meteo_observed_propertyid integer NOT NULL,
     meteopointid integer NOT NULL,
-    last_update timestamp(6) without time zone,
+    last_update timestamp without time zone,
     min_value numeric(20,10),
-    min_value_time timestamp(6) without time zone,
+    min_value_time timestamp without time zone,
     max_value numeric(20,10),
-    max_value_time timestamp(6) without time zone
+    max_value_time timestamp without time zone
 );
 
 
@@ -1134,11 +1084,23 @@ COMMENT ON COLUMN public.meteopoint_observed_property.max_value_time IS 'Time at
 
 
 --
+-- Name: meteostation_classification_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.meteostation_classification_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
 -- Name: meteostation_classification; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.meteostation_classification (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('public.meteostation_classification_id_seq'::regclass) NOT NULL,
     value character varying(255) NOT NULL
 );
 
@@ -1158,11 +1120,10 @@ COMMENT ON COLUMN public.meteostation_classification.value IS 'String to describ
 
 
 --
--- Name: meteostation_classification_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: monitoring_point_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.meteostation_classification_id_seq
-    AS integer
+CREATE SEQUENCE public.monitoring_point_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1171,18 +1132,11 @@ CREATE SEQUENCE public.meteostation_classification_id_seq
 
 
 --
--- Name: meteostation_classification_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.meteostation_classification_id_seq OWNED BY public.meteostation_classification.id;
-
-
---
 -- Name: monitoring_point; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.monitoring_point (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('public.monitoring_point_id_seq'::regclass) NOT NULL,
     station_classificationid integer NOT NULL,
     operatorid integer NOT NULL,
     eucd_pst character varying(64) NOT NULL,
@@ -1199,8 +1153,8 @@ CREATE TABLE public.monitoring_point (
     river_kilometer double precision NOT NULL,
     catchment_area double precision NOT NULL,
     altitude double precision NOT NULL,
-    start_time timestamp(6) without time zone NOT NULL,
-    end_time timestamp(6) without time zone NOT NULL,
+    start_time timestamp without time zone NOT NULL,
+    end_time timestamp without time zone NOT NULL,
     utc_offset integer NOT NULL,
     river_basin character varying(64) NOT NULL
 );
@@ -1340,11 +1294,10 @@ COMMENT ON COLUMN public.monitoring_point.river_basin IS 'Name of river basin to
 
 
 --
--- Name: monitoring_point_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: operator_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.monitoring_point_id_seq
-    AS integer
+CREATE SEQUENCE public.operator_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1353,18 +1306,11 @@ CREATE SEQUENCE public.monitoring_point_id_seq
 
 
 --
--- Name: monitoring_point_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.monitoring_point_id_seq OWNED BY public.monitoring_point.id;
-
-
---
 -- Name: operator; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.operator (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('public.operator_id_seq'::regclass) NOT NULL,
     name character varying(255) NOT NULL,
     address character varying(255) NOT NULL,
     email character varying(255) NOT NULL,
@@ -1434,26 +1380,6 @@ COMMENT ON TABLE public.operator_groups IS 'Connection table between operator an
 
 
 --
--- Name: operator_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.operator_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: operator_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.operator_id_seq OWNED BY public.operator.id;
-
-
---
 -- Name: operator_users; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1471,11 +1397,23 @@ COMMENT ON TABLE public.operator_users IS 'Connection table between operator and
 
 
 --
+-- Name: permissions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.permissions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
 -- Name: permissions; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.permissions (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('public.permissions_id_seq'::regclass) NOT NULL,
     name character varying(255) NOT NULL
 );
 
@@ -1495,11 +1433,10 @@ COMMENT ON COLUMN public.permissions.name IS 'Permission unique name';
 
 
 --
--- Name: permissions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: public_keys_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.permissions_id_seq
-    AS integer
+CREATE SEQUENCE public.public_keys_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1508,18 +1445,11 @@ CREATE SEQUENCE public.permissions_id_seq
 
 
 --
--- Name: permissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.permissions_id_seq OWNED BY public.permissions.id;
-
-
---
 -- Name: public_keys; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.public_keys (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('public.public_keys_id_seq'::regclass) NOT NULL,
     usersid integer NOT NULL,
     public_key text NOT NULL,
     revoked boolean DEFAULT false NOT NULL,
@@ -1542,11 +1472,10 @@ COMMENT ON COLUMN public.public_keys.public_key IS 'The public key';
 
 
 --
--- Name: public_keys_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: riverbank_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.public_keys_id_seq
-    AS integer
+CREATE SEQUENCE public.riverbank_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1555,18 +1484,11 @@ CREATE SEQUENCE public.public_keys_id_seq
 
 
 --
--- Name: public_keys_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.public_keys_id_seq OWNED BY public.public_keys.id;
-
-
---
 -- Name: riverbank; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.riverbank (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('public.riverbank_id_seq'::regclass) NOT NULL,
     value character varying(255) NOT NULL
 );
 
@@ -1576,26 +1498,6 @@ CREATE TABLE public.riverbank (
 --
 
 COMMENT ON COLUMN public.riverbank.value IS 'String to describe side of river “left” / ”right” / ”bridge” in downstream direction.';
-
-
---
--- Name: riverbank_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.riverbank_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: riverbank_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.riverbank_id_seq OWNED BY public.riverbank.id;
 
 
 --
@@ -1616,11 +1518,23 @@ COMMENT ON TABLE public.user_permissions IS 'Enabled permissions for users';
 
 
 --
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.users (
-    id integer NOT NULL,
+    id integer DEFAULT nextval('public.users_id_seq'::regclass) NOT NULL,
     name character varying(255),
     username character varying(255) NOT NULL,
     email character varying(255) NOT NULL,
@@ -1690,23 +1604,15 @@ COMMENT ON TABLE public.users_groups IS 'Users-groups assignment (many-to-many)'
 
 
 --
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: warning_level_warning_level_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.users_id_seq
-    AS integer
+CREATE SEQUENCE public.warning_level_warning_level_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
-
---
--- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
@@ -1714,30 +1620,10 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 --
 
 CREATE TABLE public.warning_level (
-    warning_level integer NOT NULL,
+    warning_level integer DEFAULT nextval('public.warning_level_warning_level_seq'::regclass) NOT NULL,
     mpointid integer NOT NULL,
     water_level numeric(20,10) NOT NULL
 );
-
-
---
--- Name: warning_level_warning_level_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.warning_level_warning_level_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: warning_level_warning_level_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.warning_level_warning_level_seq OWNED BY public.warning_level.warning_level;
 
 
 --
@@ -1765,153 +1651,6 @@ COMMENT ON COLUMN public.waterbody.cname IS 'Human readable name of the water bo
 
 
 --
--- Name: discharge_measurement id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.discharge_measurement ALTER COLUMN id SET DEFAULT nextval('public.discharge_measurement_id_seq'::regclass);
-
-
---
--- Name: discharge_measurement_equipment id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.discharge_measurement_equipment ALTER COLUMN id SET DEFAULT nextval('public.discharge_measurement_equipment_id_seq'::regclass);
-
-
---
--- Name: event_logs id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.event_logs ALTER COLUMN id SET DEFAULT nextval('public.event_logs_id_seq'::regclass);
-
-
---
--- Name: groups id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.groups ALTER COLUMN id SET DEFAULT nextval('public.groups_id_seq'::regclass);
-
-
---
--- Name: hydro_observed_property id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.hydro_observed_property ALTER COLUMN id SET DEFAULT nextval('public.hydro_observed_property_id_seq'::regclass);
-
-
---
--- Name: hydro_result id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.hydro_result ALTER COLUMN id SET DEFAULT nextval('public.hydro_result_id_seq'::regclass);
-
-
---
--- Name: hydro_time_series id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.hydro_time_series ALTER COLUMN id SET DEFAULT nextval('public.hydro_time_series_id_seq'::regclass);
-
-
---
--- Name: hydropoint id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.hydropoint ALTER COLUMN id SET DEFAULT nextval('public.hydropoint_id_seq'::regclass);
-
-
---
--- Name: hydrostation_classification id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.hydrostation_classification ALTER COLUMN id SET DEFAULT nextval('public.hydrostation_classification_id_seq'::regclass);
-
-
---
--- Name: meteo_observed_property id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.meteo_observed_property ALTER COLUMN id SET DEFAULT nextval('public.meteo_observed_property_id_seq'::regclass);
-
-
---
--- Name: meteo_result id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.meteo_result ALTER COLUMN id SET DEFAULT nextval('public.meteo_result_id_seq'::regclass);
-
-
---
--- Name: meteo_time_series id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.meteo_time_series ALTER COLUMN id SET DEFAULT nextval('public.meteo_time_series_id_seq'::regclass);
-
-
---
--- Name: meteopoint id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.meteopoint ALTER COLUMN id SET DEFAULT nextval('public.meteopoint_id_seq'::regclass);
-
-
---
--- Name: meteostation_classification id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.meteostation_classification ALTER COLUMN id SET DEFAULT nextval('public.meteostation_classification_id_seq'::regclass);
-
-
---
--- Name: monitoring_point id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.monitoring_point ALTER COLUMN id SET DEFAULT nextval('public.monitoring_point_id_seq'::regclass);
-
-
---
--- Name: operator id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.operator ALTER COLUMN id SET DEFAULT nextval('public.operator_id_seq'::regclass);
-
-
---
--- Name: permissions id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.permissions ALTER COLUMN id SET DEFAULT nextval('public.permissions_id_seq'::regclass);
-
-
---
--- Name: public_keys id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.public_keys ALTER COLUMN id SET DEFAULT nextval('public.public_keys_id_seq'::regclass);
-
-
---
--- Name: riverbank id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.riverbank ALTER COLUMN id SET DEFAULT nextval('public.riverbank_id_seq'::regclass);
-
-
---
--- Name: users id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
-
-
---
--- Name: warning_level warning_level; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.warning_level ALTER COLUMN warning_level SET DEFAULT nextval('public.warning_level_warning_level_seq'::regclass);
-
-
---
 -- Name: discharge_measurement_equipment discharge_measurement_equipment_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1936,19 +1675,19 @@ ALTER TABLE ONLY public.event_logs
 
 
 --
+-- Name: group_measurement_access_rules group_measurement_access_rules_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.group_measurement_access_rules
+    ADD CONSTRAINT group_measurement_access_rules_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: group_permissions group_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.group_permissions
     ADD CONSTRAINT group_permissions_pkey PRIMARY KEY (permissionsid, groupsid);
-
-
---
--- Name: groups groups_name_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.groups
-    ADD CONSTRAINT groups_name_key UNIQUE (name);
 
 
 --
@@ -1968,14 +1707,6 @@ ALTER TABLE ONLY public.hydro_observed_property
 
 
 --
--- Name: hydro_observed_property hydro_observed_property_symbol_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.hydro_observed_property
-    ADD CONSTRAINT hydro_observed_property_symbol_key UNIQUE (symbol);
-
-
---
 -- Name: hydro_result hydro_result_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1992,22 +1723,6 @@ ALTER TABLE ONLY public.hydro_time_series
 
 
 --
--- Name: hydropoint hydropoint_eucd_wgst_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.hydropoint
-    ADD CONSTRAINT hydropoint_eucd_wgst_key UNIQUE (eucd_wgst);
-
-
---
--- Name: hydropoint_observed_property hydropoint_observed_property_pk; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.hydropoint_observed_property
-    ADD CONSTRAINT hydropoint_observed_property_pk UNIQUE (observed_propertyid, mpointid);
-
-
---
 -- Name: hydropoint hydropoint_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2021,6 +1736,14 @@ ALTER TABLE ONLY public.hydropoint
 
 ALTER TABLE ONLY public.hydrostation_classification
     ADD CONSTRAINT hydrostation_classification_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: measurement_access_rules measurement_access_rules_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.measurement_access_rules
+    ADD CONSTRAINT measurement_access_rules_pkey PRIMARY KEY (id);
 
 
 --
@@ -2048,22 +1771,6 @@ ALTER TABLE ONLY public.meteo_time_series
 
 
 --
--- Name: meteopoint meteopoint_eucd_pst_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.meteopoint
-    ADD CONSTRAINT meteopoint_eucd_pst_key UNIQUE (eucd_pst);
-
-
---
--- Name: meteopoint_observed_property meteopoint_observed_property_pk; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.meteopoint_observed_property
-    ADD CONSTRAINT meteopoint_observed_property_pk UNIQUE (meteo_observed_propertyid, meteopointid);
-
-
---
 -- Name: meteopoint meteopoint_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2077,14 +1784,6 @@ ALTER TABLE ONLY public.meteopoint
 
 ALTER TABLE ONLY public.meteostation_classification
     ADD CONSTRAINT meteostation_classification_pkey PRIMARY KEY (id);
-
-
---
--- Name: monitoring_point monitoring_point_eucd_pst_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.monitoring_point
-    ADD CONSTRAINT monitoring_point_eucd_pst_key UNIQUE (eucd_pst);
 
 
 --
@@ -2120,14 +1819,6 @@ ALTER TABLE ONLY public.operator_users
 
 
 --
--- Name: permissions permissions_name_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.permissions
-    ADD CONSTRAINT permissions_name_key UNIQUE (name);
-
-
---
 -- Name: permissions permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2152,27 +1843,11 @@ ALTER TABLE ONLY public.riverbank
 
 
 --
--- Name: riverbank riverbank_value_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.riverbank
-    ADD CONSTRAINT riverbank_value_key UNIQUE (value);
-
-
---
 -- Name: user_permissions user_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.user_permissions
     ADD CONSTRAINT user_permissions_pkey PRIMARY KEY (permissionsid, usersid);
-
-
---
--- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_email_key UNIQUE (email);
 
 
 --
@@ -2208,353 +1883,297 @@ ALTER TABLE ONLY public.waterbody
 
 
 --
--- Name: hydropoint_country; Type: INDEX; Schema: public; Owner: -
+-- Name: hydro_unique_time_value; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX hydropoint_country ON public.hydropoint USING btree (country);
-
-
---
--- Name: hydropoint_ncd_wgst; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX hydropoint_ncd_wgst ON public.hydropoint USING btree (ncd_wgst);
+CREATE UNIQUE INDEX hydro_unique_time_value ON public.hydro_result USING btree (time_seriesid, "time", value, is_forecast);
 
 
 --
--- Name: hydropoint_vertical_reference; Type: INDEX; Schema: public; Owner: -
+-- Name: meteo_unique_time_value; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX hydropoint_vertical_reference ON public.hydropoint USING btree (vertical_reference);
-
-
---
--- Name: meteopoint_country; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX meteopoint_country ON public.meteopoint USING btree (country);
+CREATE UNIQUE INDEX meteo_unique_time_value ON public.meteo_result USING btree (meteo_time_seriesid, "time", value, is_forecast);
 
 
 --
--- Name: meteopoint_ncd_pst; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX meteopoint_ncd_pst ON public.meteopoint USING btree (ncd_pst);
-
-
---
--- Name: meteopoint_vertical_reference; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX meteopoint_vertical_reference ON public.meteopoint USING btree (vertical_reference);
-
-
---
--- Name: monitoring_point_country; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX monitoring_point_country ON public.monitoring_point USING btree (country);
-
-
---
--- Name: monitoring_point_ncd_pst; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX monitoring_point_ncd_pst ON public.monitoring_point USING btree (ncd_pst);
-
-
---
--- Name: monitoring_point_vertical_reference; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX monitoring_point_vertical_reference ON public.monitoring_point USING btree (vertical_reference);
-
-
---
--- Name: users_username; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX users_username ON public.users USING btree (username);
-
-
---
--- Name: discharge_measurement fkdischarge_146694; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: discharge_measurement discharge_measurement_discharge_measurement_equipmentid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.discharge_measurement
-    ADD CONSTRAINT fkdischarge_146694 FOREIGN KEY (operatorid) REFERENCES public.operator(id);
+    ADD CONSTRAINT discharge_measurement_discharge_measurement_equipmentid_fkey FOREIGN KEY (discharge_measurement_equipmentid) REFERENCES public.discharge_measurement_equipment(id);
 
 
 --
--- Name: discharge_measurement fkdischarge_237635; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.discharge_measurement
-    ADD CONSTRAINT fkdischarge_237635 FOREIGN KEY (mpointid) REFERENCES public.hydropoint(id);
-
-
---
--- Name: discharge_measurement fkdischarge_808880; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: discharge_measurement discharge_measurement_mpointid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.discharge_measurement
-    ADD CONSTRAINT fkdischarge_808880 FOREIGN KEY (discharge_measurement_equipmentid) REFERENCES public.discharge_measurement_equipment(id);
+    ADD CONSTRAINT discharge_measurement_mpointid_fkey FOREIGN KEY (mpointid) REFERENCES public.hydropoint(id);
 
 
 --
--- Name: event_logs fkevent_logs578586; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: discharge_measurement discharge_measurement_operatorid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.discharge_measurement
+    ADD CONSTRAINT discharge_measurement_operatorid_fkey FOREIGN KEY (operatorid) REFERENCES public.operator(id);
+
+
+--
+-- Name: event_logs event_logs_operator_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.event_logs
-    ADD CONSTRAINT fkevent_logs578586 FOREIGN KEY (user_id) REFERENCES public.users(id);
+    ADD CONSTRAINT event_logs_operator_id_fkey FOREIGN KEY (operator_id) REFERENCES public.operator(id);
 
 
 --
--- Name: event_logs fkevent_logs900211; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: event_logs event_logs_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.event_logs
-    ADD CONSTRAINT fkevent_logs900211 FOREIGN KEY (operator_id) REFERENCES public.operator(id);
+    ADD CONSTRAINT event_logs_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
--- Name: group_permissions fkgroup_perm470913; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.group_permissions
-    ADD CONSTRAINT fkgroup_perm470913 FOREIGN KEY (permissionsid) REFERENCES public.permissions(id);
-
-
---
--- Name: group_permissions fkgroup_perm520880; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: group_permissions group_permissions_groupsid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.group_permissions
-    ADD CONSTRAINT fkgroup_perm520880 FOREIGN KEY (groupsid) REFERENCES public.groups(id);
+    ADD CONSTRAINT group_permissions_groupsid_fkey FOREIGN KEY (groupsid) REFERENCES public.groups(id);
 
 
 --
--- Name: hydro_result fkhydro_resu859671; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: group_permissions group_permissions_permissionsid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.group_permissions
+    ADD CONSTRAINT group_permissions_permissionsid_fkey FOREIGN KEY (permissionsid) REFERENCES public.permissions(id);
+
+
+--
+-- Name: hydro_result hydro_result_time_seriesid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.hydro_result
-    ADD CONSTRAINT fkhydro_resu859671 FOREIGN KEY (time_seriesid) REFERENCES public.hydro_time_series(id);
+    ADD CONSTRAINT hydro_result_time_seriesid_fkey FOREIGN KEY (time_seriesid) REFERENCES public.hydro_time_series(id);
 
 
 --
--- Name: hydro_time_series fkhydro_time174251; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.hydro_time_series
-    ADD CONSTRAINT fkhydro_time174251 FOREIGN KEY (observed_propertyid) REFERENCES public.hydro_observed_property(id);
-
-
---
--- Name: hydro_time_series fkhydro_time663317; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: hydro_time_series hydro_time_series_mpointid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.hydro_time_series
-    ADD CONSTRAINT fkhydro_time663317 FOREIGN KEY (mpointid) REFERENCES public.hydropoint(id);
+    ADD CONSTRAINT hydro_time_series_mpointid_fkey FOREIGN KEY (mpointid) REFERENCES public.hydropoint(id);
 
 
 --
--- Name: hydropoint fkhydropoint103092; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: hydro_time_series hydro_time_series_observed_propertyid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.hydro_time_series
+    ADD CONSTRAINT hydro_time_series_observed_propertyid_fkey FOREIGN KEY (observed_propertyid) REFERENCES public.hydro_observed_property(id);
+
+
+--
+-- Name: hydropoint hydropoint_bankid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.hydropoint
-    ADD CONSTRAINT fkhydropoint103092 FOREIGN KEY (bankid) REFERENCES public.riverbank(id);
+    ADD CONSTRAINT hydropoint_bankid_fkey FOREIGN KEY (bankid) REFERENCES public.riverbank(id);
 
 
 --
--- Name: hydropoint fkhydropoint321157; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.hydropoint
-    ADD CONSTRAINT fkhydropoint321157 FOREIGN KEY (station_classificationid) REFERENCES public.hydrostation_classification(id);
-
-
---
--- Name: hydropoint_observed_property fkhydropoint365425; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: hydropoint_observed_property hydropoint_observed_property_mpointid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.hydropoint_observed_property
-    ADD CONSTRAINT fkhydropoint365425 FOREIGN KEY (observed_propertyid) REFERENCES public.hydro_observed_property(id);
+    ADD CONSTRAINT hydropoint_observed_property_mpointid_fkey FOREIGN KEY (mpointid) REFERENCES public.hydropoint(id);
 
 
 --
--- Name: hydropoint fkhydropoint519479; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.hydropoint
-    ADD CONSTRAINT fkhydropoint519479 FOREIGN KEY (waterbodyeuropean_river_code) REFERENCES public.waterbody(european_river_code);
-
-
---
--- Name: hydropoint_observed_property fkhydropoint591372; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: hydropoint_observed_property hydropoint_observed_property_observed_propertyid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.hydropoint_observed_property
-    ADD CONSTRAINT fkhydropoint591372 FOREIGN KEY (mpointid) REFERENCES public.hydropoint(id);
+    ADD CONSTRAINT hydropoint_observed_property_observed_propertyid_fkey FOREIGN KEY (observed_propertyid) REFERENCES public.hydro_observed_property(id);
 
 
 --
--- Name: hydropoint fkhydropoint850016; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: hydropoint hydropoint_operatorid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.hydropoint
-    ADD CONSTRAINT fkhydropoint850016 FOREIGN KEY (operatorid) REFERENCES public.operator(id);
+    ADD CONSTRAINT hydropoint_operatorid_fkey FOREIGN KEY (operatorid) REFERENCES public.operator(id);
 
 
 --
--- Name: meteo_result fkmeteo_resu773961; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: hydropoint hydropoint_station_classificationid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.hydropoint
+    ADD CONSTRAINT hydropoint_station_classificationid_fkey FOREIGN KEY (station_classificationid) REFERENCES public.hydrostation_classification(id);
+
+
+--
+-- Name: hydropoint hydropoint_waterbodyeuropean_river_code_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.hydropoint
+    ADD CONSTRAINT hydropoint_waterbodyeuropean_river_code_fkey FOREIGN KEY (waterbodyeuropean_river_code) REFERENCES public.waterbody(european_river_code);
+
+
+--
+-- Name: meteo_result meteo_result_meteo_time_seriesid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.meteo_result
-    ADD CONSTRAINT fkmeteo_resu773961 FOREIGN KEY (meteo_time_seriesid) REFERENCES public.meteo_time_series(id);
+    ADD CONSTRAINT meteo_result_meteo_time_seriesid_fkey FOREIGN KEY (meteo_time_seriesid) REFERENCES public.meteo_time_series(id);
 
 
 --
--- Name: meteo_time_series fkmeteo_time621587; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.meteo_time_series
-    ADD CONSTRAINT fkmeteo_time621587 FOREIGN KEY (meteopointid) REFERENCES public.meteopoint(id);
-
-
---
--- Name: meteo_time_series fkmeteo_time714612; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: meteo_time_series meteo_time_series_meteo_observed_propertyid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.meteo_time_series
-    ADD CONSTRAINT fkmeteo_time714612 FOREIGN KEY (meteo_observed_propertyid) REFERENCES public.meteo_observed_property(id);
+    ADD CONSTRAINT meteo_time_series_meteo_observed_propertyid_fkey FOREIGN KEY (meteo_observed_propertyid) REFERENCES public.meteo_observed_property(id);
 
 
 --
--- Name: meteopoint fkmeteopoint181681; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: meteo_time_series meteo_time_series_meteopointid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.meteo_time_series
+    ADD CONSTRAINT meteo_time_series_meteopointid_fkey FOREIGN KEY (meteopointid) REFERENCES public.meteopoint(id);
+
+
+--
+-- Name: meteopoint meteopoint_meteostation_classificationid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.meteopoint
-    ADD CONSTRAINT fkmeteopoint181681 FOREIGN KEY (operatorid) REFERENCES public.operator(id);
+    ADD CONSTRAINT meteopoint_meteostation_classificationid_fkey FOREIGN KEY (meteostation_classificationid) REFERENCES public.meteostation_classification(id);
 
 
 --
--- Name: meteopoint fkmeteopoint29156; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: meteopoint_observed_property meteopoint_observed_property_meteo_observed_propertyid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.meteopoint_observed_property
+    ADD CONSTRAINT meteopoint_observed_property_meteo_observed_propertyid_fkey FOREIGN KEY (meteo_observed_propertyid) REFERENCES public.meteo_observed_property(id);
+
+
+--
+-- Name: meteopoint_observed_property meteopoint_observed_property_meteopointid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.meteopoint_observed_property
+    ADD CONSTRAINT meteopoint_observed_property_meteopointid_fkey FOREIGN KEY (meteopointid) REFERENCES public.meteopoint(id);
+
+
+--
+-- Name: meteopoint meteopoint_operatorid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.meteopoint
-    ADD CONSTRAINT fkmeteopoint29156 FOREIGN KEY (meteostation_classificationid) REFERENCES public.meteostation_classification(id);
+    ADD CONSTRAINT meteopoint_operatorid_fkey FOREIGN KEY (operatorid) REFERENCES public.operator(id);
 
 
 --
--- Name: meteopoint_observed_property fkmeteopoint4068; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.meteopoint_observed_property
-    ADD CONSTRAINT fkmeteopoint4068 FOREIGN KEY (meteo_observed_propertyid) REFERENCES public.meteo_observed_property(id);
-
-
---
--- Name: meteopoint_observed_property fkmeteopoint667867; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.meteopoint_observed_property
-    ADD CONSTRAINT fkmeteopoint667867 FOREIGN KEY (meteopointid) REFERENCES public.meteopoint(id);
-
-
---
--- Name: monitoring_point fkmonitoring210523; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: monitoring_point monitoring_point_operatorid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.monitoring_point
-    ADD CONSTRAINT fkmonitoring210523 FOREIGN KEY (operatorid) REFERENCES public.operator(id);
+    ADD CONSTRAINT monitoring_point_operatorid_fkey FOREIGN KEY (operatorid) REFERENCES public.operator(id);
 
 
 --
--- Name: monitoring_point fkmonitoring739382; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: monitoring_point monitoring_point_station_classificationid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.monitoring_point
-    ADD CONSTRAINT fkmonitoring739382 FOREIGN KEY (station_classificationid) REFERENCES public.hydrostation_classification(id);
+    ADD CONSTRAINT monitoring_point_station_classificationid_fkey FOREIGN KEY (station_classificationid) REFERENCES public.hydrostation_classification(id);
 
 
 --
--- Name: operator_groups fkoperator_g537201; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.operator_groups
-    ADD CONSTRAINT fkoperator_g537201 FOREIGN KEY (operatorid) REFERENCES public.operator(id);
-
-
---
--- Name: operator_groups fkoperator_g645286; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: operator_groups operator_groups_groupsid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.operator_groups
-    ADD CONSTRAINT fkoperator_g645286 FOREIGN KEY (groupsid) REFERENCES public.groups(id);
+    ADD CONSTRAINT operator_groups_groupsid_fkey FOREIGN KEY (groupsid) REFERENCES public.groups(id);
 
 
 --
--- Name: operator_users fkoperator_u193208; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: operator_groups operator_groups_operatorid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.operator_groups
+    ADD CONSTRAINT operator_groups_operatorid_fkey FOREIGN KEY (operatorid) REFERENCES public.operator(id);
+
+
+--
+-- Name: operator_users operator_users_operatorid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.operator_users
-    ADD CONSTRAINT fkoperator_u193208 FOREIGN KEY (usersid) REFERENCES public.users(id);
+    ADD CONSTRAINT operator_users_operatorid_fkey FOREIGN KEY (operatorid) REFERENCES public.operator(id);
 
 
 --
--- Name: operator_users fkoperator_u846668; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: operator_users operator_users_usersid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.operator_users
-    ADD CONSTRAINT fkoperator_u846668 FOREIGN KEY (operatorid) REFERENCES public.operator(id);
+    ADD CONSTRAINT operator_users_usersid_fkey FOREIGN KEY (usersid) REFERENCES public.users(id);
 
 
 --
--- Name: user_permissions fkuser_permi47096; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.user_permissions
-    ADD CONSTRAINT fkuser_permi47096 FOREIGN KEY (usersid) REFERENCES public.users(id);
-
-
---
--- Name: user_permissions fkuser_permi642438; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.user_permissions
-    ADD CONSTRAINT fkuser_permi642438 FOREIGN KEY (permissionsid) REFERENCES public.permissions(id);
-
-
---
--- Name: users_groups fkusers_grou369620; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.users_groups
-    ADD CONSTRAINT fkusers_grou369620 FOREIGN KEY (usersid) REFERENCES public.users(id);
-
-
---
--- Name: users_groups fkusers_grou914995; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.users_groups
-    ADD CONSTRAINT fkusers_grou914995 FOREIGN KEY (groupsid) REFERENCES public.groups(id);
-
-
---
--- Name: public_keys fkuserspublickey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: public_keys public_keys_usersid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.public_keys
-    ADD CONSTRAINT fkuserspublickey FOREIGN KEY (usersid) REFERENCES public.users(id);
+    ADD CONSTRAINT public_keys_usersid_fkey FOREIGN KEY (usersid) REFERENCES public.users(id);
 
 
 --
--- Name: warning_level fkwarning_le889936; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: user_permissions user_permissions_permissionsid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_permissions
+    ADD CONSTRAINT user_permissions_permissionsid_fkey FOREIGN KEY (permissionsid) REFERENCES public.permissions(id);
+
+
+--
+-- Name: user_permissions user_permissions_usersid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_permissions
+    ADD CONSTRAINT user_permissions_usersid_fkey FOREIGN KEY (usersid) REFERENCES public.users(id);
+
+
+--
+-- Name: users_groups users_groups_groupsid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users_groups
+    ADD CONSTRAINT users_groups_groupsid_fkey FOREIGN KEY (groupsid) REFERENCES public.groups(id);
+
+
+--
+-- Name: users_groups users_groups_usersid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users_groups
+    ADD CONSTRAINT users_groups_usersid_fkey FOREIGN KEY (usersid) REFERENCES public.users(id);
+
+
+--
+-- Name: warning_level warning_level_mpointid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.warning_level
-    ADD CONSTRAINT fkwarning_le889936 FOREIGN KEY (mpointid) REFERENCES public.hydropoint(id);
+    ADD CONSTRAINT warning_level_mpointid_fkey FOREIGN KEY (mpointid) REFERENCES public.hydropoint(id);
 
 
 --

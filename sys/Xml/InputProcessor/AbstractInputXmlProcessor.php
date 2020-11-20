@@ -48,11 +48,12 @@ abstract class AbstractInputXmlProcessor {
 	 *
 	 * @param string        $identifier
 	 * @param Identity|null $identity
+	 * @param bool          $activeOnly
 	 *
 	 * @return mixed
 	 * @throws UploadException
 	 */
-	abstract protected function findMonitoringPoint(string $identifier, Identity $identity = null): ?array;
+	abstract protected function findMonitoringPoint(string $identifier, Identity $identity = null, bool $activeOnly = false): ?array;
 
 
 	/**
@@ -102,7 +103,7 @@ abstract class AbstractInputXmlProcessor {
 			$monitoringPointId = (string) $this->xml->xpath('/environet:UploadData/environet:MonitoringPointId[1]')[0] ?? null;
 
 			// Find monitoring point in database
-			return !!($mPoint = $this->findMonitoringPoint($monitoringPointId, $identity));
+			return !!($mPoint = $this->findMonitoringPoint($monitoringPointId, $identity, true));
 		} catch (Exception $e) {
 			return false;
 		}
@@ -139,7 +140,7 @@ abstract class AbstractInputXmlProcessor {
 			$monitoringPointId = (string) $this->xml->xpath('/environet:UploadData/environet:MonitoringPointId[1]')[0] ?? null;
 
 			// Find monitoring point in database
-			if (!($mPoint = $this->findMonitoringPoint($monitoringPointId, $identity))) {
+			if (!($mPoint = $this->findMonitoringPoint($monitoringPointId, $identity, true))) {
 				throw new UploadException(402);
 			}
 

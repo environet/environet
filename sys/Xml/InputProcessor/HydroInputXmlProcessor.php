@@ -30,7 +30,7 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 	 * @throws ApiException
 	 * @uses \Environet\Sys\General\Db\Query\Select::run()
 	 */
-	protected function findMonitoringPoint(string $identifier, Identity $identity = null): ?array {
+	protected function findMonitoringPoint(string $identifier, Identity $identity = null, bool $activeOnly = false): ?array {
 		try {
 			// Find hydro monitoring point
 			$mPointQuery = (new Select())
@@ -40,6 +40,11 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 
 			if ($identity) {
 				$mPointQuery->where('operatorid IN (' . implode(',', $this->getOperatorIdsOfIdentity($identity)) . ')');
+			}
+
+			if ($activeOnly) {
+				//Active points only
+				$mPointQuery->where('is_active = true');
 			}
 
 			$mPoint = $mPointQuery->run(Query::FETCH_FIRST);

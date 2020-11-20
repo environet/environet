@@ -36,18 +36,24 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 
 
 	/**
-	 * @param array $operatorIds
+	 * @param array|null $operatorIds
+	 * @param bool       $activeOnly
 	 *
 	 * @return array
 	 * @throws QueryException
 	 */
-	public static function all(array $operatorIds = null) {
+	public static function all(array $operatorIds = null, bool $activeOnly = false) {
 		$query = (new Select())
 			->select(static::$tableName . '.*')
 			->from(static::$tableName);
 
 		if (!is_null($operatorIds)) {
 			$query->whereIn('operatorid', $operatorIds, 'operatorId');
+		}
+
+		if ($activeOnly) {
+			//Active points only
+			$query->where('is_active = true');
 		}
 
 		$points = $query->run();
@@ -190,6 +196,9 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 			// dates
 			'start_time'                    => !empty($data['start_time']) ? $data['start_time'] : null,
 			'end_time'                      => !empty($data['end_time']) ? $data['end_time'] : null,
+
+			//boolean
+			'is_active'                    => isset($data['is_active']) && $data['is_active'] !== '' ? (bool) $data['is_active'] : null,
 		];
 
 		//Save only fields which have been provided in data array
