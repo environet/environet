@@ -205,6 +205,21 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 	}
 
 
+	/** @inheritDoc */
+	public static function delete(int $id, bool $soft = false, string $primaryKey = 'id') {
+		EventLogger::log(static::getDeleteEventType(), ['id' => $id]);
+
+		$timeSeries = array_column((new Select())->select('id')->from('meteo_time_series')->where('meteopointid = :id')->addParameter(':id', $id)->run(), 'id');
+		if (!empty($timeSeries)) {
+			(new Delete())->table('meteo_result')->whereIn('meteo_time_seriesid', $timeSeries, 'meteoSeriesIds')->run();
+			(new Delete())->table('meteo_time_series')->whereIn('id', $timeSeries, 'meteoSeriesIds')->run();
+		}
+
+		(new Delete())->table('meteopoint_observed_property')->where('meteopointid = :id')->addParameter(':id', $id)->run();
+		(new Delete())->table(static::$tableName)->where($primaryKey . ' = :id')->addParameter(':id', $id)->run();
+	}
+
+
 	/**
 	 * @inheritDoc
 	 */
