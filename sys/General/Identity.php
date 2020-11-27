@@ -95,7 +95,10 @@ class Identity {
 				->addParameter(':userId', $userId)
 				->run(Query::FETCH_FIRST);
 
-			return new static($userId, $user);
+
+			$identity = new static($userId, $user);
+			$identity->data['is_super_admin'] = $identity->isSuperAdmin();
+			return $identity;
 		} catch (Exceptions\QueryException $e) {
 			// Error during sql query
 			return null;

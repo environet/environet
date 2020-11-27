@@ -2,6 +2,7 @@
 
 namespace Environet\Sys\General\Db;
 
+use Environet\Sys\General\Db\Query\Delete;
 use Environet\Sys\General\Db\Query\Insert;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
@@ -224,6 +225,21 @@ class HydroMonitoringPointQueries extends BaseQueries {
 			$id,
 			true
 		);
+	}
+
+
+	/** @inheritDoc */
+	public static function delete(int $id, bool $soft = false, string $primaryKey = 'id') {
+		EventLogger::log(static::getDeleteEventType(), ['id' => $id]);
+
+		$timeSeries = array_column((new Select())->select('id')->from('hydro_time_series')->where('mpointid = :id')->addParameter(':id', $id)->run(), 'id');
+		if (!empty($timeSeries)) {
+			(new Delete())->table('hydro_result')->whereIn('time_seriesid', $timeSeries, 'hydroSeriesIds')->run();
+			(new Delete())->table('hydro_time_series')->whereIn('id', $timeSeries, 'hydroSeriesIds')->run();
+		}
+
+		(new Delete())->table('hydropoint_observed_property')->where('mpointid = :id')->addParameter(':id', $id)->run();
+		(new Delete())->table(static::$tableName)->where($primaryKey . ' = :id')->addParameter(':id', $id)->run();
 	}
 
 
