@@ -622,7 +622,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		}
 
 		// delete entries which do not fit to API-call (extra monitoring points, extra observed properties)
-		if ($resource->meta && isset($resource->meta["keepExtraData"]) && !$resource->meta["keepExtraData"]) {
+		if ($resource->meta && (!isset($resource->meta["keepExtraData"]) || !$resource->meta["keepExtraData"])) {
 			foreach ($flatList as $key => $entry) {
 				$mp = $this->getParameter($entry, "Type", "MonitoringPoint");
 				$obs = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
