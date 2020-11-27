@@ -33,6 +33,11 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	private $separatorThousands;
 
 	/**
+	 * @var bool if true parser will process empty tags as missing value
+	 */
+	private $skipEmptyValueTag;
+
+	/**
 	 * @var string Separator for decimals.
 	 */
 	private $separatorDecimals;
@@ -60,6 +65,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		$this->separatorThousands = $config['separatorThousands'];
 		$this->separatorDecimals = $config['separatorDecimals'];
 		$this->formatsFilename = $config['formatsFilename'];
+		$this->skipEmptyValueTag = isset($config['skipEmptyValueTag']) ? (bool) $config['skipEmptyValueTag'] : false;
 
 		parent::__construct($config);
 	}
@@ -142,12 +148,20 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 					$item["Type"] = $format["Parameter"];
 					if (empty($format["Attribute"])) {
 						$item["Value"] = $subXml->__toString();
-						if ($item["Value"] === "") {
-							$item["Value"] = "0";
-						}
 					} else {
 						$item["Value"] = $subXml[$format["Attribute"]]->__toString();
 					}
+
+					if ($item['Type'] === 'ObservedPropertyValue' && $item['Value'] === '') {
+						if ($this->skipEmptyValueTag) {
+							//Skip empty values, jump to nex group
+							continue 2;
+						} else {
+							//Convert empty values to 0
+							$item['Value'] = '0';
+						}
+					}
+
 					$item["Format"] = $format["Value"] ?? null;
 					$item["Unit"] = $format["Unit"] ?? null;
 					array_push($groupResolved, $item);
@@ -286,10 +300,10 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 		$difference = false;
 		$formatsCount = count($formats);
-		for ($i = 1; $i < $formatsCount; ++$i) {
+		for ($i = 1; $i < $formatsCount; ++ $i) {
 			if (empty($formats[$i]['Tag Hierarchy'][0]) ||
-				empty($formats[$i - 1]['Tag Hierarchy'][0]) ||
-				$formats[$i]['Tag Hierarchy'][0] != $formats[$i - 1]['Tag Hierarchy'][0]
+			    empty($formats[$i - 1]['Tag Hierarchy'][0]) ||
+			    $formats[$i]['Tag Hierarchy'][0] != $formats[$i - 1]['Tag Hierarchy'][0]
 			) {
 				$difference = true;
 			}
@@ -354,7 +368,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 			$date = DateTime::createFromFormat($Date["Format"] . ' ' . $Time["Format"], $Date["Value"] . ' ' . $Time["Value"], $this->getTimeZone());
 			if (!$date) {
 				echo("Warning: Invalid date or time format: " . $Date["Format"] . " - " . $Date["Value"]
-					 . " -- " . $Time["Format"] . " - " . $Time["Value"] . ". Replaced with 1970-01-01\r\n");
+				     . " -- " . $Time["Format"] . " - " . $Time["Value"] . ". Replaced with 1970-01-01\r\n");
 				$date = new DateTime('1970-01-01T00:00:00Z');
 			}
 			$date->setTimezone(new DateTimeZone('UTC'));
@@ -471,8 +485,8 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		if (is_null($this->formats)) {
 			$formatsPathname = CONFIGURATION_PATH . '/' . $this->formatsFilename; //Path of file is in a fixed location
 			if (!(file_exists($formatsPathname) && //File must be existing
-				  ($formats = file_get_contents($formatsPathname)) && //File must be not-empty and readable
-				  ($formats = json_decode($formats, true)) //Decode to json
+			      ($formats = file_get_contents($formatsPathname)) && //File must be not-empty and readable
+			      ($formats = json_decode($formats, true)) //Decode to json
 			)) {
 				throw new Exception("Syntax error in json string of formats configuration file '$formatsPathname', or file does not exist.");
 			}
@@ -608,7 +622,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		}
 
 		// delete entries which do not fit to API-call (extra monitoring points, extra observed properties)
-		if ($resource->meta && isset($resource->meta["keepExtraData"]) && !$resource->meta["keepExtraData"]) {
+		if ($resource->meta && (!isset($resource->meta["keepExtraData"]) || !$resource->meta["keepExtraData"])) {
 			foreach ($flatList as $key => $entry) {
 				$mp = $this->getParameter($entry, "Type", "MonitoringPoint");
 				$obs = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
@@ -669,10 +683,14 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		$separatorDecimals = $console->ask('Separator for decimals. Example: . for 142.3 cm');
 		$formatsFilename = $console->ask('Filename for xml format definitions');
 
+		$skipEmptyValueTag = $console->askWithDefault('Should parser ignore empty values in XML?', 'n');
+		$skipEmptyValueTag = trim(strtolower($skipEmptyValueTag)) === 'y';
+
 		$config = [
 			'separatorThousands' => $separatorThousands,
 			'separatorDecimals'  => $separatorDecimals,
 			'formatsFilename'    => $formatsFilename,
+			'skipEmptyValueTag'  => $skipEmptyValueTag,
 			'timeZone'           => $timeZone
 		];
 
@@ -689,6 +707,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		$config .= 'separatorThousands = "' . $this->separatorThousands . "\"\n";
 		$config .= 'separatorDecimals = "' . $this->separatorDecimals . "\"\n";
 		$config .= 'formatsFilename = "' . $this->formatsFilename . "\"\n";
+		$config .= 'skipEmptyValueTag = ' . $this->skipEmptyValueTag ? 1 : 0 . "\n";
 		$config .= 'timeZone = ' . $this->timeZone . "\n";
 
 		return $config;
