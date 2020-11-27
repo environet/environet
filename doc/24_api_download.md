@@ -15,6 +15,7 @@
 * **end**:  Maximum date of time series. Date format: [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html)
 * **country[]**: Query time series only for monitoring points from the given countries. Country code format: [ISO 3166-1 - alpha-2](https://www.iso.org/iso-3166-country-codes.html)
 * **symbol[]**: Query time series only of the given observed properties.
+* **point[]**: Query time series only of the given points.
 
 ## Headers
 
