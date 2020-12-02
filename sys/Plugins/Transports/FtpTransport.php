@@ -32,6 +32,11 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 	private $host;
 
 	/**
+	 * @var int|null
+	 */
+	private $port = null;
+
+	/**
 	 * @var string
 	 */
 	private $username;
@@ -72,6 +77,10 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		$console->writeLine('FTP host:');
 		$host = $console->ask('');
 
+		$console->writeLine('FTP port:');
+		$console->write('Leave empty to use the default 21.');
+		$port = $console->ask('');
+
 		$console->writeLine('Secure connection:');
 		$secure = $console->askWithDefault('Enter 0 for an FTP connection without SSL', true);
 
@@ -104,6 +113,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 
 		$config = [
 			'host'            => $host,
+			'port'            => $port ?: null,
 			'secure'          => $secure,
 			'username'        => $username,
 			'password'        => $password,
@@ -122,6 +132,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 	 */
 	public function serializeConfiguration(): string {
 		return 'host = "' . $this->host . '"' . "\n"
+			   . 'port = ' . ($this->port ? (int) $this->port : '') . '' . "\n"
 			   . 'secure = "' . $this->secure . '"' . "\n"
 			   . 'username = "' . $this->username . '"' . "\n"
 			   . 'password = "' . $this->password . '"' . "\n"
@@ -139,6 +150,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 	 */
 	public function __construct(array $config) {
 		$this->host = $config['host'];
+		$this->port = isset($config['port']) && !empty($config['port']) ? (int) $config['port'] : null;
 		$this->secure = $config['secure'];
 		$this->username = $config['username'];
 		$this->password = $config['password'];
@@ -164,7 +176,8 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		}
 
 		//Connect to FTP with username and password
-		$conn = $this->secure ? ftp_ssl_connect($this->host) : ftp_connect($this->host);
+		$port = $this->port ?: 21;
+		$conn = $this->secure ? ftp_ssl_connect($this->host, $port) : ftp_connect($this->host, $port);
 
 		$login_result = ftp_login($conn, $this->username, $this->password);
 		ftp_pasv($conn, true);
