@@ -244,7 +244,7 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 	 * @return string
 	 */
 	public static function generateEUCD(string $ncd, string $country): string {
-		return $country . $ncd . '_HYDRO';
+		return $country . $ncd . '_METEO';
 	}
 
 
