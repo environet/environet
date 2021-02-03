@@ -1035,6 +1035,8 @@
 <li><a href="#25_8_4_meteo_station_classification">Meteo station classification</a></li>
 <li><a href="#25_8_5_meteo_results">Meteo results</a></li>
 </ul></li>
+<li><a href="#25_9_measurement_access_rules">Measurement access rules</a></li>
+<li><a href="#25_10_upload_data">Upload missing/processed data</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#30_data_node">Data node</a>
@@ -1255,6 +1257,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <li><strong>end</strong>: Maximum date of time series. Date format: <a href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a></li>
 <li><strong>country[]</strong>: Query time series only for monitoring points from the given countries. Country code format: <a href="https://www.iso.org/iso-3166-country-codes.html">ISO 3166-1 - alpha-2</a></li>
 <li><strong>symbol[]</strong>: Query time series only of the given observed properties.</li>
+<li><strong>point[]</strong>: Query time series only of the given points.</li>
 </ul>
 <h2 id="headers-1">Headers</h2>
 <table>
@@ -1451,6 +1454,14 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p><a name="25_0_admin_user_manual"></a></p>
 <h1 id="admin-user-manual">Admin user manual</h1>
 <p>This document’s goals to represents the different parts of the administration area to help to understand how it works. Help you to see through how works the specified relationships and how you can handle them.</p>
+<p><a name="25_10_upload_data"></a></p>
+<h2 id="upload-missing-and-processed-data">Upload missing and processed data</h2>
+<p>Upload missing data: <code>/admin/missing-data</code></p>
+<p>Upload processed data: <code>/admin/processed-data</code></p>
+<h3 id="concept-of-the-rules">Concept of the rules</h3>
+<p>The two pages “Upload missing data” and “Upload processed data” are similar in functionality.</p>
+<p>On both pages you can upload multiple CSV files in a pre-defined format to upload missing or processed data for a monitoring point. A file contains data for a single monitoring point with multiple properties and data. The sample csv format is downloadable on the pages. A user can upload data only for allowed monitoring point, if the user is not a super administrator. This uploader in the background will call the standard <a href="#23_api_upload">upload api</a>, so all validation of this endpoint will work on this uploader too.</p>
+<p>The error/success messages will be separated per file, so if a file is invalid, you have to fix and upload only that file.</p>
 <p><a name="25_1_admin_general"></a></p>
 <h2 id="general-information">General information</h2>
 <p>Good to know, that on each list page, there are on the top right a search field. In the following each sections you can see a “searchable” part, where you can find in what kind of fields can the system search on the specified page.</p>
@@ -1686,7 +1697,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>Searchable: name, symbol</p>
 <p><a name="25_9_measurement_access_rules"></a></p>
 <h2 id="measurement-access-rules">Measurement access rules</h2>
-<h3 id="concept-of-the-rules">Concept of the rules</h3>
+<h3 id="concept-of-the-rules-1">Concept of the rules</h3>
 <p>The access rules controls the time interval in which the data will be available for a user under the <a href="#24_api_download">download API</a> request.</p>
 <p>The rules have three required dimensions: * <strong>Monitoring point</strong> - the rule is for all data of the given monitoring point * <strong>Observed property</strong> - the rule is for all data of the observed property of the monitoring point * <strong>User groups</strong> - the rule will be applied if the requesting user is under these groups</p>
 <p>The rules has one additional optional dimension: * <strong>Operator</strong> - If an operator creates the rule, these property will be set automatically. An administrator can set is optionally. This property controls which rule will be visible under operator’s acces rule list, and important in case of wildcard (<em>) rules. If the operator parameter is set, the wildcard (</em>) will be applied only for points/properties under the given operator.</p>

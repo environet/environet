@@ -31,6 +31,8 @@ This document is the documentation of the Environet system.
             * [Meteo observed properties](#25_8_3_meteo_observed_properties)
             * [Meteo station classification](#25_8_4_meteo_station_classification)
             * [Meteo results](#25_8_5_meteo_results)
+        * [Measurement access rules](#25_9_measurement_access_rules)
+        * [Upload missing/processed data](#25_10_upload_data)
         
 * [Data node](#30_data_node)
     * [Overview](#30_data_node)
@@ -322,6 +324,7 @@ Sample input XML:
 * **end**:  Maximum date of time series. Date format: [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html)
 * **country[]**: Query time series only for monitoring points from the given countries. Country code format: [ISO 3166-1 - alpha-2](https://www.iso.org/iso-3166-country-codes.html)
 * **symbol[]**: Query time series only of the given observed properties.
+* **point[]**: Query time series only of the given points.
 
 ## Headers
 
@@ -532,6 +535,26 @@ This document's goals to represents the different parts of the administration ar
 
 
 
+
+
+<a name="25_10_upload_data"></a>
+
+## Upload missing and processed data
+
+Upload missing data: `/admin/missing-data`
+
+Upload processed data: `/admin/processed-data`
+
+### Concept of the rules
+
+The two pages "Upload missing data" and "Upload processed data" are similar in functionality.
+
+On both pages you can upload multiple CSV files in a pre-defined format to upload missing or processed data for a monitoring point.
+A file contains data for a single monitoring point with multiple properties and data. The sample csv format is downloadable on the pages. 
+A user can upload data only for allowed monitoring point, if the user is not a super administrator. 
+This uploader in the background will call the standard [upload api](#23_api_upload), so all validation of this endpoint will work on this uploader too.
+
+The error/success messages will be separated per file, so if a file is invalid, you have to fix and upload only that file.
 
 
 <a name="25_1_admin_general"></a>
@@ -1121,7 +1144,7 @@ Generated configurations will be saved to the `/conf/plugins/configurations` fol
 
 ## Running a configuration
 
-Run `./environet plugin run [configuration name]` to run an uploader plugin configuration. (If you want to run regularly, you should set up a cron job to execute this command at regular intervals.)
+Run `./environet data plugin run [configuration name]` to run an uploader plugin configuration. (If you want to run regularly, you should set up a cron job to execute this command at regular intervals.)
 
 ## SSL key pair generation tool
 To generate an ssl key pair, you can run the command `./environet data tool keygen`.  
