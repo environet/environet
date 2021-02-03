@@ -4,6 +4,7 @@
 namespace Environet\Sys\Xml\Model;
 
 use DateTime;
+use DateTimeZone;
 use Environet\Sys\Xml\XmlRenderable;
 use Exception;
 use SimpleXMLElement;
@@ -43,7 +44,7 @@ class OutputXmlData implements XmlRenderable {
 	 * @throws Exception
 	 */
 	public static function dateToISO($string) {
-		return (new DateTime($string))->format('c');
+		return (new DateTime($string, new DateTimeZone('UTC')))->format('c');
 	}
 
 
