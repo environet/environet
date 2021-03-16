@@ -29,7 +29,7 @@ class HydroMonitoringPointQueries extends BaseQueries {
 	 * @inheritDoc
 	 */
 	public static $searchableFields = [
-		'hydropoint.waterbodyeuropean_river_code',
+		'hydropoint.river_european_river_code',
 		'hydropoint.country',
 		'hydropoint.name',
 		'hydropoint.location',
@@ -79,7 +79,7 @@ class HydroMonitoringPointQueries extends BaseQueries {
 	 * @uses \Environet\Sys\General\Db\HydroStationClassificationQueries::getById()
 	 * @uses \Environet\Sys\General\Db\OperatorQueries::getById()
 	 * @uses \Environet\Sys\General\Db\RiverbankQueries::getById()
-	 * @uses \Environet\Sys\General\Db\WaterbodyQueries::getById()
+	 * @uses \Environet\Sys\General\Db\RiverQueries::getById()
 	 * @uses \Environet\Sys\General\Db\Query\Select::run()
 	 */
 	public static function getById($id, string $primaryKey = 'id'): ?array {
@@ -89,8 +89,8 @@ class HydroMonitoringPointQueries extends BaseQueries {
 			$monitoringPoint['classification'] = $monitoringPoint['station_classificationid'] ? HydroStationClassificationQueries::getById($monitoringPoint['station_classificationid']) : null;
 			$monitoringPoint['operator'] = $monitoringPoint['operatorid'] ? OperatorQueries::getById($monitoringPoint['operatorid']) : null;
 			$monitoringPoint['riverbank'] = RiverbankQueries::getById($monitoringPoint['bankid']);
-			$monitoringPoint['waterbody'] = WaterbodyQueries::getById(
-				$monitoringPoint['waterbodyeuropean_river_code'],
+			$monitoringPoint['river'] = RiverQueries::getById(
+				$monitoringPoint['river_european_river_code'],
 				'european_river_code'
 			);
 			$monitoringPoint['observedProperties'] = (new Select())
@@ -121,7 +121,7 @@ class HydroMonitoringPointQueries extends BaseQueries {
 			'station_classificationid'     => 'classification',
 			'operatorid'                   => 'operator',
 			'bankid'                       => 'riverbank',
-			'waterbodyeuropean_river_code' => 'waterbody',
+			'river_european_river_code'    => 'river',
 		];
 		foreach ($mapKeys as $toKey => $fromKey) {
 			if (array_key_exists($fromKey, $data)) {
@@ -153,7 +153,7 @@ class HydroMonitoringPointQueries extends BaseQueries {
 			'station_classificationid'     => isset($data['station_classificationid']) ? $data['station_classificationid'] ?: null : null,
 			'operatorid'                   => isset($data['operatorid']) ? $data['operatorid'] ?: null : null,
 			'bankid'                       => isset($data['bankid']) ? $data['bankid'] ?: null : null,
-			'waterbodyeuropean_river_code' => isset($data['waterbodyeuropean_river_code']) ? $data['waterbodyeuropean_river_code'] ?: null : null,
+			'river_european_river_code'    => isset($data['river_european_river_code']) ? $data['river_european_river_code'] ?: null : null,
 
 			// dates
 			'start_time'                   => !empty($data['start_time']) ? $data['start_time'] : null,

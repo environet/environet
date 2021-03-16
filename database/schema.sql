@@ -465,7 +465,7 @@ CREATE TABLE public.hydropoint (
     station_classificationid integer,
     operatorid integer,
     bankid integer,
-    waterbodyeuropean_river_code character varying(64),
+    river_european_river_code character varying(64),
     eucd_wgst character varying(64) NOT NULL,
     ncd_wgst character varying(64) NOT NULL,
     vertical_reference character varying(32),
@@ -1314,6 +1314,30 @@ COMMENT ON COLUMN public.public_keys.public_key IS 'The public key';
 
 
 --
+-- Name: river; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.river (
+    european_river_code character varying(64) NOT NULL,
+    cname character varying(255) NOT NULL
+);
+
+
+--
+-- Name: COLUMN river.european_river_code; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN public.river.european_river_code IS 'International code of river or canal to which the water gauge station belongs. Same as River.EUCD_RIV in DanubeGIS.';
+
+
+--
+-- Name: COLUMN river.cname; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN public.river.cname IS 'Human readable name of the water body, part of river, etc. the code refers to';
+
+
+--
 -- Name: riverbank_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1466,30 +1490,6 @@ CREATE TABLE public.warning_level (
     mpointid integer NOT NULL,
     water_level numeric(20,10) NOT NULL
 );
-
-
---
--- Name: waterbody; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.waterbody (
-    european_river_code character varying(64) NOT NULL,
-    cname character varying(255) NOT NULL
-);
-
-
---
--- Name: COLUMN waterbody.european_river_code; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.waterbody.european_river_code IS 'International code of river or canal to which the water gauge station belongs. Same as River.EUCD_RIV in DanubeGIS.';
-
-
---
--- Name: COLUMN waterbody.cname; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.waterbody.cname IS 'Human readable name of the water body, part of river, etc. the code refers to';
 
 
 --
@@ -1669,6 +1669,14 @@ ALTER TABLE ONLY public.public_keys
 
 
 --
+-- Name: river river_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.river
+    ADD CONSTRAINT river_pkey PRIMARY KEY (european_river_code);
+
+
+--
 -- Name: riverbank riverbank_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1706,14 +1714,6 @@ ALTER TABLE ONLY public.users
 
 ALTER TABLE ONLY public.warning_level
     ADD CONSTRAINT warning_level_pkey PRIMARY KEY (warning_level);
-
-
---
--- Name: waterbody waterbody_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.waterbody
-    ADD CONSTRAINT waterbody_pkey PRIMARY KEY (european_river_code);
 
 
 --
@@ -1843,19 +1843,19 @@ ALTER TABLE ONLY public.hydropoint
 
 
 --
+-- Name: hydropoint hydropoint_river_european_river_code_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.hydropoint
+    ADD CONSTRAINT hydropoint_river_european_river_code_fkey FOREIGN KEY (river_european_river_code) REFERENCES public.river(european_river_code);
+
+
+--
 -- Name: hydropoint hydropoint_station_classificationid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.hydropoint
     ADD CONSTRAINT hydropoint_station_classificationid_fkey FOREIGN KEY (station_classificationid) REFERENCES public.hydrostation_classification(id);
-
-
---
--- Name: hydropoint hydropoint_waterbodyeuropean_river_code_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.hydropoint
-    ADD CONSTRAINT hydropoint_waterbodyeuropean_river_code_fkey FOREIGN KEY (waterbodyeuropean_river_code) REFERENCES public.waterbody(european_river_code);
 
 
 --

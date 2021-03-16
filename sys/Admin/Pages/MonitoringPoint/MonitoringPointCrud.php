@@ -250,7 +250,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 			'country' => '2-char country code [text]',
 			'operator' => ['title' => 'Operator ID [ID]', 'outField' => 'operatorid'],
 			'riverbank' => ['title' => 'Riverbank ID [ID]', 'outField' => 'bankid'],
-			'waterbody' => ['title' => 'Waterbody ID [ID]', 'outField' => 'waterbodyeuropean_river_code'],
+			'river' => ['title' => 'River ID [ID]', 'outField' => 'river_european_river_code'],
 			'vertical_reference' => 'Vertical reference [text]',
 			'long' => 'Longitude coordinate [number]',
 			'lat' => 'Latitude coordinate [number]',

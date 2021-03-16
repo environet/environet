@@ -41,7 +41,7 @@ The `signature` part is the base64 encoded openssl signature which was created w
                 "station_classificationid": 1,
                 "operatorid": 1,
                 "bankid": 1,
-                "waterbodyeuropean_river_code": "waterbody",
+                "river_european_river_code": "river",
                 "eucd_wgst": "ABC123",
                 "ncd_wgst": "ABC123",
                 "vertical_reference": "Vertical reference",

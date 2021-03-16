@@ -1024,7 +1024,7 @@
 <ul>
 <li><a href="#25_7_2_hydro_monitoring_point">Hydro monitoring points</a></li>
 <li><a href="#25_7_3_hydro_observed_properties">Hydro observed properties</a></li>
-<li><a href="#25_7_4_hydro_waterbody">Hydro waterbody</a></li>
+<li><a href="#25_7_4_hydro_river">Hydro river</a></li>
 <li><a href="#25_7_5_hydro_station_classification">Hydro station classification</a></li>
 <li><a href="#25_7_6_hydro_results">Hydro results</a></li>
 </ul></li>
@@ -1377,7 +1377,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <span id="cb6-5"><a href="#cb6-5"></a>            <span class="dt">&quot;station_classificationid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
 <span id="cb6-6"><a href="#cb6-6"></a>            <span class="dt">&quot;operatorid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
 <span id="cb6-7"><a href="#cb6-7"></a>            <span class="dt">&quot;bankid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
-<span id="cb6-8"><a href="#cb6-8"></a>            <span class="dt">&quot;waterbodyeuropean_river_code&quot;</span><span class="fu">:</span> <span class="st">&quot;waterbody&quot;</span><span class="fu">,</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>            <span class="dt">&quot;river_european_river_code&quot;</span><span class="fu">:</span> <span class="st">&quot;river&quot;</span><span class="fu">,</span></span>
 <span id="cb6-9"><a href="#cb6-9"></a>            <span class="dt">&quot;eucd_wgst&quot;</span><span class="fu">:</span> <span class="st">&quot;ABC123&quot;</span><span class="fu">,</span></span>
 <span id="cb6-10"><a href="#cb6-10"></a>            <span class="dt">&quot;ncd_wgst&quot;</span><span class="fu">:</span> <span class="st">&quot;ABC123&quot;</span><span class="fu">,</span></span>
 <span id="cb6-11"><a href="#cb6-11"></a>            <span class="dt">&quot;vertical_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;Vertical reference&quot;</span><span class="fu">,</span></span>
@@ -1545,7 +1545,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <h4 id="new-monitoring-point">New monitoring point</h4>
 <p>You can add new monitoring point if you click the “Add monitoring point” button on the top left of the hydro monitoring point list page.</p>
 <p>Path: <code>/admin/hydro/monitoring-points/add</code></p>
-<p>On the monitoring point creating page, you have to fill the following mandatory fields: - name - classification - operator - riverbank - waterbody - observed properties</p>
+<p>On the monitoring point creating page, you have to fill the following mandatory fields: - name - classification - operator - riverbank - river - observed properties</p>
 <h4 id="updating-monitoring-point">Updating monitoring point</h4>
 <p>You can select a monitoring point to update if you click the “Pencil” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/hydro/monitoring-points/edit?id=[monitoring point identifier]</code></p>
@@ -1553,7 +1553,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <h4 id="monitoring-point-show-page">Monitoring point show page</h4>
 <p>You can select a monitoring point to show if you click the “Eye” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/hydro/monitoring-points/show?id=[monitoring point identifier]</code></p>
-<p>Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator, waterbody and observed property.</p>
+<p>Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator, river and observed property.</p>
 <h4 id="monitoring-point-deleting">Monitoring point deleting</h4>
 <p>You cannot delete any monitoring point.</p>
 <p><a name="25_7_3_hydro_observed_properties"></a></p>
@@ -1576,25 +1576,25 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>Here you can see the stored data of an observed property.</p>
 <h4 id="observed-property-deleting">Observed property deleting</h4>
 <p>You cannot delete any observed property.</p>
-<p><a name="25_7_4_hydro_waterbody"></a></p>
-<h3 id="waterbody">Waterbody</h3>
-<p>Here you can handle the waterbodies what has already added to the system.</p>
-<p>Path: <code>/admin/hydro/waterbodies</code></p>
+<p><a name="25_7_4_hydro_river"></a></p>
+<h3 id="river">River</h3>
+<p>Here you can handle the rivers what has already added to the system.</p>
+<p>Path: <code>/admin/hydro/rivers</code></p>
 <p>Searchable: european river code</p>
-<h4 id="new-waterbody">New waterbody</h4>
-<p>You can add new waterbody if you click the “Add waterbody” button on the top left of the waterbody list page.</p>
-<p>Path: <code>/admin/hydro/waterbodies/add</code></p>
-<p>On the waterbody’s creating page, you have to fill to following mandatory fields: - cname - european river code</p>
-<h4 id="updating-waterbody">Updating waterbody</h4>
-<p>You can select a waterbody to update if you click the “Pencil” icon at the end of the specific row.</p>
-<p>Path: <code>/admin/hydro/waterbodies/edit?id=[waterbody identifier]</code></p>
-<p>Here you can change the cname of the selected waterbody.</p>
-<h4 id="waterbody-show-page">Waterbody show page</h4>
-<p>You can select a waterbody to show if you click the “Eye” icon at the end of the specific row.</p>
-<p>Path: <code>/admin/hydro/waterbodies/show?id=[waterbody identifier]</code></p>
-<p>Here you can see the stored data of a waterbody.</p>
-<h4 id="waterbody-deleting">Waterbody deleting</h4>
-<p>You cannot delete any waterbody.</p>
+<h4 id="new-river">New river</h4>
+<p>You can add new river if you click the “Add river” button on the top left of the river list page.</p>
+<p>Path: <code>/admin/hydro/rivers/add</code></p>
+<p>On the river’s creating page, you have to fill to following mandatory fields: - cname - european river code</p>
+<h4 id="updating-river">Updating river</h4>
+<p>You can select a river to update if you click the “Pencil” icon at the end of the specific row.</p>
+<p>Path: <code>/admin/hydro/rivers/edit?id=[river identifier]</code></p>
+<p>Here you can change the cname of the selected river.</p>
+<h4 id="river-show-page">River show page</h4>
+<p>You can select a river to show if you click the “Eye” icon at the end of the specific row.</p>
+<p>Path: <code>/admin/hydro/rivers/show?id=[river identifier]</code></p>
+<p>Here you can see the stored data of a river.</p>
+<h4 id="river-deleting">River deleting</h4>
+<p>You cannot delete any river.</p>
 <p><a name="25_7_5_hydro_station_classification"></a></p>
 <h3 id="station-classifications">Station classifications</h3>
 <p>Here you can handle the classifications of a specified station what has already added to the system.</p>

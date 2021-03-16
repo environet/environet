@@ -58,6 +58,7 @@ class MigrateDb extends DbCommand {
 			'renameDataProviderPermissions',
 			'addIsActiveColumns',
 			'removeMeteoPrefixes',
+			'renameWaterbody',
 		];
 		ini_set('memory_limit', - 1);
 
@@ -363,6 +364,58 @@ class MigrateDb extends DbCommand {
 
 
 	/**
+	 * Rename waterbody to river
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function renameWaterbody(array &$output): int {
+		$return = - 1;
+
+
+		if ($this->checkColumn('hydropoint', 'waterbodyeuropean_river_code')) {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE hydropoint RENAME COLUMN waterbodyeuropean_river_code TO river_european_river_code;", []);
+		}
+
+		if ($this->checkColumn('waterbody', 'european_river_code')) {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE waterbody RENAME TO river;", []);
+		}
+
+		if ($this->checkIndex('river', 'waterbody_pkey')) {
+			$return = 0;
+			$this->connection->runQuery("ALTER INDEX waterbody_pkey RENAME TO river_pkey;", []);
+		}
+
+		if ($this->checkConstraint('hydropoint', 'hydropoint_waterbodyeuropean_river_code_fkey')) {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE hydropoint DROP CONSTRAINT hydropoint_waterbodyeuropean_river_code_fkey;", []);
+			$this->connection->runQuery("
+				ALTER TABLE hydropoint 
+				    ADD CONSTRAINT hydropoint_river_european_river_code_fkey FOREIGN KEY (river_european_river_code) REFERENCES public.river(european_river_code);
+		    ", []);
+		}
+
+		$permissions = $this->connection->runQuery("SELECT * FROM permissions WHERE name LIKE '%waterbodies%';", [])->fetchAll();
+		if (!empty($permissions)) {
+			$return = 0;
+			$this->connection->runQuery("UPDATE permissions SET name = REPLACE(name, 'waterbodies', 'rivers');", []);
+		}
+
+		$eventLogs = $this->connection->runQuery("SELECT * FROM event_logs WHERE event_type LIKE '%waterbody%';", [])->fetchAll();
+		if (!empty($eventLogs)) {
+			$return = 0;
+			$this->connection->runQuery("UPDATE event_logs SET event_type = REPLACE(event_type, 'waterbody', 'river');", []);
+		}
+
+		return $return;
+	}
+
+
+	/**
 	 * @param string $tableName
 	 * @param string $columnName
 	 *
@@ -410,6 +463,25 @@ class MigrateDb extends DbCommand {
 			from pg_class t, pg_class i, pg_index ix, pg_attribute a
 			where t.oid = ix.indrelid and i.oid = ix.indexrelid and a.attrelid = t.oid and a.attnum = ANY(ix.indkey) and t.relkind = 'r' 
 			  and t.relname like '$tableName' and i.relname = '$indexName'", [])->fetchColumn();
+		return ((int) $count) > 0;
+	}
+
+
+	/**
+	 * Check if constraint exists in table
+	 *
+	 * @param string $tableName
+	 * @param string $constraintName
+	 *
+	 * @return bool
+	 * @throws QueryException
+	 */
+	private function checkConstraint(string $tableName, string $constraintName) {
+		$count = $this->connection->runQuery("select COUNT(*)
+			from pg_catalog.pg_constraint con
+			INNER JOIN pg_catalog.pg_class rel ON rel.oid = con.conrelid
+			INNER JOIN pg_catalog.pg_namespace nsp ON nsp.oid = connamespace
+			where rel.relname like '$tableName' and con.conname = '$constraintName'", [])->fetchColumn();
 		return ((int) $count) > 0;
 	}
 

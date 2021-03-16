@@ -1,52 +1,52 @@
 <?php
 
-namespace Environet\Sys\Admin\Pages\Hydro\Waterbody;
+namespace Environet\Sys\Admin\Pages\Hydro\River;
 
 use Environet\Sys\Admin\Pages\CrudPage;
-use Environet\Sys\General\Db\WaterbodyQueries;
+use Environet\Sys\General\Db\RiverQueries;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\Exceptions\RenderException;
 use Environet\Sys\General\Response;
 
 /**
- * Class WaterbodyCrud
+ * Class RiverCrud
  *
- * Handles CRUD operations for hydropoint waterbodies.
+ * Handles CRUD operations for hydropoint rivers.
  *
- * @package Environet\Sys\Admin\Pages\Hydro\Waterbody
+ * @package Environet\Sys\Admin\Pages\Hydro\River
  * @author  SRG Group <dev@srg.hu>
  */
-class WaterbodyCrud extends CrudPage {
+class RiverCrud extends CrudPage {
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $queriesClass = WaterbodyQueries::class;
+	protected $queriesClass = RiverQueries::class;
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $indexTemplate = '/hydro/waterbody/index.phtml';
+	protected $indexTemplate = '/hydro/river/index.phtml';
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $formTemplate = '/hydro/waterbody/form.phtml';
+	protected $formTemplate = '/hydro/river/form.phtml';
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $showTemplate = '/hydro/waterbody/show.phtml';
+	protected $showTemplate = '/hydro/river/show.phtml';
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $listPagePath = '/admin/hydro/waterbodies';
+	protected $listPagePath = '/admin/hydro/rivers';
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $successAddMessage = 'Waterbody successfully saved';
+	protected $successAddMessage = 'River successfully saved';
 
 
 	/**
@@ -55,7 +55,7 @@ class WaterbodyCrud extends CrudPage {
 	 * @return string
 	 */
 	protected function getEntityName(bool $plural = false): string {
-		return $plural ? 'waterbodies' : 'waterbody';
+		return $plural ? 'rivers' : 'river';
 	}
 
 
@@ -177,13 +177,13 @@ class WaterbodyCrud extends CrudPage {
 
 		if (is_null($id)) {
 			if (!validate($data, 'european_river_code', REGEX_RIVERCODE, true)) {
-				$this->addMessage('Waterbody european river code is empty, or format is invalid', self::MESSAGE_ERROR);
+				$this->addMessage('River european river code is empty, or format is invalid', self::MESSAGE_ERROR);
 				$valid = false;
 			}
 		}
 
 		if (!validate($data, 'cname', '', true)) {
-			$this->addMessage('Waterbody cname is empty, or format is invalid', self::MESSAGE_ERROR);
+			$this->addMessage('River cname is empty, or format is invalid', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 

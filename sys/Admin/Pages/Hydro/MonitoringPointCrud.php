@@ -8,7 +8,7 @@ use Environet\Sys\General\Db\HydroStationClassificationQueries;
 use Environet\Sys\General\Db\OperatorQueries;
 use Environet\Sys\General\Db\RiverbankQueries;
 use Environet\Sys\General\Db\UserQueries;
-use Environet\Sys\General\Db\WaterbodyQueries;
+use Environet\Sys\General\Db\RiverQueries;
 use Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud as MonitoringPointCrudBase;
 use Environet\Sys\General\Exceptions\QueryException;
 
@@ -90,7 +90,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 			'classifications'    => HydroStationClassificationQueries::getOptionList('value'),
 			'operators'          => $this->getOperatorList(),
 			'riverbanks'         => RiverbankQueries::getOptionList('value'),
-			'waterbodies'        => WaterbodyQueries::getOptionList('cname', 'european_river_code'),
+			'rivers'        => RiverQueries::getOptionList('cname', 'european_river_code'),
 			'observedProperties' => HydroObservedPropertyQueries::getOptionList('symbol'),
 		];
 	}
@@ -144,7 +144,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 		return [
 			['title' => 'Station classifications', 'options' => HydroStationClassificationQueries::getOptionList('value')],
 			['title' => 'Riverbanks', 'options' => RiverbankQueries::getOptionList('value')],
-			['title' => 'Waterbodies', 'options' => WaterbodyQueries::getOptionList('cname', 'european_river_code')]
+			['title' => 'Rivers', 'options' => RiverQueries::getOptionList('cname', 'european_river_code')]
 		];
 	}
 

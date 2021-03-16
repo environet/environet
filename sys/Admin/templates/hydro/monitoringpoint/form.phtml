@@ -124,11 +124,11 @@
         </fieldset>
 
         <fieldset class="form-group">
-            <legend><?=__('Waterbody');?></legend>
-			<?php $selectedWaterbody = formFieldValue('waterbody', $record); ?>
+            <legend><?=__('River');?></legend>
+			<?php $selectedRiver = formFieldValue('river', $record); ?>
             <div class="field">
-                <select name="waterbody">
-					<?=selectOptions($waterbodies, $selectedWaterbody ?? null, ' - '.__('No waterbody').' - ');?>
+                <select name="river">
+					<?=selectOptions($rivers, $selectedRiver ?? null, ' - '.__('No river').' - ');?>
                 </select>
             </div>
         </fieldset>

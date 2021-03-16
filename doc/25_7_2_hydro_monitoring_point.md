@@ -16,7 +16,7 @@ On the monitoring point creating page, you have to fill the following mandatory 
 - classification
 - operator
 - riverbank
-- waterbody
+- river
 - observed properties
 
 #### Updating monitoring point
@@ -33,7 +33,7 @@ You can select a monitoring point to show if you click the "Eye" icon at the end
 
 Path: `/admin/hydro/monitoring-points/show?id=[monitoring point identifier]`
 
-Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator, waterbody and observed property.
+Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator, river and observed property.
 
 #### Monitoring point deleting
 
