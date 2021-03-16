@@ -8,6 +8,7 @@ use Environet\Sys\General\Db\Connection;
 use Environet\Sys\General\Exceptions\InvalidConfigurationException;
 use Environet\Sys\General\Exceptions\QueryException;
 use PDO;
+use Throwable;
 
 /**
  * Class MigrateDb
@@ -55,32 +56,43 @@ class MigrateDb extends DbCommand {
 			'createRiverbankPermissions',
 			'createResultUniqueIndexesDeleteDuplicates',
 			'renameDataProviderPermissions',
-			'addIsActiveColumns'
+			'addIsActiveColumns',
+			'removeMeteoPrefixes',
 		];
 		ini_set('memory_limit', - 1);
 
-		//Run each migrations, and log results
-		$mainExitCode = 0;
-		foreach ($migrations as $migration) {
-			$output = [];
-			$exitCode = $this->{$migration}($output);
+		try {
+			$this->connection->runQuery("BEGIN TRANSACTION;", []);
 
-			if ($exitCode === - 1) {
-				//Already migrated
-				$this->console->writeLine("$migration: Already migrated", Console::COLOR_YELLOW);
-			} elseif ($exitCode > 0) {
-				//Error during migration
-				$this->console->writeLine("$migration: Errors:", Console::COLOR_RED);
-				foreach ($output as $item) {
-					$this->console->writeLine("$item");
+			//Run each migrations, and log results
+			$mainExitCode = 0;
+			foreach ($migrations as $migration) {
+				$output = [];
+				$exitCode = $this->{$migration}($output);
+
+				if ($exitCode === - 1) {
+					//Already migrated
+					$this->console->writeLine("$migration: Already migrated", Console::COLOR_YELLOW);
+				} elseif ($exitCode > 0) {
+					//Error during migration
+					$this->console->writeLine("$migration: Errors:", Console::COLOR_RED);
+					foreach ($output as $item) {
+						$this->console->writeLine("$item");
+					}
+					$mainExitCode = 1;
+				} else {
+					//Success
+					$this->console->writeLine("$migration: Done", Console::COLOR_GREEN);
 				}
-				$mainExitCode = 1;
-			} else {
-				//Success
-				$this->console->writeLine("$migration: Done", Console::COLOR_GREEN);
+				$this->console->writeLineBreak();
 			}
-			$this->console->writeLineBreak();
+
+			$this->connection->runQuery("COMMIT TRANSACTION;", []);
+		} catch (Throwable $exception) {
+			$this->connection->runQuery("ROLLBACK TRANSACTION;", []);
+			throw $exception;
 		}
+
 
 		return $mainExitCode;
 	}
@@ -184,12 +196,16 @@ class MigrateDb extends DbCommand {
 	 */
 	private function createResultUniqueIndexesDeleteDuplicates(array &$output): int {
 
-		$return = -1;
+		$return = - 1;
 		foreach (['hydro', 'meteo'] as $type) {
 			//Find duplicates for type
-			$tsColumn = ($type == 'meteo' ? 'meteo_' : '') . 'time_seriesid';
+			$tsColumn = 'time_seriesid';
 			$resultTable = "{$type}_result";
 			$indexName = "{$type}_unique_time_value";
+
+			if ($type === 'meteo') {
+				$tsColumn = $this->checkColumn($resultTable, $tsColumn) ? $tsColumn : 'meteo_'.$tsColumn;
+			}
 
 			if (!$this->checkIndex($resultTable, $indexName)) {
 				//If index is not yet created, delete duplicates first, and after it add unique index
@@ -218,7 +234,7 @@ class MigrateDb extends DbCommand {
 				if ($deleteIds) {
 					//Delete ids
 					$this->console->writeLine(sprintf('Delete %d duplicated rows for type %s', count($deleteIds), $type));
-					$this->connection->runQuery('DELETE FROM public.'.$type.'_result WHERE id IN(' . implode(',', $deleteIds) . ')', []);
+					$this->connection->runQuery('DELETE FROM public.' . $type . '_result WHERE id IN(' . implode(',', $deleteIds) . ')', []);
 				}
 
 				//Add index
@@ -264,7 +280,7 @@ class MigrateDb extends DbCommand {
 	 * @throws QueryException
 	 */
 	private function addIsActiveColumns(array &$output): int {
-		$return = -1;
+		$return = - 1;
 
 		$count = $this->connection->runQuery(
 			'SELECT COUNT(*) FROM information_schema.columns WHERE TABLE_NAME = :tableName AND column_name = :columnName;',
@@ -285,6 +301,98 @@ class MigrateDb extends DbCommand {
 		}
 
 		return $return;
+	}
+
+
+	/**
+	 * Add is_active column
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function removeMeteoPrefixes(array &$output): int {
+		$return = - 1;
+
+
+		if ($this->checkColumn('meteo_result', 'meteo_time_seriesid')) {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE meteo_result RENAME COLUMN meteo_time_seriesid TO time_seriesid;", []);
+		}
+		$meteoResultColumnData = $this->getColumnData('meteo_result', 'value');
+		if ($meteoResultColumnData && $meteoResultColumnData['data_type'] !== 'numeric') {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE meteo_result ALTER COLUMN value TYPE numeric(20,10);", []);
+		}
+
+		if ($this->checkColumn('meteo_time_series', 'meteopointid')) {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE meteo_time_series RENAME COLUMN meteopointid TO mpointid;", []);
+		}
+		if ($this->checkColumn('meteo_time_series', 'meteo_observed_propertyid')) {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE meteo_time_series RENAME COLUMN meteo_observed_propertyid TO observed_propertyid;", []);
+		}
+
+		if ($this->checkColumn('meteopoint', 'meteostation_classificationid')) {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE meteopoint RENAME COLUMN meteostation_classificationid TO station_classificationid;", []);
+		}
+
+		if ($this->checkColumn('meteopoint_observed_property', 'meteo_observed_propertyid')) {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE meteopoint_observed_property RENAME COLUMN meteo_observed_propertyid TO observed_propertyid;", []);
+		}
+		if ($this->checkColumn('meteopoint_observed_property', 'meteopointid')) {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE meteopoint_observed_property RENAME COLUMN meteopointid TO mpointid;", []);
+		}
+
+		$hasMonitoringPointTable = $this->connection->runQuery(
+			'SELECT COUNT(*) FROM information_schema.columns WHERE TABLE_NAME = :tableName',
+			['tableName' => 'monitoring_point']
+		)->fetch(PDO::FETCH_COLUMN);
+		if ($hasMonitoringPointTable) {
+			$return = 0;
+			$this->connection->runQuery("DROP TABLE IF EXISTS monitoring_point;", []);
+		}
+
+		return $return;
+	}
+
+
+	/**
+	 * @param string $tableName
+	 * @param string $columnName
+	 *
+	 * @return bool
+	 * @throws QueryException
+	 */
+	private function checkColumn(string $tableName, string $columnName) {
+		$count = $this->connection->runQuery(
+			'SELECT COUNT(*) FROM information_schema.columns WHERE TABLE_NAME = :tableName AND column_name = :columnName;',
+			['tableName' => $tableName, 'columnName' => $columnName]
+		)->fetch(PDO::FETCH_COLUMN);
+
+		return (bool) $count;
+	}
+
+
+	/**
+	 * @param string $tableName
+	 * @param string $columnName
+	 *
+	 * @return mixed|null
+	 * @throws QueryException
+	 */
+	private function getColumnData(string $tableName, string $columnName) {
+		$data = $this->connection->runQuery(
+			'SELECT * FROM information_schema.columns WHERE TABLE_NAME = :tableName AND column_name = :columnName;',
+			['tableName' => $tableName, 'columnName' => $columnName]
+		)->fetch(PDO::FETCH_ASSOC);
+
+		return $data ?: null;
 	}
 
 

@@ -124,7 +124,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 			],
 			$columns,
 			[
-				'classification' => ['title' => 'Station classification ID [ID]', 'outField' => 'meteostation_classificationid'],
+				'classification' => ['title' => 'Station classification ID [ID]', 'outField' => 'station_classificationid'],
 				'altitude'       => 'Altitue [number]',
 			]
 		);

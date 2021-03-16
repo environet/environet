@@ -62,8 +62,8 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 			$points[$i]['observed_properties'] = (new Select())
 				->from('meteo_observed_property hop')
 				->select('hop.symbol')
-				->join('meteopoint_observed_property hpop', 'hpop.meteo_observed_propertyid = hop.id', Query::JOIN_LEFT)
-				->where('hpop.meteopointid = :hpopId')
+				->join('meteopoint_observed_property hpop', 'hpop.observed_propertyid = hop.id', Query::JOIN_LEFT)
+				->where('hpop.mpointid = :hpopId')
 				->addParameter(':hpopId', $point['id'])
 				->run(Query::FETCH_COLUMN);
 		}
@@ -82,20 +82,20 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 		$monitoringPoint = parent::getById($id);
 
 		if ($monitoringPoint) {
-			$monitoringPoint['classification'] = $monitoringPoint['meteostation_classificationid'] ? MeteoStationClassificationQueries::getById($monitoringPoint['meteostation_classificationid']) : null;
+			$monitoringPoint['classification'] = $monitoringPoint['station_classificationid'] ? MeteoStationClassificationQueries::getById($monitoringPoint['station_classificationid']) : null;
 			$monitoringPoint['operator'] = $monitoringPoint['operatorid'] ? OperatorQueries::getById($monitoringPoint['operatorid']) : null;
 			$monitoringPoint['observedProperties'] = (new Select())
-				->select('meteo_observed_propertyid')
+				->select('observed_propertyid')
 				->from('meteopoint_observed_property')
-				->where('meteopointid = :meteopointId')
-				->addParameter(':meteopointId', $id)
+				->where('mpointid = :mpointId')
+				->addParameter(':mpointId', $id)
 				->run(Query::FETCH_COLUMN);
 
 			$monitoringPoint['showObservedProperty'] = (new Select())
 				->select(['mop.id', 'mop.symbol'])
 				->from('meteo_observed_property mop')
-				->join('meteopoint_observed_property mpop', 'mpop.meteo_observed_propertyid = mop.id', Query::JOIN_LEFT)
-				->where('mpop.meteopointid = :mpopId')
+				->join('meteopoint_observed_property mpop', 'mpop.observed_propertyid = mop.id', Query::JOIN_LEFT)
+				->where('mpop.mpointid = :mpopId')
 				->addParameter(':mpopId', $id)
 				->run();
 		}
@@ -148,8 +148,8 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 		static::saveConnections(
 			$data['observedProperties'] ?? [],
 			'meteopoint_observed_property',
-			'meteo_observed_propertyid',
-			'meteopointid',
+			'observed_propertyid',
+			'mpointid',
 			$id,
 			true
 		);
@@ -161,7 +161,7 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 	 */
 	public static function prepareData(array $data): array {
 		$mapKeys = [
-			'meteostation_classificationid' => 'classification',
+			'station_classificationid' => 'classification',
 			'operatorid'                    => 'operator',
 		];
 		foreach ($mapKeys as $toKey => $fromKey) {
@@ -190,7 +190,7 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 			'utc_offset'                    => isset($data['utc_offset']) && $data['utc_offset'] !== '' ? (int) $data['utc_offset'] : null,
 
 			// foreign keys
-			'meteostation_classificationid' => isset($data['meteostation_classificationid']) ? $data['meteostation_classificationid'] ?: null : null,
+			'station_classificationid'      => isset($data['station_classificationid']) ? $data['station_classificationid'] ?: null : null,
 			'operatorid'                    => isset($data['operatorid']) ? $data['operatorid'] ?: null : null,
 
 			// dates
@@ -218,13 +218,13 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 	public static function delete(int $id, bool $soft = false, string $primaryKey = 'id') {
 		EventLogger::log(static::getDeleteEventType(), ['id' => $id]);
 
-		$timeSeries = array_column((new Select())->select('id')->from('meteo_time_series')->where('meteopointid = :id')->addParameter(':id', $id)->run(), 'id');
+		$timeSeries = array_column((new Select())->select('id')->from('meteo_time_series')->where('mpointid = :id')->addParameter(':id', $id)->run(), 'id');
 		if (!empty($timeSeries)) {
-			(new Delete())->table('meteo_result')->whereIn('meteo_time_seriesid', $timeSeries, 'meteoSeriesIds')->run();
+			(new Delete())->table('meteo_result')->whereIn('time_seriesid', $timeSeries, 'meteoSeriesIds')->run();
 			(new Delete())->table('meteo_time_series')->whereIn('id', $timeSeries, 'meteoSeriesIds')->run();
 		}
 
-		(new Delete())->table('meteopoint_observed_property')->where('meteopointid = :id')->addParameter(':id', $id)->run();
+		(new Delete())->table('meteopoint_observed_property')->where('mpointid = :id')->addParameter(':id', $id)->run();
 		(new Delete())->table(static::$tableName)->where($primaryKey . ' = :id')->addParameter(':id', $id)->run();
 	}
 

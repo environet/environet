@@ -76,9 +76,9 @@ class MeteoObservedPropertyQueries extends BaseQueries {
 	public static function getSymbolsByPoint(int $pointId): array {
 		return (new Select())
 			->from('meteo_observed_property')
-			->join('meteopoint_observed_property', 'meteopoint_observed_property.meteo_observed_propertyid = meteo_observed_property.id')
+			->join('meteopoint_observed_property', 'meteopoint_observed_property.observed_propertyid = meteo_observed_property.id')
 			->select('meteo_observed_property.symbol')
-			->where('meteopoint_observed_property.meteopointid = :pointId')
+			->where('meteopoint_observed_property.mpointid = :pointId')
 			->addParameter('pointId', $pointId)
 			->run(Query::FETCH_COLUMN) ?: [];
 	}

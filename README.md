@@ -469,7 +469,7 @@ The `signature` part is the base64 encoded openssl signature which was created w
         "meteo": [
             {
                 "id": 1,
-                "meteostation_classificationid": 1,
+                "station_classificationid": 1,
                 "operatorid": 1,
                 "eucd_pst": "DEF456",
                 "ncd_pst": "DEF456",

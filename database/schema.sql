@@ -20,6 +20,10 @@ SET row_security = off;
 -- Name: environet; Type: DATABASE; Schema: -; Owner: -
 --
 
+CREATE DATABASE environet WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.utf8' LC_CTYPE = 'en_US.utf8';
+
+
+\connect environet
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -36,7 +40,7 @@ SET row_security = off;
 -- Name: public; Type: SCHEMA; Schema: -; Owner: -
 --
 
-CREATE SCHEMA IF NOT EXISTS public;
+CREATE SCHEMA public;
 
 
 --
@@ -798,9 +802,9 @@ CREATE SEQUENCE public.meteo_result_id_seq
 
 CREATE TABLE public.meteo_result (
     id bigint DEFAULT nextval('public.meteo_result_id_seq'::regclass) NOT NULL,
-    meteo_time_seriesid bigint NOT NULL,
+    time_seriesid bigint NOT NULL,
     "time" timestamp without time zone NOT NULL,
-    value double precision NOT NULL,
+    value numeric(20,10) NOT NULL,
     created_at timestamp without time zone NOT NULL,
     is_forecast boolean DEFAULT false
 );
@@ -838,8 +842,8 @@ CREATE SEQUENCE public.meteo_time_series_id_seq
 
 CREATE TABLE public.meteo_time_series (
     id bigint DEFAULT nextval('public.meteo_time_series_id_seq'::regclass) NOT NULL,
-    meteopointid integer NOT NULL,
-    meteo_observed_propertyid integer NOT NULL,
+    mpointid integer NOT NULL,
+    observed_propertyid integer NOT NULL,
     phenomenon_time_begin timestamp without time zone,
     phenomenon_time_end timestamp without time zone,
     result_time timestamp without time zone NOT NULL
@@ -892,7 +896,7 @@ CREATE SEQUENCE public.meteopoint_id_seq
 
 CREATE TABLE public.meteopoint (
     id integer DEFAULT nextval('public.meteopoint_id_seq'::regclass) NOT NULL,
-    meteostation_classificationid integer,
+    station_classificationid integer,
     operatorid integer,
     eucd_pst character varying(64) NOT NULL,
     ncd_pst character varying(64) NOT NULL,
@@ -1038,8 +1042,8 @@ COMMENT ON COLUMN public.meteopoint.river_basin IS 'Name of river basin to which
 --
 
 CREATE TABLE public.meteopoint_observed_property (
-    meteo_observed_propertyid integer NOT NULL,
-    meteopointid integer NOT NULL,
+    observed_propertyid integer NOT NULL,
+    mpointid integer NOT NULL,
     last_update timestamp without time zone,
     min_value numeric(20,10),
     min_value_time timestamp without time zone,
@@ -1129,168 +1133,6 @@ CREATE SEQUENCE public.monitoring_point_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
-
---
--- Name: monitoring_point; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.monitoring_point (
-    id integer DEFAULT nextval('public.monitoring_point_id_seq'::regclass) NOT NULL,
-    station_classificationid integer NOT NULL,
-    operatorid integer NOT NULL,
-    eucd_pst character varying(64) NOT NULL,
-    ncd_pst character varying(64) NOT NULL,
-    vertical_reference character varying(32) NOT NULL,
-    long double precision NOT NULL,
-    lat double precision NOT NULL,
-    z double precision NOT NULL,
-    maplong numeric(18,14),
-    maplat numeric(18,14),
-    country character varying(2) NOT NULL,
-    name character varying(128) NOT NULL,
-    location character varying(255) NOT NULL,
-    river_kilometer double precision NOT NULL,
-    catchment_area double precision NOT NULL,
-    altitude double precision NOT NULL,
-    start_time timestamp without time zone NOT NULL,
-    end_time timestamp without time zone NOT NULL,
-    utc_offset integer NOT NULL,
-    river_basin character varying(64) NOT NULL
-);
-
-
---
--- Name: COLUMN monitoring_point.id; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.id IS 'Identifier of the water gauge station';
-
-
---
--- Name: COLUMN monitoring_point.eucd_pst; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.eucd_pst IS 'International code of meteorological station (Link to DanubeGIS database). [country] & [NCD_PST] & “_METEO”';
-
-
---
--- Name: COLUMN monitoring_point.ncd_pst; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.ncd_pst IS 'National code of meteorological station';
-
-
---
--- Name: COLUMN monitoring_point.vertical_reference; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.vertical_reference IS 'Reference Vertical Datum identifier, e.g. European Vertical Reference Frame 2007 (EVRF2007)';
-
-
---
--- Name: COLUMN monitoring_point.long; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.long IS 'Coordinates of meteorological station: EPSG 4326 (WGS 84) Longitude [°]';
-
-
---
--- Name: COLUMN monitoring_point.lat; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.lat IS 'Coordinates of meteorological station: Height [m]';
-
-
---
--- Name: COLUMN monitoring_point.z; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.z IS 'Coordinates of water gauge station: Height [m]';
-
-
---
--- Name: COLUMN monitoring_point.maplong; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.maplong IS 'Longitude of meteorological station for display on map';
-
-
---
--- Name: COLUMN monitoring_point.maplat; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.maplat IS 'Lattude of meteorological station for display on map';
-
-
---
--- Name: COLUMN monitoring_point.country; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.country IS 'Country code of meteorological station ISO 3166-1 ALPHA-2 (e.g. “DE”)';
-
-
---
--- Name: COLUMN monitoring_point.name; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.name IS 'Locally used name of meteorological station';
-
-
---
--- Name: COLUMN monitoring_point.location; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.location IS 'Closest commune or landmark';
-
-
---
--- Name: COLUMN monitoring_point.river_kilometer; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.river_kilometer IS 'Location at river the water gauge station is located, distance from mouth';
-
-
---
--- Name: COLUMN monitoring_point.catchment_area; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.catchment_area IS 'Drainage basin area of water gauge station [km²]';
-
-
---
--- Name: COLUMN monitoring_point.altitude; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.altitude IS 'Gravity-related altitude of the zero level of the gauge above the sea level [m]. Same as gauge_zero for water gauge stations.';
-
-
---
--- Name: COLUMN monitoring_point.start_time; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.start_time IS 'Starting time of time series measurements on this meteorological station (UTC)';
-
-
---
--- Name: COLUMN monitoring_point.end_time; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.end_time IS 'Ending time of time series measurements on this meteorological station (UTC)';
-
-
---
--- Name: COLUMN monitoring_point.utc_offset; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.utc_offset IS 'Time zone the meteorological station belongs to UTC+X [min], disregarding daylight-saving time.';
-
-
---
--- Name: COLUMN monitoring_point.river_basin; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.monitoring_point.river_basin IS 'Name of river basin to which meteorological station belongs';
 
 
 --
@@ -1787,14 +1629,6 @@ ALTER TABLE ONLY public.meteostation_classification
 
 
 --
--- Name: monitoring_point monitoring_point_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.monitoring_point
-    ADD CONSTRAINT monitoring_point_pkey PRIMARY KEY (id);
-
-
---
 -- Name: operator_groups operator_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1893,7 +1727,7 @@ CREATE UNIQUE INDEX hydro_unique_time_value ON public.hydro_result USING btree (
 -- Name: meteo_unique_time_value; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX meteo_unique_time_value ON public.meteo_result USING btree (meteo_time_seriesid, "time", value, is_forecast);
+CREATE UNIQUE INDEX meteo_unique_time_value ON public.meteo_result USING btree (time_seriesid, "time", value, is_forecast);
 
 
 --
@@ -2029,7 +1863,7 @@ ALTER TABLE ONLY public.hydropoint
 --
 
 ALTER TABLE ONLY public.meteo_result
-    ADD CONSTRAINT meteo_result_meteo_time_seriesid_fkey FOREIGN KEY (meteo_time_seriesid) REFERENCES public.meteo_time_series(id);
+    ADD CONSTRAINT meteo_result_meteo_time_seriesid_fkey FOREIGN KEY (time_seriesid) REFERENCES public.meteo_time_series(id);
 
 
 --
@@ -2037,7 +1871,7 @@ ALTER TABLE ONLY public.meteo_result
 --
 
 ALTER TABLE ONLY public.meteo_time_series
-    ADD CONSTRAINT meteo_time_series_meteo_observed_propertyid_fkey FOREIGN KEY (meteo_observed_propertyid) REFERENCES public.meteo_observed_property(id);
+    ADD CONSTRAINT meteo_time_series_meteo_observed_propertyid_fkey FOREIGN KEY (observed_propertyid) REFERENCES public.meteo_observed_property(id);
 
 
 --
@@ -2045,7 +1879,7 @@ ALTER TABLE ONLY public.meteo_time_series
 --
 
 ALTER TABLE ONLY public.meteo_time_series
-    ADD CONSTRAINT meteo_time_series_meteopointid_fkey FOREIGN KEY (meteopointid) REFERENCES public.meteopoint(id);
+    ADD CONSTRAINT meteo_time_series_meteopointid_fkey FOREIGN KEY (mpointid) REFERENCES public.meteopoint(id);
 
 
 --
@@ -2053,7 +1887,7 @@ ALTER TABLE ONLY public.meteo_time_series
 --
 
 ALTER TABLE ONLY public.meteopoint
-    ADD CONSTRAINT meteopoint_meteostation_classificationid_fkey FOREIGN KEY (meteostation_classificationid) REFERENCES public.meteostation_classification(id);
+    ADD CONSTRAINT meteopoint_meteostation_classificationid_fkey FOREIGN KEY (station_classificationid) REFERENCES public.meteostation_classification(id);
 
 
 --
@@ -2061,7 +1895,7 @@ ALTER TABLE ONLY public.meteopoint
 --
 
 ALTER TABLE ONLY public.meteopoint_observed_property
-    ADD CONSTRAINT meteopoint_observed_property_meteo_observed_propertyid_fkey FOREIGN KEY (meteo_observed_propertyid) REFERENCES public.meteo_observed_property(id);
+    ADD CONSTRAINT meteopoint_observed_property_meteo_observed_propertyid_fkey FOREIGN KEY (observed_propertyid) REFERENCES public.meteo_observed_property(id);
 
 
 --
@@ -2069,7 +1903,7 @@ ALTER TABLE ONLY public.meteopoint_observed_property
 --
 
 ALTER TABLE ONLY public.meteopoint_observed_property
-    ADD CONSTRAINT meteopoint_observed_property_meteopointid_fkey FOREIGN KEY (meteopointid) REFERENCES public.meteopoint(id);
+    ADD CONSTRAINT meteopoint_observed_property_meteopointid_fkey FOREIGN KEY (mpointid) REFERENCES public.meteopoint(id);
 
 
 --
@@ -2078,22 +1912,6 @@ ALTER TABLE ONLY public.meteopoint_observed_property
 
 ALTER TABLE ONLY public.meteopoint
     ADD CONSTRAINT meteopoint_operatorid_fkey FOREIGN KEY (operatorid) REFERENCES public.operator(id);
-
-
---
--- Name: monitoring_point monitoring_point_operatorid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.monitoring_point
-    ADD CONSTRAINT monitoring_point_operatorid_fkey FOREIGN KEY (operatorid) REFERENCES public.operator(id);
-
-
---
--- Name: monitoring_point monitoring_point_station_classificationid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.monitoring_point
-    ADD CONSTRAINT monitoring_point_station_classificationid_fkey FOREIGN KEY (station_classificationid) REFERENCES public.hydrostation_classification(id);
 
 
 --

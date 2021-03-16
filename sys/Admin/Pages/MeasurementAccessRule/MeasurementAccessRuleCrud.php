@@ -194,8 +194,8 @@ class MeasurementAccessRuleCrud extends CrudPage {
 									->join('hydropoint_observed_property', 'hydropoint_observed_property.observed_propertyid = hydro_observed_property.id')
 									->join('hydropoint', 'hydropoint.id = hydropoint_observed_property.mpointid');
 		$meteoQuery = (new Select())->select(['DISTINCT(symbol)', 'meteo_observed_property.id'])->from('meteo_observed_property')
-									->join('meteopoint_observed_property', 'meteopoint_observed_property.meteo_observed_propertyid = meteo_observed_property.id')
-									->join('meteopoint', 'meteopoint.id = meteopoint_observed_property.meteopointid');
+									->join('meteopoint_observed_property', 'meteopoint_observed_property.observed_propertyid = meteo_observed_property.id')
+									->join('meteopoint', 'meteopoint.id = meteopoint_observed_property.mpointid');
 		if ($operator) {
 			$hydroQuery->where('hydropoint.operatorid = :operatorid')->addParameter('operatorid', $operator);
 			$meteoQuery->where('meteopoint.operatorid = :operatorid')->addParameter('operatorid', $operator);
