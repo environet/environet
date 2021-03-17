@@ -465,7 +465,7 @@ CREATE TABLE public.hydropoint (
     station_classificationid integer,
     operatorid integer,
     bankid integer,
-    river_european_river_code character varying(64),
+    eucd_riv character varying(64),
     eucd_wgst character varying(64) NOT NULL,
     ncd_wgst character varying(64) NOT NULL,
     vertical_reference character varying(32),
@@ -1158,7 +1158,7 @@ CREATE TABLE public.operator (
     email character varying(255) NOT NULL,
     phone character varying(255) NOT NULL,
     url character varying(255),
-    other_info character varying(255)
+    other_info text
 );
 
 
@@ -1318,16 +1318,16 @@ COMMENT ON COLUMN public.public_keys.public_key IS 'The public key';
 --
 
 CREATE TABLE public.river (
-    european_river_code character varying(64) NOT NULL,
+    eucd_riv character varying(64) NOT NULL,
     cname character varying(255) NOT NULL
 );
 
 
 --
--- Name: COLUMN river.european_river_code; Type: COMMENT; Schema: public; Owner: -
+-- Name: COLUMN river.eucd_riv; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN public.river.european_river_code IS 'International code of river or canal to which the water gauge station belongs. Same as River.EUCD_RIV in DanubeGIS.';
+COMMENT ON COLUMN public.river.eucd_riv IS 'International code of river or canal to which the water gauge station belongs. Same as River.EUCD_RIV in DanubeGIS.';
 
 
 --
@@ -1673,7 +1673,7 @@ ALTER TABLE ONLY public.public_keys
 --
 
 ALTER TABLE ONLY public.river
-    ADD CONSTRAINT river_pkey PRIMARY KEY (european_river_code);
+    ADD CONSTRAINT river_pkey PRIMARY KEY (eucd_riv);
 
 
 --
@@ -1717,6 +1717,48 @@ ALTER TABLE ONLY public.warning_level
 
 
 --
+-- Name: discharge_measurement_equipment_description_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX discharge_measurement_equipment_description_unique ON public.discharge_measurement_equipment USING btree (description);
+
+
+--
+-- Name: eucd_pst_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX eucd_pst_unique ON public.meteopoint USING btree (eucd_pst);
+
+
+--
+-- Name: eucd_wgst_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX eucd_wgst_unique ON public.hydropoint USING btree (eucd_wgst);
+
+
+--
+-- Name: groups_name_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX groups_name_unique ON public.groups USING btree (name);
+
+
+--
+-- Name: hydro_observed_property_symbol_type_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX hydro_observed_property_symbol_type_unique ON public.hydro_observed_property USING btree (symbol, type);
+
+
+--
+-- Name: hydro_time_series_mpoint_property_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX hydro_time_series_mpoint_property_unique ON public.hydro_time_series USING btree (mpointid, observed_propertyid);
+
+
+--
 -- Name: hydro_unique_time_value; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1724,10 +1766,87 @@ CREATE UNIQUE INDEX hydro_unique_time_value ON public.hydro_result USING btree (
 
 
 --
+-- Name: hydrostation_classification_value_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX hydrostation_classification_value_unique ON public.hydrostation_classification USING btree (value);
+
+
+--
+-- Name: meteo_observed_property_symbol_type_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX meteo_observed_property_symbol_type_unique ON public.meteo_observed_property USING btree (symbol, type);
+
+
+--
+-- Name: meteo_time_series_mpoint_property_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX meteo_time_series_mpoint_property_unique ON public.meteo_time_series USING btree (mpointid, observed_propertyid);
+
+
+--
 -- Name: meteo_unique_time_value; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX meteo_unique_time_value ON public.meteo_result USING btree (time_seriesid, "time", value, is_forecast);
+
+
+--
+-- Name: meteostation_classification_value_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX meteostation_classification_value_unique ON public.meteostation_classification USING btree (value);
+
+
+--
+-- Name: ncd_pst_operator_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX ncd_pst_operator_unique ON public.meteopoint USING btree (ncd_pst, operatorid);
+
+
+--
+-- Name: ncd_wgst_operator_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX ncd_wgst_operator_unique ON public.hydropoint USING btree (ncd_wgst, operatorid);
+
+
+--
+-- Name: operator_name_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX operator_name_unique ON public.operator USING btree (name);
+
+
+--
+-- Name: permissions_name_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX permissions_name_unique ON public.permissions USING btree (name);
+
+
+--
+-- Name: river_cname_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX river_cname_unique ON public.river USING btree (cname);
+
+
+--
+-- Name: riverbank_value_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX riverbank_value_unique ON public.riverbank USING btree (value);
+
+
+--
+-- Name: users_username_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX users_username_unique ON public.users USING btree (username);
 
 
 --
@@ -1847,7 +1966,7 @@ ALTER TABLE ONLY public.hydropoint
 --
 
 ALTER TABLE ONLY public.hydropoint
-    ADD CONSTRAINT hydropoint_river_european_river_code_fkey FOREIGN KEY (river_european_river_code) REFERENCES public.river(european_river_code);
+    ADD CONSTRAINT hydropoint_river_european_river_code_fkey FOREIGN KEY (eucd_riv) REFERENCES public.river(eucd_riv);
 
 
 --

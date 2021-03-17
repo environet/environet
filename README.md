@@ -442,7 +442,7 @@ The `signature` part is the base64 encoded openssl signature which was created w
                 "station_classificationid": 1,
                 "operatorid": 1,
                 "bankid": 1,
-                "river_european_river_code": "river",
+                "eucd_riv": "river",
                 "eucd_wgst": "ABC123",
                 "ncd_wgst": "ABC123",
                 "vertical_reference": "Vertical reference",
@@ -727,7 +727,7 @@ Here you can handle the monitoring points what has already added to the system.
 
 Path: `/admin/hydro/monitoring-points`
 
-Searchable: european river code, country, name, location
+Searchable: EUCD RIV, country, name, location
 
 #### New monitoring point
 
@@ -812,7 +812,7 @@ Here you can handle the rivers what has already added to the system.
 
 Path: `/admin/hydro/rivers`
 
-Searchable: european river code
+Searchable: EUCD RIV
 
 #### New river
 
@@ -822,7 +822,7 @@ Path: `/admin/hydro/rivers/add`
 
 On the river's creating page, you have to fill to following mandatory fields:
 - cname
-- european river code
+- EUCD RIV
 
 #### Updating river
 

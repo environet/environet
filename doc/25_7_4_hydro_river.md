@@ -3,7 +3,7 @@ Here you can handle the rivers what has already added to the system.
 
 Path: `/admin/hydro/rivers`
 
-Searchable: european river code
+Searchable: EUCD RIV
 
 #### New river
 
@@ -13,7 +13,7 @@ Path: `/admin/hydro/rivers/add`
 
 On the river's creating page, you have to fill to following mandatory fields:
 - cname
-- european river code
+- EUCD RIV
 
 #### Updating river
 

@@ -60,11 +60,16 @@ class RiverbankCrud extends CrudPage {
 	/**
 	 * @inheritDoc
 	 */
-	protected function validateData(array $data): bool {
+	protected function validateData(array $data, ?array $editedRecord = null): bool {
 		$valid = true;
 
 		if (!validate($data, 'value', REGEX_ALPHANUMERIC, true)) {
-			$this->addMessage('Riverbank value is empty, or format is invalid', self::MESSAGE_ERROR);
+			$this->addFieldMessage('value', 'Riverbank value is empty, or format is invalid', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+
+		if (!RiverbankQueries::checkUnique(['value' => $data['value']], $editedRecord ? $editedRecord['id'] : null)) {
+			$this->addFieldMessage('value', 'Value must be unique', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 

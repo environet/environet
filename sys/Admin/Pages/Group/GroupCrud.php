@@ -78,10 +78,15 @@ class GroupCrud extends CrudPage {
 	/**
 	 * @inheritDoc
 	 */
-	protected function validateData(array $data): bool {
+	protected function validateData(array $data, ?array $editedRecord = null): bool {
 		$valid = true;
 		if (!validate($data, 'name', REGEX_ALPHANUMERIC, true)) {
-			$this->addMessage('The group\'s name is empty or its format is not valid', self::MESSAGE_ERROR);
+			$this->addFieldMessage('name', 'The group\'s name is empty or its format is not valid', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+
+		if (!GroupQueries::checkUnique(['name' => $data['name']], $editedRecord ? $editedRecord['id'] : null)) {
+			$this->addFieldMessage('name', 'Name must be unique', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 

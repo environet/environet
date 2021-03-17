@@ -59,6 +59,7 @@ class MigrateDb extends DbCommand {
 			'addIsActiveColumns',
 			'removeMeteoPrefixes',
 			'renameWaterbody',
+			'uniqueFieldsAndRenames',
 		];
 		ini_set('memory_limit', - 1);
 
@@ -409,6 +410,93 @@ class MigrateDb extends DbCommand {
 		if (!empty($eventLogs)) {
 			$return = 0;
 			$this->connection->runQuery("UPDATE event_logs SET event_type = REPLACE(event_type, 'waterbody', 'river');", []);
+		}
+
+		return $return;
+	}
+
+
+	/**
+	 * Add some unique indexes, and rename some fields
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function uniqueFieldsAndRenames(array &$output): int {
+		$return = - 1;
+
+		if ($this->checkColumn('hydropoint', 'river_european_river_code')) {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE hydropoint RENAME COLUMN river_european_river_code TO eucd_riv;", []);
+		}
+		if ($this->checkColumn('river', 'european_river_code')) {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE river RENAME COLUMN european_river_code TO eucd_riv;", []);
+		}
+
+		$operatorOtherInfoData = $this->getColumnData('operator', 'other_info');
+		if ($operatorOtherInfoData && $operatorOtherInfoData['data_type'] !== 'text') {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE operator ALTER COLUMN other_info TYPE text;", []);
+		}
+
+		if (!$this->checkIndex('discharge_measurement_equipment', 'discharge_measurement_equipment_description_unique')) {
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS discharge_measurement_equipment_description_unique ON discharge_measurement_equipment (description)", []);
+		}
+
+		if (!$this->checkIndex('hydropoint', 'eucd_wgst_unique')) {
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS eucd_wgst_unique ON hydropoint (eucd_wgst)", []);
+		}
+		if (!$this->checkIndex('hydropoint', 'ncd_wgst_operator_unique')) {
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS ncd_wgst_operator_unique ON hydropoint (ncd_wgst, operatorid)", []);
+		}
+		if (!$this->checkIndex('meteopoint', 'eucd_pst_unique')) {
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS eucd_pst_unique ON meteopoint (eucd_pst)", []);
+		}
+		if (!$this->checkIndex('meteopoint', 'ncd_pst_operator_unique')) {
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS ncd_pst_operator_unique ON meteopoint (ncd_pst, operatorid)", []);
+		}
+
+		if (!$this->checkIndex('hydro_observed_property', 'hydro_observed_property_symbol_type_unique')) {
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS hydro_observed_property_symbol_type_unique ON hydro_observed_property (symbol, type)", []);
+		}
+		if (!$this->checkIndex('meteo_observed_property', 'meteo_observed_property_symbol_type_unique')) {
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS meteo_observed_property_symbol_type_unique ON meteo_observed_property (symbol, type)", []);
+		}
+
+		if (!$this->checkIndex('hydro_time_series', 'hydro_time_series_mpoint_property_unique')) {
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS hydro_time_series_mpoint_property_unique ON hydro_time_series (mpointid, observed_propertyid)", []);
+		}
+		if (!$this->checkIndex('meteo_time_series', 'meteo_time_series_mpoint_property_unique')) {
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS meteo_time_series_mpoint_property_unique ON meteo_time_series (mpointid, observed_propertyid)", []);
+		}
+
+		if (!$this->checkIndex('hydrostation_classification', 'hydrostation_classification_value_unique')) {
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS hydrostation_classification_value_unique ON hydrostation_classification (value)", []);
+		}
+		if (!$this->checkIndex('meteostation_classification', 'meteostation_classification_value_unique')) {
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS meteostation_classification_value_unique ON meteostation_classification (value)", []);
+		}
+
+		if (!$this->checkIndex('groups', 'groups_name_unique')) {
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS groups_name_unique ON groups (name)", []);
+		}
+		if (!$this->checkIndex('operator', 'operator_name_unique')) {
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS operator_name_unique ON operator (name)", []);
+		}
+		if (!$this->checkIndex('permissions', 'permissions_name_unique')) {
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS permissions_name_unique ON permissions (name)", []);
+		}
+		if (!$this->checkIndex('river', 'river_cname_unique')) {
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS river_cname_unique ON river (cname)", []);
+		}
+		if (!$this->checkIndex('riverbank', 'riverbank_value_unique')) {
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS riverbank_value_unique ON riverbank (value)", []);
+		}
+		if (!$this->checkIndex('users', 'users_username_unique')) {
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS users_username_unique ON users (username)", []);
 		}
 
 		return $return;

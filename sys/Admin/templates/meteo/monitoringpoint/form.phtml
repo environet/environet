@@ -5,26 +5,18 @@
         <input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
         <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" name="name" id="name" class="form-control" required value="<?=formFieldValue('name', $record);?>" />
-            <div class="invalid-feedback">
-                Please provide a valid name!
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="eucd_pst">EUCD PST</label>
-            <input type="text" name="eucd_pst" id="eucd_pst" class="form-control" required value="<?=formFieldValue('eucd_pst', $record);?>" />
-            <div class="invalid-feedback">
-                Please provide a valid Eucd pst value!
-            </div>
+            <input type="text" name="name" id="name" class="form-control <?=isFieldInvalidClass('name', get_defined_vars());?>" required value="<?=formFieldValue('name', $record);?>" />
+			<div class="invalid-feedback">
+		        <?=getFieldInvalidMessage('name', get_defined_vars(), 'Please provide a valid name!');?>
+			</div>
         </div>
 
         <div class="form-group">
             <label for="ncd_pst">NCD PST</label>
-            <input type="text" name="ncd_pst" id="ncd_pst" class="form-control" required value="<?=formFieldValue('ncd_pst', $record);?>" />
-            <div class="invalid-feedback">
-                Please provide a valid Ncd pst value!
-            </div>
+            <input type="text" name="ncd_pst" id="ncd_pst" class="form-control <?=isFieldInvalidClass('ncd_pst', get_defined_vars());?>" required value="<?=formFieldValue('ncd_pst', $record);?>" />
+			<div class="invalid-feedback">
+		        <?=getFieldInvalidMessage('ncd_pst', get_defined_vars(), 'Please provide a valid Ncd wgst value!');?>
+			</div>
         </div>
 
 		<div class="form-check">
@@ -40,8 +32,11 @@
 
         <div class="form-group">
             <label for="country">Country</label>
-            <input type="text" name="country" id="country" maxlength="2" class="form-control" value="<?=formFieldValue('country', $record);?>" />
-        </div>
+            <input type="text" name="country" id="country" maxlength="2" class="form-control <?=isFieldInvalidClass('country', get_defined_vars());?>" value="<?=formFieldValue('country', $record);?>" />
+			<div class="invalid-feedback">
+		        <?=getFieldInvalidMessage('country', get_defined_vars());?>
+			</div>
+		</div>
 
         <div class="form-group">
             <label for="lat">Latitude coordinate</label>
@@ -97,9 +92,12 @@
             <legend><?=__('Operator');?></legend>
 			<?php $selectedOperator = formFieldValue('operator', $record); ?>
             <div class="field">
-                <select name="operator">
+                <select name="operator" class="<?=isFieldInvalidClass('operator', get_defined_vars());?>">
 					<?=selectOptions($operators, $selectedOperator ?? null, ' - '.__('No operator').' - ');?>
                 </select>
+				<div class="invalid-feedback">
+		            <?=getFieldInvalidMessage('operator', get_defined_vars());?>
+				</div>
             </div>
         </fieldset>
 

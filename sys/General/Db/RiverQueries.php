@@ -27,7 +27,7 @@ class RiverQueries extends BaseQueries {
 	 * @inheritDoc
 	 */
 	public static $searchableFields = [
-		'river.european_river_code',
+		'river.eucd_riv',
 	];
 
 
@@ -80,7 +80,7 @@ class RiverQueries extends BaseQueries {
 		if ($soft) {
 			(new Update())
 				->table(static::$tableName)
-				->where(static::$tableName . '.' . 'european_river_code' . ' = :id')
+				->where(static::$tableName . '.' . 'eucd_riv' . ' = :id')
 				->addSet('deleted_at', ':deletedAt')
 				->setParameters([
 					':id'        => $id,
@@ -88,7 +88,7 @@ class RiverQueries extends BaseQueries {
 				])
 				->run();
 		} else {
-			(new Delete())->table(static::$tableName)->where('european_river_code' . ' = :id')->addParameter(':id', $id)->run();
+			(new Delete())->table(static::$tableName)->where('eucd_riv' . ' = :id')->addParameter(':id', $id)->run();
 		}
 	}
 

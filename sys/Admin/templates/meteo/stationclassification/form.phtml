@@ -3,10 +3,13 @@
 	<?=includeTemplatePart('crud_show_header.phtml', get_defined_vars());?>
 	<form action="" method="POST">
 		<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
-        <div class="form-group">
-            <label for="value">Value</label>
-            <input type="text" name="value" id="value" class="form-control"  value="<?=formFieldValue('value', $record);?>" />
-        </div>
+		<div class="form-group">
+			<label for="value">Value</label>
+			<input type="text" name="value" id="value" class="form-control <?=isFieldInvalidClass('value', get_defined_vars());?>"  value="<?=formFieldValue('value', $record);?>" />
+			<div class="invalid-feedback">
+				<?=getFieldInvalidMessage('value', get_defined_vars());?>
+			</div>
+		</div>
         <div class="field">
             <input type="submit" class="btn btn-primary" value="Save"/>
         </div>

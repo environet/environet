@@ -3,7 +3,7 @@ Here you can handle the monitoring points what has already added to the system.
 
 Path: `/admin/hydro/monitoring-points`
 
-Searchable: european river code, country, name, location
+Searchable: EUCD RIV, country, name, location
 
 #### New monitoring point
 

@@ -59,11 +59,16 @@ class StationClassificationCrud extends CrudPage {
 	/**
 	 * @inheritDoc
 	 */
-	protected function validateData(array $data): bool {
+	protected function validateData(array $data, ?array $editedRecord = null): bool {
 		$valid = true;
 
 		if (!validate($data, 'value', REGEX_ALPHANUMERIC, true)) {
-			$this->addMessage('Station classification value is empty, or format is invalid', self::MESSAGE_ERROR);
+			$this->addFieldMessage('value', 'Station classification value is empty, or format is invalid', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+
+		if (!HydroStationClassificationQueries::checkUnique(['value' => $data['value']], $editedRecord ? $editedRecord['id'] : null)) {
+			$this->addFieldMessage('value', 'Value must be unique', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 

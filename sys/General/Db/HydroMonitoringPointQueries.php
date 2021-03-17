@@ -29,7 +29,7 @@ class HydroMonitoringPointQueries extends BaseQueries {
 	 * @inheritDoc
 	 */
 	public static $searchableFields = [
-		'hydropoint.river_european_river_code',
+		'hydropoint.eucd_riv',
 		'hydropoint.country',
 		'hydropoint.name',
 		'hydropoint.location',
@@ -90,8 +90,8 @@ class HydroMonitoringPointQueries extends BaseQueries {
 			$monitoringPoint['operator'] = $monitoringPoint['operatorid'] ? OperatorQueries::getById($monitoringPoint['operatorid']) : null;
 			$monitoringPoint['riverbank'] = RiverbankQueries::getById($monitoringPoint['bankid']);
 			$monitoringPoint['river'] = RiverQueries::getById(
-				$monitoringPoint['river_european_river_code'],
-				'european_river_code'
+				$monitoringPoint['eucd_riv'],
+				'eucd_riv'
 			);
 			$monitoringPoint['observedProperties'] = (new Select())
 				->select('observed_propertyid')
@@ -121,7 +121,7 @@ class HydroMonitoringPointQueries extends BaseQueries {
 			'station_classificationid'     => 'classification',
 			'operatorid'                   => 'operator',
 			'bankid'                       => 'riverbank',
-			'river_european_river_code'    => 'river',
+			'eucd_riv'    => 'river',
 		];
 		foreach ($mapKeys as $toKey => $fromKey) {
 			if (array_key_exists($fromKey, $data)) {
@@ -153,7 +153,7 @@ class HydroMonitoringPointQueries extends BaseQueries {
 			'station_classificationid'     => isset($data['station_classificationid']) ? $data['station_classificationid'] ?: null : null,
 			'operatorid'                   => isset($data['operatorid']) ? $data['operatorid'] ?: null : null,
 			'bankid'                       => isset($data['bankid']) ? $data['bankid'] ?: null : null,
-			'river_european_river_code'    => isset($data['river_european_river_code']) ? $data['river_european_river_code'] ?: null : null,
+			'eucd_riv'    => isset($data['eucd_riv']) ? $data['eucd_riv'] ?: null : null,
 
 			// dates
 			'start_time'                   => !empty($data['start_time']) ? $data['start_time'] : null,

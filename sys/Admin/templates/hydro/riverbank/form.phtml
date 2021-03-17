@@ -5,7 +5,10 @@
         <input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
         <div class="form-group">
             <label for="value">Value</label>
-            <input type="text" name="value" id="value" class="form-control"  value="<?=formFieldValue('value', $record);?>" />
+            <input type="text" name="value" id="value" class="form-control <?=isFieldInvalidClass('value', get_defined_vars());?>"  value="<?=formFieldValue('value', $record);?>" />
+			<div class="invalid-feedback">
+		        <?=getFieldInvalidMessage('value', get_defined_vars(), 'Please provide a valid name!');?>
+			</div>
         </div>
         <div class="field">
             <input type="submit" class="btn btn-primary" value="Save"/>
