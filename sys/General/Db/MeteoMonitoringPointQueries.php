@@ -18,7 +18,7 @@ use Environet\Sys\General\Exceptions\QueryException;
  * @package Environet\Sys\General\Db
  * @author  SRG Group <dev@srg.hu>
  */
-class MeteoMonitoringPointQueries extends BaseQueries {
+class MeteoMonitoringPointQueries extends AbstractMonitoringPointQueries {
 
 	/**
 	 * @inheritdoc
@@ -33,6 +33,14 @@ class MeteoMonitoringPointQueries extends BaseQueries {
 		'meteopoint.name',
 		'meteopoint.location',
 	];
+
+
+	/**
+	 * @return string
+	 */
+	protected static function getType(): string {
+		return 'meteo';
+	}
 
 
 	/**

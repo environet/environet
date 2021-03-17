@@ -4,6 +4,7 @@ namespace Environet\Sys\Xml\InputProcessor;
 
 use DateTime;
 use DateTimeZone;
+use Environet\Sys\General\Db\MeteoMonitoringPointQueries;
 use Environet\Sys\General\Db\Query\Insert;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
@@ -152,6 +153,14 @@ class MeteoInputXmlProcessor extends AbstractInputXmlProcessor {
 	protected function createResultInsert(): Insert {
 		return (new Insert())->table('meteo_result')->columns(['time_seriesid', 'time', 'value', 'is_forecast', 'created_at'])
 			->ignoreConflict(['time_seriesid', 'time', 'value', 'is_forecast']);
+	}
+
+
+	/**
+	 * @return string
+	 */
+	protected function getPointQueriesClass(): string {
+		return MeteoMonitoringPointQueries::class;
 	}
 
 
