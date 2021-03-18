@@ -266,7 +266,7 @@ class AdminHandler extends BaseHandler {
 		'^upload-test$'   => [UploadTest::class, 'handle', ['api.upload']],
 		'^download-test$' => [DownloadTest::class, 'handle', ['api.download']],
 
-		'^ajax\/select\/operator-points$'     => [MeasurementAccessRuleCrud::class, 'operatorPoints', ['admin.measurementaccessrules.read']],
-		'^ajax\/select\/operator-properties$' => [MeasurementAccessRuleCrud::class, 'operatorProperties', ['admin.measurementaccessrules.read']],
+		'^ajax\/select\/operator-points$'     => [MeasurementAccessRuleCrud::class, 'operatorPoints', ['admin.measurementaccessrules.read'], ['admin.measurementaccessrules.readown']],
+		'^ajax\/select\/operator-properties$' => [MeasurementAccessRuleCrud::class, 'operatorProperties', ['admin.measurementaccessrules.read'], ['admin.measurementaccessrules.readown']],
 	];
 }
