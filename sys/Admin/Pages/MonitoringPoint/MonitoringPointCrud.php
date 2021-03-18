@@ -86,7 +86,10 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 * @throws QueryException
 	 */
 	protected function getAllowedOperatorIds(): ?array {
-		if (in_array($this->readOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())) {
+		if (in_array($this->readOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions()) ||
+			in_array($this->createOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions()) ||
+			in_array($this->updateOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())
+		) {
 			// Get the ids of operators the user is part of, and filter the query accordingly
 			$operators = UserQueries::getOperatorsOfUser($this->request->getIdentity()->getId());
 			return $operators ? array_column($operators, 'id') : [];
