@@ -279,6 +279,10 @@ abstract class AbstractUploadDataPage extends BasePage {
 			//Create new keypair
 			[$publicKey, $privateKey] = $pkiLib->generateKeyPair();
 
+			if (!is_dir(SysIdentity::SYS_KEY_DIR)) {
+				mkdir(SysIdentity::SYS_KEY_DIR, 0755, true);
+			}
+
 			// Write files
 			file_put_contents($privateKeyFile, $privateKey);
 			file_put_contents($publicKeyFile, $publicKey);
