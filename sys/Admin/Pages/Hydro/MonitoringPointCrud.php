@@ -117,8 +117,8 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 			$valid = false;
 		}
 
-		if (!empty($data['country']) && strlen($data['country']) > 2) {
-			$this->addMessage('County field expects a two letter country code', self::MESSAGE_ERROR);
+		if (!empty($data['country']) && !preg_match('/^[A-Z]{2}$/', $data['country'])) {
+			$this->addMessage('County field expects a valid country code (2 capital letters)', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 
