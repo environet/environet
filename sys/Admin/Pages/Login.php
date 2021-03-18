@@ -11,6 +11,7 @@ use Environet\Sys\General\EventLogger;
 use Environet\Sys\General\Exceptions\HttpBadRequestException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\Exceptions\RenderException;
+use Environet\Sys\General\Identity;
 use Environet\Sys\General\Request;
 use Environet\Sys\General\Response;
 use Exception;
@@ -130,6 +131,13 @@ class Login extends BasePage {
 
 		if (!password_verify($_POST['password'], ($user['password'] ?? null))) {
 			$this->addMessage('Credentials are invalid', self::MESSAGE_ERROR);
+
+			return false;
+		}
+
+		$identity = new Identity($user['id'], $user);
+		if (!$identity->hasPermissions(['admin.login'])) {
+			$this->addMessage('Login disabled', self::MESSAGE_ERROR);
 
 			return false;
 		}
