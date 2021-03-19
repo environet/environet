@@ -61,8 +61,10 @@ class JsonApiHandler extends ApiHandler {
 		} catch (HttpNotFoundException $e) {
 			return $this->jsonResponse(json_encode(['error' => $e->getMessage()]), 404);
 		} catch (ApiException $e) {
+			exception_logger($e);
 			return $this->jsonResponse(json_encode(['error' => $e->getMessage()]), 400);
 		} catch (Exception $e) {
+			exception_logger($e);
 			return $this->jsonResponse(json_encode(['error' => $e->getMessage()]), 500);
 		}
 	}

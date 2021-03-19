@@ -104,6 +104,3 @@ function exception_handler(Throwable $exception) {
 }
 //Register the exception handler
 set_exception_handler('exception_handler');
-
-
-en_debug("ERROR HANDLING MODULE loaded.");
