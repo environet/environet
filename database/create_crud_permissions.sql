@@ -22,10 +22,10 @@ INSERT INTO "public"."permissions"("name") VALUES
 ('admin.hydro.observedproperties.update'),
 ('admin.hydro.observedproperties.delete'),
 
-('admin.hydro.waterbodies.read'),
-('admin.hydro.waterbodies.create'),
-('admin.hydro.waterbodies.update'),
-('admin.hydro.waterbodies.delete'),
+('admin.hydro.rivers.read'),
+('admin.hydro.rivers.create'),
+('admin.hydro.rivers.update'),
+('admin.hydro.rivers.delete'),
 
 ('admin.hydro.classifications.read'),
 ('admin.hydro.classifications.create'),

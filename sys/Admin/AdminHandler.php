@@ -14,7 +14,7 @@ use Environet\Sys\Admin\Pages\Hydro\ResultsCrud as HydroResultsCrud;
 use Environet\Sys\Admin\Pages\Meteo\ResultsCrud as MeteoResultsCrud;
 use Environet\Sys\Admin\Pages\Meteo\ObservedPropertyCrud as MeteoObservedPropertyCrud;
 
-use Environet\Sys\Admin\Pages\Hydro\Waterbody\WaterbodyCrud;
+use Environet\Sys\Admin\Pages\Hydro\River\RiverCrud;
 
 use Environet\Sys\Admin\Pages\Hydro\StationClassificationCrud as HydroStationClassificationCrud;
 use Environet\Sys\Admin\Pages\Meteo\StationClassificationCrud as MeteoStationClassificationCrud;
@@ -211,11 +211,11 @@ class AdminHandler extends BaseHandler {
 		'^hydro\/observed-properties\/edit$'  => [HydroObservedPropertyCrud::class, 'edit', ['admin.hydro.observedproperties.update']],
 		'^hydro\/observed-properties\/delete' => [HydroObservedPropertyCrud::class, 'delete', ['admin.hydro.observedproperties.delete']],
 
-		'^hydro\/waterbodies$'        => [WaterbodyCrud::class, 'list', ['admin.hydro.waterbodies.read']],
-		'^hydro\/waterbodies\/show$'  => [WaterbodyCrud::class, 'show', ['admin.hydro.waterbodies.read']],
-		'^hydro\/waterbodies\/add$'   => [WaterbodyCrud::class, 'add', ['admin.hydro.waterbodies.create']],
-		'^hydro\/waterbodies\/edit$'  => [WaterbodyCrud::class, 'edit', ['admin.hydro.waterbodies.update']],
-		'^hydro\/waterbodies\/delete' => [WaterbodyCrud::class, 'delete', ['admin.hydro.waterbodies.delete']],
+		'^hydro\/rivers$'        => [RiverCrud::class, 'list', ['admin.hydro.rivers.read']],
+		'^hydro\/rivers\/show$'  => [RiverCrud::class, 'show', ['admin.hydro.rivers.read']],
+		'^hydro\/rivers\/add$'   => [RiverCrud::class, 'add', ['admin.hydro.rivers.create']],
+		'^hydro\/rivers\/edit$'  => [RiverCrud::class, 'edit', ['admin.hydro.rivers.update']],
+		'^hydro\/rivers\/delete' => [RiverCrud::class, 'delete', ['admin.hydro.rivers.delete']],
 
 		'^hydro\/riverbanks$'        => [RiverbankCrud::class, 'list', ['admin.hydro.riverbanks.read']],
 		'^hydro\/riverbanks\/show$'  => [RiverbankCrud::class, 'show', ['admin.hydro.riverbanks.read']],
@@ -266,7 +266,7 @@ class AdminHandler extends BaseHandler {
 		'^upload-test$'   => [UploadTest::class, 'handle', ['api.upload']],
 		'^download-test$' => [DownloadTest::class, 'handle', ['api.download']],
 
-		'^ajax\/select\/operator-points$'     => [MeasurementAccessRuleCrud::class, 'operatorPoints', ['admin.measurementaccessrules.read']],
-		'^ajax\/select\/operator-properties$' => [MeasurementAccessRuleCrud::class, 'operatorProperties', ['admin.measurementaccessrules.read']],
+		'^ajax\/select\/operator-points$'     => [MeasurementAccessRuleCrud::class, 'operatorPoints', ['admin.measurementaccessrules.read'], ['admin.measurementaccessrules.readown']],
+		'^ajax\/select\/operator-properties$' => [MeasurementAccessRuleCrud::class, 'operatorProperties', ['admin.measurementaccessrules.read'], ['admin.measurementaccessrules.readown']],
 	];
 }

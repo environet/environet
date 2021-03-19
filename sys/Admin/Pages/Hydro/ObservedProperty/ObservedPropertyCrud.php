@@ -62,11 +62,16 @@ class ObservedPropertyCrud extends CrudPage {
 	/**
 	 * @inheritDoc
 	 */
-	protected function validateData(array $data): bool {
+	protected function validateData(array $data, ?array $editedRecord = null): bool {
 		$valid = true;
 
 		if (!validate($data, 'symbol', REGEX_ALPHANUMERIC, true)) {
-			$this->addMessage('Observed property symbol is empty, or format is invalid', self::MESSAGE_ERROR);
+			$this->addFieldMessage('symbol', 'Observed property symbol is empty, or format is invalid', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+
+		if (!HydroObservedPropertyQueries::checkUnique(['symbol' => $data['symbol'], 'type' => $data['type']], $editedRecord ? $editedRecord['id'] : null)) {
+			$this->addFieldMessage('symbol', sprintf('Symbol must be unique with type %s', observedPropertyTypeOptions()[$data['type']] ?? null), self::MESSAGE_ERROR);
 			$valid = false;
 		}
 

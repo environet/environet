@@ -4,9 +4,6 @@ namespace Environet\Sys\Admin\Pages\Meteo;
 
 use Environet\Sys\Admin\Pages\CrudPage;
 use Environet\Sys\General\Db\MeteoObservedPropertyQueries;
-use Environet\Sys\General\Exceptions\HttpNotFoundException;
-use Environet\Sys\General\Exceptions\RenderException;
-use Environet\Sys\General\Response;
 
 /**
  * Class ObservedPropertyCrud
@@ -62,11 +59,16 @@ class ObservedPropertyCrud extends CrudPage {
 	/**
 	 * @inheritDoc
 	 */
-	protected function validateData(array $data): bool {
+	protected function validateData(array $data, ?array $editedRecord = null): bool {
 		$valid = true;
 
 		if (!validate($data, 'symbol', REGEX_ALPHANUMERIC, true)) {
 			$this->addMessage('Observed property symbol is empty, or format is invalid', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+
+		if (!MeteoObservedPropertyQueries::checkUnique(['symbol' => $data['symbol'], 'type' => $data['type']], $editedRecord ? $editedRecord['id'] : null)) {
+			$this->addFieldMessage('symbol', sprintf('Symbol must be unique with type %s', observedPropertyTypeOptions()[$data['type']] ?? null), self::MESSAGE_ERROR);
 			$valid = false;
 		}
 

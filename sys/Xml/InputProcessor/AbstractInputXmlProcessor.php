@@ -91,6 +91,14 @@ abstract class AbstractInputXmlProcessor {
 
 
 	/**
+	 * Get class of Queries
+	 *
+	 * @return string
+	 */
+	abstract protected function getPointQueriesClass(): string;
+
+
+	/**
 	 * Check if mpoint found under this type (hydro or meteo)
 	 *
 	 * @param Identity $identity
@@ -223,6 +231,9 @@ abstract class AbstractInputXmlProcessor {
 					continue;
 				}
 			}
+
+			//Update min-max values of time series
+			$this->getPointQueriesClass()::updateTimeSeriesPropertyMinMax($timeSeriesId);
 		} catch (QueryException $e) {
 			throw UploadException::serverError();
 		}
@@ -237,6 +248,7 @@ abstract class AbstractInputXmlProcessor {
 	 */
 	protected function getOperatorIdsOfIdentity(Identity $identity): array {
 		$groups = array_column(UserQueries::getUserGroups($identity->getId()), 'id');
+
 		return array_column(UserQueries::getMergedOperatorsOfUser($identity->getId(), $groups ?: []), 'id');
 	}
 

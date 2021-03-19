@@ -4,6 +4,7 @@ namespace Environet\Sys\Xml\InputProcessor;
 
 use DateTime;
 use DateTimeZone;
+use Environet\Sys\General\Db\HydroMonitoringPointQueries;
 use Environet\Sys\General\Db\Query\Insert;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
@@ -152,6 +153,14 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 	protected function createResultInsert(): Insert {
 		return (new Insert())->table('hydro_result')->columns(['time_seriesid', 'time', 'value', 'is_forecast', 'created_at'])
 			->ignoreConflict(['time_seriesid', 'time', 'value', 'is_forecast']);
+	}
+
+
+	/**
+	 * @return string
+	 */
+	protected function getPointQueriesClass(): string {
+		return HydroMonitoringPointQueries::class;
 	}
 
 

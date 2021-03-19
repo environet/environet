@@ -23,7 +23,7 @@ This document is the documentation of the Environet system.
         * [Hydro](#25_7_1_hydro)
             * [Hydro monitoring points](#25_7_2_hydro_monitoring_point)
             * [Hydro observed properties](#25_7_3_hydro_observed_properties)
-            * [Hydro waterbody](#25_7_4_hydro_waterbody)
+            * [Hydro river](#25_7_4_hydro_river)
             * [Hydro station classification](#25_7_5_hydro_station_classification)
             * [Hydro results](#25_7_6_hydro_results)
         * [Meteo](#25_8_1_meteo)
@@ -442,7 +442,7 @@ The `signature` part is the base64 encoded openssl signature which was created w
                 "station_classificationid": 1,
                 "operatorid": 1,
                 "bankid": 1,
-                "waterbodyeuropean_river_code": "waterbody",
+                "eucd_riv": "river",
                 "eucd_wgst": "ABC123",
                 "ncd_wgst": "ABC123",
                 "vertical_reference": "Vertical reference",
@@ -727,7 +727,7 @@ Here you can handle the monitoring points what has already added to the system.
 
 Path: `/admin/hydro/monitoring-points`
 
-Searchable: european river code, country, name, location
+Searchable: EUCD RIV, country, name, location
 
 #### New monitoring point
 
@@ -740,7 +740,7 @@ On the monitoring point creating page, you have to fill the following mandatory 
 - classification
 - operator
 - riverbank
-- waterbody
+- river
 - observed properties
 
 #### Updating monitoring point
@@ -757,7 +757,7 @@ You can select a monitoring point to show if you click the "Eye" icon at the end
 
 Path: `/admin/hydro/monitoring-points/show?id=[monitoring point identifier]`
 
-Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator, waterbody and observed property.
+Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator, river and observed property.
 
 #### Monitoring point deleting
 
@@ -805,44 +805,44 @@ Here you can see the stored data of an observed property.
 
 You cannot delete any observed property.
 
-<a name="25_7_4_hydro_waterbody"></a>
+<a name="25_7_4_hydro_river"></a>
 
-### Waterbody
-Here you can handle the waterbodies what has already added to the system.
+### River
+Here you can handle the rivers what has already added to the system.
 
-Path: `/admin/hydro/waterbodies`
+Path: `/admin/hydro/rivers`
 
-Searchable: european river code
+Searchable: EUCD RIV
 
-#### New waterbody
+#### New river
 
-You can add new waterbody if you click the "Add waterbody" button on the top left of the waterbody list page.
+You can add new river if you click the "Add river" button on the top left of the river list page.
 
-Path: `/admin/hydro/waterbodies/add`
+Path: `/admin/hydro/rivers/add`
 
-On the waterbody's creating page, you have to fill to following mandatory fields:
+On the river's creating page, you have to fill to following mandatory fields:
 - cname
-- european river code
+- EUCD RIV
 
-#### Updating waterbody
+#### Updating river
 
-You can select a waterbody to update if you click the "Pencil" icon at the end of the specific row.
+You can select a river to update if you click the "Pencil" icon at the end of the specific row.
 
-Path: `/admin/hydro/waterbodies/edit?id=[waterbody identifier]`
+Path: `/admin/hydro/rivers/edit?id=[river identifier]`
 
-Here you can change the cname of the selected waterbody.
+Here you can change the cname of the selected river.
 
-#### Waterbody show page
+#### River show page
 
-You can select a waterbody to show if you click the "Eye" icon at the end of the specific row.
+You can select a river to show if you click the "Eye" icon at the end of the specific row.
 
-Path: `/admin/hydro/waterbodies/show?id=[waterbody identifier]`
+Path: `/admin/hydro/rivers/show?id=[river identifier]`
 
-Here you can see the stored data of a waterbody.
+Here you can see the stored data of a river.
 
-#### Waterbody deleting
+#### River deleting
 
-You cannot delete any waterbody.
+You cannot delete any river.
 
 <a name="25_7_5_hydro_station_classification"></a>
 

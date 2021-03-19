@@ -41,14 +41,14 @@ class EventLogger {
 	const EVENT_TYPE_HYDRO_SC_ADD    = 'hydro_station_classification_add';
 	const EVENT_TYPE_HYDRO_SC_UPDATE = 'hydro_station_classification_update';
 	const EVENT_TYPE_HYDRO_SC_DELETE = 'hydro_station_classification_delete';
-	
+
 	const EVENT_TYPE_HYDRO_RIVERBANK_ADD    = 'hydro_riverbank_add';
 	const EVENT_TYPE_HYDRO_RIVERBANK_UPDATE = 'hydro_riverbank_update';
 	const EVENT_TYPE_HYDRO_RIVERBANK_DELETE = 'hydro_riverbank_delete';
 
-	const EVENT_TYPE_WATERBODY_ADD    = 'waterbody_add';
-	const EVENT_TYPE_WATERBODY_UPDATE = 'waterbody_update';
-	const EVENT_TYPE_WATERBODY_DELETE = 'waterbody_delete';
+	const EVENT_TYPE_RIVER_ADD    = 'river_add';
+	const EVENT_TYPE_RIVER_UPDATE = 'river_update';
+	const EVENT_TYPE_RIVER_DELETE = 'river_delete';
 
 	const EVENT_TYPE_METEO_MP_ADD    = 'meteo_monitoring_point_add';
 	const EVENT_TYPE_METEO_MP_UPDATE = 'meteo_monitoring_point_update';

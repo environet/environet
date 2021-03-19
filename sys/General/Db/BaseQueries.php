@@ -122,8 +122,8 @@ class BaseQueries {
 	/**
 	 * Get record by column value
 	 *
-	 * @param string  $column Column name.
-	 * @param mixed $value    Column value.
+	 * @param string $column Column name.
+	 * @param mixed  $value  Column value.
 	 *
 	 * @return array|null
 	 */
@@ -132,7 +132,7 @@ class BaseQueries {
 			return (new Select())
 				->select(static::$tableName . '.*')
 				->from(static::$tableName)
-				->where(static::$tableName . '.'.$column.' = :value')
+				->where(static::$tableName . '.' . $column . ' = :value')
 				->addParameter(':value', $value)
 				->run(Query::FETCH_FIRST);
 		} catch (QueryException $exception) {
@@ -142,11 +142,43 @@ class BaseQueries {
 
 
 	/**
+	 * @param array  $values
+	 * @param mixed  $exceptValue
+	 * @param string $exceptField
+	 *
+	 * @return boolean
+	 */
+	public static function checkUnique($values = [], $exceptValue = null, $exceptField = 'id') {
+		try {
+			$query = (new Select())
+				->select('COUNT(*)')
+				->from(static::$tableName);
+
+			foreach ($values as $column => $value) {
+				$query->where("$column = :$column");
+				$query->addParameter(":$column", $value);
+			}
+
+			if (!is_null($exceptValue)) {
+				$query->where("$exceptField <> :except$exceptField");
+				$query->addParameter(":except$exceptField", $exceptValue);
+			}
+
+			$count = $query->run(Query::FETCH_COUNT);
+
+			return $count === 0;
+		} catch (QueryException $exception) {
+			return false;
+		}
+	}
+
+
+	/**
 	 * Update or insert an item to specified table.
 	 * Logs the transaction regardless of updating or inserting.
 	 *
-	 * @param array $data Data to save.
-	 * @param mixed $id If the id is exist, update otherwise insert the new record.
+	 * @param array  $data       Data to save.
+	 * @param mixed  $id         If the id is exist, update otherwise insert the new record.
 	 * @param string $primaryKey The primary key of the specified table.
 	 *
 	 * @throws MissingEventTypeException

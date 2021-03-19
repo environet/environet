@@ -3,10 +3,13 @@
 	<?=includeTemplatePart('crud_show_header.phtml', get_defined_vars());?>
 	<form action="" method="POST">
 		<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
-        <div class="form-group">
-            <label for="symbol">Symbol</label>
-            <input type="text" name="symbol" id="symbol" class="form-control"  value="<?=formFieldValue('symbol', $record);?>" />
-        </div>
+		<div class="form-group">
+			<label for="symbol">Symbol</label>
+			<input type="text" name="symbol" id="symbol" class="form-control <?=isFieldInvalidClass('symbol', get_defined_vars());?>"  value="<?=formFieldValue('symbol', $record);?>" />
+			<div class="invalid-feedback">
+				<?=getFieldInvalidMessage('symbol', get_defined_vars());?>
+			</div>
+		</div>
 
         <div class="form-group">
             <label for="unit">Unit</label>

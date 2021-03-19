@@ -134,12 +134,12 @@ class UserCrud extends CrudPage {
 	 * @inheritDoc
 	 * @throws QueryException
 	 */
-	protected function validateData(array $data): bool {
+	protected function validateData(array $data, ?array $editedRecord = null): bool {
 		$userId = $this->request->getQueryParam('id');
 		$valid = true;
 
 		if (!validate($data, 'name', null, true)) {
-			$this->addMessage('The user\'s name is required', self::MESSAGE_ERROR);
+			$this->addFieldMessage('name', 'The user\'s name is required', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 
@@ -149,19 +149,19 @@ class UserCrud extends CrudPage {
 				// if user want to change his pw
 				if ($data['password_confirm'] === "") {
 					// but they left the confirm field empty
-					$this->addMessage('If you want to change your password, you have to set the password confirmation also.', self::MESSAGE_ERROR);
+					$this->addFieldMessage('password', 'If you want to change your password, you have to set the password confirmation also.', self::MESSAGE_ERROR);
 					$valid = false;
 				}
 				if ($data['password'] != $data['password_confirm']) {
 					// if the password confirmation failed
-					$this->addMessage('Password confirmation is invalid', self::MESSAGE_ERROR);
+					$this->addFieldMessage('password', 'Password confirmation is invalid', self::MESSAGE_ERROR);
 					$valid = false;
 				}
 			}
 
 
 			if (!validate($data, 'email', REGEX_EMAIL, true)) {
-				$this->addMessage('The user\'s e-mail address is required and should be valid e-mail address', self::MESSAGE_ERROR);
+				$this->addFieldMessage('email', 'The user\'s e-mail address is required and should be valid e-mail address', self::MESSAGE_ERROR);
 				$valid = false;
 			} else {
 				$userEmailInDb = (new Select())
@@ -179,13 +179,13 @@ class UserCrud extends CrudPage {
 					->run(Query::FETCH_FIRST);
 
 				if ($userEmailInDb > 0 && $user['email'] != $data['email']) {
-					$this->addMessage(__('This e-mail is already taken'), self::MESSAGE_ERROR);
+					$this->addFieldMessage('email', __('This e-mail is already taken'), self::MESSAGE_ERROR);
 					$valid = false;
 				}
 			}
 		} else {
 			if (!validate($data, 'email', REGEX_EMAIL, true)) {
-				$this->addMessage('The user\'s e-mail address is required and should be valid e-mail address', self::MESSAGE_ERROR);
+				$this->addFieldMessage('email', 'The user\'s e-mail address is required and should be valid e-mail address', self::MESSAGE_ERROR);
 				$valid = false;
 			} else {
 				$userWithEmail = (new Select())
@@ -195,14 +195,14 @@ class UserCrud extends CrudPage {
 					->addParameter(':email', $data['email'])
 					->run(Query::FETCH_COUNT);
 				if ($userWithEmail > 0) {
-					$this->addMessage(__('User with this e-mail already exists'), self::MESSAGE_ERROR);
+					$this->addFieldMessage('email', __('User with this e-mail already exists'), self::MESSAGE_ERROR);
 					$valid = false;
 				}
 			}
 
 			// insert validation
 			if (!validate($data, 'username', REGEX_USERNAME, true)) {
-				$this->addMessage('The user\'s username is required', self::MESSAGE_ERROR);
+				$this->addFieldMessage('username', 'The user\'s username is required', self::MESSAGE_ERROR);
 				$valid = false;
 			} else {
 				$userWithUsername = (new Select())
@@ -212,7 +212,7 @@ class UserCrud extends CrudPage {
 					->addParameter(':username', $data['username'])
 					->run(Query::FETCH_COUNT);
 				if ($userWithUsername > 0) {
-					$this->addMessage(__('User with this username already exists'), self::MESSAGE_ERROR);
+					$this->addFieldMessage('username', __('User with this username already exists'), self::MESSAGE_ERROR);
 					$valid = false;
 				}
 			}

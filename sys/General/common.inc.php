@@ -12,6 +12,7 @@
  * @package Environet\Sys\General
  */
 
+use Environet\Sys\Admin\Pages\BasePage;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\Response;
 
@@ -200,6 +201,30 @@ function formFieldValue(string $field, array $data = null) {
 	//Empty
 	return null;
 }
+
+
+/**
+ * @param string $field
+ * @param        $vars
+ *
+ * @return string
+ */
+function isFieldInvalidClass(string $field, $vars): string {
+	return !empty($vars['fieldMessages'][$field][BasePage::MESSAGE_ERROR]) ? 'is-invalid' : '';
+}
+
+
+/**
+ * @param string      $field
+ * @param             $vars
+ * @param string|null $default
+ *
+ * @return string|null
+ */
+function getFieldInvalidMessage(string $field, $vars, ?string $default = null): ?string {
+	return isset($vars['fieldMessages'][$field][BasePage::MESSAGE_ERROR]) ? implode("<br/>", $vars['fieldMessages'][$field][BasePage::MESSAGE_ERROR]) : $default;
+}
+
 
 /**
  * Call a specified function recursively each item in an array.

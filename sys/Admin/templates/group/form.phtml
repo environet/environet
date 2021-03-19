@@ -7,7 +7,10 @@
 
 			<div class="form-group">
 				<label for="groupName">Group name</label>
-				<input type="text" name="name" id="groupName" class="form-control"  value="<?=formFieldValue('name', $record);?>" />
+				<input type="text" name="name" id="groupName" class="form-control <?=isFieldInvalidClass('name', get_defined_vars());?>"  value="<?=formFieldValue('name', $record);?>" />
+				<div class="invalid-feedback">
+					<?=getFieldInvalidMessage('name', get_defined_vars());?>
+				</div>
 			</div>
 
             <fieldset class="form-group">

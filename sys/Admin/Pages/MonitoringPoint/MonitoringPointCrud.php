@@ -86,7 +86,10 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 * @throws QueryException
 	 */
 	protected function getAllowedOperatorIds(): ?array {
-		if (in_array($this->readOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())) {
+		if (in_array($this->readOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions()) ||
+			in_array($this->createOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions()) ||
+			in_array($this->updateOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())
+		) {
 			// Get the ids of operators the user is part of, and filter the query accordingly
 			$operators = UserQueries::getOperatorsOfUser($this->request->getIdentity()->getId());
 			return $operators ? array_column($operators, 'id') : [];
@@ -250,7 +253,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 			'country' => '2-char country code [text]',
 			'operator' => ['title' => 'Operator ID [ID]', 'outField' => 'operatorid'],
 			'riverbank' => ['title' => 'Riverbank ID [ID]', 'outField' => 'bankid'],
-			'waterbody' => ['title' => 'Waterbody ID [ID]', 'outField' => 'waterbodyeuropean_river_code'],
+			'river' => ['title' => 'River ID [ID]', 'outField' => 'eucd_riv'],
 			'vertical_reference' => 'Vertical reference [text]',
 			'long' => 'Longitude coordinate [number]',
 			'lat' => 'Latitude coordinate [number]',

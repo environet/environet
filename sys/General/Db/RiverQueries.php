@@ -9,25 +9,25 @@ use Environet\Sys\General\Exceptions\MissingEventTypeException;
 use Environet\Sys\General\Exceptions\QueryException;
 
 /**
- * Class WaterbodyQueries
+ * Class RiverQueries
  *
- * Base queries adjusted for waterbodies
+ * Base queries adjusted for rivers
  *
  * @package Environet\Sys\General\Db
  * @author  SRG Group <dev@srg.hu>
  */
-class WaterbodyQueries extends BaseQueries {
+class RiverQueries extends BaseQueries {
 
 	/**
 	 * @inheritdoc
 	 */
-	public static $tableName = 'waterbody';
+	public static $tableName = 'river';
 
 	/**
 	 * @inheritDoc
 	 */
 	public static $searchableFields = [
-		'waterbody.european_river_code',
+		'river.eucd_riv',
 	];
 
 
@@ -43,7 +43,7 @@ class WaterbodyQueries extends BaseQueries {
 	 * @inheritDoc
 	 */
 	public static function getUpdateEventType(): string {
-		return EventLogger::EVENT_TYPE_WATERBODY_UPDATE;
+		return EventLogger::EVENT_TYPE_RIVER_UPDATE;
 	}
 
 
@@ -51,16 +51,16 @@ class WaterbodyQueries extends BaseQueries {
 	 * @inheritDoc
 	 */
 	public static function getInsertEventType(): string {
-		return EventLogger::EVENT_TYPE_WATERBODY_ADD;
+		return EventLogger::EVENT_TYPE_RIVER_ADD;
 	}
-	
+
 	/**
 	 * @inheritDoc
 	 */
 	public static function getDeleteEventType(): string {
-		return EventLogger::EVENT_TYPE_WATERBODY_DELETE;
+		return EventLogger::EVENT_TYPE_RIVER_DELETE;
 	}
-	
+
 	/**
 	 * Delete an item.
 	 * Logs the event.
@@ -76,11 +76,11 @@ class WaterbodyQueries extends BaseQueries {
 	 */
 	public static function delete($id, bool $soft = false, string $primaryKey = 'id') {
 		EventLogger::log(static::getDeleteEventType(), ['id' => $id]);
-		
+
 		if ($soft) {
 			(new Update())
 				->table(static::$tableName)
-				->where(static::$tableName . '.' . 'european_river_code' . ' = :id')
+				->where(static::$tableName . '.' . 'eucd_riv' . ' = :id')
 				->addSet('deleted_at', ':deletedAt')
 				->setParameters([
 					':id'        => $id,
@@ -88,7 +88,7 @@ class WaterbodyQueries extends BaseQueries {
 				])
 				->run();
 		} else {
-			(new Delete())->table(static::$tableName)->where('european_river_code' . ' = :id')->addParameter(':id', $id)->run();
+			(new Delete())->table(static::$tableName)->where('eucd_riv' . ' = :id')->addParameter(':id', $id)->run();
 		}
 	}
 

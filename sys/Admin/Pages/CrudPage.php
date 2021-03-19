@@ -25,7 +25,7 @@ use Exception;
 abstract class CrudPage extends BasePage {
 
 	const PAGE_LIST = 'list';
-	const PAGE_ADD = 'add';
+	const PAGE_ADD  = 'add';
 	const PAGE_EDIT = 'edit';
 	const PAGE_SHOW = 'show';
 
@@ -86,7 +86,7 @@ abstract class CrudPage extends BasePage {
 		$recordTitle = [];
 		if ($record) {
 			if (!empty($record['id'])) {
-				$recordTitle[] = '#'.$record['id'];
+				$recordTitle[] = '#' . $record['id'];
 			}
 			if (!empty($record['name'])) {
 				$recordTitle[] = $record['name'];
@@ -97,9 +97,10 @@ abstract class CrudPage extends BasePage {
 			case self::PAGE_LIST:
 				return ucfirst($this->getEntityName(true));
 			case self::PAGE_ADD:
-				return 'Add '.$this->getEntityName();
+				return 'Add ' . $this->getEntityName();
 			case self::PAGE_SHOW:
 				$name = ucfirst($this->getEntityName());
+
 				return "$name: $recordTitle";
 			case self::PAGE_EDIT:
 				return "Edit {$this->getEntityName()}: $recordTitle";
@@ -191,6 +192,7 @@ abstract class CrudPage extends BasePage {
 
 		$listPage = $this->getListPageLinkWithState();
 		$pageTitle = $this->getTitle(self::PAGE_SHOW, $record);
+
 		return $this->render($this->showTemplate, compact('record', 'listPage', 'pageTitle'));
 	}
 
@@ -216,8 +218,12 @@ abstract class CrudPage extends BasePage {
 			throw new HttpBadRequestException('CSRF validation failed');
 		}
 
-		if (!$this->validateData($postData)) {
+		if (!$this->validateData($postData, $record)) {
 			// if data isn't valid, render the form again with error messages
+			if (!empty($this->fieldMessages) && empty($this->messages[self::MESSAGE_ERROR])) {
+				$this->addMessage('Form has some invalid data', self::MESSAGE_ERROR);
+			}
+
 			return $this->renderForm($record);
 		}
 
@@ -352,8 +358,8 @@ abstract class CrudPage extends BasePage {
 		$pageTitle = $this->getTitle($record ? self::PAGE_EDIT : self::PAGE_ADD, $record);
 
 		$context = array_merge([
-			'record' => $record,
-			'listPage' => $this->getListPageLinkWithState(),
+			'record'    => $record,
+			'listPage'  => $this->getListPageLinkWithState(),
 			'pageTitle' => $pageTitle
 		], $this->formContext());
 
@@ -369,6 +375,7 @@ abstract class CrudPage extends BasePage {
 		$pathParts = array_filter($pathParts, function ($part) {
 			return !in_array($part, ['show', 'edit', 'add', 'delete']);
 		});
+
 		return implode('_', $pathParts);
 	}
 
@@ -407,8 +414,9 @@ abstract class CrudPage extends BasePage {
 			$listPageState = array_filter(array_map(function ($item) {
 				return urlencode($item);
 			}, $listPageState));
-			$path .= $listPageState ? $separator.http_build_query($listPageState) : '';
+			$path .= $listPageState ? $separator . http_build_query($listPageState) : '';
 		}
+
 		return $path;
 	}
 
@@ -426,11 +434,12 @@ abstract class CrudPage extends BasePage {
 	/**
 	 * Validate the form's data, return a boolean response
 	 *
-	 * @param array $data Form's data
+	 * @param array      $data Form's data
+	 * @param array|null $editedRecord
 	 *
 	 * @return bool Valid state
 	 */
-	protected function validateData(array $data): bool {
+	protected function validateData(array $data, ?array $editedRecord = null): bool {
 		return true;
 	}
 
@@ -448,12 +457,12 @@ abstract class CrudPage extends BasePage {
 
 
 	/**
-	* Check if user has permission to edit a record with a given id
-	*
-	* @param mixed $id
-	*
-	* @return bool Has permission
-	*/
+	 * Check if user has permission to edit a record with a given id
+	 *
+	 * @param mixed $id
+	 *
+	 * @return bool Has permission
+	 */
 	protected function userCanEdit($id) {
 		return true;
 	}

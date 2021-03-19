@@ -33,9 +33,9 @@ class ResultsCrud extends MonitoringPointResultsCrud {
 	 */
 	protected function getBaseQuery(): Select {
 		return (new Select())->from('meteo_result r')
-			->join('meteo_time_series ts', 'ts.id = r.meteo_time_seriesid', Query::JOIN_LEFT)
-			->join('meteopoint p', 'p.id = ts.meteopointid', Query::JOIN_LEFT)
-			->join('meteo_observed_property op', 'op.id = ts.meteo_observed_propertyid', Query::JOIN_LEFT)
+			->join('meteo_time_series ts', 'ts.id = r.time_seriesid', Query::JOIN_LEFT)
+			->join('meteopoint p', 'p.id = ts.mpointid', Query::JOIN_LEFT)
+			->join('meteo_observed_property op', 'op.id = ts.observed_propertyid', Query::JOIN_LEFT)
 			->orderBy('mr.time', Query::DIR_DESC)
 			->select([
 				'p.name',

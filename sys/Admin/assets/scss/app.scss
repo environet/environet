@@ -84,33 +84,6 @@ section#main-content {
 		padding: 1em $content-padding-horizontal;
 	}
 
-	.messages {
-		ul {
-			margin: 0;
-			padding: 0;
-		}
-
-		li {
-			margin: 1em 0;
-			width: 100%;
-			padding: 1em;
-			color: white;
-			border-radius: $border-radius-sm;
-		}
-
-		&.message-error li {
-			background-color: map_get($theme-colors, 'danger');
-		}
-
-		&.message-success li {
-			background-color: map_get($theme-colors, 'success');
-		}
-
-		&.message-warning li {
-			background-color: map_get($theme-colors, 'warning');
-		}
-	}
-
 	.card {
 		padding: 1em;
 	}
@@ -133,6 +106,33 @@ section#main-content {
 				max-height: 60px;
 			}
 		}
+	}
+}
+
+.messages {
+	ul {
+		margin: 0;
+		padding: 0;
+	}
+
+	li {
+		margin: 1em 0;
+		width: 100%;
+		padding: 1em;
+		color: white;
+		border-radius: $border-radius-sm;
+	}
+
+	&.message-error li {
+		background-color: map_get($theme-colors, 'danger');
+	}
+
+	&.message-success li {
+		background-color: map_get($theme-colors, 'success');
+	}
+
+	&.message-warning li {
+		background-color: map_get($theme-colors, 'warning');
 	}
 }
 
