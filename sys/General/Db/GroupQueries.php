@@ -102,28 +102,30 @@ class GroupQueries extends BaseQueries {
 	public static function getById($id, string $primaryKey = 'id'): ?array {
 		$record = parent::getById($id, $primaryKey);
 
-		$record['permissions'] = (new Select())
-			->select('permissionsid')
-			->from('group_permissions')
-			->where('groupsid = :groupId')
-			->addParameter(':groupId', $id)
-			->run(Query::FETCH_COLUMN);
+		if (!is_null($record)) {
+			$record['permissions'] = (new Select())
+				->select('permissionsid')
+				->from('group_permissions')
+				->where('groupsid = :groupId')
+				->addParameter(':groupId', $id)
+				->run(Query::FETCH_COLUMN);
 
-		$record['users'] = (new Select())
-			->select('users.*')
-			->from('users')
-			->join('users_groups', 'users_groups.usersid = users.id', Query::JOIN_INNER)
-			->where('groupsid = :groupId')
-			->addParameter(':groupId', $id)
-			->run();
+			$record['users'] = (new Select())
+				->select('users.*')
+				->from('users')
+				->join('users_groups', 'users_groups.usersid = users.id', Query::JOIN_INNER)
+				->where('groupsid = :groupId')
+				->addParameter(':groupId', $id)
+				->run();
 
-		$record['operators'] = (new Select())
-			->select('operator.*')
-			->from('operator')
-			->join('operator_groups', 'operator_groups.operatorid = operator.id', Query::JOIN_INNER)
-			->where('groupsid = :groupId')
-			->addParameter(':groupId', $id)
-			->run();
+			$record['operators'] = (new Select())
+				->select('operator.*')
+				->from('operator')
+				->join('operator_groups', 'operator_groups.operatorid = operator.id', Query::JOIN_INNER)
+				->where('groupsid = :groupId')
+				->addParameter(':groupId', $id)
+				->run();
+		}
 
 		return $record;
 	}
