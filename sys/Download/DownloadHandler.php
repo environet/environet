@@ -250,10 +250,14 @@ class DownloadHandler extends ApiHandler {
 			// Create ErrorResponse xml
 			http_response_code(400);
 
+			exception_logger($e);
+
 			return (new Response((new CreateErrorXml())->generateXml($e->getErrorXmlData())->asXML()))->setHeaders(['Content-type: application/xml']);
 		} catch (Throwable $e) {
 			// Create ErrorResponse xml
 			http_response_code(500);
+
+			exception_logger($e);
 
 			return (new Response((new CreateErrorXml())->generateXml([new ErrorXmlData(500, $e->getMessage())])->asXML()))
 				->setHeaders(['Content-type: application/xml']);

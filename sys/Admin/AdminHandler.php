@@ -151,6 +151,7 @@ class AdminHandler extends BaseHandler {
 		} catch (HttpBadRequestException $e) {
 			return (new Renderer('/error_400.phtml', ['exception' => $e]))();
 		} catch (Exception $e) {
+			exception_logger($e);
 			return (new Renderer('/error_500.phtml', ['exception' => $e]))();
 		}
 	}
