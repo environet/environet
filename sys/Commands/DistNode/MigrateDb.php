@@ -538,7 +538,7 @@ class MigrateDb extends DbCommand {
 				    operatorid integer NOT NULL,
 				    warning_level_groupid integer NOT NULL,
 				    color character varying(6),
-				    short_description character varying(512),
+				    short_description character varying(512) NOT NULL,
 				    long_description text,
 				    is_inclusive bool NOT NULL DEFAULT true
 				);

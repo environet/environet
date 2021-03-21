@@ -126,6 +126,28 @@
                     <?= includeTemplatePart('menuitem.phtml', ['title' => 'Measurement access rules', 'route' => '/admin/measurement-access-rules', 'icon' => 'database', 'matchExtra' => 1]) ?>
                 </li>
 			<?php endif; ?>
+
+	        <?php if($request->getIdentity()->hasPermissionsAnyOf([
+		        'admin.warninglevels.read',
+		        'admin.warninglevelgroups.read',
+		        'admin.warninglevels.readown',
+	        ])): ?>
+				<li class="sub-menu" data-id="meteoSubmenu" >
+			        <?= includeTemplatePart('menuitem.phtml', ['title' => 'Warning levels', 'route' => null, 'icon' => 'cloud', 'matchExtra' => 1]) ?>
+					<ul class="sub">
+						<?php if($request->getIdentity()->hasPermissions(['admin.warninglevels.read']) || $request->getIdentity()->hasPermissions(['admin.warninglevels.readown'])): ?>
+							<li>
+								<?= includeTemplatePart('menuitem.phtml', ['title' => 'Warning levels', 'route' => '/admin/warning-levels', 'icon' => 'database', 'matchExtra' => 1]) ?>
+							</li>
+						<?php endif; ?>
+						<?php if($request->getIdentity()->hasPermissions(['admin.warninglevelgroups.read'])): ?>
+							<li>
+								<?= includeTemplatePart('menuitem.phtml', ['title' => 'Warning level groups', 'route' => '/admin/warning-level-groups', 'icon' => 'database', 'matchExtra' => 1]) ?>
+							</li>
+						<?php endif; ?>
+					</ul>
+				</li>
+	        <?php endif; ?>
             <?php if($request->getIdentity()->hasPermissions(['admin.missingData.upload']) || $request->getIdentity()->hasPermissions(['admin.missingData.uploadown'])): ?>
                 <li>
                     <?=includeTemplatePart('menuitem.phtml', ['title' => 'Upload missing data', 'route' => '/admin/missing-data', 'icon' => 'upload', 'matchExtra' => 1]) ?>

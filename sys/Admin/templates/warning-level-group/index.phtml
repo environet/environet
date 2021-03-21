@@ -1,0 +1,54 @@
+<?php include __DIR__ . '../../layouts/before_app.phtml'; ?>
+
+<div class="card">
+	<?=includeTemplatePart('crud_list_header.phtml', get_defined_vars() + [
+		'addUrl' => '/admin/warning-level-groups/add',
+		'addTitle' => 'Add warning level group'
+	]);?>
+
+	<table class="table table-striped table-bordered">
+		<thead>
+		<tr>
+			<th><?=sortableColumn('Id', 'id');?></th>
+			<th><?=sortableColumn('Name', 'operatorid');?></th>
+			<th class="actions">Actions</th>
+		</tr>
+		</thead>
+		<tbody>
+		<?php
+		if (count($records) > 0):
+			foreach ($records as $record):
+				?>
+				<tr>
+					<td><?=$record['id'] ?? null;?></td>
+					<td><?=$record['name'] ?? null;?></td>
+					<td class="actions">
+						<a href="/admin/warning-level-groups/edit?id=<?=$record['id'];?>"><i class="fas fa-edit"></i></a>
+						<a href="/admin/warning-level-groups/delete?id=<?=$record['id'];?>" onclick="return confirm('Are you sure to delete?')"><i class="fas fa-trash text-danger"></i></a>
+					</td>
+				</tr>
+			<?php
+			endforeach;
+		else:
+			?>
+			<tr>
+				<td colspan="3">
+					There is no record to show.
+				</td>
+			</tr>
+		<?
+		endif;
+		?>
+		</tbody>
+		<tfoot>
+		<tr>
+			<td colspan="6">
+				<div class="paginator">
+					<?php include __DIR__.'/../parts/paginator.phtml';?>
+				</div>
+			</td>
+		</tr>
+		</tfoot>
+	</table>
+</div>
+<?php include __DIR__ . '../../layouts/after_app.phtml'; ?>
