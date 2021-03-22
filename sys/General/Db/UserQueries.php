@@ -229,6 +229,10 @@ class UserQueries extends BaseQueries {
 				'admin.measurementaccessrules.createown',
 				'admin.measurementaccessrules.updateown',
 				'admin.measurementaccessrules.deleteown',
+				'admin.warninglevels.readown',
+				'admin.warninglevels.createown',
+				'admin.warninglevels.updateown',
+				'admin.warninglevels.deleteown',
 				'admin.missingData.uploadown',
 				'admin.processedData.uploadown',
 
