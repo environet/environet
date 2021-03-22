@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 12.4 (Debian 12.4-1.pgdg100+1)
--- Dumped by pg_dump version 12.5 (Debian 12.5-1.pgdg100+1)
+-- Dumped by pg_dump version 12.6 (Debian 12.6-1.pgdg100+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1124,18 +1124,6 @@ COMMENT ON COLUMN public.meteostation_classification.value IS 'String to describ
 
 
 --
--- Name: monitoring_point_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.monitoring_point_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
 -- Name: operator_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1470,10 +1458,10 @@ COMMENT ON TABLE public.users_groups IS 'Users-groups assignment (many-to-many)'
 
 
 --
--- Name: warning_level_warning_level_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: warning_level_group_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.warning_level_warning_level_seq
+CREATE SEQUENCE public.warning_level_group_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1482,13 +1470,51 @@ CREATE SEQUENCE public.warning_level_warning_level_seq
 
 
 --
--- Name: warning_level; Type: TABLE; Schema: public; Owner: -
+-- Name: warning_level_groups; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.warning_level (
-    warning_level integer DEFAULT nextval('public.warning_level_warning_level_seq'::regclass) NOT NULL,
+CREATE TABLE public.warning_level_groups (
+    id integer DEFAULT nextval('public.warning_level_group_id_seq'::regclass) NOT NULL,
+    name character varying(255) NOT NULL
+);
+
+
+--
+-- Name: warning_level_hydropoint; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.warning_level_hydropoint (
     mpointid integer NOT NULL,
-    water_level numeric(20,10) NOT NULL
+    observed_propertyid integer NOT NULL,
+    warning_levelid integer NOT NULL,
+    value numeric(20,10) NOT NULL
+);
+
+
+--
+-- Name: warning_level_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.warning_level_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: warning_levels; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.warning_levels (
+    id integer DEFAULT nextval('public.warning_level_id_seq'::regclass) NOT NULL,
+    operatorid integer NOT NULL,
+    warning_level_groupid integer NOT NULL,
+    color character varying(6),
+    short_description character varying(512),
+    long_description text,
+    is_inclusive boolean DEFAULT true NOT NULL
 );
 
 
@@ -1709,11 +1735,11 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: warning_level warning_level_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: warning_levels warning_level_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.warning_level
-    ADD CONSTRAINT warning_level_pkey PRIMARY KEY (warning_level);
+ALTER TABLE ONLY public.warning_levels
+    ADD CONSTRAINT warning_level_pkey PRIMARY KEY (id);
 
 
 --
@@ -1822,6 +1848,20 @@ CREATE UNIQUE INDEX operator_name_unique ON public.operator USING btree (name);
 
 
 --
+-- Name: operatorid_color_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX operatorid_color_unique ON public.warning_levels USING btree (operatorid, color);
+
+
+--
+-- Name: operatorid_short_description_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX operatorid_short_description_unique ON public.warning_levels USING btree (operatorid, short_description);
+
+
+--
 -- Name: permissions_name_unique; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1847,6 +1887,13 @@ CREATE UNIQUE INDEX riverbank_value_unique ON public.riverbank USING btree (valu
 --
 
 CREATE UNIQUE INDEX users_username_unique ON public.users USING btree (username);
+
+
+--
+-- Name: warning_level_group_pkey; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX warning_level_group_pkey ON public.warning_level_groups USING btree (id);
 
 
 --
@@ -1938,6 +1985,14 @@ ALTER TABLE ONLY public.hydropoint
 
 
 --
+-- Name: hydropoint hydropoint_eucd_riv_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.hydropoint
+    ADD CONSTRAINT hydropoint_eucd_riv_fkey FOREIGN KEY (eucd_riv) REFERENCES public.river(eucd_riv);
+
+
+--
 -- Name: hydropoint_observed_property hydropoint_observed_property_mpointid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1962,14 +2017,6 @@ ALTER TABLE ONLY public.hydropoint
 
 
 --
--- Name: hydropoint hydropoint_river_european_river_code_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.hydropoint
-    ADD CONSTRAINT hydropoint_river_european_river_code_fkey FOREIGN KEY (eucd_riv) REFERENCES public.river(eucd_riv);
-
-
---
 -- Name: hydropoint hydropoint_station_classificationid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1978,51 +2025,43 @@ ALTER TABLE ONLY public.hydropoint
 
 
 --
--- Name: meteo_result meteo_result_meteo_time_seriesid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: meteo_result meteo_result_time_seriesid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.meteo_result
-    ADD CONSTRAINT meteo_result_meteo_time_seriesid_fkey FOREIGN KEY (time_seriesid) REFERENCES public.meteo_time_series(id);
+    ADD CONSTRAINT meteo_result_time_seriesid_fkey FOREIGN KEY (time_seriesid) REFERENCES public.meteo_time_series(id);
 
 
 --
--- Name: meteo_time_series meteo_time_series_meteo_observed_propertyid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.meteo_time_series
-    ADD CONSTRAINT meteo_time_series_meteo_observed_propertyid_fkey FOREIGN KEY (observed_propertyid) REFERENCES public.meteo_observed_property(id);
-
-
---
--- Name: meteo_time_series meteo_time_series_meteopointid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: meteo_time_series meteo_time_series_mpointid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.meteo_time_series
-    ADD CONSTRAINT meteo_time_series_meteopointid_fkey FOREIGN KEY (mpointid) REFERENCES public.meteopoint(id);
+    ADD CONSTRAINT meteo_time_series_mpointid_fkey FOREIGN KEY (mpointid) REFERENCES public.meteopoint(id);
 
 
 --
--- Name: meteopoint meteopoint_meteostation_classificationid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: meteo_time_series meteo_time_series_observed_propertyid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.meteopoint
-    ADD CONSTRAINT meteopoint_meteostation_classificationid_fkey FOREIGN KEY (station_classificationid) REFERENCES public.meteostation_classification(id);
-
-
---
--- Name: meteopoint_observed_property meteopoint_observed_property_meteo_observed_propertyid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.meteopoint_observed_property
-    ADD CONSTRAINT meteopoint_observed_property_meteo_observed_propertyid_fkey FOREIGN KEY (observed_propertyid) REFERENCES public.meteo_observed_property(id);
+ALTER TABLE ONLY public.meteo_time_series
+    ADD CONSTRAINT meteo_time_series_observed_propertyid_fkey FOREIGN KEY (observed_propertyid) REFERENCES public.meteo_observed_property(id);
 
 
 --
--- Name: meteopoint_observed_property meteopoint_observed_property_meteopointid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: meteopoint_observed_property meteopoint_observed_property_mpointid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.meteopoint_observed_property
-    ADD CONSTRAINT meteopoint_observed_property_meteopointid_fkey FOREIGN KEY (mpointid) REFERENCES public.meteopoint(id);
+    ADD CONSTRAINT meteopoint_observed_property_mpointid_fkey FOREIGN KEY (mpointid) REFERENCES public.meteopoint(id);
+
+
+--
+-- Name: meteopoint_observed_property meteopoint_observed_property_observed_propertyid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.meteopoint_observed_property
+    ADD CONSTRAINT meteopoint_observed_property_observed_propertyid_fkey FOREIGN KEY (observed_propertyid) REFERENCES public.meteo_observed_property(id);
 
 
 --
@@ -2031,6 +2070,14 @@ ALTER TABLE ONLY public.meteopoint_observed_property
 
 ALTER TABLE ONLY public.meteopoint
     ADD CONSTRAINT meteopoint_operatorid_fkey FOREIGN KEY (operatorid) REFERENCES public.operator(id);
+
+
+--
+-- Name: meteopoint meteopoint_station_classificationid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.meteopoint
+    ADD CONSTRAINT meteopoint_station_classificationid_fkey FOREIGN KEY (station_classificationid) REFERENCES public.meteostation_classification(id);
 
 
 --
@@ -2106,11 +2153,43 @@ ALTER TABLE ONLY public.users_groups
 
 
 --
--- Name: warning_level warning_level_mpointid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: warning_level_hydropoint warning_level_hydropoint_mpointid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.warning_level
-    ADD CONSTRAINT warning_level_mpointid_fkey FOREIGN KEY (mpointid) REFERENCES public.hydropoint(id);
+ALTER TABLE ONLY public.warning_level_hydropoint
+    ADD CONSTRAINT warning_level_hydropoint_mpointid_fkey FOREIGN KEY (mpointid) REFERENCES public.hydropoint(id);
+
+
+--
+-- Name: warning_level_hydropoint warning_level_hydropoint_observed_propertyid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.warning_level_hydropoint
+    ADD CONSTRAINT warning_level_hydropoint_observed_propertyid_fkey FOREIGN KEY (observed_propertyid) REFERENCES public.hydro_observed_property(id);
+
+
+--
+-- Name: warning_level_hydropoint warning_level_hydropoint_warning_levelid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.warning_level_hydropoint
+    ADD CONSTRAINT warning_level_hydropoint_warning_levelid_fkey FOREIGN KEY (warning_levelid) REFERENCES public.warning_levels(id);
+
+
+--
+-- Name: warning_levels warning_levels_operatorid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.warning_levels
+    ADD CONSTRAINT warning_levels_operatorid_fkey FOREIGN KEY (operatorid) REFERENCES public.operator(id);
+
+
+--
+-- Name: warning_levels warning_levels_warning_level_groupid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.warning_levels
+    ADD CONSTRAINT warning_levels_warning_level_groupid_fkey FOREIGN KEY (warning_level_groupid) REFERENCES public.warning_level_groups(id);
 
 
 --

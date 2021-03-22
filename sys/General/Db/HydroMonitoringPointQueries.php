@@ -47,11 +47,12 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 	/**
 	 * @param array|null $operatorIds
 	 * @param bool       $activeOnly
+	 * @param bool       $withWarningLevels
 	 *
 	 * @return array
 	 * @throws QueryException
 	 */
-	public static function all(array $operatorIds = null, bool $activeOnly = false) {
+	public static function all(array $operatorIds = null, bool $activeOnly = false, $withWarningLevels = false) {
 		$query = (new Select())
 			->select(static::$tableName . '.*')
 			->from(static::$tableName);
@@ -75,6 +76,33 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 				->where('hpop.mpointid = :hpopId')
 				->addParameter(':hpopId', $point['id'])
 				->run(Query::FETCH_COLUMN);
+
+			if ($withWarningLevels) {
+				$points[$i]['warning_levels'] = (new Select())
+					->from('warning_level_hydropoint wlh')
+					->join('warning_levels wl', 'wl.id = wlh.warning_levelid')
+					->join('warning_level_groups wlg', 'wlg.id = wl.warning_level_groupid')
+					->join('hydro_observed_property hop', 'hop.id = wlh.observed_propertyid')
+					->where('hop.type = :propertyType')
+					->addParameter('propertyType', PROPERTY_TYPE_REALTIME)
+					->select([
+						'wl.short_description',
+						'wl.long_description',
+						'wl.color',
+						'wl.is_inclusive',
+						'wlg.name as group',
+						'hop.symbol as observed_property',
+						'wlh.value as threshold',
+					])
+					->where('wlh.mpointid = :mpointId')
+					->orderBy('wlg.id', 'ASC')
+					->addParameter(':mpointId', $point['id'])
+					->run();
+
+				foreach ($points[$i]['warning_levels'] as &$warningLevel) {
+					$warningLevel['threshold'] = floatval($warningLevel['threshold']);
+				}
+			}
 		}
 
 		return $points;

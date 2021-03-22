@@ -4,6 +4,8 @@ namespace Environet\Sys\Admin;
 
 use Environet\Sys\Admin\Pages\BasePage;
 use Environet\Sys\Admin\Pages\Dashboard;
+use Environet\Sys\Admin\Pages\WarningLevel\WarningLevelCrud;
+use Environet\Sys\Admin\Pages\WarningLevel\WarningLevelGroupCrud;
 use Environet\Sys\Admin\Pages\Operator\OperatorCrud;
 use Environet\Sys\Admin\Pages\DownloadTest;
 use Environet\Sys\Admin\Pages\Group\GroupCrud;
@@ -237,6 +239,7 @@ class AdminHandler extends BaseHandler {
 		'^hydro\/monitoring-points\/delete'         => [HydroMonitoringPointCrud::class, 'delete', ['admin.hydro.monitoringpoints.delete'], ['admin.hydro.monitoringpoints.deleteown']],
 		'^hydro\/monitoring-points\/csv-upload'     => [HydroMonitoringPointCrud::class, 'csvUpload', ['admin.hydro.monitoringpoints.create', 'admin.hydro.monitoringpoints.update'], ['admin.hydro.monitoringpoints.createown', 'admin.hydro.monitoringpoints.updateown', 'admin.hydro.monitoringpoints.readown']],
 		'^hydro\/monitoring-points\/csv-download'   => [HydroMonitoringPointCrud::class, 'csvDownload', ['admin.hydro.monitoringpoints.create', 'admin.hydro.monitoringpoints.update'], ['admin.hydro.monitoringpoints.createown', 'admin.hydro.monitoringpoints.updateown', 'admin.hydro.monitoringpoints.readown']],
+		'^hydro\/monitoring-points\/warning-levels'   => [HydroMonitoringPointCrud::class, 'warningLevels', ['admin.hydro.monitoringpoints.update'], ['admin.hydro.monitoringpoints.updateown']],
 
 		'^meteo\/station-classifications$'         => [MeteoStationClassificationCrud::class, 'list', ['admin.meteo.classifications.read']],
 		'^meteo\/station-classifications\/show$'   => [MeteoStationClassificationCrud::class, 'show', ['admin.meteo.classifications.read']],
@@ -266,6 +269,18 @@ class AdminHandler extends BaseHandler {
 
 		'^upload-test$'   => [UploadTest::class, 'handle', ['api.upload']],
 		'^download-test$' => [DownloadTest::class, 'handle', ['api.download']],
+
+		'^warning-levels$'        => [WarningLevelCrud::class, 'list', ['admin.warninglevels.read'], ['admin.warninglevels.readown']],
+		'^warning-levels\/show$'  => [WarningLevelCrud::class, 'show', ['admin.warninglevels.read'], ['admin.warninglevels.readown']],
+		'^warning-levels\/add$'   => [WarningLevelCrud::class, 'add', ['admin.warninglevels.create'], ['admin.warninglevels.createown']],
+		'^warning-levels\/edit$'  => [WarningLevelCrud::class, 'edit', ['admin.warninglevels.update'], ['admin.warninglevels.updateown']],
+		'^warning-levels\/delete' => [WarningLevelCrud::class, 'delete', ['admin.warninglevels.delete'], ['admin.warninglevels.deleteown']],
+
+		'^warning-level-groups$'        => [WarningLevelGroupCrud::class, 'list', ['admin.warninglevelgroups.read']],
+		'^warning-level-groups\/show$'  => [WarningLevelGroupCrud::class, 'show', ['admin.warninglevelgroups.read']],
+		'^warning-level-groups\/add$'   => [WarningLevelGroupCrud::class, 'add', ['admin.warninglevelgroups.create']],
+		'^warning-level-groups\/edit$'  => [WarningLevelGroupCrud::class, 'edit', ['admin.warninglevelgroups.update']],
+		'^warning-level-groups\/delete' => [WarningLevelGroupCrud::class, 'delete', ['admin.warninglevelgroups.delete']],
 
 		'^ajax\/select\/operator-points$'     => [MeasurementAccessRuleCrud::class, 'operatorPoints', ['admin.measurementaccessrules.read'], ['admin.measurementaccessrules.readown']],
 		'^ajax\/select\/operator-properties$' => [MeasurementAccessRuleCrud::class, 'operatorProperties', ['admin.measurementaccessrules.read'], ['admin.measurementaccessrules.readown']],

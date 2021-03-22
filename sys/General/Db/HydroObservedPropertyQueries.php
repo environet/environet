@@ -84,4 +84,31 @@ class HydroObservedPropertyQueries extends BaseQueries {
 	}
 
 
+	/**
+	 * Get list of properties, but only real-time type
+	 *
+	 * @return array|null
+	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses \exception_logger()
+	 */
+	public static function getRealTimeOptionList(): ?array {
+		try {
+			$records = (new Select())
+				->from(static::$tableName)
+				->select([static::$tableName . '.id', static::$tableName . '.symbol'])
+				->where(static::$tableName.'.type = :type')
+				->addParameter('type', PROPERTY_TYPE_REALTIME)
+				->orderBy(static::$tableName . '.id', 'ASC')
+				->run();
+			$records = array_combine(array_column($records, 'id'), array_column($records, 'symbol'));
+
+			return $records ?: [];
+		} catch (QueryException $e) {
+			exception_logger($e);
+
+			return [];
+		}
+	}
+
+
 }

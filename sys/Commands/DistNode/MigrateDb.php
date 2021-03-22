@@ -60,6 +60,7 @@ class MigrateDb extends DbCommand {
 			'removeMeteoPrefixes',
 			'renameWaterbody',
 			'uniqueFieldsAndRenames',
+			'warningLevels',
 		];
 		ini_set('memory_limit', - 1);
 
@@ -500,6 +501,102 @@ class MigrateDb extends DbCommand {
 		}
 
 		return $return;
+	}
+
+
+	/**
+	 * Rename waterbody to river
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function warningLevels(array &$output): int {
+		$return = - 1;
+
+		if (!$this->checkTable('warning_level_groups')) {
+			$return = 0;
+			$this->connection->runQuery("CREATE SEQUENCE IF NOT EXISTS public.warning_level_group_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;", []);
+			$this->connection->runQuery("
+				CREATE TABLE public.warning_level_groups (
+				    id integer DEFAULT nextval('public.warning_level_group_id_seq'::regclass) NOT NULL,
+				    name character varying(255) NOT NULL
+				);
+			", []);
+			$this->connection->runQuery("CREATE UNIQUE INDEX warning_level_group_pkey ON public.warning_level_groups USING btree (id)", []);
+		}
+
+		if ($this->checkTable('warning_level') && !$this->checkTable('warning_levels')) {
+			$return = 0;
+			$this->connection->runQuery("DROP TABLE IF EXISTS warning_level;", []);
+			$this->connection->runQuery("CREATE SEQUENCE IF NOT EXISTS public.warning_level_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;", []);
+			$this->connection->runQuery("DROP SEQUENCE IF EXISTS public.warning_level_warning_level_seq;", []);
+			$this->connection->runQuery("
+				CREATE TABLE public.warning_levels (
+				    id integer DEFAULT nextval('public.warning_level_id_seq'::regclass) NOT NULL,
+				    operatorid integer NOT NULL,
+				    warning_level_groupid integer NOT NULL,
+				    color character varying(6),
+				    short_description character varying(512) NOT NULL,
+				    long_description text,
+				    is_inclusive bool NOT NULL DEFAULT true
+				);
+			", []);
+			$this->connection->runQuery("ALTER TABLE ONLY public.warning_levels ADD CONSTRAINT warning_level_pkey PRIMARY KEY (id);", []);
+			$this->connection->runQuery("
+				ALTER TABLE ONLY public.warning_levels ADD CONSTRAINT warning_levels_operatorid_fkey FOREIGN KEY (operatorid) REFERENCES public.operator(id);",
+				[]
+			);
+			$this->connection->runQuery("
+				ALTER TABLE ONLY public.warning_levels ADD CONSTRAINT warning_levels_warning_level_groupid_fkey FOREIGN KEY (warning_level_groupid) REFERENCES public.warning_level_groups(id);",
+				[]
+			);
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS operatorid_short_description_unique ON warning_levels (operatorid,short_description)", []);
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS operatorid_color_unique ON warning_levels (operatorid,color)", []);
+		}
+
+		if (!$this->checkTable('warning_level_hydropoint')) {
+			$return = 0;
+			$this->connection->runQuery("
+				CREATE TABLE public.warning_level_hydropoint (
+				    mpointid integer NOT NULL,
+				    observed_propertyid integer NOT NULL,
+				    warning_levelid integer NOT NULL,
+				    value numeric(20,10) NOT NULL
+				);
+			", []);
+			$this->connection->runQuery("
+				ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_mpointid_fkey FOREIGN KEY (mpointid) REFERENCES public.hydropoint(id);",
+				[]
+			);
+			$this->connection->runQuery("
+				ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_observed_propertyid_fkey FOREIGN KEY (observed_propertyid) REFERENCES public.hydro_observed_property(id);",
+				[]
+			);
+			$this->connection->runQuery("
+				ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_warning_levelid_fkey FOREIGN KEY (warning_levelid) REFERENCES public.warning_levels(id);",
+				[]
+			);
+		}
+
+		return $return;
+	}
+
+
+	/**
+	 * @param string $tableName
+	 *
+	 * @return bool
+	 * @throws QueryException
+	 */
+	private function checkTable(string $tableName) {
+		$count = $this->connection->runQuery(
+			'SELECT COUNT(*) FROM information_schema.tables WHERE table_name = :tableName;',
+			['tableName' => $tableName]
+		)->fetch(PDO::FETCH_COLUMN);
+
+		return (bool) $count;
 	}
 
 

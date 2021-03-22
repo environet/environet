@@ -1,0 +1,41 @@
+<?php include __DIR__ . '../../../layouts/before_app.phtml'; ?>
+<div class="card formPage">
+	<?=includeTemplatePart('crud_show_header.phtml', get_defined_vars());?>
+	<form action="" novalidate class="needs-validation" method="POST">
+		<input type="hidden" name="__csrf" value="<?=$csrf;?>" />
+
+		<table class="table table-bordered">
+			<thead>
+			<tr>
+				<th>Warning Levels</th>
+				<?php foreach ($observedProperties as $observedPropertyName) { ?>
+					<th><?=$observedPropertyName;?></th>
+				<?php } ?>
+			</tr>
+			</thead>
+			<tbody>
+			<?php foreach ($warningLevels as $warningLevelId => $warningLevelName) { ?>
+				<tr>
+					<th><?=$warningLevelName;?></th>
+					<?php foreach ($observedProperties as $observedPropertyId => $observedPropertyName) { ?>
+						<?php $key = $observedPropertyId . '_' . $warningLevelId; ?>
+						<td>
+							<input type="number"
+								   name="<?=$key;?>"
+								   value="<?=formFieldValue($key, $data);?>"
+								   step=".0000000001"
+								   style="max-width: 150px"/>
+						</td>
+					<?php } ?>
+				</tr>
+			<?php } ?>
+			</tbody>
+		</table>
+
+		<div class="field">
+			<input type="submit" class="btn btn-primary" value="Save" />
+		</div>
+	</form>
+</div>
+
+<?php include __DIR__ . '../../../layouts/after_app.phtml'; ?>

@@ -4,6 +4,7 @@ import './Dropdown.js';
 import './Forms.js';
 import './FileUpload.js';
 import './Multiselect.js';
+import './ColorInput.js';
 
 const logoutLinks = document.querySelectorAll('.logout-link');
 logoutLinks.forEach(link => {
