@@ -83,6 +83,8 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 					->join('warning_levels wl', 'wl.id = wlh.warning_levelid')
 					->join('warning_level_groups wlg', 'wlg.id = wl.warning_level_groupid')
 					->join('hydro_observed_property hop', 'hop.id = wlh.observed_propertyid')
+					->where('hop.type = :propertyType')
+					->addParameter('propertyType', PROPERTY_TYPE_REALTIME)
 					->select([
 						'wl.short_description',
 						'wl.long_description',

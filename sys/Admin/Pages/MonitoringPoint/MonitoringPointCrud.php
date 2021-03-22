@@ -292,7 +292,8 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 			$allowedOperatorIds = $this->getAllowedOperatorIds();
 			foreach ($csvLines as $lineNumber => $line) {
 				$csvId = $line[array_search($this->getGlobalIdName(), $this->headingLine)];
-				$record = $this->queriesClass::getByColumn($this->getGlobalIdName(), $csvId);
+				$operatorId = $line[array_search('operator', $this->headingLine)];
+				$record = $this->queriesClass::getByNcdAndOperator($this->getGlobalIdName(), $csvId, $operatorId);
 				$recordId = $record ? $record['id'] : null;
 
 				//Allow operator only if user is allowed to edit the point
@@ -305,6 +306,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 
 				try {
 					$this->queriesClass::save($data, $recordId);
+					$this->csvUploadAfterSave($data, $recordId);
 					if ($recordId) {
 						$updated[] = $csvId;
 					} else {
@@ -355,6 +357,16 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 
 
 	/**
+	 * Possibility to save some other data after records is saved after upload
+	 *
+	 * @param $data
+	 * @param $mpointId
+	 */
+	protected function csvUploadAfterSave($data, $mpointId) {
+	}
+
+
+	/**
 	 * Download CSV of current monitoring points
 	 *
 	 * @throws QueryException
@@ -377,7 +389,10 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 		foreach ($records as $record) {
 			$line = [];
 			foreach ($csvColumns as $field => $titleOrConfig) {
-				if ($field === $this->observedPropertiesCsvColumn) {
+				if (method_exists($this, 'getCsvField') && ($getterValue = $this->getCsvField($record['id'], $field)) !== false) {
+					//Check if custom getter returns any valid value. If yes, this will be used
+					$line[$field] = $getterValue;
+				} elseif ($field === $this->observedPropertiesCsvColumn) {
 					//Observed property special column
 					$line[$field] = implode(' ', $this->getObservedPropertyQueriesClass()::getSymbolsByPoint($record['id']));
 				} else {

@@ -5,6 +5,7 @@ namespace Environet\Sys\General\Db;
 
 
 use Environet\Sys\General\Db\Query\Query;
+use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\QueryException;
 
 /**
@@ -58,6 +59,31 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 		$sqlMax = str_replace('{{order}}', 'DESC', $sql);
 		$sqlMax = str_replace('{{minMax}}', 'max', $sqlMax);
 		(new Query())->table($pointPropertyTable)->setRawQuery($sqlMax)->addParameter(':tsid', $timeSeriesId)->run();
+	}
+
+
+	/**
+	 * Get a point by NCD code, and operator
+	 *
+	 * @param $ncdField
+	 * @param $ncdId
+	 * @param $operatorId
+	 *
+	 * @return array|bool|int|null
+	 */
+	public static function getByNcdAndOperator($ncdField, $ncdId, $operatorId) {
+		try {
+			return (new Select())
+				->select(static::$tableName . '.*')
+				->from(static::$tableName)
+				->where(static::$tableName . '.' . $ncdField . ' = :ncdId')
+				->where(static::$tableName . '.operatorid = :operatorId')
+				->addParameter(':ncdId', $ncdId)
+				->addParameter(':operatorId', $operatorId)
+				->run(Query::FETCH_FIRST);
+		} catch (QueryException $exception) {
+			return null;
+		}
 	}
 
 
