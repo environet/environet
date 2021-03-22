@@ -52,7 +52,7 @@ class JsonApiHandler extends ApiHandler {
 					$results = [];
 
 					//Find active points only
-					$results['hydro'] = HydroMonitoringPointQueries::all($operatorIds, true);
+					$results['hydro'] = HydroMonitoringPointQueries::all($operatorIds, true, true);
 					$results['meteo'] = MeteoMonitoringPointQueries::all($operatorIds, true);
 					return $this->jsonResponse(json_encode($results), 200);
 				default:
