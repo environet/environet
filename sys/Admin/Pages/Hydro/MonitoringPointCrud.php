@@ -2,13 +2,25 @@
 
 namespace Environet\Sys\Admin\Pages\Hydro;
 
+use Environet\Sys\General\Db\Connection;
 use Environet\Sys\General\Db\HydroMonitoringPointQueries;
 use Environet\Sys\General\Db\HydroObservedPropertyQueries;
 use Environet\Sys\General\Db\HydroStationClassificationQueries;
+use Environet\Sys\General\Db\Query\Insert;
+use Environet\Sys\General\Db\Query\Query;
+use Environet\Sys\General\Db\Query\Select;
+use Environet\Sys\General\Db\Query\Update;
 use Environet\Sys\General\Db\RiverbankQueries;
 use Environet\Sys\General\Db\RiverQueries;
 use Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud as MonitoringPointCrudBase;
+use Environet\Sys\General\Db\WarningLevelQueries;
+use Environet\Sys\General\Exceptions\HttpBadRequestException;
+use Environet\Sys\General\Exceptions\HttpNotFoundException;
+use Environet\Sys\General\Exceptions\PermissionException;
 use Environet\Sys\General\Exceptions\QueryException;
+use Environet\Sys\General\Exceptions\RenderException;
+use Environet\Sys\General\Response;
+use Throwable;
 
 /**
  * Class MonitoringPointCrud
@@ -128,6 +140,109 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 		}
 
 		return $valid;
+	}
+
+
+	/**
+	 * Function to handle warning-levels edit method.
+	 *
+	 * @return Response
+	 * @throws HttpBadRequestException
+	 * @throws HttpNotFoundException
+	 * @throws PermissionException
+	 * @throws QueryException
+	 * @throws RenderException
+	 */
+	public function warningLevels(): Response {
+		$mpointId = $this->getIdParam();
+		$record = $this->getRecordById($mpointId);
+
+		if (!$this->userCanEdit($mpointId)) {
+			throw new PermissionException("You don't have permission to edit record with id: '$mpointId'");
+		}
+
+		//Get all existing data for monitorin point, and organize under keys (property_warninglevel)
+		$existingData = (new Select())
+			->select('*')
+			->from('warning_level_hydropoint')
+			->where('mpointid = :mpointId')
+			->addParameter(':mpointId', $mpointId)
+			->run();
+		$existingDataByKey = [];
+		foreach ($existingData as $datum) {
+			$datum['value'] = floatval($datum['value']);
+			$existingDataByKey[$datum['observed_propertyid'] . '_' . $datum['warning_levelid']] = $datum;
+		}
+
+		//Build form context
+		$pageTitle = sprintf('Edit warning levels for monitoring point: %s', $record['name']);
+		$context = array_merge([
+			'record'    => $record,
+			'listPage'  => $this->getListPageLinkWithState(),
+			'pageTitle' => $pageTitle,
+			'data'      => array_combine(array_keys($existingDataByKey), array_column($existingDataByKey, 'value'))
+		], $this->formContext(), [
+			'warningLevels' => WarningLevelQueries::getOptionListForOperator($record['operatorid'])
+		]);
+
+		if ($this->request->isPost()) {
+			//Save thresholds to database
+			$postData = $this->request->getCleanData();
+
+			if (!$this->checkCsrf()) {
+				// if the csrf token isn't valid
+				throw new HttpBadRequestException('CSRF validation failed');
+			}
+
+			try {
+				$connection = Connection::getInstance();
+				$connection->runQuery("BEGIN TRANSACTION;", []);
+
+				foreach ($postData as $key => $value) {
+					if ($value === '' || $key === '__csrf') {
+						continue;
+					}
+					//Convert to float, and split key
+					$value = floatval($value);
+					$observedPropertyId = explode('_', $key)[0];
+					$warningLevelId = explode('_', $key)[1];
+					if (!array_key_exists($key, $existingDataByKey)) {
+						//Threshold not saved yet, insert into databas
+						(new Insert())->table('warning_level_hydropoint')->addSingleData([
+							'observed_propertyid' => $observedPropertyId,
+							'warning_levelid'     => $warningLevelId,
+							'mpointid'            => $mpointId,
+							'value'               => $value
+						])->run(Query::RETURN_BOOL);
+					} else if($value !== $existingDataByKey[$key]['value']) {
+						//Existing, and value updated, save it
+						(new Update())
+							->table('warning_level_hydropoint')
+							->updateData(['value' => $value])
+							->where('warning_level_hydropoint.observed_propertyid = :observedPropertyId')
+							->where('warning_level_hydropoint.warning_levelid = :warningLevelId')
+							->where('warning_level_hydropoint.mpointid = :mpointId')
+							->addParameters([
+								'mpointId'           => $mpointId,
+								'warningLevelId'     => $warningLevelId,
+								'observedPropertyId' => $observedPropertyId,
+							])
+							->run(Query::RETURN_BOOL);
+					}
+				}
+				$connection->runQuery("COMMIT TRANSACTION;", []);
+				$this->addMessage('Warning levels have been successfully saved', self::MESSAGE_SUCCESS);
+
+				return $this->redirect($this->getListPageLinkWithState());
+			} catch (Throwable $e) {
+				$connection->runQuery("ROLLBACK TRANSACTION;", []);
+				$this->addMessage('Can\'t save form data', self::MESSAGE_ERROR);
+
+				return $this->render('/hydro/monitoringpoint/form-warning-levels.phtml', $context);
+			}
+		}
+
+		return $this->render('/hydro/monitoringpoint/form-warning-levels.phtml', $context);
 	}
 
 

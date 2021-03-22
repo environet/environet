@@ -239,6 +239,7 @@ class AdminHandler extends BaseHandler {
 		'^hydro\/monitoring-points\/delete'         => [HydroMonitoringPointCrud::class, 'delete', ['admin.hydro.monitoringpoints.delete'], ['admin.hydro.monitoringpoints.deleteown']],
 		'^hydro\/monitoring-points\/csv-upload'     => [HydroMonitoringPointCrud::class, 'csvUpload', ['admin.hydro.monitoringpoints.create', 'admin.hydro.monitoringpoints.update'], ['admin.hydro.monitoringpoints.createown', 'admin.hydro.monitoringpoints.updateown', 'admin.hydro.monitoringpoints.readown']],
 		'^hydro\/monitoring-points\/csv-download'   => [HydroMonitoringPointCrud::class, 'csvDownload', ['admin.hydro.monitoringpoints.create', 'admin.hydro.monitoringpoints.update'], ['admin.hydro.monitoringpoints.createown', 'admin.hydro.monitoringpoints.updateown', 'admin.hydro.monitoringpoints.readown']],
+		'^hydro\/monitoring-points\/warning-levels'   => [HydroMonitoringPointCrud::class, 'warningLevels', ['admin.hydro.monitoringpoints.update'], ['admin.hydro.monitoringpoints.updateown']],
 
 		'^meteo\/station-classifications$'         => [MeteoStationClassificationCrud::class, 'list', ['admin.meteo.classifications.read']],
 		'^meteo\/station-classifications\/show$'   => [MeteoStationClassificationCrud::class, 'show', ['admin.meteo.classifications.read']],

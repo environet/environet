@@ -2,6 +2,9 @@
 
 namespace Environet\Sys\General\Db;
 
+use Environet\Sys\General\Db\Query\Select;
+use Environet\Sys\General\Exceptions\QueryException;
+
 /**
  * Class WarningLevelQueries
  *
@@ -54,6 +57,36 @@ class WarningLevelQueries extends BaseQueries {
 	 */
 	public static function getUpdateEventType(): string {
 		return 'warning_level_update';
+	}
+
+
+	/**
+	 * Get a simple list of records. Keys are the id, label is configurable
+	 *
+	 * @param int $operatorId
+	 *
+	 * @return array|null
+	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses \exception_logger()
+	 */
+	public static function getOptionListForOperator(int $operatorId): ?array {
+		try {
+			$records = (new Select())
+				->from(static::$tableName)
+				->select(["CONCAT(warning_levels.short_description, ' (',  warning_level_groups.name, ')') as name", "warning_levels.id as id"])
+				->orderBy('warning_level_groups.id', 'ASC')
+				->join('warning_level_groups', 'warning_level_groups.id = warning_levels.warning_level_groupid')
+				->where('warning_levels.operatorid = :operatorId')
+				->addParameter('operatorId', $operatorId)
+				->run();
+			$records = array_combine(array_column($records, 'id'), array_column($records, 'name'));
+
+			return $records ?: [];
+		} catch (QueryException $e) {
+			exception_logger($e);
+
+			return [];
+		}
 	}
 
 
