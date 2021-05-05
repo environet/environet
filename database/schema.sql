@@ -16,13 +16,6 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
---
--- Name: environet; Type: DATABASE; Schema: -; Owner: -
---
-
-CREATE DATABASE environet WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.utf8' LC_CTYPE = 'en_US.utf8';
-
-
 \connect environet
 
 SET statement_timeout = 0;
@@ -36,11 +29,6 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
---
--- Name: public; Type: SCHEMA; Schema: -; Owner: -
---
-
-CREATE SCHEMA public;
 
 
 --
