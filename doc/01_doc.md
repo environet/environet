@@ -21,7 +21,7 @@ This document is the documentation of the Environet system.
         * [Hydro](25_7_1_hydro.md)
             * [Hydro monitoring points](25_7_2_hydro_monitoring_point.md)
             * [Hydro observed properties](25_7_3_hydro_observed_properties.md)
-            * [Hydro waterbody](25_7_4_hydro_waterbody.md)
+            * [Hydro river](25_7_4_hydro_river.md)
             * [Hydro station classification](25_7_5_hydro_station_classification.md)
             * [Hydro results](25_7_6_hydro_results.md)
         * [Meteo](25_8_1_meteo.md)

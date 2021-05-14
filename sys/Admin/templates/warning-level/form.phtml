@@ -1,0 +1,71 @@
+<?php include __DIR__ . '../../layouts/before_app.phtml'; ?>
+
+	<div class="card formPage">
+		<?=includeTemplatePart('crud_show_header.phtml', get_defined_vars());?>
+		<form action="" method="POST">
+			<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
+
+            <fieldset class="form-group">
+                <div class="field">
+                    <legend><?=__('Operator');?></legend>
+                    <select name="operatorid">
+	                    <?=selectOptions($operators, formFieldValue('operatorid', $record));?>
+                    </select>
+					<div class="invalid-feedback">
+		                <?=getFieldInvalidMessage('operatorid', get_defined_vars());?>
+					</div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-group">
+                <div class="field">
+                    <legend><?=__('Warning level group');?></legend>
+                    <select name="warning_level_groupid">
+						<?=selectOptions($groups, formFieldValue('warning_level_groupid', $record));?>
+                    </select>
+					<div class="invalid-feedback">
+		                <?=getFieldInvalidMessage('warning_level_groupid', get_defined_vars());?>
+					</div>
+                </div>
+            </fieldset>
+
+			<div class="form-group">
+				<label for="color">Color</label>
+				<div class="input-group mb-3 colorPreviewGroup">
+					<div class="input-group-prepend">
+						<span class="input-group-text colorPreview" id="basic-addon1">&nbsp;&nbsp;</span>
+					</div>
+					<input type="text" name="color" id="color" class="form-control <?=isFieldInvalidClass('color', get_defined_vars());?>"  value="<?=formFieldValue('color', $record);?>" />
+					<div class="invalid-feedback">
+						<?=getFieldInvalidMessage('color', get_defined_vars());?>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="shortDescription">Short description</label>
+				<input type="text" name="short_description" id="shortDescription" class="form-control <?=isFieldInvalidClass('short_description', get_defined_vars());?>"  value="<?=formFieldValue('short_description', $record);?>" />
+				<div class="invalid-feedback">
+					<?=getFieldInvalidMessage('short_description', get_defined_vars());?>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="longDescription"><?=__('Long description');?></label>
+				<textarea name="long_description" id="longDescription" class="form-control"><?=formFieldValue('long_description', $record);?></textarea>
+			</div>
+
+			<div class="form-check">
+				<input type="hidden" name="is_inclusive" value="0"/>
+				<input type="checkbox" name="is_inclusive" id="is_inclusive" value="1" class="form-check-input" <?=formFieldValue('is_inclusive', $record) ? 'checked' : '';?>/>
+				<label for="is_inclusive">Is inclusive <small class="help-block text-muted">(ON, if comparison should be "greater or equal than", OFF if "greater than")</small></label>
+
+			</div>
+
+            <div class="field">
+				<input type="submit" class="btn btn-primary" value="Save"/>
+			</div>
+		</form>
+	</div>
+
+<?php include __DIR__ . '../../layouts/after_app.phtml'; ?>

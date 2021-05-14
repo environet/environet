@@ -1,0 +1,29 @@
+<?php include __DIR__ . '../../../layouts/before_app.phtml'; ?>
+<div class="card formPage">
+	<?=includeTemplatePart('crud_show_header.phtml', get_defined_vars());?>
+	<form action="" method="POST">
+		<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
+		<?php if ( is_null($record) ): ?>
+        <div class="form-group">
+            <label for="eucd_riv">EUCD RIV</label>
+            <input type="text" name="eucd_riv" id="eucd_riv" class="form-control <?=isFieldInvalidClass('eucd_riv', get_defined_vars());?>"  value="<?=formFieldValue('eucd_riv', $record);?>" />
+			<div class="invalid-feedback">
+		        <?=getFieldInvalidMessage('eucd_riv', get_defined_vars());?>
+			</div>
+        </div>
+		<?php endif; ?>
+        <div class="form-group">
+            <label for="cname">Cname</label>
+            <input type="text" name="cname" id="cname" class="form-control <?=isFieldInvalidClass('cname', get_defined_vars());?>"  value="<?=formFieldValue('cname', $record);?>" />
+			<div class="invalid-feedback">
+		        <?=getFieldInvalidMessage('cname', get_defined_vars());?>
+			</div>
+        </div>
+
+        <div class="field">
+            <input type="submit" class="btn btn-primary" value="Save"/>
+        </div>
+    </form>
+</div>
+
+<?php include __DIR__ . '../../../layouts/after_app.phtml'; ?>

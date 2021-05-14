@@ -1024,7 +1024,7 @@
 <ul>
 <li><a href="#25_7_2_hydro_monitoring_point">Hydro monitoring points</a></li>
 <li><a href="#25_7_3_hydro_observed_properties">Hydro observed properties</a></li>
-<li><a href="#25_7_4_hydro_waterbody">Hydro waterbody</a></li>
+<li><a href="#25_7_4_hydro_river">Hydro river</a></li>
 <li><a href="#25_7_5_hydro_station_classification">Hydro station classification</a></li>
 <li><a href="#25_7_6_hydro_results">Hydro results</a></li>
 </ul></li>
@@ -1035,6 +1035,8 @@
 <li><a href="#25_8_4_meteo_station_classification">Meteo station classification</a></li>
 <li><a href="#25_8_5_meteo_results">Meteo results</a></li>
 </ul></li>
+<li><a href="#25_9_measurement_access_rules">Measurement access rules</a></li>
+<li><a href="#25_10_upload_data">Upload missing/processed data</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#30_data_node">Data node</a>
@@ -1255,6 +1257,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <li><strong>end</strong>: Maximum date of time series. Date format: <a href="https://www.iso.org/iso-8601-date-and-time-format.html">ISO 8601</a></li>
 <li><strong>country[]</strong>: Query time series only for monitoring points from the given countries. Country code format: <a href="https://www.iso.org/iso-3166-country-codes.html">ISO 3166-1 - alpha-2</a></li>
 <li><strong>symbol[]</strong>: Query time series only of the given observed properties.</li>
+<li><strong>point[]</strong>: Query time series only of the given points.</li>
 </ul>
 <h2 id="headers-1">Headers</h2>
 <table>
@@ -1374,7 +1377,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <span id="cb6-5"><a href="#cb6-5"></a>            <span class="dt">&quot;station_classificationid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
 <span id="cb6-6"><a href="#cb6-6"></a>            <span class="dt">&quot;operatorid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
 <span id="cb6-7"><a href="#cb6-7"></a>            <span class="dt">&quot;bankid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
-<span id="cb6-8"><a href="#cb6-8"></a>            <span class="dt">&quot;waterbodyeuropean_river_code&quot;</span><span class="fu">:</span> <span class="st">&quot;waterbody&quot;</span><span class="fu">,</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>            <span class="dt">&quot;eucd_riv&quot;</span><span class="fu">:</span> <span class="st">&quot;river&quot;</span><span class="fu">,</span></span>
 <span id="cb6-9"><a href="#cb6-9"></a>            <span class="dt">&quot;eucd_wgst&quot;</span><span class="fu">:</span> <span class="st">&quot;ABC123&quot;</span><span class="fu">,</span></span>
 <span id="cb6-10"><a href="#cb6-10"></a>            <span class="dt">&quot;ncd_wgst&quot;</span><span class="fu">:</span> <span class="st">&quot;ABC123&quot;</span><span class="fu">,</span></span>
 <span id="cb6-11"><a href="#cb6-11"></a>            <span class="dt">&quot;vertical_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;Vertical reference&quot;</span><span class="fu">,</span></span>
@@ -1451,6 +1454,14 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p><a name="25_0_admin_user_manual"></a></p>
 <h1 id="admin-user-manual">Admin user manual</h1>
 <p>This document’s goals to represents the different parts of the administration area to help to understand how it works. Help you to see through how works the specified relationships and how you can handle them.</p>
+<p><a name="25_10_upload_data"></a></p>
+<h2 id="upload-missing-and-processed-data">Upload missing and processed data</h2>
+<p>Upload missing data: <code>/admin/missing-data</code></p>
+<p>Upload processed data: <code>/admin/processed-data</code></p>
+<h3 id="concept-of-the-rules">Concept of the rules</h3>
+<p>The two pages “Upload missing data” and “Upload processed data” are similar in functionality.</p>
+<p>On both pages you can upload multiple CSV files in a pre-defined format to upload missing or processed data for a monitoring point. A file contains data for a single monitoring point with multiple properties and data. The sample csv format is downloadable on the pages. A user can upload data only for allowed monitoring point, if the user is not a super administrator. This uploader in the background will call the standard <a href="#23_api_upload">upload api</a>, so all validation of this endpoint will work on this uploader too.</p>
+<p>The error/success messages will be separated per file, so if a file is invalid, you have to fix and upload only that file.</p>
 <p><a name="25_1_admin_general"></a></p>
 <h2 id="general-information">General information</h2>
 <p>Good to know, that on each list page, there are on the top right a search field. In the following each sections you can see a “searchable” part, where you can find in what kind of fields can the system search on the specified page.</p>
@@ -1530,11 +1541,11 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <h3 id="hydro-monitoring-point">Hydro monitoring point</h3>
 <p>Here you can handle the monitoring points what has already added to the system.</p>
 <p>Path: <code>/admin/hydro/monitoring-points</code></p>
-<p>Searchable: european river code, country, name, location</p>
+<p>Searchable: EUCD RIV, country, name, location</p>
 <h4 id="new-monitoring-point">New monitoring point</h4>
 <p>You can add new monitoring point if you click the “Add monitoring point” button on the top left of the hydro monitoring point list page.</p>
 <p>Path: <code>/admin/hydro/monitoring-points/add</code></p>
-<p>On the monitoring point creating page, you have to fill the following mandatory fields: - name - classification - operator - riverbank - waterbody - observed properties</p>
+<p>On the monitoring point creating page, you have to fill the following mandatory fields: - name - classification - operator - riverbank - river - observed properties</p>
 <h4 id="updating-monitoring-point">Updating monitoring point</h4>
 <p>You can select a monitoring point to update if you click the “Pencil” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/hydro/monitoring-points/edit?id=[monitoring point identifier]</code></p>
@@ -1542,7 +1553,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <h4 id="monitoring-point-show-page">Monitoring point show page</h4>
 <p>You can select a monitoring point to show if you click the “Eye” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/hydro/monitoring-points/show?id=[monitoring point identifier]</code></p>
-<p>Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator, waterbody and observed property.</p>
+<p>Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator, river and observed property.</p>
 <h4 id="monitoring-point-deleting">Monitoring point deleting</h4>
 <p>You cannot delete any monitoring point.</p>
 <p><a name="25_7_3_hydro_observed_properties"></a></p>
@@ -1565,25 +1576,25 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>Here you can see the stored data of an observed property.</p>
 <h4 id="observed-property-deleting">Observed property deleting</h4>
 <p>You cannot delete any observed property.</p>
-<p><a name="25_7_4_hydro_waterbody"></a></p>
-<h3 id="waterbody">Waterbody</h3>
-<p>Here you can handle the waterbodies what has already added to the system.</p>
-<p>Path: <code>/admin/hydro/waterbodies</code></p>
-<p>Searchable: european river code</p>
-<h4 id="new-waterbody">New waterbody</h4>
-<p>You can add new waterbody if you click the “Add waterbody” button on the top left of the waterbody list page.</p>
-<p>Path: <code>/admin/hydro/waterbodies/add</code></p>
-<p>On the waterbody’s creating page, you have to fill to following mandatory fields: - cname - european river code</p>
-<h4 id="updating-waterbody">Updating waterbody</h4>
-<p>You can select a waterbody to update if you click the “Pencil” icon at the end of the specific row.</p>
-<p>Path: <code>/admin/hydro/waterbodies/edit?id=[waterbody identifier]</code></p>
-<p>Here you can change the cname of the selected waterbody.</p>
-<h4 id="waterbody-show-page">Waterbody show page</h4>
-<p>You can select a waterbody to show if you click the “Eye” icon at the end of the specific row.</p>
-<p>Path: <code>/admin/hydro/waterbodies/show?id=[waterbody identifier]</code></p>
-<p>Here you can see the stored data of a waterbody.</p>
-<h4 id="waterbody-deleting">Waterbody deleting</h4>
-<p>You cannot delete any waterbody.</p>
+<p><a name="25_7_4_hydro_river"></a></p>
+<h3 id="river">River</h3>
+<p>Here you can handle the rivers what has already added to the system.</p>
+<p>Path: <code>/admin/hydro/rivers</code></p>
+<p>Searchable: EUCD RIV</p>
+<h4 id="new-river">New river</h4>
+<p>You can add new river if you click the “Add river” button on the top left of the river list page.</p>
+<p>Path: <code>/admin/hydro/rivers/add</code></p>
+<p>On the river’s creating page, you have to fill to following mandatory fields: - cname - EUCD RIV</p>
+<h4 id="updating-river">Updating river</h4>
+<p>You can select a river to update if you click the “Pencil” icon at the end of the specific row.</p>
+<p>Path: <code>/admin/hydro/rivers/edit?id=[river identifier]</code></p>
+<p>Here you can change the cname of the selected river.</p>
+<h4 id="river-show-page">River show page</h4>
+<p>You can select a river to show if you click the “Eye” icon at the end of the specific row.</p>
+<p>Path: <code>/admin/hydro/rivers/show?id=[river identifier]</code></p>
+<p>Here you can see the stored data of a river.</p>
+<h4 id="river-deleting">River deleting</h4>
+<p>You cannot delete any river.</p>
 <p><a name="25_7_5_hydro_station_classification"></a></p>
 <h3 id="station-classifications">Station classifications</h3>
 <p>Here you can handle the classifications of a specified station what has already added to the system.</p>
@@ -1686,7 +1697,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>Searchable: name, symbol</p>
 <p><a name="25_9_measurement_access_rules"></a></p>
 <h2 id="measurement-access-rules">Measurement access rules</h2>
-<h3 id="concept-of-the-rules">Concept of the rules</h3>
+<h3 id="concept-of-the-rules-1">Concept of the rules</h3>
 <p>The access rules controls the time interval in which the data will be available for a user under the <a href="#24_api_download">download API</a> request.</p>
 <p>The rules have three required dimensions: * <strong>Monitoring point</strong> - the rule is for all data of the given monitoring point * <strong>Observed property</strong> - the rule is for all data of the observed property of the monitoring point * <strong>User groups</strong> - the rule will be applied if the requesting user is under these groups</p>
 <p>The rules has one additional optional dimension: * <strong>Operator</strong> - If an operator creates the rule, these property will be set automatically. An administrator can set is optionally. This property controls which rule will be visible under operator’s acces rule list, and important in case of wildcard (<em>) rules. If the operator parameter is set, the wildcard (</em>) will be applied only for points/properties under the given operator.</p>

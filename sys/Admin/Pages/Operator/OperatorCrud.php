@@ -169,27 +169,32 @@ class OperatorCrud extends CrudPage {
 	/**
 	 * @inheritDoc
 	 */
-	protected function validateData(array $data): bool {
+	protected function validateData(array $data, ?array $editedRecord = null): bool {
 		$valid = true;
 
 		//Validate operator name - required, and pattern
 		if (!validate($data, 'name', REGEX_ALPHANUMERIC, true)) {
-			$this->addMessage(__('Operator name is empty, or format is invalid'), self::MESSAGE_ERROR);
+			$this->addFieldMessage('name', __('Operator name is empty, or format is invalid'), self::MESSAGE_ERROR);
 			$valid = false;
 		}
 		//Validate operator email - required and pattern
 		if (!validate($data, 'email', REGEX_EMAIL, true)) {
-			$this->addMessage(__('Operator e-mail address is empty, or format is invalid'), self::MESSAGE_ERROR);
+			$this->addFieldMessage('email', __('Operator e-mail address is empty, or format is invalid'), self::MESSAGE_ERROR);
 			$valid = false;
 		}
 		//Validate phone - not required and pattern
 		if (!validate($data, 'phone', REGEX_PHONE)) {
-			$this->addMessage(__('Phone format is invalid'), self::MESSAGE_ERROR);
+			$this->addFieldMessage('phone', __('Phone format is invalid'), self::MESSAGE_ERROR);
 			$valid = false;
 		}
 		//Validate url - not required and pattern
 		if (!validate($data, 'url', REGEX_URL)) {
-			$this->addMessage(__('URL format is invalid'), self::MESSAGE_ERROR);
+			$this->addFieldMessage('url', __('URL format is invalid'), self::MESSAGE_ERROR);
+			$valid = false;
+		}
+
+		if (!OperatorQueries::checkUnique(['name' => $data['name']], $editedRecord ? $editedRecord['id'] : null)) {
+			$this->addFieldMessage('name', 'Name must be unique', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 

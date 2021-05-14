@@ -23,7 +23,7 @@ This document is the documentation of the Environet system.
         * [Hydro](#25_7_1_hydro)
             * [Hydro monitoring points](#25_7_2_hydro_monitoring_point)
             * [Hydro observed properties](#25_7_3_hydro_observed_properties)
-            * [Hydro waterbody](#25_7_4_hydro_waterbody)
+            * [Hydro river](#25_7_4_hydro_river)
             * [Hydro station classification](#25_7_5_hydro_station_classification)
             * [Hydro results](#25_7_6_hydro_results)
         * [Meteo](#25_8_1_meteo)
@@ -31,6 +31,8 @@ This document is the documentation of the Environet system.
             * [Meteo observed properties](#25_8_3_meteo_observed_properties)
             * [Meteo station classification](#25_8_4_meteo_station_classification)
             * [Meteo results](#25_8_5_meteo_results)
+        * [Measurement access rules](#25_9_measurement_access_rules)
+        * [Upload missing/processed data](#25_10_upload_data)
         
 * [Data node](#30_data_node)
     * [Overview](#30_data_node)
@@ -322,6 +324,7 @@ Sample input XML:
 * **end**:  Maximum date of time series. Date format: [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html)
 * **country[]**: Query time series only for monitoring points from the given countries. Country code format: [ISO 3166-1 - alpha-2](https://www.iso.org/iso-3166-country-codes.html)
 * **symbol[]**: Query time series only of the given observed properties.
+* **point[]**: Query time series only of the given points.
 
 ## Headers
 
@@ -439,7 +442,7 @@ The `signature` part is the base64 encoded openssl signature which was created w
                 "station_classificationid": 1,
                 "operatorid": 1,
                 "bankid": 1,
-                "waterbodyeuropean_river_code": "waterbody",
+                "eucd_riv": "river",
                 "eucd_wgst": "ABC123",
                 "ncd_wgst": "ABC123",
                 "vertical_reference": "Vertical reference",
@@ -532,6 +535,26 @@ This document's goals to represents the different parts of the administration ar
 
 
 
+
+
+<a name="25_10_upload_data"></a>
+
+## Upload missing and processed data
+
+Upload missing data: `/admin/missing-data`
+
+Upload processed data: `/admin/processed-data`
+
+### Concept of the rules
+
+The two pages "Upload missing data" and "Upload processed data" are similar in functionality.
+
+On both pages you can upload multiple CSV files in a pre-defined format to upload missing or processed data for a monitoring point.
+A file contains data for a single monitoring point with multiple properties and data. The sample csv format is downloadable on the pages. 
+A user can upload data only for allowed monitoring point, if the user is not a super administrator. 
+This uploader in the background will call the standard [upload api](#23_api_upload), so all validation of this endpoint will work on this uploader too.
+
+The error/success messages will be separated per file, so if a file is invalid, you have to fix and upload only that file.
 
 
 <a name="25_1_admin_general"></a>
@@ -704,7 +727,7 @@ Here you can handle the monitoring points what has already added to the system.
 
 Path: `/admin/hydro/monitoring-points`
 
-Searchable: european river code, country, name, location
+Searchable: EUCD RIV, country, name, location
 
 #### New monitoring point
 
@@ -717,7 +740,7 @@ On the monitoring point creating page, you have to fill the following mandatory 
 - classification
 - operator
 - riverbank
-- waterbody
+- river
 - observed properties
 
 #### Updating monitoring point
@@ -734,7 +757,7 @@ You can select a monitoring point to show if you click the "Eye" icon at the end
 
 Path: `/admin/hydro/monitoring-points/show?id=[monitoring point identifier]`
 
-Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator, waterbody and observed property.
+Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator, river and observed property.
 
 #### Monitoring point deleting
 
@@ -782,44 +805,44 @@ Here you can see the stored data of an observed property.
 
 You cannot delete any observed property.
 
-<a name="25_7_4_hydro_waterbody"></a>
+<a name="25_7_4_hydro_river"></a>
 
-### Waterbody
-Here you can handle the waterbodies what has already added to the system.
+### River
+Here you can handle the rivers what has already added to the system.
 
-Path: `/admin/hydro/waterbodies`
+Path: `/admin/hydro/rivers`
 
-Searchable: european river code
+Searchable: EUCD RIV
 
-#### New waterbody
+#### New river
 
-You can add new waterbody if you click the "Add waterbody" button on the top left of the waterbody list page.
+You can add new river if you click the "Add river" button on the top left of the river list page.
 
-Path: `/admin/hydro/waterbodies/add`
+Path: `/admin/hydro/rivers/add`
 
-On the waterbody's creating page, you have to fill to following mandatory fields:
+On the river's creating page, you have to fill to following mandatory fields:
 - cname
-- european river code
+- EUCD RIV
 
-#### Updating waterbody
+#### Updating river
 
-You can select a waterbody to update if you click the "Pencil" icon at the end of the specific row.
+You can select a river to update if you click the "Pencil" icon at the end of the specific row.
 
-Path: `/admin/hydro/waterbodies/edit?id=[waterbody identifier]`
+Path: `/admin/hydro/rivers/edit?id=[river identifier]`
 
-Here you can change the cname of the selected waterbody.
+Here you can change the cname of the selected river.
 
-#### Waterbody show page
+#### River show page
 
-You can select a waterbody to show if you click the "Eye" icon at the end of the specific row.
+You can select a river to show if you click the "Eye" icon at the end of the specific row.
 
-Path: `/admin/hydro/waterbodies/show?id=[waterbody identifier]`
+Path: `/admin/hydro/rivers/show?id=[river identifier]`
 
-Here you can see the stored data of a waterbody.
+Here you can see the stored data of a river.
 
-#### Waterbody deleting
+#### River deleting
 
-You cannot delete any waterbody.
+You cannot delete any river.
 
 <a name="25_7_5_hydro_station_classification"></a>
 
@@ -1121,7 +1144,7 @@ Generated configurations will be saved to the `/conf/plugins/configurations` fol
 
 ## Running a configuration
 
-Run `./environet plugin run [configuration name]` to run an uploader plugin configuration. (If you want to run regularly, you should set up a cron job to execute this command at regular intervals.)
+Run `./environet data plugin run [configuration name]` to run an uploader plugin configuration. (If you want to run regularly, you should set up a cron job to execute this command at regular intervals.)
 
 ## SSL key pair generation tool
 To generate an ssl key pair, you can run the command `./environet data tool keygen`.  

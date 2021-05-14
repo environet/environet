@@ -5,9 +5,7 @@ namespace Environet\Sys\Admin\Pages\Meteo;
 use Environet\Sys\General\Db\MeteoMonitoringPointQueries;
 use Environet\Sys\General\Db\MeteoObservedPropertyQueries;
 use Environet\Sys\General\Db\MeteoStationClassificationQueries;
-use Environet\Sys\General\Db\OperatorQueries;
 use Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud as MonitoringPointCrudBase;
-use Environet\Sys\General\Db\UserQueries;
 use Environet\Sys\General\Exceptions\QueryException;
 
 /**
@@ -95,16 +93,33 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	/**
 	 * @inheritDoc
 	 */
-	protected function validateData(array $data): bool {
+	protected function validateData(array $data, ?array $editedRecord = null): bool {
 		$valid = true;
 
 		if (!validate($data, 'name', REGEX_ALPHANUMERIC, true)) {
-			$this->addMessage('Monitoring point name is empty, or format is invalid', self::MESSAGE_ERROR);
+			$this->addFieldMessage('name', 'Monitoring point name is empty, or format is invalid', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+		if (!validate($data, 'country', null, true)) {
+			$this->addFieldMessage('country', 'Country is required', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+		if (!validate($data, 'ncd_pst', null, true)) {
+			$this->addFieldMessage('ncd_pst', 'NCD PST is required', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+		if (!validate($data, 'operator', null, true)) {
+			$this->addFieldMessage('operator', 'Operator is required', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 
 		if (!empty($data['country']) && strlen($data['country']) > 2) {
 			$this->addMessage('County field expects a two letter country code', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+
+		if (!MeteoMonitoringPointQueries::checkUnique(['ncd_pst' => $data['ncd_pst'], 'operatorid' => $data['operator']], $editedRecord ? $editedRecord['id'] : null)) {
+			$this->addFieldMessage('ncd_pst', sprintf('NCD PST must be unique for operator #%d', $data['operator']), self::MESSAGE_ERROR);
 			$valid = false;
 		}
 
@@ -124,7 +139,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 			],
 			$columns,
 			[
-				'classification' => ['title' => 'Station classification ID [ID]', 'outField' => 'meteostation_classificationid'],
+				'classification' => ['title' => 'Station classification ID [ID]', 'outField' => 'station_classificationid'],
 				'altitude'       => 'Altitue [number]',
 			]
 		);

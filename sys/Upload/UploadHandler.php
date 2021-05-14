@@ -56,6 +56,8 @@ class UploadHandler extends ApiHandler {
 				// Parse the XML with simpleXML
 				$parsedXml = new SimpleXMLElement($content);
 			} catch (Exception $exception) {
+				exception_logger($exception);
+
 				// Syntax error
 				throw new UploadException(302);
 			}
@@ -67,6 +69,8 @@ class UploadHandler extends ApiHandler {
 				// XML is invalid
 				throw UploadException::schemaErrors($e->getErrorMessages());
 			} catch (Exception $e) {
+				exception_logger($e);
+
 				// Other error during validation
 				throw UploadException::serverError();
 			}
@@ -79,10 +83,14 @@ class UploadHandler extends ApiHandler {
 				throw new UploadException(401);
 			}
 		} catch (UploadException $e) {
+			exception_logger($e);
+
 			return (new Response((new CreateErrorXml())->generateXml($e->getErrorXmlData())->asXML()))
 				->setStatusCode(400)
 				->setHeaders(['Content-type: application/xml']);
 		} catch (Throwable $e) {
+			exception_logger($e);
+
 			return (new Response((new CreateErrorXml())->generateXml([new ErrorXmlData(500, $e->getMessage())])->asXML()))
 				->setStatusCode(500)
 				->setHeaders(['Content-type: application/xml']);

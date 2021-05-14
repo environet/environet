@@ -41,6 +41,12 @@ class BasePage {
 		self::MESSAGE_SUCCESS => []
 	];
 
+	/**
+	 * Page message containers
+	 * @var array
+	 */
+	protected $fieldMessages = [];
+
 
 	/**
 	 * AbstractPage constructor.
@@ -73,6 +79,7 @@ class BasePage {
 	 */
 	public function render(string $template, array $vars = []): Response {
 		$vars['messages'] = $this->messages;
+		$vars['fieldMessages'] = $this->fieldMessages;
 		$vars['identity'] = !$this->request->getIdentity() ?: $this->request->getIdentity()->getData();
 		$vars['csrf'] = $this->generateCsrf();
 
@@ -125,6 +132,12 @@ class BasePage {
 			//Messages should stay in session only for 1 request, so remove it from the session
 			unset($_SESSION['messages']);
 		}
+		if (!empty($_SESSION['fieldMessages'])) {
+			$this->fieldMessages = array_merge($this->fieldMessages, $_SESSION['fieldMessages']);
+
+			//Messages should stay in session only for 1 request, so remove it from the session
+			unset($_SESSION['fieldMessages']);
+		}
 	}
 
 
@@ -167,6 +180,21 @@ class BasePage {
 
 
 	/**
+	 * Add an error, warning, info or success message for a form field
+	 *
+	 * @param string $field
+	 * @param string $message Message string
+	 * @param string $type    Type of the message
+	 */
+	protected function addFieldMessage(string $field, string $message, $type = self::MESSAGE_INFO) {
+		if (!isset($this->fieldMessages[$field][$type])) {
+			$this->fieldMessages[$field][$type] = [];
+		}
+		$this->fieldMessages[$field][$type][] = $message;
+	}
+
+
+	/**
 	 * Add flash messages to session.
 	 *
 	 * With this we can display messages after a redirect.
@@ -174,6 +202,7 @@ class BasePage {
 	 */
 	protected function messagesToSession() {
 		$_SESSION['messages'] = $this->messages;
+		$_SESSION['fieldMessages'] = $this->fieldMessages;
 	}
 
 

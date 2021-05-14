@@ -4,6 +4,7 @@ namespace Environet\Sys\Xml\InputProcessor;
 
 use DateTime;
 use DateTimeZone;
+use Environet\Sys\General\Db\MeteoMonitoringPointQueries;
 use Environet\Sys\General\Db\Query\Insert;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
@@ -69,11 +70,11 @@ class MeteoInputXmlProcessor extends AbstractInputXmlProcessor {
 				->select('property.id')
 				->join(
 					'meteopoint_observed_property as point_property',
-					'point_property.meteo_observed_propertyid = property.id',
+					'point_property.observed_propertyid = property.id',
 					Query::JOIN_INNER
 				)
 				->where('property.symbol = :propertySymbol')
-				->where('point_property.meteopointid = :pointId')
+				->where('point_property.mpointid = :pointId')
 				->setParameters([
 					'propertySymbol' => $propertySymbol,
 					'pointId'        => $mPointId,
@@ -102,8 +103,8 @@ class MeteoInputXmlProcessor extends AbstractInputXmlProcessor {
 			$timeSeriesId = (new Select())
 				->from('meteo_time_series as time_series')
 				->select('time_series.id')
-				->where('time_series.meteo_observed_propertyid = :propertyId')
-				->where('time_series.meteopointid = :pointId')
+				->where('time_series.observed_propertyid = :propertyId')
+				->where('time_series.mpointid = :pointId')
 				->setParameters([
 					'propertyId' => $propertyId,
 					'pointId'    => $mPointId,
@@ -117,7 +118,7 @@ class MeteoInputXmlProcessor extends AbstractInputXmlProcessor {
 				$now = new DateTime('now', (new DateTimeZone('UTC')));
 				$timeSeriesId = (new Insert())
 					->table('meteo_time_series')
-					->columns(['meteo_observed_propertyid', 'meteopointid', 'result_time'])
+					->columns(['observed_propertyid', 'mpointid', 'result_time'])
 					->addValueRow([':propertyId', ':mPointId', ':resultTime'])
 					->setParameters([
 						'propertyId' => $propertyId,
@@ -150,8 +151,16 @@ class MeteoInputXmlProcessor extends AbstractInputXmlProcessor {
 	 * @inheritDoc
 	 */
 	protected function createResultInsert(): Insert {
-		return (new Insert())->table('meteo_result')->columns(['meteo_time_seriesid', 'time', 'value', 'is_forecast', 'created_at'])
-			->ignoreConflict(['meteo_time_seriesid', 'time', 'value', 'is_forecast']);
+		return (new Insert())->table('meteo_result')->columns(['time_seriesid', 'time', 'value', 'is_forecast', 'created_at'])
+			->ignoreConflict(['time_seriesid', 'time', 'value', 'is_forecast']);
+	}
+
+
+	/**
+	 * @return string
+	 */
+	protected function getPointQueriesClass(): string {
+		return MeteoMonitoringPointQueries::class;
 	}
 
 

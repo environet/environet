@@ -4,6 +4,8 @@ namespace Environet\Sys\Admin;
 
 use Environet\Sys\Admin\Pages\BasePage;
 use Environet\Sys\Admin\Pages\Dashboard;
+use Environet\Sys\Admin\Pages\WarningLevel\WarningLevelCrud;
+use Environet\Sys\Admin\Pages\WarningLevel\WarningLevelGroupCrud;
 use Environet\Sys\Admin\Pages\Operator\OperatorCrud;
 use Environet\Sys\Admin\Pages\DownloadTest;
 use Environet\Sys\Admin\Pages\Group\GroupCrud;
@@ -14,7 +16,7 @@ use Environet\Sys\Admin\Pages\Hydro\ResultsCrud as HydroResultsCrud;
 use Environet\Sys\Admin\Pages\Meteo\ResultsCrud as MeteoResultsCrud;
 use Environet\Sys\Admin\Pages\Meteo\ObservedPropertyCrud as MeteoObservedPropertyCrud;
 
-use Environet\Sys\Admin\Pages\Hydro\Waterbody\WaterbodyCrud;
+use Environet\Sys\Admin\Pages\Hydro\River\RiverCrud;
 
 use Environet\Sys\Admin\Pages\Hydro\StationClassificationCrud as HydroStationClassificationCrud;
 use Environet\Sys\Admin\Pages\Meteo\StationClassificationCrud as MeteoStationClassificationCrud;
@@ -151,6 +153,7 @@ class AdminHandler extends BaseHandler {
 		} catch (HttpBadRequestException $e) {
 			return (new Renderer('/error_400.phtml', ['exception' => $e]))();
 		} catch (Exception $e) {
+			exception_logger($e);
 			return (new Renderer('/error_500.phtml', ['exception' => $e]))();
 		}
 	}
@@ -211,11 +214,11 @@ class AdminHandler extends BaseHandler {
 		'^hydro\/observed-properties\/edit$'  => [HydroObservedPropertyCrud::class, 'edit', ['admin.hydro.observedproperties.update']],
 		'^hydro\/observed-properties\/delete' => [HydroObservedPropertyCrud::class, 'delete', ['admin.hydro.observedproperties.delete']],
 
-		'^hydro\/waterbodies$'        => [WaterbodyCrud::class, 'list', ['admin.hydro.waterbodies.read']],
-		'^hydro\/waterbodies\/show$'  => [WaterbodyCrud::class, 'show', ['admin.hydro.waterbodies.read']],
-		'^hydro\/waterbodies\/add$'   => [WaterbodyCrud::class, 'add', ['admin.hydro.waterbodies.create']],
-		'^hydro\/waterbodies\/edit$'  => [WaterbodyCrud::class, 'edit', ['admin.hydro.waterbodies.update']],
-		'^hydro\/waterbodies\/delete' => [WaterbodyCrud::class, 'delete', ['admin.hydro.waterbodies.delete']],
+		'^hydro\/rivers$'        => [RiverCrud::class, 'list', ['admin.hydro.rivers.read']],
+		'^hydro\/rivers\/show$'  => [RiverCrud::class, 'show', ['admin.hydro.rivers.read']],
+		'^hydro\/rivers\/add$'   => [RiverCrud::class, 'add', ['admin.hydro.rivers.create']],
+		'^hydro\/rivers\/edit$'  => [RiverCrud::class, 'edit', ['admin.hydro.rivers.update']],
+		'^hydro\/rivers\/delete' => [RiverCrud::class, 'delete', ['admin.hydro.rivers.delete']],
 
 		'^hydro\/riverbanks$'        => [RiverbankCrud::class, 'list', ['admin.hydro.riverbanks.read']],
 		'^hydro\/riverbanks\/show$'  => [RiverbankCrud::class, 'show', ['admin.hydro.riverbanks.read']],
@@ -236,6 +239,7 @@ class AdminHandler extends BaseHandler {
 		'^hydro\/monitoring-points\/delete'         => [HydroMonitoringPointCrud::class, 'delete', ['admin.hydro.monitoringpoints.delete'], ['admin.hydro.monitoringpoints.deleteown']],
 		'^hydro\/monitoring-points\/csv-upload'     => [HydroMonitoringPointCrud::class, 'csvUpload', ['admin.hydro.monitoringpoints.create', 'admin.hydro.monitoringpoints.update'], ['admin.hydro.monitoringpoints.createown', 'admin.hydro.monitoringpoints.updateown', 'admin.hydro.monitoringpoints.readown']],
 		'^hydro\/monitoring-points\/csv-download'   => [HydroMonitoringPointCrud::class, 'csvDownload', ['admin.hydro.monitoringpoints.create', 'admin.hydro.monitoringpoints.update'], ['admin.hydro.monitoringpoints.createown', 'admin.hydro.monitoringpoints.updateown', 'admin.hydro.monitoringpoints.readown']],
+		'^hydro\/monitoring-points\/warning-levels'   => [HydroMonitoringPointCrud::class, 'warningLevels', ['admin.hydro.monitoringpoints.update'], ['admin.hydro.monitoringpoints.updateown']],
 
 		'^meteo\/station-classifications$'         => [MeteoStationClassificationCrud::class, 'list', ['admin.meteo.classifications.read']],
 		'^meteo\/station-classifications\/show$'   => [MeteoStationClassificationCrud::class, 'show', ['admin.meteo.classifications.read']],
@@ -266,7 +270,19 @@ class AdminHandler extends BaseHandler {
 		'^upload-test$'   => [UploadTest::class, 'handle', ['api.upload']],
 		'^download-test$' => [DownloadTest::class, 'handle', ['api.download']],
 
-		'^ajax\/select\/operator-points$'     => [MeasurementAccessRuleCrud::class, 'operatorPoints', ['admin.measurementaccessrules.read']],
-		'^ajax\/select\/operator-properties$' => [MeasurementAccessRuleCrud::class, 'operatorProperties', ['admin.measurementaccessrules.read']],
+		'^warning-levels$'        => [WarningLevelCrud::class, 'list', ['admin.warninglevels.read'], ['admin.warninglevels.readown']],
+		'^warning-levels\/show$'  => [WarningLevelCrud::class, 'show', ['admin.warninglevels.read'], ['admin.warninglevels.readown']],
+		'^warning-levels\/add$'   => [WarningLevelCrud::class, 'add', ['admin.warninglevels.create'], ['admin.warninglevels.createown']],
+		'^warning-levels\/edit$'  => [WarningLevelCrud::class, 'edit', ['admin.warninglevels.update'], ['admin.warninglevels.updateown']],
+		'^warning-levels\/delete' => [WarningLevelCrud::class, 'delete', ['admin.warninglevels.delete'], ['admin.warninglevels.deleteown']],
+
+		'^warning-level-groups$'        => [WarningLevelGroupCrud::class, 'list', ['admin.warninglevelgroups.read']],
+		'^warning-level-groups\/show$'  => [WarningLevelGroupCrud::class, 'show', ['admin.warninglevelgroups.read']],
+		'^warning-level-groups\/add$'   => [WarningLevelGroupCrud::class, 'add', ['admin.warninglevelgroups.create']],
+		'^warning-level-groups\/edit$'  => [WarningLevelGroupCrud::class, 'edit', ['admin.warninglevelgroups.update']],
+		'^warning-level-groups\/delete' => [WarningLevelGroupCrud::class, 'delete', ['admin.warninglevelgroups.delete']],
+
+		'^ajax\/select\/operator-points$'     => [MeasurementAccessRuleCrud::class, 'operatorPoints', ['admin.measurementaccessrules.read'], ['admin.measurementaccessrules.readown']],
+		'^ajax\/select\/operator-properties$' => [MeasurementAccessRuleCrud::class, 'operatorProperties', ['admin.measurementaccessrules.read'], ['admin.measurementaccessrules.readown']],
 	];
 }

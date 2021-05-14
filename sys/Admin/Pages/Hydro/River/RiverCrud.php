@@ -1,52 +1,52 @@
 <?php
 
-namespace Environet\Sys\Admin\Pages\Hydro\Waterbody;
+namespace Environet\Sys\Admin\Pages\Hydro\River;
 
 use Environet\Sys\Admin\Pages\CrudPage;
-use Environet\Sys\General\Db\WaterbodyQueries;
+use Environet\Sys\General\Db\RiverQueries;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\Exceptions\RenderException;
 use Environet\Sys\General\Response;
 
 /**
- * Class WaterbodyCrud
+ * Class RiverCrud
  *
- * Handles CRUD operations for hydropoint waterbodies.
+ * Handles CRUD operations for hydropoint rivers.
  *
- * @package Environet\Sys\Admin\Pages\Hydro\Waterbody
+ * @package Environet\Sys\Admin\Pages\Hydro\River
  * @author  SRG Group <dev@srg.hu>
  */
-class WaterbodyCrud extends CrudPage {
+class RiverCrud extends CrudPage {
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $queriesClass = WaterbodyQueries::class;
+	protected $queriesClass = RiverQueries::class;
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $indexTemplate = '/hydro/waterbody/index.phtml';
+	protected $indexTemplate = '/hydro/river/index.phtml';
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $formTemplate = '/hydro/waterbody/form.phtml';
+	protected $formTemplate = '/hydro/river/form.phtml';
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $showTemplate = '/hydro/waterbody/show.phtml';
+	protected $showTemplate = '/hydro/river/show.phtml';
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $listPagePath = '/admin/hydro/waterbodies';
+	protected $listPagePath = '/admin/hydro/rivers';
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $successAddMessage = 'Waterbody successfully saved';
+	protected $successAddMessage = 'River successfully saved';
 
 
 	/**
@@ -55,7 +55,7 @@ class WaterbodyCrud extends CrudPage {
 	 * @return string
 	 */
 	protected function getEntityName(bool $plural = false): string {
-		return $plural ? 'waterbodies' : 'waterbody';
+		return $plural ? 'rivers' : 'river';
 	}
 
 
@@ -74,14 +74,14 @@ class WaterbodyCrud extends CrudPage {
 			return httpErrorPage(404);
 		}
 
-		$record = $this->queriesClass::getById($id, 'european_river_code');
+		$record = $this->queriesClass::getById($id, 'eucd_riv');
 		if (is_null($record)) {
 			// if the requested record doesn't exist, return 404
 			return httpErrorPage(404);
 		}
 
 		//Make an alias for pageTitle
-		$record['id'] = $record['european_river_code'];
+		$record['id'] = $record['eucd_riv'];
 
 		$listPage = $this->getListPageLinkWithState();
 		$pageTitle = $this->getTitle(self::PAGE_SHOW, $record);
@@ -103,7 +103,7 @@ class WaterbodyCrud extends CrudPage {
 			// if id doesn't exist, return 404
 			return httpErrorPage(404);
 		}
-		$record = $this->queriesClass::getById($id, 'european_river_code');
+		$record = $this->queriesClass::getById($id, 'eucd_riv');
 		if (is_null($record)) {
 			// if record doesn't exist, return 404
 			return httpErrorPage(404);
@@ -114,7 +114,7 @@ class WaterbodyCrud extends CrudPage {
 		}
 
 		//Make an alias for pageTitle
-		$record['id'] = $record['european_river_code'];
+		$record['id'] = $record['eucd_riv'];
 
 		return $this->renderForm($record);
 	}
@@ -133,7 +133,7 @@ class WaterbodyCrud extends CrudPage {
 	protected function handleFormPost($id = null, $record = null): Response {
 		$postData = $this->request->getCleanData();
 
-		if (!$this->validateData($postData)) {
+		if (!$this->validateData($postData, $record)) {
 			// if data isn't valid, render the form again with error messages
 			return $this->renderForm($record);
 		}
@@ -146,7 +146,7 @@ class WaterbodyCrud extends CrudPage {
 		if (is_null($id)) {
 			$postData = [
 				'cname'               => $postData['cname'] ?? null,
-				'european_river_code' => $postData['european_river_code'] ?? null,
+				'eucd_riv' => $postData['eucd_riv'] ?? null,
 			];
 		} else {
 			$postData = [
@@ -156,7 +156,7 @@ class WaterbodyCrud extends CrudPage {
 
 		//Data is valid, save it, add success message, and redirect to index page
 		try {
-			$this->queriesClass::save($postData, $id, 'european_river_code');
+			$this->queriesClass::save($postData, $id, 'eucd_riv');
 			$this->addMessage($this->successAddMessage, self::MESSAGE_SUCCESS);
 
 			return $this->redirect($this->listPagePath);
@@ -171,19 +171,29 @@ class WaterbodyCrud extends CrudPage {
 	/**
 	 * @inheritDoc
 	 */
-	protected function validateData(array $data): bool {
+	protected function validateData(array $data, ?array $editedRecord = null): bool {
 		$id = $this->request->getQueryParam('id');
 		$valid = true;
 
 		if (is_null($id)) {
-			if (!validate($data, 'european_river_code', REGEX_RIVERCODE, true)) {
-				$this->addMessage('Waterbody european river code is empty, or format is invalid', self::MESSAGE_ERROR);
+			if (!validate($data, 'eucd_riv', REGEX_RIVERCODE, true)) {
+				$this->addFieldMessage('eucd_riv', 'EUCD RIV is empty, or format is invalid', self::MESSAGE_ERROR);
+				$valid = false;
+			}
+
+			if (!RiverQueries::checkUnique(['eucd_riv' => $data['eucd_riv']], $editedRecord ? $editedRecord['id'] : null)) {
+				$this->addFieldMessage('eucd_riv', 'EUCD RIV must be unique', self::MESSAGE_ERROR);
 				$valid = false;
 			}
 		}
 
 		if (!validate($data, 'cname', '', true)) {
-			$this->addMessage('Waterbody cname is empty, or format is invalid', self::MESSAGE_ERROR);
+			$this->addFieldMessage('cname', 'River cname is empty, or format is invalid', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+
+		if (!RiverQueries::checkUnique(['cname' => $data['cname']], $editedRecord ? $editedRecord['eucd_riv'] : null, 'eucd_riv')) {
+			$this->addFieldMessage('cname', 'Name must be unique', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 
