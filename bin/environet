@@ -6,6 +6,7 @@ use Environet\Sys\Commands\Console;
 use Environet\Sys\Commands\DataNode\Install as DataNodeInstall;
 use Environet\Sys\Commands\DataNode\PluginCreate;
 use Environet\Sys\Commands\DataNode\PluginRun;
+use Environet\Sys\Commands\DistNode\ExportDb;
 use Environet\Sys\Commands\DistNode\InitDb;
 use Environet\Sys\Commands\DistNode\Install as DistNodeInstall;
 use Environet\Sys\Commands\DistNode\MigrateDb;
@@ -14,16 +15,16 @@ use Environet\Sys\Commands\Tools\GenerateKeys;
 use Environet\Sys\Commands\Tools\GenerateSignature;
 use Environet\Sys\Config;
 
-ini_set('memory_limit', -1);
+ini_set('memory_limit', - 1);
 
 define('SRC_PATH', realpath(__DIR__ . '/..'));
 
 $arguments = $argv;
 array_shift($arguments);
 
-require_once SRC_PATH.'/sys/init_autoloader.inc.php';
+require_once SRC_PATH . '/sys/init_autoloader.inc.php';
 
-require_once SRC_PATH.'/sys/constants.inc.php';
+require_once SRC_PATH . '/sys/constants.inc.php';
 
 $config = new Config();
 
@@ -37,6 +38,7 @@ function commandRouter(array $arguments): ?string {
 			switch ($arguments[1] ?? null) {
 				case 'tool':
 					array_shift($arguments);
+
 					return commandRouter($arguments);
 				case 'install':
 					return DataNodeInstall::class;
@@ -53,6 +55,7 @@ function commandRouter(array $arguments): ?string {
 			switch ($arguments[1] ?? null) {
 				case 'tool':
 					array_shift($arguments);
+
 					return commandRouter($arguments);
 				case 'install':
 					return DistNodeInstall::class;
@@ -62,6 +65,8 @@ function commandRouter(array $arguments): ?string {
 							return InitDb::class;
 						case 'migrate':
 							return MigrateDb::class;
+						case 'export':
+							return ExportDb::class;
 					}
 					break;
 			}
@@ -74,6 +79,7 @@ function commandRouter(array $arguments): ?string {
 					return GenerateSignature::class;
 			}
 	}
+
 	return null;
 }
 

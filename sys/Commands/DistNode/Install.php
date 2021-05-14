@@ -29,14 +29,14 @@ class Install extends BaseCommand {
 	 * @return int
 	 */
 	public function run($arguments): int {
-		
+
 		$configDir = SRC_PATH . '/conf';
-		
+
 		$this->console->writeLine(
 			'This is an Environet distribution node install script, which will generate a configuration file for this distribution node deployment',
 			Console::COLOR_GREEN
 		);
-		
+
 		$configFilePath = $configDir . '/conf.local.ini';
 		$configFileRealpath = getenv('ENVIRONET_HOST_CONF_DIR', $configDir) . '/conf.local.ini';
 
@@ -56,7 +56,7 @@ class Install extends BaseCommand {
 			],
 			'database'  => []
 		];
-		
+
 		// Ask for timezone, and check the validity of it
 		if(!empty(getenv('ENVIRONET_TIMEZONE'))) {
 			$configArray['environet']['timezone'] = getenv('ENVIRONET_TIMEZONE');
@@ -70,7 +70,11 @@ class Install extends BaseCommand {
 				break;
 			}
 		}
-		
+
+
+		$storeInputXmls = $this->console->askYesNo("Do you want to store input XML data in a local directory?", true);
+		$configArray['environet']['store_input_xmls'] = $storeInputXmls;
+
 
 		dbConfig:
 		// Ask database config options if not set in env
