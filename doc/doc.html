@@ -1790,6 +1790,9 @@ Private keys should be placed in the <code>conf/plugins/credentials</code> direc
 <p>Command: <code>./environet dist|data tool sign</code></p>
 <p>Description: With this command you gen sign a content (a string, or a file) with a private key. The command will ask for: * Relative path of private key file * How do you want to enter the content (file, or pasted string) * The file path (in case of ‘file’ mode) or the raw string (in case of ‘pasted string’ mode) * Generate md5 hash before sigining, or not</p>
 <p>Based on the input data a base64 encoded signature will be generated, which can be used in the Authorization header of any api request.</p>
+<h3 id="exporting-database">Exporting database</h3>
+<p>Command: <code>./environet dist database export</code></p>
+<p>Description: This commands exports the database content of the distribution node to a file under data/export folder. The filename of the exported file will be written to the console after successful export.</p>
 
 
 </body>

@@ -1228,5 +1228,12 @@ With this command you gen sign a content (a string, or a file) with a private ke
 
 Based on the input data a base64 encoded signature will be generated, which can be used in the Authorization header of any api request.
 
+### Exporting database
+
+Command: `./environet dist database export`
+
+Description:
+This commands exports the database content of the distribution node to a file under data/export folder. The filename of the exported file will be written to the console after successful export.
+
 
 
