@@ -2,6 +2,7 @@
 
 namespace Environet\Sys\Upload;
 
+use Environet\Sys\Config;
 use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\HttpClient\ApiHandler;
 use Environet\Sys\General\Response;
@@ -146,11 +147,15 @@ class UploadHandler extends ApiHandler {
 	 * @param string $content
 	 */
 	protected function storeInputData(string $content): void {
-		$dir = SRC_PATH . '/data/input_xmls';
-		if (!is_dir($dir)) {
-			mkdir($dir, 0755, true);
+		$config = Config::getInstance();
+		$storeInputXmls = $config->getStoreInputXmls();
+		if ($storeInputXmls) {
+			$dir = SRC_PATH . '/data/input_xmls';
+			if (!is_dir($dir)) {
+				mkdir($dir, 0755, true);
+			}
+			file_put_contents($dir . '/' . time() . '.xml', $content);
 		}
-		file_put_contents($dir . '/' . time() . '.xml', $content);
 	}
 
 
