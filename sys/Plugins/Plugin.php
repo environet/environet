@@ -57,7 +57,7 @@ class Plugin {
 					$xmls = $this->parser->parse($resource);
 
 					if (!count($xmls)) {
-						$console->writeLog("Couldn't parse $resource->name into xml", true);
+						$console->writeLog("Couldn't parse $resource->name into xml for upload. Parser error or empty data", true);
 					}
 					$successfulDownloads++;
 
