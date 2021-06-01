@@ -52,9 +52,10 @@ class Plugin {
 						$MonitoringPointNCDs = array_merge($MonitoringPointNCDs, $resource->meta['MonitoringPointNCDs']);
 						$MonitoringPointNCDs = array_unique($MonitoringPointNCDs);
 					}
-					$console->writeLogNoEol("Downloaded $resource->name: ");
+					$console->writeLog("Downloaded $resource->name");
 
 					$xmls = $this->parser->parse($resource);
+
 					if (!count($xmls)) {
 						$console->writeLog("Couldn't parse $resource->name into xml", true);
 					}
@@ -109,7 +110,7 @@ class Plugin {
 			}
 
 		}
-		$console->writeLog('Running plugin finished', true, true);
+		$console->writeLog('Running plugin finished -------------------------------------------------------------------------------------', true, true);
 
 	}
 

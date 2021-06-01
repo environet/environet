@@ -88,8 +88,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		}
 
 		if (!count($formats)) {
-			echo "Error condition 1: Call, but all information already resolved.";
-
+			Console::getInstance()->writeLog("Error condition 1: Call, but all information already resolved.", true);
 			return [];
 		}
 
@@ -367,8 +366,8 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		} elseif ($Date && $Time) {
 			$date = DateTime::createFromFormat($Date["Format"] . ' ' . $Time["Format"], $Date["Value"] . ' ' . $Time["Value"], $this->getTimeZone());
 			if (!$date) {
-				echo("Warning: Invalid date or time format: " . $Date["Format"] . " - " . $Date["Value"]
-				     . " -- " . $Time["Format"] . " - " . $Time["Value"] . ". Replaced with 1970-01-01\r\n");
+				Console::getInstance()->writeLog("Warning: Invalid date or time format: " . $Date["Format"] . " - " . $Date["Value"]
+				     . " -- " . $Time["Format"] . " - " . $Time["Value"] . ". Replaced with 1970-01-01", true);
 				$date = new DateTime('1970-01-01T00:00:00Z');
 			}
 			$date->setTimezone(new DateTimeZone('UTC'));
@@ -378,7 +377,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		} elseif ($DateTime) {
 			$date = DateTime::createFromFormat($DateTime["Format"], $DateTime["Value"], $this->getTimeZone());
 			if (!$date) {
-				echo("Warning: Invalid datetime format: " . $DateTime["Format"] . " --- " . $DateTime["Value"] . ". Replaced with 1970-01-01\r\n");
+				Console::getInstance()->writeLog("Warning: Invalid datetime format: " . $DateTime["Format"] . " --- " . $DateTime["Value"] . ". Replaced with 1970-01-01", true);
 				$date = new DateTime('1970-01-01T00:00:00Z');
 			}
 			$date->setTimezone(new DateTimeZone('UTC'));
@@ -518,7 +517,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 * @throws Exception
 	 */
 	public function parse(Resource $resource): array {
-		echo "Received " . strlen($resource->contents) . " characters.\r\n";
+		Console::getInstance()->writeLog("Received " . strlen($resource->contents) . " characters");
 
 		$resource->contents = str_replace("xlink:href", "href", $resource->contents); // Workaround for WaterML 2.0
 
