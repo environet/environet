@@ -177,13 +177,18 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 
 		//Connect to FTP with username and password
 		$port = $this->port ?: 21;
-		$conn = $this->secure ? ftp_ssl_connect($this->host, $port) : ftp_connect($this->host, $port);
+		$conn = $this->secure ? @ftp_ssl_connect($this->host, $port) : @ftp_connect($this->host, $port);
+		if ($conn == false) {
+			throw new Exception("Connection to ftp server " . $this->host . " failed");
+		}
 
-		$login_result = ftp_login($conn, $this->username, $this->password);
-		ftp_pasv($conn, true);
+		$login_result = @ftp_login($conn, $this->username, $this->password);
 		if ($login_result) {
 			$console->writeLine('Logged in to ftp server', Console::COLOR_YELLOW);
+		} else {
+			throw new Exception("Login to ftp server " . $this->host . " failed");
 		}
+		ftp_pasv($conn, true);
 
 		//Get list of files under directory
 		$files = $this->getListOfFiles($conn, $this->path);

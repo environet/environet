@@ -30,62 +30,93 @@ class Plugin {
 	 * @param Console $console
 	 */
 	public function run(Console $console) {
-		$console->writeLine('Running plugin', '36');
-		$resources = $this->transport->get($console);
+		$console->writeLog('Running plugin ----------------------------------------------------------------------------------------------', true, true);
+		$console->writeLogNoEol('');	// to prefix data to following message
+		try {
+			$resources = $this->transport->get($console);
+		} catch (\Exception $e) {
+			$console->writeLog($e->getMessage(), true, true);
+			$resources = [];
+		}
 
 		if (count($resources) < 1) {
-			$console->writeLine('Nothing to upload', Console::COLOR_YELLOW);
-			return;
-		}
+			$console->writeLine('Nothing to upload');
+		} else {
 
-		$successful = 0;
-		$failed = 0;
-		$successfulDownloads = 0;
-		$failedDownloads = 0;
+			$successful = 0;
+			$failed = 0;
+			$successfulDownloads = 0;
+			$failedDownloads = 0;
+			$missingMonitoringPoints = 0;
 
-		foreach ($resources as $resource) {
-			try {
-				$console->writeLine("Uploading $resource->name", Console::COLOR_YELLOW);
-
-				$xmls = $this->parser->parse($resource);
-				if (!count($xmls)) {
-					$console->writeLine("Couldn't parse $resource->name into xml", Console::COLOR_RED);
-				}
-				$successfulDownloads++;
-
-				foreach ($xmls as $xmlPayload) {
-					$console->write('Uploading monitoring point data', Console::COLOR_YELLOW);
-					//$console->write($xmlPayload->asXML(), Console::COLOR_YELLOW);
-					try {
-						$this->apiClient->upload($xmlPayload);
-						$console->write("\r");
-						$console->writeLine('Monitoring point data upload successful  ', Console::COLOR_GREEN);
-						$console->writeLine('');
-
-						$successful ++;
-					} catch (\Exception $e) {
-						$console->write("\r");
-						$console->writeLine('Upload failed, response:                ', Console::COLOR_RED);
-						$console->writeLine($e->getMessage(), Console::COLOR_RED);
-						$console->writeLine('Payload was ', Console::COLOR_YELLOW);
-						$console->writeLine($xmlPayload->asXML());
-						$console->writeLine('');
-						$failed ++;
+			$MonitoringPointNCDs = [];
+			
+			foreach ($resources as $resource) {
+				try {
+					if (is_array($resource->meta['MonitoringPointNCDs'])) {
+						$MonitoringPointNCDs = array_merge($MonitoringPointNCDs, $resource->meta['MonitoringPointNCDs']);
+						$MonitoringPointNCDs = array_unique($MonitoringPointNCDs);
 					}
-				}
-			} catch (\Exception $e) {
-				$console->write("\r");
-				$console->write('Parsing failed, response: ', Console::COLOR_RED);
-				$console->writeLine($e->getMessage(), Console::COLOR_RED);
-				$failedDownloads++;
-			}
-		}
+					$console->writeLog("Downloaded $resource->name");
 
-		$console->writeLine('');
-		$console->writeLine("Successful downloads from data provider: $successfulDownloads", Console::COLOR_GREEN);
-		$console->writeLine("Successful uploads to distribution node: $successful", Console::COLOR_GREEN);
-		$console->writeLine("Failed downloads from data provider: $failedDownloads", Console::COLOR_RED);
-		$console->writeLine("Failed uploads to distribution nodes: $failed", Console::COLOR_RED);
+					$xmls = $this->parser->parse($resource);
+
+					if (!count($xmls)) {
+						$console->writeLog("Couldn't parse $resource->name into xml for upload. Parser error or empty data", true);
+					}
+					$successfulDownloads++;
+
+					foreach ($xmls as $xmlPayload) {
+						$ns = $xmlPayload->getNamespaces(true);
+						$child = $xmlPayload->children($ns['environet']);
+
+						// remove current monitoring point id from list
+						if (($key = array_search($child->MonitoringPointId, $MonitoringPointNCDs)) !== false) {
+	 						unset($MonitoringPointNCDs[$key]);
+						}
+
+						$console->writeLogNoEol('Uploading monitoring point data for station NCD ' . $child->MonitoringPointId . ": ");
+						//$console->write($xmlPayload->asXML(), Console::COLOR_YELLOW);
+						try {
+							$this->apiClient->upload($xmlPayload);
+							$console->writeLine('success');
+							$successful ++;
+						} catch (\Exception $e) {
+							$console->writeLine('failed');
+							$console->writeLog('Upload for station NCD ' . $child->MonitoringPointId . ' failed, response: ', true);
+							$console->writeLog($e->getMessage(), true);
+							$console->writeLog('Payload was ', true);
+							$console->writeLog($xmlPayload->asXML(), true);
+							$console->writeLog('---', true);
+							$failed ++;
+						}
+					}
+				} catch (\Exception $e) {
+					$console->writeLog('Parsing of ' . $resource->name . ' failed, response: ', true, true);
+					$console->writeLog($e->getMessage(), true, true);
+					$failedDownloads++;
+				}
+			}
+
+
+			$missingMonitoringPoints = sizeof($MonitoringPointNCDs);
+
+			$thereWasAnError = false;
+			if ($failedDownloads > 0 || $failed > 0 || $missingMonitoringPoints > 0) {
+				$thereWasAnError = true;
+			}
+			$console->writeLog("Successful downloads from data provider: $successfulDownloads");
+			$console->writeLog("Successful uploads to distribution node: $successful");
+			$console->writeLog("Failed downloads from data provider: $failedDownloads", $thereWasAnError, $thereWasAnError);
+			$console->writeLog("Failed uploads to distribution node: $failed", $thereWasAnError, $thereWasAnError);
+			$console->writeLog("Monitoring points missing in data: " . $missingMonitoringPoints, $thereWasAnError, $thereWasAnError);
+			if (sizeof($MonitoringPointNCDs)>0) {
+				$console->writeLog("Following monitoring points missing in data: " . implode(" ", $MonitoringPointNCDs), true);
+			}
+
+		}
+		$console->writeLog('Running plugin finished -------------------------------------------------------------------------------------', true, true);
+
 	}
 
 
