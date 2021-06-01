@@ -32,7 +32,12 @@ class Plugin {
 	public function run(Console $console) {
 		$console->writeLog('Running plugin ----------------------------------------------------------------------------------------------', true, true);
 		$console->writeLogNoEol('');	// to prefix data to following message
-		$resources = $this->transport->get($console);
+		try {
+			$resources = $this->transport->get($console);
+		} catch (\Exception $e) {
+			$console->writeLog($e->getMessage(), true, true);
+			$resources = [];
+		}
 
 		if (count($resources) < 1) {
 			$console->writeLine('Nothing to upload');
@@ -104,7 +109,7 @@ class Plugin {
 			$console->writeLog("Successful uploads to distribution node: $successful");
 			$console->writeLog("Failed downloads from data provider: $failedDownloads", $thereWasAnError, $thereWasAnError);
 			$console->writeLog("Failed uploads to distribution node: $failed", $thereWasAnError, $thereWasAnError);
-			$console->writeLog("Missing monitoring points: " . $missingMonitoringPoints, $thereWasAnError, $thereWasAnError);
+			$console->writeLog("Monitoring points missing in data: " . $missingMonitoringPoints, $thereWasAnError, $thereWasAnError);
 			if (sizeof($MonitoringPointNCDs)>0) {
 				$console->writeLog("Following monitoring points missing in data: " . implode(" ", $MonitoringPointNCDs), true);
 			}
