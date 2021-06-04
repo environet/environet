@@ -48,3 +48,8 @@ The `environet` cli script is a wrapper for some docker containers managed with 
 To stop and start them manually, you may run `./environet data up` or `./environet data down` (`./environet dist up` and `./environet dist down` in case of a distribution node).  
 
 To get the latest version, simply run `git pull` in the repository folder.  
+
+## Linux with UFW security settings
+
+If the nodes are hosted on a linux system, which using UFW firewall, there are some additional steps to make it secure, and do not open unneccessary ports.
+The recommended solution is to make some modification on UFW rules. The description of the compatibility problem, and the solution can be found here: [https://github.com/chaifeng/ufw-docker](https://github.com/chaifeng/ufw-docker)

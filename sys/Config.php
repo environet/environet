@@ -17,6 +17,7 @@ use Environet\Sys\General\Exceptions\InvalidConfigurationException;
  * @method bool getDevMode
  * @method string getDatanodeDistHost
  * @method int getOpMode
+ * @method bool getStoreInputXmls
  * @method string getTimezone
  * @method string getDatabaseHost
  * @method string getDatabaseDatabase

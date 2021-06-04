@@ -155,10 +155,16 @@ The detailed documentation of this endpoint can found here: [Download API docume
 
 1. Install the environet project. Refer to [Setup](#11_setup).
 
-2. Create a distribution node configuration
+2. Create the .env file in the root folder, with copying the .env.example.minimal file. This file contains the mandatory properties for the successful install.
+   
+   `cp .env.example.minimal .env`
+   
+   Before next command it is possible the customize the database name, database username, and database password in the new .env file.
+
+3. Create a distribution node configuration
    `./environet dist install`
    
-3. Initialize database, and create admin user
+4. Initialize database, and create admin user
    `./environet dist database init`
 
 After going through these steps, the distribution node should be up and running. You can access the admin panel at YOUR_IP/admin.
@@ -1221,6 +1227,13 @@ With this command you gen sign a content (a string, or a file) with a private ke
 * Generate md5 hash before sigining, or not
 
 Based on the input data a base64 encoded signature will be generated, which can be used in the Authorization header of any api request.
+
+### Exporting database
+
+Command: `./environet dist database export`
+
+Description:
+This commands exports the database content of the distribution node to a file under data/export folder. The filename of the exported file will be written to the console after successful export.
 
 
 
