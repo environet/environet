@@ -61,6 +61,7 @@ class MigrateDb extends DbCommand {
 			'renameWaterbody',
 			'uniqueFieldsAndRenames',
 			'warningLevels',
+			'fixIndexesPointProperty'
             'addOutOfOrderColumns',
 		];
 		ini_set('memory_limit', - 1);
@@ -545,11 +546,13 @@ class MigrateDb extends DbCommand {
 				);
 			", []);
 			$this->connection->runQuery("ALTER TABLE ONLY public.warning_levels ADD CONSTRAINT warning_level_pkey PRIMARY KEY (id);", []);
-			$this->connection->runQuery("
+			$this->connection->runQuery(
+				"
 				ALTER TABLE ONLY public.warning_levels ADD CONSTRAINT warning_levels_operatorid_fkey FOREIGN KEY (operatorid) REFERENCES public.operator(id);",
 				[]
 			);
-			$this->connection->runQuery("
+			$this->connection->runQuery(
+				"
 				ALTER TABLE ONLY public.warning_levels ADD CONSTRAINT warning_levels_warning_level_groupid_fkey FOREIGN KEY (warning_level_groupid) REFERENCES public.warning_level_groups(id);",
 				[]
 			);
@@ -567,18 +570,46 @@ class MigrateDb extends DbCommand {
 				    value numeric(20,10) NOT NULL
 				);
 			", []);
-			$this->connection->runQuery("
+			$this->connection->runQuery(
+				"
 				ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_mpointid_fkey FOREIGN KEY (mpointid) REFERENCES public.hydropoint(id);",
 				[]
 			);
-			$this->connection->runQuery("
+			$this->connection->runQuery(
+				"
 				ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_observed_propertyid_fkey FOREIGN KEY (observed_propertyid) REFERENCES public.hydro_observed_property(id);",
 				[]
 			);
-			$this->connection->runQuery("
+			$this->connection->runQuery(
+				"
 				ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_warning_levelid_fkey FOREIGN KEY (warning_levelid) REFERENCES public.warning_levels(id);",
 				[]
 			);
+		}
+
+		return $return;
+	}
+
+
+	/**
+	 * Add some unique indexes, to hydropoint_observed_property and meteopoint_observed_property tables
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function fixIndexesPointProperty(array &$output): int {
+		$return = - 1;
+
+		if (!$this->checkIndex('hydropoint_observed_property', 'hydro_observed_property_mpoint_unique')) {
+			$return = 0;
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS hydro_observed_property_mpoint_unique ON hydropoint_observed_property (observed_propertyid, mpointid)", []);
+		}
+
+		if (!$this->checkIndex('meteopoint_observed_property', 'meteo_observed_property_mpoint_unique')) {
+			$return = 0;
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS meteo_observed_property_mpoint_unique ON meteopoint_observed_property (observed_propertyid, mpointid)", []);
 		}
 
 		return $return;
