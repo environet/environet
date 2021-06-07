@@ -441,7 +441,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 			],
             'is_out_of_order' => [
                 'label'    => 'Is Ouf of Order',
-                'options'  => ['_0' => 'Inactive', '_1' => 'Active'],
+                'options'  => ['_0' => 'No', '_1' => 'Yes'],
                 'selected' => $this->request->getQueryParam('is_out_of_order') ?? null
             ],
 			'country' => [
