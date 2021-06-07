@@ -4,8 +4,10 @@
 namespace Environet\Sys\General\Db;
 
 
+use DateTime;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
+use Environet\Sys\General\Db\Query\Update;
 use Environet\Sys\General\Exceptions\QueryException;
 
 /**
@@ -59,6 +61,32 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 		$sqlMax = str_replace('{{order}}', 'DESC', $sql);
 		$sqlMax = str_replace('{{minMax}}', 'max', $sqlMax);
 		(new Query())->table($pointPropertyTable)->setRawQuery($sqlMax)->addParameter(':tsid', $timeSeriesId)->run();
+	}
+
+
+	/**
+	 * Update point_observed_property tables last_update value.
+	 *
+	 * @param int      $mpointId
+	 * @param int      $propertyId
+	 * @param DateTime $now
+	 *
+	 * @throws QueryException
+	 */
+	public static function updatePropertyLastUpdate(int $mpointId, int $propertyId, DateTime $now) {
+		$type = static::getType();
+		$pointPropertyTable = "{$type}point_observed_property";
+
+		(new Update())
+			->table($pointPropertyTable)
+			->where($pointPropertyTable . '.observed_propertyid = :opid')
+			->where($pointPropertyTable . '.mpointid = :mpid')
+			->updateData([
+				'last_update' => $now->format('c')
+			])
+			->addParameter('opid', $propertyId)
+			->addParameter('mpid', $mpointId)
+			->run();
 	}
 
 

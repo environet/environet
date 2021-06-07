@@ -171,6 +171,7 @@ abstract class AbstractInputXmlProcessor {
 				// Insert results
 				$timeSeriesPoints = $property->xpath('environet:TimeSeries/environet:Point');
 				$this->insertResults($timeSeriesPoints, $timeSeriesId);
+				$this->getPointQueriesClass()::updatePropertyLastUpdate($mPoint['id'], $propertyId, $now);
 			}
 			Connection::getInstance()->pdo->commit();
 		} catch (UploadException $exception) {
