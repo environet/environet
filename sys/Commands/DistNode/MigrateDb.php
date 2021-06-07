@@ -61,6 +61,7 @@ class MigrateDb extends DbCommand {
 			'renameWaterbody',
 			'uniqueFieldsAndRenames',
 			'warningLevels',
+            'addOutOfOrderColumns',
 		];
 		ini_set('memory_limit', - 1);
 
@@ -582,6 +583,42 @@ class MigrateDb extends DbCommand {
 
 		return $return;
 	}
+
+
+    /**
+     * Adds a temporary out of order column for hydropoint and meteopoint
+     *
+     * @param array $output
+     *
+     * @return int
+     * @throws QueryException
+     */
+    private function addOutOfOrderColumns(array &$output): int
+    {
+        $return = -1;
+
+        $columnCheckQuery = 'SELECT COUNT(*) FROM information_schema.columns WHERE TABLE_NAME = :tableName AND column_name = :columnName;';
+
+        $count = $this->connection->runQuery(
+            $columnCheckQuery,
+            ['tableName' => 'hydropoint', 'columnName' => 'is_out_of_order']
+        )->fetch(PDO::FETCH_COLUMN);
+        if (!$count) {
+            $return = 0;
+            $this->connection->runQuery('ALTER TABLE hydropoint ADD COLUMN is_out_of_order boolean DEFAULT false NOT NULL', []);
+        }
+
+        $count = $this->connection->runQuery(
+            $columnCheckQuery,
+            ['tableName' => 'meteopoint', 'columnName' => 'is_out_of_order']
+        )->fetch(PDO::FETCH_COLUMN);
+        if (!$count) {
+            $return = 0;
+            $this->connection->runQuery('ALTER TABLE meteopoint ADD COLUMN is_out_of_order boolean DEFAULT false NOT NULL', []);
+        }
+
+        return $return;
+    }
 
 
 	/**
