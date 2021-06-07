@@ -65,6 +65,31 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 
 
 	/**
+	 * Update time_series tables with phenomnon begin/end values and times, for a single time series.
+	 *
+	 * @param int $timeSeriesId
+	 *
+	 * @throws QueryException
+	 */
+	public static function updateTimeSeriesPropertyPhenomenon(int $timeSeriesId) {
+		$type = static::getType();
+		$tsTable = "{$type}_time_series";
+
+		$sqlBegin = "
+			UPDATE $tsTable
+			SET phenomenon_time_begin = (SELECT MIN(time) FROM hydro_result WHERE time_seriesid = :tsid)
+			WHERE $tsTable.id = :tsid";
+		(new Query())->table($tsTable)->setRawQuery($sqlBegin)->addParameter(':tsid', $timeSeriesId)->run();
+
+		$sqlEnd = "
+			UPDATE $tsTable
+			SET phenomenon_time_end = (SELECT MAX(time) FROM hydro_result WHERE time_seriesid = :tsid)
+			WHERE $tsTable.id = :tsid";
+		(new Query())->table($tsTable)->setRawQuery($sqlEnd)->addParameter(':tsid', $timeSeriesId)->run();
+	}
+
+
+	/**
 	 * Update point_observed_property tables last_update value.
 	 *
 	 * @param int      $mpointId

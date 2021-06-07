@@ -235,6 +235,7 @@ abstract class AbstractInputXmlProcessor {
 
 			//Update min-max values of time series
 			$this->getPointQueriesClass()::updateTimeSeriesPropertyMinMax($timeSeriesId);
+			$this->getPointQueriesClass()::updateTimeSeriesPropertyPhenomenon($timeSeriesId);
 		} catch (QueryException $e) {
 			throw UploadException::serverError();
 		}
