@@ -61,7 +61,7 @@ class MigrateDb extends DbCommand {
 			'renameWaterbody',
 			'uniqueFieldsAndRenames',
 			'warningLevels',
-			'fixIndexesPointProperty'
+			'fixIndexesPointProperty',
             'addOutOfOrderColumns',
 		];
 		ini_set('memory_limit', - 1);
@@ -547,13 +547,11 @@ class MigrateDb extends DbCommand {
 			", []);
 			$this->connection->runQuery("ALTER TABLE ONLY public.warning_levels ADD CONSTRAINT warning_level_pkey PRIMARY KEY (id);", []);
 			$this->connection->runQuery(
-				"
-				ALTER TABLE ONLY public.warning_levels ADD CONSTRAINT warning_levels_operatorid_fkey FOREIGN KEY (operatorid) REFERENCES public.operator(id);",
+				"ALTER TABLE ONLY public.warning_levels ADD CONSTRAINT warning_levels_operatorid_fkey FOREIGN KEY (operatorid) REFERENCES public.operator(id);",
 				[]
 			);
 			$this->connection->runQuery(
-				"
-				ALTER TABLE ONLY public.warning_levels ADD CONSTRAINT warning_levels_warning_level_groupid_fkey FOREIGN KEY (warning_level_groupid) REFERENCES public.warning_level_groups(id);",
+				"ALTER TABLE ONLY public.warning_levels ADD CONSTRAINT warning_levels_warning_level_groupid_fkey FOREIGN KEY (warning_level_groupid) REFERENCES public.warning_level_groups(id);",
 				[]
 			);
 			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS operatorid_short_description_unique ON warning_levels (operatorid,short_description)", []);
@@ -571,18 +569,15 @@ class MigrateDb extends DbCommand {
 				);
 			", []);
 			$this->connection->runQuery(
-				"
-				ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_mpointid_fkey FOREIGN KEY (mpointid) REFERENCES public.hydropoint(id);",
+				"ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_mpointid_fkey FOREIGN KEY (mpointid) REFERENCES public.hydropoint(id);",
 				[]
 			);
 			$this->connection->runQuery(
-				"
-				ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_observed_propertyid_fkey FOREIGN KEY (observed_propertyid) REFERENCES public.hydro_observed_property(id);",
+				"ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_observed_propertyid_fkey FOREIGN KEY (observed_propertyid) REFERENCES public.hydro_observed_property(id);",
 				[]
 			);
 			$this->connection->runQuery(
-				"
-				ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_warning_levelid_fkey FOREIGN KEY (warning_levelid) REFERENCES public.warning_levels(id);",
+				"ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_warning_levelid_fkey FOREIGN KEY (warning_levelid) REFERENCES public.warning_levels(id);",
 				[]
 			);
 		}

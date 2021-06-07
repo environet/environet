@@ -126,6 +126,11 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 			$query->where('is_active = :isActive')->addParameter('isActive', $value);
 		}
 
+        if ($this->request->getQueryParam('is_out_of_order') !== null) {
+            $value = $this->request->getQueryParam('is_out_of_order') === '_0' ? false : true;
+            $query->where('is_out_of_order = :isOutOfOrder')->addParameter('isOutOfOrder', $value);
+        }
+
 		$query->join('operator', "operator.id = {$this->queriesClass::$tableName}.operatorid");
 		$query->select('operator.name as operator');
 	}
@@ -434,6 +439,11 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 				'options'  => ['_0' => 'Inactive', '_1' => 'Active'],
 				'selected' => $this->request->getQueryParam('is_active') ?? null
 			],
+            'is_out_of_order' => [
+                'label'    => 'Is Ouf of Order',
+                'options'  => ['_0' => 'Inactive', '_1' => 'Active'],
+                'selected' => $this->request->getQueryParam('is_out_of_order') ?? null
+            ],
 			'country' => [
 				'label'    => 'Country',
 				'options'  => array_combine($countries, $countries),
