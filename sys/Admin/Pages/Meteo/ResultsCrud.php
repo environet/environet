@@ -42,6 +42,8 @@ class ResultsCrud extends MonitoringPointResultsCrud {
 				'op.symbol',
 				'r.value',
 				'r.time',
+                'r.is_forecast',
+                'r.is_obsolete',
 				'r.created_at',
 				'ts.phenomenon_time_begin',
 				'ts.phenomenon_time_end',
