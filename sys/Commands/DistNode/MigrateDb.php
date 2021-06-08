@@ -63,6 +63,7 @@ class MigrateDb extends DbCommand {
 			'warningLevels',
 			'fixIndexesPointProperty',
             'addOutOfOrderColumns',
+            'addObsoleteFlagForRecords',
 		];
 		ini_set('memory_limit', - 1);
 
@@ -623,24 +624,40 @@ class MigrateDb extends DbCommand {
     {
         $return = -1;
 
-        $columnCheckQuery = 'SELECT COUNT(*) FROM information_schema.columns WHERE TABLE_NAME = :tableName AND column_name = :columnName;';
-
-        $count = $this->connection->runQuery(
-            $columnCheckQuery,
-            ['tableName' => 'hydropoint', 'columnName' => 'is_out_of_order']
-        )->fetch(PDO::FETCH_COLUMN);
-        if (!$count) {
+        if (!$this->checkColumn('hydropoint', 'is_out_of_order')) {
             $return = 0;
             $this->connection->runQuery('ALTER TABLE hydropoint ADD COLUMN is_out_of_order boolean DEFAULT false NOT NULL', []);
         }
 
-        $count = $this->connection->runQuery(
-            $columnCheckQuery,
-            ['tableName' => 'meteopoint', 'columnName' => 'is_out_of_order']
-        )->fetch(PDO::FETCH_COLUMN);
-        if (!$count) {
+        if (!$this->checkColumn('meteopoint', 'is_out_of_order')) {
             $return = 0;
             $this->connection->runQuery('ALTER TABLE meteopoint ADD COLUMN is_out_of_order boolean DEFAULT false NOT NULL', []);
+        }
+
+        return $return;
+    }
+
+
+    /**
+     * Adds a flag for outdated result data in hydro_result and meteo_result
+     *
+     * @param array $output
+     *
+     * @return int
+     * @throws QueryException
+     */
+    private function addObsoleteFlagForRecords(array &$output): int
+    {
+        $return = -1;
+
+        if (!$this->checkColumn('hydro_result', 'is_obsolete')) {
+            $return = 0;
+            $this->connection->runQuery('ALTER TABLE hydro_result ADD COLUMN is_obsolete boolean DEFAULT false NOT NULL', []);
+        }
+
+        if (!$this->checkColumn('meteo_result', 'is_obsolete')) {
+            $return = 0;
+            $this->connection->runQuery('ALTER TABLE meteo_result ADD COLUMN is_obsolete boolean DEFAULT false NOT NULL', []);
         }
 
         return $return;
