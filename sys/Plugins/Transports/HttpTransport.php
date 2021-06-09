@@ -145,7 +145,7 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 	 * @throws HttpClientException
 	 * @throws Exception
 	 */
-	public function get(Console $console): array {
+	public function get(Console $console, string $configFile): array {
 		$urls = [];
 		if ($this->conversionsFilename) {
 			//Not manual url-type, but url processing based on convertions JSON file

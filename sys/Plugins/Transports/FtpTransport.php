@@ -166,8 +166,9 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 	 * @throws Exception
 	 * @see Resource
 	 */
-	public function get(Console $console): array {
-		$localFileDir = SRC_PATH . '/data/plugin_input_files';
+	public function get(Console $console, string $configFile): array {
+		$configuration = preg_replace('/^(.*)\.[^\.]+$/i', '$1', $configFile);
+		$localFileDir = SRC_PATH . '/data/plugin_input_files/' . $configuration . '/';
 		$localCopyPath = rtrim($localFileDir . '/' . $this->path, '/');
 
 		if (!file_exists($localCopyPath)) {

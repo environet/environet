@@ -28,12 +28,13 @@ class Plugin {
 	 * Run the plugin console command.
 	 *
 	 * @param Console $console
+	 * @param string  $configFile
 	 */
-	public function run(Console $console) {
+	public function run(Console $console, string $configFile) {
 		$console->writeLog('Running plugin ----------------------------------------------------------------------------------------------', true, true);
 		$console->writeLogNoEol('');	// to prefix data to following message
 		try {
-			$resources = $this->transport->get($console);
+			$resources = $this->transport->get($console, $configFile);
 		} catch (\Exception $e) {
 			$console->writeLog($e->getMessage(), true, true);
 			$resources = [];
@@ -50,7 +51,7 @@ class Plugin {
 			$missingMonitoringPoints = 0;
 
 			$MonitoringPointNCDs = [];
-			
+
 			foreach ($resources as $resource) {
 				try {
 					if (is_array($resource->meta['MonitoringPointNCDs'])) {

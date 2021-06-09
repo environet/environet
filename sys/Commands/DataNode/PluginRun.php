@@ -47,7 +47,7 @@ class PluginRun extends BaseCommand {
 		$pluginBuilder = new PluginBuilder();
 		$plugin = $pluginBuilder->loadFromConfiguration($configuration);
 
-		echo $plugin->run($this->console);
+		echo $plugin->run($this->console, $configFile);
 
 		return 0;
 	}
