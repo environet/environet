@@ -104,6 +104,12 @@ To stop and start them manually, you may run `./environet data up` or `./environ
 
 To get the latest version, simply run `git pull` in the repository folder.  
 
+## Linux with UFW security settings
+
+If the nodes are hosted on a linux system, which using UFW firewall, there are some additional steps to make it secure, and do not open unneccessary ports.
+The recommended solution is to make some modification on UFW rules. The description of the compatibility problem, and the solution can be found here: [https://github.com/chaifeng/ufw-docker](https://github.com/chaifeng/ufw-docker)
+
+
 <a name="20_distribution_node"></a>
 
 # Distribution node
@@ -1203,6 +1209,13 @@ After the installation you have to run these commands:
 # Other Environet tools
 
 Useful CLI tools which are available through the './environet' wrapper script.
+
+### Data node cleanup
+
+Command: `./environet data cleanup`
+
+Description:
+Cleanup data node, delete unnecessary, old files.
 
 ### Generating keypair
 

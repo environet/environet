@@ -2,6 +2,13 @@
 
 Useful CLI tools which are available through the './environet' wrapper script.
 
+### Data node cleanup
+
+Command: `./environet data cleanup`
+
+Description:
+Cleanup data node, delete unnecessary, old files.
+
 ### Generating keypair
 
 Command: `./environet dist|data tool keygen`
