@@ -20,7 +20,7 @@
 		<dt class="col-sm-3">Operator</dt>
 		<dd class="col-sm-9">
 		    <?php if(!empty($record['operator'])): ?>
-				<a href="/admin/operators?id=<?= $record['operator']['id'] ;?>">#<?= $record['operator']['id'] ?></a>
+				<a href="/admin/operators/show?id=<?= $record['operator']['id'] ;?>">#<?= $record['operator']['id'] ?></a>
 				<span><?=$record['operator']['name'] ?? null;?></span>
 		    <?php endif; ?>
 		</dd>

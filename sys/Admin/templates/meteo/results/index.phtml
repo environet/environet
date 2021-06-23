@@ -8,6 +8,8 @@
 			<th><?=sortableColumn('Property', 'op.symbol');?></th>
 			<th class="text-right"><?=sortableColumn('Result time', 'r.time');?></th>
 			<th class="text-right"><?=sortableColumn('Created at', 'r.created_at');?></th>
+            <th class="text-right"><?=sortableColumn('Is Forecast', 'r.is_forecast');?></th>
+            <th class="text-right"><?=sortableColumn('Is Obsolete', 'r.is_obsolete');?></th>
 			<th class="text-right"><?=sortableColumn('Value', 'r.value');?></th>
 		</tr>
 		</thead>
@@ -21,7 +23,9 @@
 				<td><?=$result['symbol'] ?? null;?></td>
 				<td class="text-right text-monospace"><?=$result['time'] ?? null;?></td>
 				<td class="text-right text-monospace"><?=$result['created_at'] ?? null;?></td>
-				<td class="text-right text-monospace"><?=isset($result['value']) ? number_format((float) $result['value'], $precision, '.', ' ') : null;?></td>
+                <td class="text-right text-monospace"><i class="fa <?=$result['is_forecast'] ? 'fa-check text-success' : 'fa-times text-danger';?>"></i></td>
+                <td class="text-right text-monospace"><?=$result['is_obsolete'] ? '<i class="fa fa-calendar-times"></i>' : null ?></td>
+                <td class="text-right text-monospace"><?=isset($result['value']) ? number_format((float) $result['value'], $precision, '.', ' ') : null;?></td>
 			</tr>
 			<?php
 					endforeach;

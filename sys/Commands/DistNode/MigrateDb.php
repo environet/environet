@@ -61,7 +61,9 @@ class MigrateDb extends DbCommand {
 			'renameWaterbody',
 			'uniqueFieldsAndRenames',
 			'warningLevels',
-			'fixIndexesPointProperty'
+			'fixIndexesPointProperty',
+            'addOutOfOrderColumns',
+            'addObsoleteFlagForRecords',
 		];
 		ini_set('memory_limit', - 1);
 
@@ -546,13 +548,11 @@ class MigrateDb extends DbCommand {
 			", []);
 			$this->connection->runQuery("ALTER TABLE ONLY public.warning_levels ADD CONSTRAINT warning_level_pkey PRIMARY KEY (id);", []);
 			$this->connection->runQuery(
-				"
-				ALTER TABLE ONLY public.warning_levels ADD CONSTRAINT warning_levels_operatorid_fkey FOREIGN KEY (operatorid) REFERENCES public.operator(id);",
+				"ALTER TABLE ONLY public.warning_levels ADD CONSTRAINT warning_levels_operatorid_fkey FOREIGN KEY (operatorid) REFERENCES public.operator(id);",
 				[]
 			);
 			$this->connection->runQuery(
-				"
-				ALTER TABLE ONLY public.warning_levels ADD CONSTRAINT warning_levels_warning_level_groupid_fkey FOREIGN KEY (warning_level_groupid) REFERENCES public.warning_level_groups(id);",
+				"ALTER TABLE ONLY public.warning_levels ADD CONSTRAINT warning_levels_warning_level_groupid_fkey FOREIGN KEY (warning_level_groupid) REFERENCES public.warning_level_groups(id);",
 				[]
 			);
 			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS operatorid_short_description_unique ON warning_levels (operatorid,short_description)", []);
@@ -570,18 +570,15 @@ class MigrateDb extends DbCommand {
 				);
 			", []);
 			$this->connection->runQuery(
-				"
-				ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_mpointid_fkey FOREIGN KEY (mpointid) REFERENCES public.hydropoint(id);",
+				"ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_mpointid_fkey FOREIGN KEY (mpointid) REFERENCES public.hydropoint(id);",
 				[]
 			);
 			$this->connection->runQuery(
-				"
-				ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_observed_propertyid_fkey FOREIGN KEY (observed_propertyid) REFERENCES public.hydro_observed_property(id);",
+				"ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_observed_propertyid_fkey FOREIGN KEY (observed_propertyid) REFERENCES public.hydro_observed_property(id);",
 				[]
 			);
 			$this->connection->runQuery(
-				"
-				ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_warning_levelid_fkey FOREIGN KEY (warning_levelid) REFERENCES public.warning_levels(id);",
+				"ALTER TABLE ONLY public.warning_level_hydropoint ADD CONSTRAINT warning_level_hydropoint_warning_levelid_fkey FOREIGN KEY (warning_levelid) REFERENCES public.warning_levels(id);",
 				[]
 			);
 		}
@@ -613,6 +610,58 @@ class MigrateDb extends DbCommand {
 
 		return $return;
 	}
+
+
+    /**
+     * Adds a temporary out of order column for hydropoint and meteopoint
+     *
+     * @param array $output
+     *
+     * @return int
+     * @throws QueryException
+     */
+    private function addOutOfOrderColumns(array &$output): int
+    {
+        $return = -1;
+
+        if (!$this->checkColumn('hydropoint', 'is_out_of_order')) {
+            $return = 0;
+            $this->connection->runQuery('ALTER TABLE hydropoint ADD COLUMN is_out_of_order boolean DEFAULT false NOT NULL', []);
+        }
+
+        if (!$this->checkColumn('meteopoint', 'is_out_of_order')) {
+            $return = 0;
+            $this->connection->runQuery('ALTER TABLE meteopoint ADD COLUMN is_out_of_order boolean DEFAULT false NOT NULL', []);
+        }
+
+        return $return;
+    }
+
+
+    /**
+     * Adds a flag for outdated result data in hydro_result and meteo_result
+     *
+     * @param array $output
+     *
+     * @return int
+     * @throws QueryException
+     */
+    private function addObsoleteFlagForRecords(array &$output): int
+    {
+        $return = -1;
+
+        if (!$this->checkColumn('hydro_result', 'is_obsolete')) {
+            $return = 0;
+            $this->connection->runQuery('ALTER TABLE hydro_result ADD COLUMN is_obsolete boolean DEFAULT false NOT NULL', []);
+        }
+
+        if (!$this->checkColumn('meteo_result', 'is_obsolete')) {
+            $return = 0;
+            $this->connection->runQuery('ALTER TABLE meteo_result ADD COLUMN is_obsolete boolean DEFAULT false NOT NULL', []);
+        }
+
+        return $return;
+    }
 
 
 	/**

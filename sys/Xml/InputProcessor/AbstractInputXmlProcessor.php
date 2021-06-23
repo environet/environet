@@ -3,9 +3,11 @@
 namespace Environet\Sys\Xml\InputProcessor;
 
 use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
 use Environet\Sys\General\Db\Connection;
 use Environet\Sys\General\Db\Query\Insert;
+use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\UserQueries;
 use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\Exceptions\InvalidConfigurationException;
@@ -88,6 +90,14 @@ abstract class AbstractInputXmlProcessor {
 	 * @return Insert
 	 */
 	abstract protected function createResultInsert(): Insert;
+
+
+    /**
+     * Crate a base update request for results table
+     *
+     * @return Query
+     */
+	abstract protected function createResultUpdate(): Query;
 
 
 	/**
@@ -197,6 +207,7 @@ abstract class AbstractInputXmlProcessor {
 	 * @uses \Environet\Sys\Xml\InputProcessor\AbstractInputXmlProcessor::createResultInsert()
 	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
 	 * @uses \DateTime
+     * @uses \DateTimeInterface
 	 * @uses \DateTimeZone
 	 */
 	protected function insertResults(array $timeSeriesPoints, int $timeSeriesId) {
@@ -210,7 +221,7 @@ abstract class AbstractInputXmlProcessor {
 
 				foreach ($batch as $key => $point) {
 					// Convert time to UTC
-					$time = DateTime::createFromFormat(DateTime::ISO8601, (string) $point->xpath('environet:PointTime')[0] ?? null);
+					$time = DateTime::createFromFormat(DateTimeInterface::ISO8601, (string) $point->xpath('environet:PointTime')[0] ?? null);
 					$time->setTimezone(new DateTimeZone('UTC'));
 
 					// Add 'values' row to insert query
@@ -223,6 +234,15 @@ abstract class AbstractInputXmlProcessor {
 						"isForecast$key" => $now < $time,
 						"createdAt$key"  => $now->format('c'),
 					]);
+
+                    $update = $this->createResultUpdate();
+                    $update->addParameters([
+                        "tsid" => $timeSeriesId,
+                        "time" => $time->format('c'),
+                        "isForecast" => $now < $time,
+                        "value" => $value,
+                    ]);
+                    $update->run();
 				}
 
 				try {
