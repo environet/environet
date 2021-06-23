@@ -3,6 +3,7 @@
 
 use Environet\Sys\Commands\BaseCommand;
 use Environet\Sys\Commands\Console;
+use Environet\Sys\Commands\DataNode\Cleanup as DataNodeCleanup;
 use Environet\Sys\Commands\DataNode\Install as DataNodeInstall;
 use Environet\Sys\Commands\DataNode\PluginCreate;
 use Environet\Sys\Commands\DataNode\PluginRun;
@@ -42,6 +43,8 @@ function commandRouter(array $arguments): ?string {
 					return commandRouter($arguments);
 				case 'install':
 					return DataNodeInstall::class;
+				case 'cleanup':
+					return DataNodeCleanup::class;
 				case 'plugin':
 					switch ($arguments[2] ?? null) {
 						case 'create':

@@ -77,9 +77,10 @@ class LocalDirectoryTransport implements TransportInterface, BuilderLayerInterfa
 	 * @inheritDoc
 	 * @see Resource
 	 */
-	public function get(Console $console): array {
+	public function get(Console $console, string $configFile): array {
 		$console = Console::getInstance();
-		$localFileDir = SRC_PATH . '/data/plugin_input_files/';
+		$configuration = preg_replace('/^(.*)\.[^\.]+$/i', '$1', $configFile);
+		$localFileDir = SRC_PATH . '/data/plugin_input_files/' . $configuration . '/';
 		$localCopyPath = $localFileDir . $this->path;
 
 		if (!file_exists($localCopyPath)) {

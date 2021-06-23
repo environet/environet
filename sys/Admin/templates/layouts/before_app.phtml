@@ -159,6 +159,9 @@
                 </li>
 			<?php endif; ?>
         </ul>
+        <div class="version">
+            <p>Version: <?=file_get_contents(SRC_PATH . '/version.txt');?></p>
+        </div>
 		<div class="logo"><img src="/img/dareffort_logo.png" alt="DAREFFORT"></div>
         <!-- sidebar menu end-->
     </aside>

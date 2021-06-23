@@ -1087,7 +1087,6 @@ It should output the currently installed version number.</p>
 <p>The <code>environet</code> cli script is a wrapper for some docker containers managed with docker compose. After first starting a <em>dist</em> or <em>data</em> node, these services will start automatically after a system reboot.<br />
 To stop and start them manually, you may run <code>./environet data up</code> or <code>./environet data down</code> (<code>./environet dist up</code> and <code>./environet dist down</code> in case of a distribution node).</p>
 <p>To get the latest version, simply run <code>git pull</code> in the repository folder.</p>
-<p>Depending on the git version it can be possible to run the following command to update the submodule (src folder) too: <code>git submodule update --init --recursive --remote</code></p>
 <h2 id="linux-with-ufw-security-settings">Linux with UFW security settings</h2>
 <p>If the nodes are hosted on a linux system, which using UFW firewall, there are some additional steps to make it secure, and do not open unneccessary ports. The recommended solution is to make some modification on UFW rules. The description of the compatibility problem, and the solution can be found here: <a href="https://github.com/chaifeng/ufw-docker">https://github.com/chaifeng/ufw-docker</a></p>
 <p><a name="20_distribution_node"></a></p>
@@ -1785,6 +1784,9 @@ Private keys should be placed in the <code>conf/plugins/credentials</code> direc
 <p><a name="51_tools"></a></p>
 <h1 id="other-environet-tools">Other Environet tools</h1>
 <p>Useful CLI tools which are available through the ‘./environet’ wrapper script.</p>
+<h3 id="data-node-cleanup">Data node cleanup</h3>
+<p>Command: <code>./environet data cleanup</code></p>
+<p>Description: Cleanup data node, delete unnecessary, old files.</p>
 <h3 id="generating-keypair">Generating keypair</h3>
 <p>Command: <code>./environet dist|data tool keygen</code></p>
 <p>Description: With this command you gen generate a openssl keypair with an interactive process. The command will ask for: * Destination folder of the key files * Prefix for the key file names</p>

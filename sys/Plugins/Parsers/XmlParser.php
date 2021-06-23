@@ -88,8 +88,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		}
 
 		if (!count($formats)) {
-			echo "Error condition 1: Call, but all information already resolved.";
-
+			Console::getInstance()->writeLog("Error condition 1: Call, but all information already resolved.", true);
 			return [];
 		}
 
@@ -236,7 +235,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 * @param string $parameterValue value for parameter
 	 */
 	private function delete(array &$list, string $parameterName, string $parameterValue) {
-		foreach ($list as $key => $item) {
+		foreach ($list as $key => &$item) { // FFF
 			if (array_key_exists($parameterName, $item) && $item[$parameterName] == $parameterValue) {
 				unset($list[$key]);
 			}
@@ -367,8 +366,8 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		} elseif ($Date && $Time) {
 			$date = DateTime::createFromFormat($Date["Format"] . ' ' . $Time["Format"], $Date["Value"] . ' ' . $Time["Value"], $this->getTimeZone());
 			if (!$date) {
-				echo("Warning: Invalid date or time format: " . $Date["Format"] . " - " . $Date["Value"]
-				     . " -- " . $Time["Format"] . " - " . $Time["Value"] . ". Replaced with 1970-01-01\r\n");
+				Console::getInstance()->writeLog("Warning: Invalid date or time format: " . $Date["Format"] . " - " . $Date["Value"]
+				     . " -- " . $Time["Format"] . " - " . $Time["Value"] . ". Replaced with 1970-01-01", true);
 				$date = new DateTime('1970-01-01T00:00:00Z');
 			}
 			$date->setTimezone(new DateTimeZone('UTC'));
@@ -378,7 +377,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		} elseif ($DateTime) {
 			$date = DateTime::createFromFormat($DateTime["Format"], $DateTime["Value"], $this->getTimeZone());
 			if (!$date) {
-				echo("Warning: Invalid datetime format: " . $DateTime["Format"] . " --- " . $DateTime["Value"] . ". Replaced with 1970-01-01\r\n");
+				Console::getInstance()->writeLog("Warning: Invalid datetime format: " . $DateTime["Format"] . " --- " . $DateTime["Value"] . ". Replaced with 1970-01-01", true);
 				$date = new DateTime('1970-01-01T00:00:00Z');
 			}
 			$date->setTimezone(new DateTimeZone('UTC'));
@@ -518,7 +517,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 * @throws Exception
 	 */
 	public function parse(Resource $resource): array {
-		echo "Received " . strlen($resource->contents) . " characters.\r\n";
+		Console::getInstance()->writeLog("Received " . strlen($resource->contents) . " characters");
 
 		$resource->contents = str_replace("xlink:href", "href", $resource->contents); // Workaround for WaterML 2.0
 
@@ -600,7 +599,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 								];
 								array_push($newEntry, $elem);
 								// delete all occurrences of ObservedPropertyValue with wrong symbol
-								foreach ($newEntry as $newenkey => $newenval) {
+								foreach ($newEntry as $newenkey => &$newenval) {  // FFF
 									if ($newenval["Type"] == "ObservedPropertyValue" && $newenval["Format"] != $prop) {
 										unset($newEntry[$newenkey]);
 									}
@@ -623,7 +622,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 		// delete entries which do not fit to API-call (extra monitoring points, extra observed properties)
 		if ($resource->meta && (!isset($resource->meta["keepExtraData"]) || !$resource->meta["keepExtraData"])) {
-			foreach ($flatList as $key => $entry) {
+			foreach ($flatList as $key => &$entry) {
 				$mp = $this->getParameter($entry, "Type", "MonitoringPoint");
 				$obs = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
 				if (!in_array($mp["Value"], $resource->meta["MonitoringPointNCDs"]) || !in_array($obs["Value"], $resource->meta["ObservedPropertySymbols"])) {

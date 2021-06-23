@@ -81,6 +81,40 @@ class Console {
 
 
 	/**
+	 * Write log entry with a line break
+	 *
+	 * @param string      $string
+	 * @param bool        $isError
+	 * @param bool        $writeToBoth
+	 */
+	public function writeLog(string $string, bool $isError = false, bool $writeToBoth = false) {
+		if ($isError || $writeToBoth) {
+			fwrite(STDERR, date(DATE_ATOM) . " " . $string . "\n");
+		}
+		if (!$isError || $writeToBoth) {
+			echo date(DATE_ATOM) . " " . $string . "\n";
+		}
+	}
+
+
+	/**
+	 * Write log entry without a line break
+	 *
+	 * @param string      $string
+	 * @param bool        $isError
+	 * @param bool        $writeToBoth
+	 */
+	public function writeLogNoEol(string $string, bool $isError = false, bool $writeToBoth = false) {
+		if ($isError || $writeToBoth) {
+			fwrite(STDERR, date(DATE_ATOM) . " " . $string);
+		}
+		if (!$isError || $writeToBoth) {
+			echo date(DATE_ATOM) . " " . $string;
+		}
+	}
+
+
+	/**
 	 * Ask for an answer.
 	 *
 	 * @param string $string

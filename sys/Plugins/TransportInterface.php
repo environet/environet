@@ -20,10 +20,11 @@ interface TransportInterface {
 	 * Get a list of resources
 	 *
 	 * @param Console $console
+	 * @param string  $configFile
 	 *
 	 * @return Resource[]
 	 */
-	public function get(Console $console): array;
+	public function get(Console $console, string $configFile): array;
 
 
 }
