@@ -24,7 +24,7 @@
         <dt class="col-sm-3">Users</dt>
         <dd class="col-sm-9">
             <ul>
-            <?php foreach ($record['operators'] ?: [] as $user) { ?>
+            <?php foreach ($record['users'] ?: [] as $user) { ?>
 				<li>
 					<a href="/admin/users/show?id=<?=$user['id'];?>">#<?=$user['id'] ?? null;?></a>
 					-
