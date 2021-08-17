@@ -31,6 +31,8 @@ class Console {
 	
 	private static $instance;
 
+	private $timezone;
+	private $timeFormat;
 
 	/**
 	 * Console constructor.
@@ -39,6 +41,8 @@ class Console {
 	public function __construct() {
 		self::$instance = $this;
 		$this->stdin = fopen('php://stdin', 'r');
+		$this->timezone = new \DateTimeZone('Europe/Berlin');   // do not use Config::getTimezone(), because Console may run before Config exists
+		$this->timeFormat = 'Y-m-d h:i:s'; //DATE_ATOM;
 	}
 	
 	public static function getInstance(): Console {
@@ -88,11 +92,14 @@ class Console {
 	 * @param bool        $writeToBoth
 	 */
 	public function writeLog(string $string, bool $isError = false, bool $writeToBoth = false) {
+		$dt = new \DateTime();
+		$dt->setTimezone($this->timezone);
+
 		if ($isError || $writeToBoth) {
-			fwrite(STDERR, date(DATE_ATOM) . " " . $string . "\n");
+			fwrite(STDERR, $dt->format($this->timeFormat) . " " . $string . "\n");
 		}
 		if (!$isError || $writeToBoth) {
-			echo date(DATE_ATOM) . " " . $string . "\n";
+			echo $dt->format($this->timeFormat) . " " . $string . "\n";
 		}
 	}
 
@@ -105,11 +112,14 @@ class Console {
 	 * @param bool        $writeToBoth
 	 */
 	public function writeLogNoEol(string $string, bool $isError = false, bool $writeToBoth = false) {
+		$dt = new \DateTime();
+		$dt->setTimezone($this->timezone);
+
 		if ($isError || $writeToBoth) {
-			fwrite(STDERR, date(DATE_ATOM) . " " . $string);
+			fwrite(STDERR, $dt->format($this->timeFormat) . " " . $string);
 		}
 		if (!$isError || $writeToBoth) {
-			echo date(DATE_ATOM) . " " . $string;
+			echo $dt->format($this->timeFormat) . " " . $string;
 		}
 	}
 
