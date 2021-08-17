@@ -42,7 +42,7 @@ class Console {
 		self::$instance = $this;
 		$this->stdin = fopen('php://stdin', 'r');
 		$this->timezone = new \DateTimeZone('Europe/Berlin');   // do not use Config::getTimezone(), because Console may run before Config exists
-		$this->timeFormat = 'Y-m-d h:i:s'; //DATE_ATOM;
+		$this->timeFormat = DATE_ATOM;
 	}
 	
 	public static function getInstance(): Console {
