@@ -60,7 +60,9 @@ class UploadHandler extends ApiHandler {
 				exception_logger($exception);
 
 				// Syntax error
-				throw new UploadException(302);
+				$identityData = $this->identity->getData();
+				$messages = [ 'Username: ' . $identityData['username'] ];
+				throw new UploadException(302, $messages);
 			}
 
 			try {
@@ -68,7 +70,10 @@ class UploadHandler extends ApiHandler {
 				(new SchemaValidator($parsedXml, SRC_PATH . '/public/schemas/environet.xsd'))->validate();
 			} catch (SchemaInvalidException $e) {
 				// XML is invalid
-				throw UploadException::schemaErrors($e->getErrorMessages());
+				$identityData = $this->identity->getData();
+				$messages = [ 'Username: ' . $identityData['username'] ];
+				$messages = array_merge($e->getErrorMessages(), $messages);
+				throw UploadException::schemaErrors($messages);
 			} catch (Exception $e) {
 				exception_logger($e);
 
@@ -81,7 +86,9 @@ class UploadHandler extends ApiHandler {
 				$this->createInputProcessor($parsedXml)->process($this->getIdentity());
 			} catch (InputXmlProcessException $e) {
 				// There are some invalid values in XML
-				throw new UploadException(401);
+				$identityData = $this->identity->getData();
+				$messages = [ 'Username: ' . $identityData['username'] ];
+				throw new UploadException(401, $messages);
 			}
 		} catch (UploadException $e) {
 			exception_logger($e);
@@ -114,7 +121,9 @@ class UploadHandler extends ApiHandler {
 
 		if (!$signatureValid) {
 			// Signature is not valid
-			throw new ApiException(208);
+			$identityData = $this->identity->getData();
+			$messages = [ 'Username: ' . $identityData['username'] ];
+			throw new ApiException(208, $messages);
 		}
 	}
 
@@ -137,7 +146,9 @@ class UploadHandler extends ApiHandler {
 			return $meteoProcessor;
 		}
 
-		throw new UploadException(402);
+		$identityData = $this->identity->getData();
+		$messages = [ 'Username: ' . $identityData['username'] ];
+		throw new UploadException(402, $messages);
 	}
 
 
