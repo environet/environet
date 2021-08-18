@@ -60,6 +60,7 @@ class ApiException extends \Exception {
 		if (!empty($errorMessages)) {
 			$this->errorMessages = array_merge($this->errorMessages, $errorMessages);
 		}
+		array_push($this->errorMessages, 'REMOTE_ADDR: ' . substr($_SERVER['REMOTE_ADDR'],0,32) . ", HTTP_X_FORWARDED_FOR: " . substr($_SERVER['HTTP_X_FORWARDED_FOR'],0,128));
 		parent::__construct(join(', ', $this->errorMessages), $code);
 	}
 
