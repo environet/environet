@@ -146,8 +146,11 @@ class UploadHandler extends ApiHandler {
 			return $meteoProcessor;
 		}
 
+		$monitoringPointId = (string) $xml->xpath('/environet:UploadData/environet:MonitoringPointId[1]')[0] ?? null;
 		$identityData = $this->identity->getData();
-		$messages = [ 'Username: ' . $identityData['username'] ];
+		$messages = [ 'Monitoring point NCD: ' . $monitoringPointId,
+			'Username: ' . $identityData['username'] 
+		];
 		throw new UploadException(402, $messages);
 	}
 

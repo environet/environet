@@ -160,7 +160,10 @@ abstract class AbstractInputXmlProcessor {
 			// Find monitoring point in database
 			if (!($mPoint = $this->findMonitoringPoint($monitoringPointId, $identity, true))) {
 				$identityData = $identity->getData();
-				$messages = [ 'Username: ' . $identityData['username'] ];
+				$messages = [ 
+					'Monitoring point NCD: ' .  $monitoringPointId,
+					'Username: ' . $identityData['username'] 
+				];
 				throw new UploadException(402, $messages);
 			}
 
@@ -173,14 +176,20 @@ abstract class AbstractInputXmlProcessor {
 				// Get the id of the property which will be returned only if the point can measure the property
 				if (!($propertyId = $this->getPropertyIdIfAllowed($mPoint['id'], $propertySymbol))) {
 					$identityData = $identity->getData();
-					$messages = [ 'Username: ' . $identityData['username'] ];
+					$messages = [
+						'Monitoring point NCD: ' . $mPoint['id'] . ', Property symbol: ' . $propertySymbol,
+						'Username: ' . $identityData['username'] 
+					];
 					throw new UploadException(403, $messages);
 				}
 
 				// Get the time series id, or create a new one, and update the result_time of time series
 				if (!($timeSeriesId = $this->getOrCreateTimeSeries($mPoint['id'], $propertyId, $now))) {
 					$identityData = $identity->getData();
-					$messages = [ 'Username: ' . $identityData['username'] ];
+					$messages = [
+						'Monitoring point NCD: ' . $mPoint['id'] . ', Property symbol: ' . $propertySymbol,
+						'Username: ' . $identityData['username'] 
+					];
 					throw new UploadException(404, $messages);
 				}
 
