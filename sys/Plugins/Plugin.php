@@ -63,7 +63,7 @@ class Plugin {
 					$xmls = $this->parser->parse($resource);
 
 					if (!count($xmls)) {
-						$console->writeLog("Couldn't parse $resource->name into xml for upload. Parser error or empty data", true);
+						$console->writeLog("Couldn't parse $resource->name into xml for upload (first 30 characters: \"". $this->previewString($resource->contents,30) ."\"). Parser error or empty data", true);
 					}
 					$successfulDownloads++;
 
@@ -93,8 +93,7 @@ class Plugin {
 						}
 					}
 				} catch (\Exception $e) {
-					$console->writeLog('Parsing of ' . $resource->name . ' failed, response: ', true, true);
-					$console->writeLog($e->getMessage(), true, true);
+					$console->writeLog('Parsing of ' . $resource->name . ' (first 30 characters: "'. $this->previewString($resource->contents,30) .'") failed, response: ' .$e->getMessage(), true, true);
 					$failedDownloads++;
 				}
 			}
@@ -120,5 +119,14 @@ class Plugin {
 
 	}
 
-
+	/**
+	 * Give a preview of a string (example of an xml file)
+	 *
+	 * @param string $data
+	 * @param int $lengthOfPreview
+	 */
+	public function previewString(string $data, int $lengthOfPreview) {
+		$a = str_replace(array("\r", "\n"), '', $data);
+		return substr($a,0,$lengthOfPreview);
+	}
 }

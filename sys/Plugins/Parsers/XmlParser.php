@@ -336,6 +336,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		$Day = $this->getParameter($entry, "Type", "Day");
 		$Hour = $this->getParameter($entry, "Type", "Hour");
 		$Minute = $this->getParameter($entry, "Type", "Minute");
+		$NCD = $this->getParameter($entry, "Type", "MonitoringPoint")["Value"];
 
 		$result = [
 			"Type"   => "DateTime",
@@ -366,8 +367,8 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		} elseif ($Date && $Time) {
 			$date = DateTime::createFromFormat($Date["Format"] . ' ' . $Time["Format"], $Date["Value"] . ' ' . $Time["Value"], $this->getTimeZone());
 			if (!$date) {
-				Console::getInstance()->writeLog("Warning: Invalid date or time format: " . $Date["Format"] . " - " . $Date["Value"]
-				     . " -- " . $Time["Format"] . " - " . $Time["Value"] . ". Replaced with 1970-01-01", true);
+				Console::getInstance()->writeLog("Warning: Invalid date or time format (monitoring point national code: $NCD): Date format is \"" . $Date["Format"] . "\" value is \"" . $Date["Value"]
+				     . "\", Time format is \"" . $Time["Format"] . "\", value is \"" . $Time["Value"] . "\". Replaced with 1970-01-01", true);
 				$date = new DateTime('1970-01-01T00:00:00Z');
 			}
 			$date->setTimezone(new DateTimeZone('UTC'));
@@ -377,7 +378,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		} elseif ($DateTime) {
 			$date = DateTime::createFromFormat($DateTime["Format"], $DateTime["Value"], $this->getTimeZone());
 			if (!$date) {
-				Console::getInstance()->writeLog("Warning: Invalid datetime format: " . $DateTime["Format"] . " --- " . $DateTime["Value"] . ". Replaced with 1970-01-01", true);
+				Console::getInstance()->writeLog("Warning: Invalid datetime format (monitoring point national code: $NCD): Format is \"" . $DateTime["Format"] . "\", value is \"" . $DateTime["Value"] . "\". Replaced with 1970-01-01", true);
 				$date = new DateTime('1970-01-01T00:00:00Z');
 			}
 			$date->setTimezone(new DateTimeZone('UTC'));
