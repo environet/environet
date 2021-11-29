@@ -104,6 +104,9 @@ To stop and start them manually, you may run `./environet data up` or `./environ
 
 To get the latest version, simply run `git pull` in the repository folder.  
 
+Depending on the git version it can be possible to run the following command to update the submodule (src folder) too:
+`git submodule update --init --recursive --remote`
+
 ## Linux with UFW security settings
 
 If the nodes are hosted on a linux system, which using UFW firewall, there are some additional steps to make it secure, and do not open unneccessary ports.
