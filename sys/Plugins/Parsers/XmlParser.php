@@ -510,7 +510,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 			try {
 				$this->assembleDate($entry);
 			} catch (\Exception $e) {
-				unset($flatlist[$key]);
+				unset($flatList[$key]);
 			}
 		}
 		$flatList = array_values($flatList);
