@@ -180,7 +180,7 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 				$resource = new Resource();
 				$resource->name = basename($url['url']); //Filename
 				$resource->contents = (new HttpClient())->sendRequest(new Request($url['url']))->getBody();
-				$console->writeLine('File downloaded from url: '.$url['url']);
+				$console->writeLine('File downloaded from url: '.$url['url'].' ('.strlen($resource->contents).' bytes)');
 			}
 			if ($resource) {
 				//Has a valid resource
