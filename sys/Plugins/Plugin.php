@@ -63,7 +63,7 @@ class Plugin {
 					$xmls = $this->parser->parse($resource);
 
 					if (!count($xmls)) {
-						$console->writeLog("Couldn't parse $resource->name into xml for upload (first 30 characters: \"". $this->previewString($resource->contents,30) ."\"). Parser error or empty data", true);
+						$console->writeLog("Couldn't parse $resource->name into xml for upload (first 100 characters: \"". $this->previewString($resource->contents,100) ."\"). Parser error or empty data", true);
 					}
 					$successfulDownloads++;
 
