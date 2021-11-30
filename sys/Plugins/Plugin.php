@@ -126,7 +126,7 @@ class Plugin {
 	 * @param int $lengthOfPreview
 	 */
 	public function previewString(string $data, int $lengthOfPreview) {
-		$a = str_replace(array("\r", "\n"), '', $data);
+		$a = str_replace(array("\r", "\n"), "\\n", $data);
 		return substr($a,0,$lengthOfPreview);
 	}
 }
