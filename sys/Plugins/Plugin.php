@@ -93,7 +93,7 @@ class Plugin {
 						}
 					}
 				} catch (\Exception $e) {
-					$console->writeLog('Parsing of ' . $resource->name . ' (first 30 characters: "'. $this->previewString($resource->contents,30) .'") failed, response: ' .$e->getMessage(), true, true);
+					$console->writeLog('Parsing of ' . $resource->name . ' (first 100 characters: "'. $this->previewString($resource->contents,100) .'") failed, response: ' .$e->getMessage(), true, true);
 					$failedDownloads++;
 				}
 			}
