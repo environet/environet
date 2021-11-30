@@ -62,6 +62,11 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 	private $newestFileOnly;
 
 	/**
+	 * @var int
+	 */
+	private $lastNDaysOnly;
+
+	/**
 	 * @var string
 	 */
 	private $conversionsFilename;
@@ -102,6 +107,10 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		$console->write('Enter 1 if only the newest of all matching files should be used:');
 		$newestFileOnly = $console->askWithDefault('', false);
 
+		$console->writeLine('Use only files with modification time newer than or equal N days:');
+		$console->write('Enter a number > 0 for N or 0 to use all files:');
+		$lastNDaysOnly = $console->askWithDefault('', 0);
+
 		$console->writeLine('Do you want to user a conversion specification?');
 		$console->write('Enter 1 if to specify the conversion specification file:');
 		$withConversions = $console->askWithDefault('', '0');
@@ -120,6 +129,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 			'path'            => $path,
 			'filenamePattern' => $filenamePattern,
 			'newestFileOnly'  => $newestFileOnly,
+			'lastNDaysOnly'   => $lastNDaysOnly,
 			'conversionsFilename' => $conversionsFilename
 		];
 
@@ -139,6 +149,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 			   . 'path = "' . $this->path . '"' . "\n"
 			   . 'filenamePattern = "' . $this->filenamePattern . '"' . "\n"
 			   . 'newestFileOnly = "' . $this->newestFileOnly . '"' . "\n"
+			   . 'lastNDaysOnly = "' . $this->lastNDaysOnly . '"' . "\n"
 			   . 'conversionsFilename = "' . $this->conversionsFilename . '"' . "\n";
 	}
 
@@ -157,6 +168,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		$this->path = rtrim($config['path'], '/');
 		$this->filenamePattern = $config['filenamePattern'];
 		$this->newestFileOnly = $config['newestFileOnly'];
+		$this->lastNDaysOnly = $config['lastNDaysOnly'];
 		$this->conversionsFilename = $config['conversionsFilename'];
 	}
 
@@ -211,6 +223,23 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 				return 0;
 			});
 			$files = [$files[0]];
+		}
+
+		// Filter to date within last N days
+		if (!empty($files) && $this->lastNDaysOnly > 0) {
+			$newFiles = [];
+			foreach ($files as $file) {
+				if (!empty($file['modify'])) {
+					$dateFile = new \DateTime();
+					$dateFile->setTimestamp($file['modify']); 
+					$dateNow = new \DateTime();
+					$interval = date_diff($dateFile, $dateNow);
+					$days = $interval->format('%a');
+					//echo $file['modify'] . ", dateFile=" . $dateFile->format('U = Y-m-d H:i:s') . ", diff=" . $days ."days\n";
+					if ($days <= $this->lastNDaysOnly) array_push($newFiles, $file);
+				}
+			}
+			$files = $newFiles;
 		}
 
 		//Prepend path the filename
