@@ -367,9 +367,9 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		} elseif ($Date && $Time) {
 			$date = DateTime::createFromFormat($Date["Format"] . ' ' . $Time["Format"], $Date["Value"] . ' ' . $Time["Value"], $this->getTimeZone());
 			if (!$date) {
-				Console::getInstance()->writeLog("Warning: Invalid date or time format (monitoring point national code: $NCD): Date format is \"" . $Date["Format"] . "\" value is \"" . $Date["Value"]
-				     . "\", Time format is \"" . $Time["Format"] . "\", value is \"" . $Time["Value"] . "\". Replaced with 1970-01-01", true);
-				$date = new DateTime('1970-01-01T00:00:00Z');
+				throw new Exception("Invalid date or time format (monitoring point national code: $NCD): Date format is \"" . 
+					$Date["Format"] . "\" value is \"" . $Date["Value"] . "\", Time format is \"" . $Time["Format"] . 
+					"\", value is \"" . $Time["Value"] . "\". Entry dropped.");
 			}
 			$date->setTimezone(new DateTimeZone('UTC'));
 			$result["Value"] = $date->format(self::API_TIME_FORMAT_STRING);
@@ -378,8 +378,8 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		} elseif ($DateTime) {
 			$date = DateTime::createFromFormat($DateTime["Format"], $DateTime["Value"], $this->getTimeZone());
 			if (!$date) {
-				Console::getInstance()->writeLog("Warning: Invalid datetime format (monitoring point national code: $NCD): Format is \"" . $DateTime["Format"] . "\", value is \"" . $DateTime["Value"] . "\". Replaced with 1970-01-01", true);
-				$date = new DateTime('1970-01-01T00:00:00Z');
+				throw new Exception("Invalid datetime format (monitoring point national code: $NCD): Format is \"" . $DateTime["Format"] . 
+					"\", value is \"" . $DateTime["Value"] . "\". Entry dropped.");
 			}
 			$date->setTimezone(new DateTimeZone('UTC'));
 			$result["Value"] = $date->format(self::API_TIME_FORMAT_STRING);
@@ -506,9 +506,14 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 * @see assembleDate
 	 */
 	private function assembleDates(array &$flatList) {
-		foreach ($flatList as &$entry) {
-			$this->assembleDate($entry);
+		foreach ($flatList as $key => &$entry) {
+			try {
+				$this->assembleDate($entry);
+			} catch (\Exception $e) {
+				unset($flatlist[$key]);
+			}
 		}
+		$flatList = array_values($flatList);
 	}
 
 
