@@ -177,8 +177,8 @@ abstract class AbstractInputXmlProcessor {
 				if (!($propertyId = $this->getPropertyIdIfAllowed($mPoint['id'], $propertySymbol))) {
 					$identityData = $identity->getData();
 					$messages = [
-						'Monitoring point NCD: ' . $mPoint['id'] . ', Property symbol: ' . $propertySymbol,
-						'Username: ' . $identityData['username'] 
+						'Monitoring point NCD: ' . $monitoringPointId . ", Property symbol: " . $propertySymbol,
+						'Username: ' . $identityData['username']
 					];
 					throw new UploadException(403, $messages);
 				}
@@ -187,7 +187,7 @@ abstract class AbstractInputXmlProcessor {
 				if (!($timeSeriesId = $this->getOrCreateTimeSeries($mPoint['id'], $propertyId, $now))) {
 					$identityData = $identity->getData();
 					$messages = [
-						'Monitoring point NCD: ' . $mPoint['id'] . ', Property symbol: ' . $propertySymbol,
+						'Monitoring point NCD: ' . $monitoringPointId . ', Property symbol: ' . $propertySymbol,
 						'Username: ' . $identityData['username'] 
 					];
 					throw new UploadException(404, $messages);
