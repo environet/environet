@@ -202,6 +202,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		$fixedMPoint = null;
 		$fixedObservedProperty = null;
 		$lineCount = 0;
+		$allskip = true;	// signals whether file consists only of skip values
 		foreach ($lines as $line) {
 			++ $lineCount;
 
@@ -242,6 +243,8 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 					continue;
 				}
 
+				$allskip = false;
+
 				//Init mpoint property in resultArray
 				if (!array_key_exists($resultLine['mPointId'], $resultArray)) {
 					$resultArray[$resultLine['mPointId']] = [];
@@ -264,6 +267,11 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 				);
 			}
 		}
+
+		if ($allskip) {
+			Console::getInstance()->writeLog("Resource contains only skip values: $resource->name", true);
+		}
+
 		return $resultArray;
 	}
 
