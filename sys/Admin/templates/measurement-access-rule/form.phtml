@@ -9,9 +9,7 @@
                 <div class="field">
                     <legend><?=__('Operator');?></legend>
                     <select name="operator" id="accessRuleOperatorSelect">
-						<?php foreach ($operators as $id => $name): ?>
-                            <option value="<?= $id; ?>" <?= isset($record['operator_id']) && $record['operator_id'] == $id ? 'selected' : '' ?>><?= $name; ?></option>
-						<?php endforeach; ?>
+						<?=selectOptions($operators, $record['operator_id'] ?? null);?>
                     </select>
                 </div>
             </fieldset>

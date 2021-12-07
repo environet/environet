@@ -169,6 +169,9 @@ function selectOptions(array $options, $selected = null, string $emptyOption = n
 		$selected = (array) $selected;
 	}
 
+    // Sort options by value
+	asort($options);
+
 	$optionsHtml = [];
 	//Create empty option
 	if (!is_null($emptyOption)) {

@@ -159,8 +159,8 @@ class MeasurementAccessRuleCrud extends CrudPage {
 			$meteoQuery->where('operatorid = :operatorid')->addParameter('operatorid', $operator);
 		}
 		if ($search) {
-			$hydroQuery->where('name LIKE %' . $search . '%');
-			$meteoQuery->where('name LIKE %' . $search . '%');
+			$hydroQuery->where("UPPER(name) LIKE UPPER('%$search%')");
+			$meteoQuery->where("UPPER(name) LIKE UPPER('%$search%')");
 		}
 		$meteoPoints = $meteoQuery->run();
 		$hydroPoints = $hydroQuery->run();
@@ -168,15 +168,20 @@ class MeasurementAccessRuleCrud extends CrudPage {
 		foreach ($hydroPoints as $hydroPoint) {
 			$results[] = [
 				'value' => $hydroPoint['id'],
-				'name'  => $hydroPoint['name']
+				'name'  => $hydroPoint['name'] . ' (HYDRO)'
 			];
 		}
 		foreach ($meteoPoints as $meteoPoint) {
 			$results[] = [
 				'value' => $meteoPoint['id'],
-				'name'  => $meteoPoint['name']
+				'name'  => $meteoPoint['name'] . ' (METEO)'
 			];
 		}
+
+		// Sort points by name
+		usort($results, function ($a, $b) {
+			return strcasecmp($a['name'], $b['name']);
+		});
 
 		return new Response(json_encode($results));
 	}
@@ -215,6 +220,11 @@ class MeasurementAccessRuleCrud extends CrudPage {
 				'name'  => $meteoProperty['symbol']
 			];
 		}
+
+		// Sort properties by symbol
+		usort($results, function ($a, $b) {
+			return strcasecmp($a['name'], $b['name']);
+		});
 
 		return new Response(json_encode($results));
 	}
