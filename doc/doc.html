@@ -1706,9 +1706,9 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <h3 id="concept-of-the-rules-1">Concept of the rules</h3>
 <p>The access rules controls the time interval in which the data will be available for a user under the <a href="#24_api_download">download API</a> request.</p>
 <p>The rules have three required dimensions: * <strong>Monitoring point</strong> - the rule is for all data of the given monitoring point * <strong>Observed property</strong> - the rule is for all data of the observed property of the monitoring point * <strong>User groups</strong> - the rule will be applied if the requesting user is under these groups</p>
-<p>The rules has one additional optional dimension: * <strong>Operator</strong> - If an operator creates the rule, these property will be set automatically. An administrator can set is optionally. This property controls which rule will be visible under operator’s acces rule list, and important in case of wildcard (<em>) rules. If the operator parameter is set, the wildcard (</em>) will be applied only for points/properties under the given operator.</p>
+<p>The rules has one additional optional dimension: * <strong>Operator</strong> - If an operator creates the rule, these property will be set automatically. An administrator can set it. This property controls which rule will be visible under operator’s access rule list, and important in case of wildcard (- ALL -) rules. If the operator parameter is set, the “ALL” option will be applied only for points/properties under the given operator.</p>
+<p>A rule matches, and will be checked during a download, if all of the conditions are met: * The group of user (who do the request) is in one of the groups of the rule * The result is related to the selected operator * The result is related to the selected operator’s selected monitoring points (in case of “ALL” all monitoring points will be selected) * The result is related to the selected observed properties (in case of “ALL” all properties will be selected)</p>
 <p>If the rule matches for a <a href="#24_api_download">download API</a> request (so the <strong>user</strong> getting data for the <strong>monitoring point</strong> and the <strong>observed property</strong>), the user can retrieve data only in the given time period. This period’s end is the current date, and the start is controlled by the <code>years</code>, <code>months</code> and <code>days</code> paramter of the access rule.</p>
-<p>The monitoring point and the observed property can be a *, which will match all monitoring points (globally, or of an operator), or all properties.</p>
 <p>The rules will be “merged” before checking user’s access level.</p>
 <h4 id="rule-list">Rule list</h4>
 <p>On the list page all rules are visible, with the required and optional dimensions.</p>
@@ -1716,8 +1716,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <h4 id="new-access-rule">New access rule</h4>
 <p>You can add new access rule if you click the “Add rule” button on the top left of the rules list page.</p>
 <p>Path: <code>/admin/measurements-access-rules/add</code></p>
-<p>On the rules’s creating page, you have to fill the following mandatory fields: - Monitoring point selector - The ID of the monitoring point, or * for all - Observed property selector - The ID (symbol) of the monitoring point, or * for all - Groups - Multiple user groups can be selected - At least one of the time interval fields: years, months, days</p>
-<p>Optionally you can select an operator, in this case wildcard (*) will be applied for items only under the give operator.</p>
+<p>On the rules’s creating page, you have to fill the following mandatory fields: - Monitoring point selector - Select some or all monitoring points - Observed property selector - Select some or all observed properties - Groups - Multiple user groups can be selected - At least one of the time interval fields: years, months, days</p>
 <h4 id="updating-access-rule">Updating access rule</h4>
 <p>You can select a rule to update if you click the “Pencil” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/measurements-access-rules/edit?id=[rule identifier]</code></p>

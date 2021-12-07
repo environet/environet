@@ -1058,14 +1058,18 @@ The rules have three required dimensions:
 * **User groups** - the rule will be applied if the requesting user is under these groups
 
 The rules has one additional optional dimension:
-* **Operator** - If an operator creates the rule, these property will be set automatically. An administrator can set is optionally. 
-This property controls which rule will be visible under operator's acces rule list, and important in case of wildcard (*) rules. 
-If the operator parameter is set, the wildcard (*) will be applied only for points/properties under the given operator.
+* **Operator** - If an operator creates the rule, these property will be set automatically. An administrator can set it. 
+This property controls which rule will be visible under operator's access rule list, and important in case of wildcard (- ALL -) rules. 
+If the operator parameter is set, the "ALL" option will be applied only for points/properties under the given operator.
+
+A rule matches, and will be checked during a download, if all of the conditions are met:
+* The group of user (who do the request) is in one of the groups of the rule
+* The result is related to the selected operator 
+* The result is related to the selected operator's selected monitoring points (in case of "ALL" all monitoring points will be selected)
+* The result is related to the selected observed properties (in case of "ALL" all properties will be selected)
 
 If the rule matches for a [download API](#24_api_download) request (so the __user__ getting data for the __monitoring point__ and the __observed property__), the user can retrieve data only in the given time period.
 This period's end is the current date, and the start is controlled by the `years`, `months` and `days` paramter of the access rule.
-
-The monitoring point and the observed property can be a *, which will match all monitoring points (globally, or of an operator), or all properties. 
 
 The rules will be "merged" before checking user's access level.
 
@@ -1082,12 +1086,10 @@ You can add new access rule if you click the "Add rule" button on the top left o
 Path: `/admin/measurements-access-rules/add`
 
 On the rules's creating page, you have to fill the following mandatory fields:
-- Monitoring point selector - The ID of the monitoring point, or * for all
-- Observed property selector - The ID (symbol) of the monitoring point, or * for all
+- Monitoring point selector - Select some or all monitoring points
+- Observed property selector - Select some or all observed properties
 - Groups - Multiple user groups can be selected
 - At least one of the time interval fields: years, months, days
-
-Optionally you can select an operator, in this case wildcard (*) will be applied for items only under the give operator.
 
 #### Updating access rule
 
