@@ -37,6 +37,8 @@
       <excludeFolder url="file://$MODULE_DIR$/dev/vendor/symfony/polyfill-ctype" />
       <excludeFolder url="file://$MODULE_DIR$/dev/vendor/theseer/tokenizer" />
       <excludeFolder url="file://$MODULE_DIR$/dev/vendor/webmozart/assert" />
+      <excludeFolder url="file://$MODULE_DIR$/dev/vendor/squizlabs/php_codesniffer" />
+      <excludeFolder url="file://$MODULE_DIR$/dev/vendor/srggroup/srg_standards" />
       <excludePattern pattern=".user.ini" />
     </content>
     <orderEntry type="inheritedJdk" />
