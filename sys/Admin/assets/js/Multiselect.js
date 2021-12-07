@@ -1,6 +1,22 @@
 import 'slim-select/dist/slimselect.min.css';
 import SlimSelect from 'slim-select';
 
+window.slimSelects = {
+	_storage: new WeakMap(),
+	put: function (element, obj) {
+		this._storage.set(element, obj);
+	},
+	get: function (element) {
+		return this._storage.get(element);
+	},
+	has: function (element) {
+		return this._storage.has(element);
+	},
+	remove: function (element) {
+		return this._storage.delete(element);
+	}
+}
+
 Array.prototype.filter.call(document.querySelectorAll('select[multiple]'), (select) => {
 
 	const options = {
@@ -34,7 +50,7 @@ Array.prototype.filter.call(document.querySelectorAll('select[multiple]'), (sele
 		}
 	}
 	const sSelect = new SlimSelect(options);
-
+	slimSelects.put(select, sSelect);
 
 	select.addEventListener('doSearch', function() {
 		sSelect.search(' '); //Hack to change empty value, and trigger ajax

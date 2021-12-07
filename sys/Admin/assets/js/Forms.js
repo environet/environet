@@ -59,23 +59,43 @@ const accessRuleForm = document.getElementById('accessRuleForm');
 if (accessRuleForm) {
 
 	const operatorSelector = document.getElementById('accessRuleOperatorSelect');
-	operatorSelector.addEventListener('change', function (event) {
-		Array.prototype.filter.call(document.querySelectorAll('#accessRuleForm select[data-ajaxdefault]'), (select) => {
-			const url = select.dataset.ajaxdefault;
-			select.setAttribute('data-ajax', url + '?operator=' + operatorSelector.value);
+	const pointSelector = document.getElementById('accessRulePointSelect');
 
-			select.dispatchEvent(new CustomEvent('clear'));
+	const updateAjaxUrls = function (selector) {
+		Array.prototype.filter.call(document.querySelectorAll(selector), (select) => {
+			const url = select.dataset.ajaxdefault;
+			const concatChar = url.includes('?') ? '&' : '?';
+
+			const operator = operatorSelector.value;
+
+			let hasMeteo, hasHydro, hasAll;
+			hasMeteo = hasHydro = hasAll = false;
+			slimSelects.get(pointSelector).selected().forEach(function(value) {
+				if (value === '*') hasAll = true;
+				if (value.startsWith('hydro_')) hasHydro = true;
+				if (value.startsWith('meteo_')) hasMeteo = true;
+			});
+			const type = (hasAll || (hasMeteo && hasHydro)) ? '' : (hasHydro ? 'hydro' : (hasMeteo ? 'meteo' : ''));
+
+			select.setAttribute('data-ajax', url + concatChar + 'operator=' + operator + '&type=' + type);
+
 			select.dispatchEvent(new CustomEvent('doSearch'));
 
 			docReady(function () {
 			});
 		});
+	}
+	operatorSelector.addEventListener('change', function (event) {
+		updateAjaxUrls('#accessRulePointSelect, #accessRulePropertySelect');
+	});
 
-
+	pointSelector.addEventListener('change', function(event) {
+		updateAjaxUrls('#accessRulePropertySelect');
 	});
 
 	docReady(function () {
 		operatorSelector.dispatchEvent(new Event('change'));
+		pointSelector.dispatchEvent(new Event('change'));
 		Array.prototype.filter.call(document.querySelectorAll('#accessRuleForm select[data-ajaxdefault]'), (select) => {
 			const event = new CustomEvent('initValue', {
 				detail: {
