@@ -45,6 +45,13 @@ abstract class MonitoringPointResultsCrud extends CrudPage {
 
 
 	/**
+	 * Add addition custom fields for search
+	 * @return array
+	 */
+	abstract protected function getSearchFields(): array;
+
+
+	/**
 	 * List page action for hydropoint measurement results.
 	 *
 	 * @return Response
@@ -56,9 +63,13 @@ abstract class MonitoringPointResultsCrud extends CrudPage {
 			$query = $this->getBaseQuery();
 
 			if (($searchString = $this->request->getQueryParam('search'))) {
+				// Add addition custom fields for search
+				$additionalSearchFields = array_map(function ($field) {
+					return "p.$field";
+				}, $this->getSearchFields());
 				$query->search(
 					explode(' ', urldecode($searchString)),
-					['p.name', 'op.symbol']
+					array_merge(['p.name'], $additionalSearchFields)
 				);
 			}
 
@@ -91,8 +102,8 @@ abstract class MonitoringPointResultsCrud extends CrudPage {
 			//Add order by query condition
 			$query->clearOrderBy();
 			$query->sort(
-				$this->request->getQueryParam('order_by'),
-				$this->request->getQueryParam('order_dir', 'ASC')
+				$this->request->getQueryParam('order_by', 'r.time'),
+				$this->request->getQueryParam('order_dir', 'DESC')
 			);
 
 			//Run query

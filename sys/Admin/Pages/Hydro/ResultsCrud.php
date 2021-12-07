@@ -69,7 +69,7 @@ class ResultsCrud extends MonitoringPointResultsCrud {
 			->select('DISTINCT(country)')
 			->from('hydropoint')
 			->orderBy('country', 'ASC')
-			->run(Query::FETCH_COLUMN));
+		->run(Query::FETCH_COLUMN));
 	}
 
 
@@ -82,7 +82,15 @@ class ResultsCrud extends MonitoringPointResultsCrud {
 			->select(['id', 'symbol as label'])
 			->from('hydro_observed_property')
 			->orderBy('symbol', 'ASC')
-			->run());
+		->run());
+	}
+
+
+	/**
+	 * @return string[]
+	 */
+	protected function getSearchFields(): array {
+		return ['ncd_wgst'];
 	}
 
 
