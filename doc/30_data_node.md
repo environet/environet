@@ -448,10 +448,9 @@ In the “observedPropertyConversions” property the variable names for the obs
 ##### More complex example of a CONVERSIONS json file
 As another example the URL of the German Meteorological Service is described. This example is more complex, because the observables are coded several times with different inputs and data file is within a zip file. Filenames within a zip file are appended to the URL using the pipe symbol (“|”).
 The URL pattern for getting the data from the server is:
-````
-https://opendata.dwd.de/climate_environment/CDC/
-observations_germany/climate/[INT1]/[OBS2]/recent/
-[INT3]_[OBS1]_[MPID1]_akt.zip|produkt_[OBS3]_[INT2]_*_[MPID1].txt
+
+```
+https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/[INT1]/[OBS2]/recent/[INT3]_[OBS1]_[MPID1]_akt.zip|produkt_[OBS3]_[INT2]_*_[MPID1].txt
 ```
 
 The elements highlighted in brackets are again variables which will be replaced on run-time when data is acquired.
@@ -473,10 +472,7 @@ The station name [MPID1] will be replaced by the national station number 164 pad
 ```json
 { 
   "generalInformation": { 
-    "URLPattern": "https://opendata.dwd.de/climate_environment/
-        CDC/observations_germany/climate/[INT1]/[OBS2]/
-        recent/[INT3]_[OBS1]_[MPID1]_akt.zip|produkt_
-        [OBS3]_[INT2]_*_[MPID1].txt" 
+    "URLPattern": "https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/[INT1]/[OBS2]/recent/[INT3]_[OBS1]_[MPID1]_akt.zip|produkt_[OBS3]_[INT2]_*_[MPID1].txt" 
   }, 
   "monitoringPointConversions": { 
     "MPID1": "#####", 
