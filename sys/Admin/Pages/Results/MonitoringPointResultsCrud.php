@@ -52,7 +52,7 @@ abstract class MonitoringPointResultsCrud extends CrudPage {
 
 
 	/**
-	 * List page action for hydropoint measurement results.
+	 * List page action for hydropoint and meteopoint measurement results.
 	 *
 	 * @return Response
 	 * @throws RenderException
@@ -101,14 +101,14 @@ abstract class MonitoringPointResultsCrud extends CrudPage {
 
 			//Add order by query condition
 			$query->clearOrderBy();
-			$query->sort(
-				$this->request->getQueryParam('order_by', 'r.time'),
-				$this->request->getQueryParam('order_dir', 'DESC')
-			);
+			$orderByField = $this->request->getQueryParam('order_by', 'r.time');
+			$orderByDir = $this->request->getQueryParam('order_dir', 'DESC');
+			$query->sort($orderByField, $orderByDir);
 
 			//Run query
 			$results = $query->run();
 		} catch (QueryException $exception) {
+			$orderByField = $orderByDir = null;
 			$results = [];
 		}
 
@@ -120,7 +120,18 @@ abstract class MonitoringPointResultsCrud extends CrudPage {
 		$listFilters = $this->getListFilters();
 		$pageTitle = $this->getTitle(self::PAGE_LIST);
 
-		return $this->render($this->getTemplate(), compact('results', 'totalCount', 'currentPage', 'maxPage', 'searchString', 'listFilters', 'precision', 'pageTitle'));
+		return $this->render($this->getTemplate(), compact(
+			'results',
+			'totalCount',
+			'currentPage',
+			'maxPage',
+			'searchString',
+			'listFilters',
+			'precision',
+			'pageTitle',
+			'orderByField',
+			'orderByDir'
+		));
 	}
 
 
