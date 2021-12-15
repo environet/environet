@@ -75,15 +75,17 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 		$type = static::getType();
 		$tsTable = "{$type}_time_series";
 
+		$type = static::getType();
+
 		$sqlBegin = "
 			UPDATE $tsTable
-			SET phenomenon_time_begin = (SELECT MIN(time) FROM hydro_result WHERE time_seriesid = :tsid)
+			SET phenomenon_time_begin = (SELECT MIN(time) FROM {$type}_result WHERE time_seriesid = :tsid)
 			WHERE $tsTable.id = :tsid";
 		(new Query())->table($tsTable)->setRawQuery($sqlBegin)->addParameter(':tsid', $timeSeriesId)->run();
 
 		$sqlEnd = "
 			UPDATE $tsTable
-			SET phenomenon_time_end = (SELECT MAX(time) FROM hydro_result WHERE time_seriesid = :tsid)
+			SET phenomenon_time_end = (SELECT MAX(time) FROM {$type}_result WHERE time_seriesid = :tsid)
 			WHERE $tsTable.id = :tsid";
 		(new Query())->table($tsTable)->setRawQuery($sqlEnd)->addParameter(':tsid', $timeSeriesId)->run();
 	}
