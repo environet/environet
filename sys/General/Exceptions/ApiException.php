@@ -44,6 +44,13 @@ class ApiException extends \Exception {
 	 */
 	protected $errorMessages = [];
 
+	/**
+	 * @var array|string[]
+	 */
+	protected array $loggedServerKeys = [
+		'REMOTE_ADDR',
+		'HTTP_X_FORWARDED_FOR'
+	];
 
 	/**
 	 * UploadException constructor.
@@ -60,7 +67,7 @@ class ApiException extends \Exception {
 		if (!empty($errorMessages)) {
 			$this->errorMessages = array_merge($this->errorMessages, $errorMessages);
 		}
-		array_push($this->errorMessages, 'REMOTE_ADDR: ' . substr($_SERVER['REMOTE_ADDR'],0,32) . ", HTTP_X_FORWARDED_FOR: " . substr($_SERVER['HTTP_X_FORWARDED_FOR'],0,128));
+		$this->addVarsToMessage();
 		parent::__construct(join(', ', $this->errorMessages), $code);
 	}
 
@@ -97,4 +104,15 @@ class ApiException extends \Exception {
 	public static function unknownError(): self {
 		return new static(101);
 	}
+
+
+	/**
+	 * Add server variable values to error message
+	 */
+	protected function addVarsToMessage(): void {
+		$vars = array_map(function ($serverKey) {
+			return $serverKey . ': ' . ($_SERVER[$serverKey] ?? 'N/A');
+		}, $this->loggedServerKeys);
+		array_push($this->errorMessages, implode(', ', $vars));
+	}	
 }
