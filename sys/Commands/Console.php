@@ -3,6 +3,8 @@
 
 namespace Environet\Sys\Commands;
 
+use Environet\Sys\Config;
+
 /**
  * Class Console
  *
@@ -31,8 +33,8 @@ class Console {
 	
 	private static $instance;
 
-	private $timezone;
-	private $timeFormat;
+	private \DateTimeZone $timezone;
+	private string $timeFormat;
 
 	/**
 	 * Console constructor.
@@ -41,7 +43,7 @@ class Console {
 	public function __construct() {
 		self::$instance = $this;
 		$this->stdin = fopen('php://stdin', 'r');
-		$this->timezone = new \DateTimeZone('Europe/Berlin');   // do not use Config::getTimezone(), because Console may run before Config exists
+		$this->timezone = new \DateTimeZone(Config::getInstance()->getTimezone() ?? 'Europe/Berlin');
 		$this->timeFormat = DATE_ATOM;
 	}
 	
