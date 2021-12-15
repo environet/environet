@@ -235,8 +235,9 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 					$dateNow = new \DateTime();
 					$interval = date_diff($dateFile, $dateNow);
 					$days = $interval->format('%a');
-					//echo $file['modify'] . ", dateFile=" . $dateFile->format('U = Y-m-d H:i:s') . ", diff=" . $days ."days\n";
-					if ($days <= $this->lastNDaysOnly) array_push($newFiles, $file);
+					if ($days <= $this->lastNDaysOnly) {
+						array_push($newFiles, $file);
+					}
 				}
 			}
 			$files = $newFiles;
