@@ -30,11 +30,13 @@ class Console {
 	 * @var false|resource PHP standard input
 	 */
 	private $stdin;
-	
+
 	private static $instance;
 
 	private \DateTimeZone $timezone;
+
 	private string $timeFormat;
+
 
 	/**
 	 * Console constructor.
@@ -43,13 +45,18 @@ class Console {
 	public function __construct() {
 		self::$instance = $this;
 		$this->stdin = fopen('php://stdin', 'r');
-		$this->timezone = new \DateTimeZone(Config::getInstance()->getTimezone() ?? 'Europe/Berlin');
+		$this->timezone = new \DateTimeZone(Config::getInstance()->getTimezone() ?? 'UTC');
 		$this->timeFormat = DATE_ATOM;
 	}
-	
+
+
+	/**
+	 * @return Console
+	 */
 	public static function getInstance(): Console {
 		return self::$instance;
 	}
+
 
 	/**
 	 * Write to output without a line break
