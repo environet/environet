@@ -77,11 +77,12 @@ abstract class AbstractInputXmlProcessor {
 	 * @param int      $mPointId   Monitoring point id
 	 * @param int      $propertyId Observed property id
 	 * @param DateTime $now        This parameter will be the result_time
+	 * @param bool     $hasData
 	 *
 	 * @return int|null
 	 * @throws UploadException
 	 */
-	abstract protected function getOrCreateTimeSeries(int $mPointId, int $propertyId, DateTime $now): ?int;
+	abstract protected function getOrCreateTimeSeries(int $mPointId, int $propertyId, DateTime $now, bool $hasData = false): ?int;
 
 
 	/**
@@ -160,9 +161,9 @@ abstract class AbstractInputXmlProcessor {
 			// Find monitoring point in database
 			if (!($mPoint = $this->findMonitoringPoint($monitoringPointId, $identity, true))) {
 				$identityData = $identity->getData();
-				$messages = [ 
+				$messages = [
 					'Monitoring point NCD: ' .  $monitoringPointId,
-					'Username: ' . $identityData['username'] 
+					'Username: ' . $identityData['username']
 				];
 				throw new UploadException(402, $messages);
 			}
@@ -172,6 +173,9 @@ abstract class AbstractInputXmlProcessor {
 			foreach ($properties as $property) {
 				// Get property's symbol
 				$propertySymbol = (string) $property->xpath('environet:PropertyId[1]')[0] ?? null;
+
+				$timeSeriesPoints = $property->xpath('environet:TimeSeries/environet:Point');
+				$hasData = !empty($timeSeriesPoints);
 
 				// Get the id of the property which will be returned only if the point can measure the property
 				if (!($propertyId = $this->getPropertyIdIfAllowed($mPoint['id'], $propertySymbol))) {
@@ -184,17 +188,16 @@ abstract class AbstractInputXmlProcessor {
 				}
 
 				// Get the time series id, or create a new one, and update the result_time of time series
-				if (!($timeSeriesId = $this->getOrCreateTimeSeries($mPoint['id'], $propertyId, $now))) {
+				if (!($timeSeriesId = $this->getOrCreateTimeSeries($mPoint['id'], $propertyId, $now, $hasData))) {
 					$identityData = $identity->getData();
 					$messages = [
 						'Monitoring point NCD: ' . $monitoringPointId . ', Property symbol: ' . $propertySymbol,
-						'Username: ' . $identityData['username'] 
+						'Username: ' . $identityData['username']
 					];
 					throw new UploadException(404, $messages);
 				}
 
 				// Insert results
-				$timeSeriesPoints = $property->xpath('environet:TimeSeries/environet:Point');
 				$this->insertResults($timeSeriesPoints, $timeSeriesId);
 				$this->getPointQueriesClass()::updatePropertyLastUpdate($mPoint['id'], $propertyId, $now);
 			}

@@ -97,7 +97,7 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
 	 * @uses \Environet\Sys\General\Db\Query\Update::run()
 	 */
-	protected function getOrCreateTimeSeries(int $mPointId, int $propertyId, DateTime $now): ?int {
+	protected function getOrCreateTimeSeries(int $mPointId, int $propertyId, DateTime $now, bool $hasData = false): ?int {
 		try {
 			// Find time series by id
 			$timeSeriesId = (new Select())
@@ -130,15 +130,17 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 				return $timeSeriesId ?? null;
 			}
 
-			// Update time series result time
-			(new Update())
-				->table('hydro_time_series')
-				->where('hydro_time_series.id = :tsid')
-				->updateData([
-					'result_time' => $now->format('c')
-				])
-				->addParameter('tsid', $timeSeriesId)
-				->run();
+			if ($hasData) {
+				// Update time series result time
+				(new Update())
+					->table('hydro_time_series')
+					->where('hydro_time_series.id = :tsid')
+					->updateData([
+						'result_time' => $now->format('c')
+					])
+					->addParameter('tsid', $timeSeriesId)
+					->run();
+			}
 
 			return $timeSeriesId;
 		} catch (QueryException $e) {
