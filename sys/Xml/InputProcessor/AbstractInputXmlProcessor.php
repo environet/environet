@@ -77,12 +77,11 @@ abstract class AbstractInputXmlProcessor {
 	 * @param int      $mPointId   Monitoring point id
 	 * @param int      $propertyId Observed property id
 	 * @param DateTime $now        This parameter will be the result_time
-	 * @param bool     $hasData
 	 *
 	 * @return int|null
 	 * @throws UploadException
 	 */
-	abstract protected function getOrCreateTimeSeries(int $mPointId, int $propertyId, DateTime $now, bool $hasData = false): ?int;
+	abstract protected function getOrCreateTimeSeries(int $mPointId, int $propertyId, DateTime $now): ?int;
 
 
 	/**
@@ -175,7 +174,6 @@ abstract class AbstractInputXmlProcessor {
 				$propertySymbol = (string) $property->xpath('environet:PropertyId[1]')[0] ?? null;
 
 				$timeSeriesPoints = $property->xpath('environet:TimeSeries/environet:Point');
-				$hasData = !empty($timeSeriesPoints);
 
 				// Get the id of the property which will be returned only if the point can measure the property
 				if (!($propertyId = $this->getPropertyIdIfAllowed($mPoint['id'], $propertySymbol))) {
@@ -187,8 +185,8 @@ abstract class AbstractInputXmlProcessor {
 					throw new UploadException(403, $messages);
 				}
 
-				// Get the time series id, or create a new one, and update the result_time of time series
-				if (!($timeSeriesId = $this->getOrCreateTimeSeries($mPoint['id'], $propertyId, $now, $hasData))) {
+				// Get the time series id, or create a new one
+				if (!($timeSeriesId = $this->getOrCreateTimeSeries($mPoint['id'], $propertyId, $now))) {
 					$identityData = $identity->getData();
 					$messages = [
 						'Monitoring point NCD: ' . $monitoringPointId . ', Property symbol: ' . $propertySymbol,
@@ -274,6 +272,7 @@ abstract class AbstractInputXmlProcessor {
 			//Update min-max values of time series
 			$this->getPointQueriesClass()::updateTimeSeriesPropertyMinMax($timeSeriesId);
 			$this->getPointQueriesClass()::updateTimeSeriesPropertyPhenomenon($timeSeriesId);
+			$this->getPointQueriesClass()::updateTimeSeriesResultTime($timeSeriesId);
 		} catch (QueryException $e) {
 			throw UploadException::serverError();
 		}

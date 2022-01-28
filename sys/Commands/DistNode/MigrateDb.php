@@ -62,8 +62,9 @@ class MigrateDb extends DbCommand {
 			'uniqueFieldsAndRenames',
 			'warningLevels',
 			'fixIndexesPointProperty',
-            'addOutOfOrderColumns',
-            'addObsoleteFlagForRecords',
+			'addOutOfOrderColumns',
+			'addObsoleteFlagForRecords',
+			'resultTimeNullable',
 		];
 		ini_set('memory_limit', - 1);
 
@@ -210,7 +211,7 @@ class MigrateDb extends DbCommand {
 			$indexName = "{$type}_unique_time_value";
 
 			if ($type === 'meteo') {
-				$tsColumn = $this->checkColumn($resultTable, $tsColumn) ? $tsColumn : 'meteo_'.$tsColumn;
+				$tsColumn = $this->checkColumn($resultTable, $tsColumn) ? $tsColumn : 'meteo_' . $tsColumn;
 			}
 
 			if (!$this->checkIndex($resultTable, $indexName)) {
@@ -612,56 +613,77 @@ class MigrateDb extends DbCommand {
 	}
 
 
-    /**
-     * Adds a temporary out of order column for hydropoint and meteopoint
-     *
-     * @param array $output
-     *
-     * @return int
-     * @throws QueryException
-     */
-    private function addOutOfOrderColumns(array &$output): int
-    {
-        $return = -1;
+	/**
+	 * Adds a temporary out of order column for hydropoint and meteopoint
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function addOutOfOrderColumns(array &$output): int {
+		$return = - 1;
 
-        if (!$this->checkColumn('hydropoint', 'is_out_of_order')) {
-            $return = 0;
-            $this->connection->runQuery('ALTER TABLE hydropoint ADD COLUMN is_out_of_order boolean DEFAULT false NOT NULL', []);
-        }
+		if (!$this->checkColumn('hydropoint', 'is_out_of_order')) {
+			$return = 0;
+			$this->connection->runQuery('ALTER TABLE hydropoint ADD COLUMN is_out_of_order boolean DEFAULT false NOT NULL', []);
+		}
 
-        if (!$this->checkColumn('meteopoint', 'is_out_of_order')) {
-            $return = 0;
-            $this->connection->runQuery('ALTER TABLE meteopoint ADD COLUMN is_out_of_order boolean DEFAULT false NOT NULL', []);
-        }
+		if (!$this->checkColumn('meteopoint', 'is_out_of_order')) {
+			$return = 0;
+			$this->connection->runQuery('ALTER TABLE meteopoint ADD COLUMN is_out_of_order boolean DEFAULT false NOT NULL', []);
+		}
 
-        return $return;
-    }
+		return $return;
+	}
 
 
-    /**
-     * Adds a flag for outdated result data in hydro_result and meteo_result
-     *
-     * @param array $output
-     *
-     * @return int
-     * @throws QueryException
-     */
-    private function addObsoleteFlagForRecords(array &$output): int
-    {
-        $return = -1;
+	/**
+	 * Adds a flag for outdated result data in hydro_result and meteo_result
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function addObsoleteFlagForRecords(array &$output): int {
+		$return = - 1;
 
-        if (!$this->checkColumn('hydro_result', 'is_obsolete')) {
-            $return = 0;
-            $this->connection->runQuery('ALTER TABLE hydro_result ADD COLUMN is_obsolete boolean DEFAULT false NOT NULL', []);
-        }
+		if (!$this->checkColumn('hydro_result', 'is_obsolete')) {
+			$return = 0;
+			$this->connection->runQuery('ALTER TABLE hydro_result ADD COLUMN is_obsolete boolean DEFAULT false NOT NULL', []);
+		}
 
-        if (!$this->checkColumn('meteo_result', 'is_obsolete')) {
-            $return = 0;
-            $this->connection->runQuery('ALTER TABLE meteo_result ADD COLUMN is_obsolete boolean DEFAULT false NOT NULL', []);
-        }
+		if (!$this->checkColumn('meteo_result', 'is_obsolete')) {
+			$return = 0;
+			$this->connection->runQuery('ALTER TABLE meteo_result ADD COLUMN is_obsolete boolean DEFAULT false NOT NULL', []);
+		}
 
-        return $return;
-    }
+		return $return;
+	}
+
+
+	/**
+	 * Update time series table, result time must be nullable
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function resultTimeNullable(array &$output): int {
+		$return = -1;
+
+		foreach (['hydro', 'meteo'] as $type) {
+			$columnData = $this->getColumnData("{$type}_time_series", 'result_time');
+			if (isset($columnData['is_nullable']) && $columnData['is_nullable'] === 'NO') {
+				$return = 0;
+				$this->connection->runQuery("ALTER TABLE {$type}_time_series ALTER COLUMN result_time DROP NOT NULL;", []);
+			}
+		}
+
+		return $return;
+	}
 
 
 	/**
@@ -728,6 +750,7 @@ class MigrateDb extends DbCommand {
 			from pg_class t, pg_class i, pg_index ix, pg_attribute a
 			where t.oid = ix.indrelid and i.oid = ix.indexrelid and a.attrelid = t.oid and a.attnum = ANY(ix.indkey) and t.relkind = 'r' 
 			  and t.relname like '$tableName' and i.relname = '$indexName'", [])->fetchColumn();
+
 		return ((int) $count) > 0;
 	}
 
@@ -747,6 +770,7 @@ class MigrateDb extends DbCommand {
 			INNER JOIN pg_catalog.pg_class rel ON rel.oid = con.conrelid
 			INNER JOIN pg_catalog.pg_namespace nsp ON nsp.oid = connamespace
 			where rel.relname like '$tableName' and con.conname = '$constraintName'", [])->fetchColumn();
+
 		return ((int) $count) > 0;
 	}
 

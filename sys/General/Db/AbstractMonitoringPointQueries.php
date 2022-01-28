@@ -29,6 +29,25 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 
 
 	/**
+	 * Update *_time_series tables with result_time value based on result table created_at
+	 *
+	 * @param int $timeSeriesId
+	 *
+	 * @throws QueryException
+	 */
+	public static function updateTimeSeriesResultTime(int $timeSeriesId) {
+		$type = static::getType();
+
+		$sql = "
+			UPDATE {$type}_time_series ts
+			SET result_time = (SELECT MAX(r.created_at) FROM {$type}_result r WHERE r.time_seriesid = :tsid)
+			WHERE ts.id = :tsid
+		";
+		(new Query())->table("{$type}_time_series")->setRawQuery($sql)->addParameter(':tsid', $timeSeriesId)->run();
+	}
+
+
+	/**
 	 * Update point_observed_property tables with min/max values and times, for a single time series.
 	 *
 	 * @param int $timeSeriesId

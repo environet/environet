@@ -53,10 +53,11 @@ class OutputXmlObservationMember implements XmlRenderable {
 		$timePeriod->addChild('gml:beginPosition', OutputXmlData::dateToISO($this->propertyData['phenomenon_time_begin']));
 		$timePeriod->addChild('gml:endPosition', OutputXmlData::dateToISO($this->propertyData['phenomenon_time_end']));
 
+		$resultTime = !empty($this->propertyData['time_series_result_time']) ? OutputXmlData::dateToISO($this->propertyData['time_series_result_time']) : '';
 		$container
 			->addChild('om:resultTime')
 			->addChild('gml:TimeInstant')
-			->addChild('gml:timePosition', OutputXmlData::dateToISO($this->propertyData['time_series_result_time']));
+			->addChild('gml:timePosition', $resultTime);
 
 		$processType = $container->addChild('om:procedure')->addChild('wml2:ObservationProcess')->addChild('wml2:processType');
 		$processType->addAttribute('xlink:href', 'http://www.opengis.net/def/processType/WaterML/2.0/Sensor');
@@ -120,7 +121,8 @@ class OutputXmlObservationMember implements XmlRenderable {
 		// TVP Point
 		foreach ($this->valueRows as $valueRow) {
 			$tvp = $timeSeries->addChild('wml2:point')->addChild('wml2:MeasurementTVP');
-			$tvp->addChild('wml2:time', OutputXmlData::dateToISO($valueRow['result_time']));
+			$resultTime = !empty($valueRow['result_time']) ? OutputXmlData::dateToISO($valueRow['result_time']) : '';
+			$tvp->addChild('wml2:time', $resultTime);
 			$tvp->addChild('wml2:value', $valueRow['result_value'] ?? '');
 		}
 	}

@@ -97,7 +97,7 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
 	 * @uses \Environet\Sys\General\Db\Query\Update::run()
 	 */
-	protected function getOrCreateTimeSeries(int $mPointId, int $propertyId, DateTime $now, bool $hasData = false): ?int {
+	protected function getOrCreateTimeSeries(int $mPointId, int $propertyId, DateTime $now): ?int {
 		try {
 			// Find time series by id
 			$timeSeriesId = (new Select())
@@ -118,28 +118,15 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 				$now = new DateTime('now', (new DateTimeZone('UTC')));
 				$timeSeriesId = (new Insert())
 					->table('hydro_time_series')
-					->columns(['observed_propertyid', 'mpointid', 'result_time'])
-					->addValueRow([':propertyId', ':mPointId', ':resultTime'])
+					->columns(['observed_propertyid', 'mpointid'])
+					->addValueRow([':propertyId', ':mPointId'])
 					->setParameters([
 						'propertyId' => $propertyId,
-						'mPointId'   => $mPointId,
-						'resultTime' => $now->format('c')
+						'mPointId'   => $mPointId
 					])
 					->run();
 
 				return $timeSeriesId ?? null;
-			}
-
-			if ($hasData) {
-				// Update time series result time
-				(new Update())
-					->table('hydro_time_series')
-					->where('hydro_time_series.id = :tsid')
-					->updateData([
-						'result_time' => $now->format('c')
-					])
-					->addParameter('tsid', $timeSeriesId)
-					->run();
 			}
 
 			return $timeSeriesId;
