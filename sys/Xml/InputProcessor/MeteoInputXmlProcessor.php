@@ -118,27 +118,16 @@ class MeteoInputXmlProcessor extends AbstractInputXmlProcessor {
 				$now = new DateTime('now', (new DateTimeZone('UTC')));
 				$timeSeriesId = (new Insert())
 					->table('meteo_time_series')
-					->columns(['observed_propertyid', 'mpointid', 'result_time'])
-					->addValueRow([':propertyId', ':mPointId', ':resultTime'])
+					->columns(['observed_propertyid', 'mpointid'])
+					->addValueRow([':propertyId', ':mPointId'])
 					->setParameters([
 						'propertyId' => $propertyId,
-						'mPointId'   => $mPointId,
-						'resultTime' => $now->format('c')
+						'mPointId'   => $mPointId
 					])
 					->run();
 
 				return $timeSeriesId ?? null;
 			}
-
-			// Update time series result time
-			(new Update())
-				->table('meteo_time_series')
-				->where('meteo_time_series.id = :tsid')
-				->updateData([
-					'result_time' => $now->format('c')
-				])
-				->addParameter('tsid', $timeSeriesId)
-				->run();
 
 			return $timeSeriesId;
 		} catch (QueryException $e) {

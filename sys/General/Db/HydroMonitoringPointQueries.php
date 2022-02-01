@@ -33,6 +33,7 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 		'hydropoint.country',
 		'hydropoint.name',
 		'hydropoint.location',
+		'hydropoint.ncd_wgst' // national code listed in log files
 	];
 
 

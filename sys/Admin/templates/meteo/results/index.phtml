@@ -4,13 +4,13 @@
 	<table class="table table-striped table-bordered">
 		<thead>
 		<tr>
-			<th><?=sortableColumn('Meteopoint name', 'p.name');?></th>
-			<th><?=sortableColumn('Property', 'op.symbol');?></th>
-			<th class="text-right"><?=sortableColumn('Result time', 'r.time');?></th>
-			<th class="text-right"><?=sortableColumn('Created at', 'r.created_at');?></th>
-            <th class="text-right"><?=sortableColumn('Is Forecast', 'r.is_forecast');?></th>
-            <th class="text-right"><?=sortableColumn('Is Obsolete', 'r.is_obsolete');?></th>
-			<th class="text-right"><?=sortableColumn('Value', 'r.value');?></th>
+			<th><?=sortableColumn('Meteopoint name', 'p.name', get_defined_vars());?></th>
+			<th><?=sortableColumn('Property', 'op.symbol', get_defined_vars());?></th>
+			<th class="text-right"><?=sortableColumn('Result time', 'r.time', get_defined_vars());?></th>
+			<th class="text-right"><?=sortableColumn('Created at', 'r.created_at', get_defined_vars());?></th>
+            <th class="text-right"><?=sortableColumn('Is Forecast', 'r.is_forecast', get_defined_vars());?></th>
+            <th class="text-right"><?=sortableColumn('Is Obsolete', 'r.is_obsolete', get_defined_vars());?></th>
+			<th class="text-right"><?=sortableColumn('Value', 'r.value', get_defined_vars());?></th>
 		</tr>
 		</thead>
 		<tbody>

@@ -3,6 +3,8 @@
 
 namespace Environet\Sys\Commands;
 
+use Environet\Sys\Config;
+
 /**
  * Class Console
  *
@@ -28,8 +30,12 @@ class Console {
 	 * @var false|resource PHP standard input
 	 */
 	private $stdin;
-	
+
 	private static $instance;
+
+	private \DateTimeZone $timezone;
+
+	private string $timeFormat;
 
 
 	/**
@@ -39,11 +45,18 @@ class Console {
 	public function __construct() {
 		self::$instance = $this;
 		$this->stdin = fopen('php://stdin', 'r');
+		$this->timezone = new \DateTimeZone(Config::getInstance()->getTimezone() ?? 'UTC');
+		$this->timeFormat = DATE_ATOM;
 	}
-	
+
+
+	/**
+	 * @return Console
+	 */
 	public static function getInstance(): Console {
 		return self::$instance;
 	}
+
 
 	/**
 	 * Write to output without a line break
@@ -88,11 +101,14 @@ class Console {
 	 * @param bool        $writeToBoth
 	 */
 	public function writeLog(string $string, bool $isError = false, bool $writeToBoth = false) {
+		$dt = new \DateTime();
+		$dt->setTimezone($this->timezone);
+
 		if ($isError || $writeToBoth) {
-			fwrite(STDERR, date(DATE_ATOM) . " " . $string . "\n");
+			fwrite(STDERR, $dt->format($this->timeFormat) . " " . $string . "\n");
 		}
 		if (!$isError || $writeToBoth) {
-			echo date(DATE_ATOM) . " " . $string . "\n";
+			echo $dt->format($this->timeFormat) . " " . $string . "\n";
 		}
 	}
 
@@ -105,11 +121,14 @@ class Console {
 	 * @param bool        $writeToBoth
 	 */
 	public function writeLogNoEol(string $string, bool $isError = false, bool $writeToBoth = false) {
+		$dt = new \DateTime();
+		$dt->setTimezone($this->timezone);
+
 		if ($isError || $writeToBoth) {
-			fwrite(STDERR, date(DATE_ATOM) . " " . $string);
+			fwrite(STDERR, $dt->format($this->timeFormat) . " " . $string);
 		}
 		if (!$isError || $writeToBoth) {
-			echo date(DATE_ATOM) . " " . $string;
+			echo $dt->format($this->timeFormat) . " " . $string;
 		}
 	}
 

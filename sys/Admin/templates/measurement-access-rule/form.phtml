@@ -1,6 +1,6 @@
 <?php include __DIR__ . '../../layouts/before_app.phtml'; ?>
 
-	<div class="card formPage">
+	<div class="card formPage accessRules">
 		<?=includeTemplatePart('crud_show_header.phtml', get_defined_vars());?>
 		<form action="" method="POST" id="accessRuleForm">
 			<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
@@ -9,14 +9,12 @@
                 <div class="field">
                     <legend><?=__('Operator');?></legend>
                     <select name="operator" id="accessRuleOperatorSelect">
-						<?php foreach ($operators as $id => $name): ?>
-                            <option value="<?= $id; ?>" <?= isset($record['operator_id']) && $record['operator_id'] == $id ? 'selected' : '' ?>><?= $name; ?></option>
-						<?php endforeach; ?>
+						<?=selectOptions($operators, $record['operator_id'] ?? null);?>
                     </select>
                 </div>
             </fieldset>
 
-			<div class="form-group">
+			<div class="form-group" id="pointSelect">
 				<div class="field">
 					<label for="monitoringpoint_selector">Monitoring point selector</label>
 					<select name="monitoringpoint_selector[]" id="accessRulePointSelect"
@@ -26,7 +24,7 @@
 				</div>
 			</div>
 
-            <div class="form-group">
+            <div class="form-group" id="propertySelect">
                 <label for="observed_property_selector">Observed property selector</label>
 				<select name="observed_property_selector[]" id="accessRulePropertySelect"
 						data-ajaxdefault="/admin/ajax/select/operator-properties"

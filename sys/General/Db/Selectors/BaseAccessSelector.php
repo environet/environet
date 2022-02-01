@@ -63,4 +63,17 @@ abstract class BaseAccessSelector extends Selector {
 	}
 
 
+	/**
+	 * @param $serialized
+	 */
+	public function unserialize($serialized) {
+		if (is_string($serialized)) {
+			$strType = $this->type === MPOINT_TYPE_HYDRO ? 'hydro' : 'meteo';
+			$this->values = array_filter(array_map(function ($value) use ($strType) {
+				return intval(preg_replace('/^' . $strType . '_(\d+)$/', '$1', $value)) ?: null;
+			}, explode(',', $serialized)));
+		}
+	}
+
+
 }

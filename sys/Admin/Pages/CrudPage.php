@@ -154,6 +154,8 @@ abstract class CrudPage extends BasePage {
 			$records = [];
 		}
 
+		$this->modifyRecords($records);
+
 		$this->updateListPageState();
 
 		$listFilters = $this->getListFilters();
@@ -468,6 +470,20 @@ abstract class CrudPage extends BasePage {
 	}
 
 
+	/**
+	 * @param array $records
+	 *
+	 * @return void
+	 */
+	protected function modifyRecords(array &$records) {
+	}
+
+
+	/**
+	 * @param Select $query
+	 *
+	 * @return bool
+	 */
 	protected function modifyListQuery(Select $query) {
 		return true;
 	}

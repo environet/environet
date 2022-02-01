@@ -159,7 +159,12 @@ abstract class AbstractInputXmlProcessor {
 
 			// Find monitoring point in database
 			if (!($mPoint = $this->findMonitoringPoint($monitoringPointId, $identity, true))) {
-				throw new UploadException(402);
+				$identityData = $identity->getData();
+				$messages = [
+					'Monitoring point NCD: ' .  $monitoringPointId,
+					'Username: ' . $identityData['username']
+				];
+				throw new UploadException(402, $messages);
 			}
 
 			// Find properties in xml, and update time series for all property
@@ -168,18 +173,29 @@ abstract class AbstractInputXmlProcessor {
 				// Get property's symbol
 				$propertySymbol = (string) $property->xpath('environet:PropertyId[1]')[0] ?? null;
 
+				$timeSeriesPoints = $property->xpath('environet:TimeSeries/environet:Point');
+
 				// Get the id of the property which will be returned only if the point can measure the property
 				if (!($propertyId = $this->getPropertyIdIfAllowed($mPoint['id'], $propertySymbol))) {
-					throw new UploadException(403);
+					$identityData = $identity->getData();
+					$messages = [
+						'Monitoring point NCD: ' . $monitoringPointId . ", Property symbol: " . $propertySymbol,
+						'Username: ' . $identityData['username']
+					];
+					throw new UploadException(403, $messages);
 				}
 
-				// Get the time series id, or create a new one, and update the result_time of time series
+				// Get the time series id, or create a new one
 				if (!($timeSeriesId = $this->getOrCreateTimeSeries($mPoint['id'], $propertyId, $now))) {
-					throw new UploadException(404);
+					$identityData = $identity->getData();
+					$messages = [
+						'Monitoring point NCD: ' . $monitoringPointId . ', Property symbol: ' . $propertySymbol,
+						'Username: ' . $identityData['username']
+					];
+					throw new UploadException(404, $messages);
 				}
 
 				// Insert results
-				$timeSeriesPoints = $property->xpath('environet:TimeSeries/environet:Point');
 				$this->insertResults($timeSeriesPoints, $timeSeriesId);
 				$this->getPointQueriesClass()::updatePropertyLastUpdate($mPoint['id'], $propertyId, $now);
 			}
@@ -256,6 +272,7 @@ abstract class AbstractInputXmlProcessor {
 			//Update min-max values of time series
 			$this->getPointQueriesClass()::updateTimeSeriesPropertyMinMax($timeSeriesId);
 			$this->getPointQueriesClass()::updateTimeSeriesPropertyPhenomenon($timeSeriesId);
+			$this->getPointQueriesClass()::updateTimeSeriesResultTime($timeSeriesId);
 		} catch (QueryException $e) {
 			throw UploadException::serverError();
 		}

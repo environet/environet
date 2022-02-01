@@ -32,6 +32,7 @@ class MeteoMonitoringPointQueries extends AbstractMonitoringPointQueries {
 		'meteopoint.country',
 		'meteopoint.name',
 		'meteopoint.location',
+        'meteopoint.ncd_pst', // national code listed in log files
 	];
 
 
