@@ -40,10 +40,10 @@ function getPaginatorParts(int $currentPage, int $maxPage) {
  *
  * @return string
  */
-function sortableColumn(string $label, string $name) {
+function sortableColumn(string $label, string $name, array $definedVars = []) {
 
-	$currentBy = getCurrentOrderBy();
-	$currentDir = getCurrentOrderDir();
+	$currentBy = $definedVars['orderByField'] ?? getCurrentOrderBy();
+	$currentDir = $definedVars['orderByDir'] ?? getCurrentOrderDir();
 
 	//Column is active, if the currentBy is the column's name
 	$active = ($currentDir && $currentBy === $name);
@@ -59,7 +59,7 @@ function sortableColumn(string $label, string $name) {
 	$markerClass = 'fas fa-sort';
 
 	if($active) {
-	    $markerClass = $currentDir === 'ASC' ?  'fas fa-sort-down' : 'fas fa-sort-up';
+	    $markerClass = $currentDir === 'ASC' ?  'fas fa-sort-up' : 'fas fa-sort-down';
     }
 
 	//Render HTML link
@@ -168,6 +168,9 @@ function selectOptions(array $options, $selected = null, string $emptyOption = n
 	} else {
 		$selected = (array) $selected;
 	}
+
+    // Sort options by value
+	asort($options);
 
 	$optionsHtml = [];
 	//Create empty option

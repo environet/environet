@@ -5,8 +5,10 @@ namespace Environet\Sys\Admin\Pages\MeasurementAccessRule;
 use Environet\Sys\Admin\Pages\CrudPage;
 use Environet\Sys\General\Db\GroupQueries;
 use Environet\Sys\General\Db\HydroMonitoringPointQueries;
+use Environet\Sys\General\Db\HydroObservedPropertyQueries;
 use Environet\Sys\General\Db\MeasurementAccessRuleQueries;
 use Environet\Sys\General\Db\MeteoMonitoringPointQueries;
+use Environet\Sys\General\Db\MeteoObservedPropertyQueries;
 use Environet\Sys\General\Db\OperatorQueries;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
@@ -121,7 +123,7 @@ class MeasurementAccessRuleCrud extends CrudPage {
 
 		$options = [
 			'operators' => OperatorQueries::getOptionList(),
-			'groups' => GroupQueries::getOptionList(),
+			'groups'    => GroupQueries::getOptionList(),
 		];
 
 		// If the form is loaded for a user with limited permissions, the selectable options for the "operator" must be limited to the ones they have access to
@@ -159,24 +161,29 @@ class MeasurementAccessRuleCrud extends CrudPage {
 			$meteoQuery->where('operatorid = :operatorid')->addParameter('operatorid', $operator);
 		}
 		if ($search) {
-			$hydroQuery->where('name LIKE %' . $search . '%');
-			$meteoQuery->where('name LIKE %' . $search . '%');
+			$hydroQuery->where("UPPER(name) LIKE UPPER('%$search%')");
+			$meteoQuery->where("UPPER(name) LIKE UPPER('%$search%')");
 		}
 		$meteoPoints = $meteoQuery->run();
 		$hydroPoints = $hydroQuery->run();
 		$results = [];
 		foreach ($hydroPoints as $hydroPoint) {
 			$results[] = [
-				'value' => $hydroPoint['id'],
-				'name'  => $hydroPoint['name']
+				'value' => 'hydro_' . $hydroPoint['id'],
+				'name'  => $hydroPoint['name'] . ' (HYDRO)'
 			];
 		}
 		foreach ($meteoPoints as $meteoPoint) {
 			$results[] = [
-				'value' => $meteoPoint['id'],
-				'name'  => $meteoPoint['name']
+				'value' => 'meteo_' . $meteoPoint['id'],
+				'name'  => $meteoPoint['name'] . ' (METEO)'
 			];
 		}
+
+		// Sort points by name
+		usort($results, function ($a, $b) {
+			return strcasecmp($a['name'], $b['name']);
+		});
 
 		return new Response(json_encode($results));
 	}
@@ -189,34 +196,83 @@ class MeasurementAccessRuleCrud extends CrudPage {
 	 * @throws QueryException
 	 */
 	public function operatorProperties() {
+		$type = $_GET['type'] ?: false;
 		$operator = trim($this->request->getQueryParam('operator'));
-		$hydroQuery = (new Select())->select(['DISTINCT(symbol)', 'hydro_observed_property.id'])->from('hydro_observed_property')
-									->join('hydropoint_observed_property', 'hydropoint_observed_property.observed_propertyid = hydro_observed_property.id')
-									->join('hydropoint', 'hydropoint.id = hydropoint_observed_property.mpointid');
-		$meteoQuery = (new Select())->select(['DISTINCT(symbol)', 'meteo_observed_property.id'])->from('meteo_observed_property')
-									->join('meteopoint_observed_property', 'meteopoint_observed_property.observed_propertyid = meteo_observed_property.id')
-									->join('meteopoint', 'meteopoint.id = meteopoint_observed_property.mpointid');
-		if ($operator) {
-			$hydroQuery->where('hydropoint.operatorid = :operatorid')->addParameter('operatorid', $operator);
-			$meteoQuery->where('meteopoint.operatorid = :operatorid')->addParameter('operatorid', $operator);
-		}
-		$meteoProperties = $meteoQuery->run();
-		$hydroProperties = $hydroQuery->run();
+
 		$results = [];
-		foreach ($hydroProperties as $hydroProperty) {
-			$results[] = [
-				'value' => $hydroProperty['id'],
-				'name'  => $hydroProperty['symbol']
-			];
-		}
-		foreach ($meteoProperties as $meteoProperty) {
-			$results[] = [
-				'value' => $meteoProperty['id'],
-				'name'  => $meteoProperty['symbol']
-			];
+
+		if ($type === false || $type === 'hydro') {
+			$hydroQuery = (new Select())->select(['DISTINCT(symbol)', 'hydro_observed_property.id'])->from('hydro_observed_property')
+				->join('hydropoint_observed_property', 'hydropoint_observed_property.observed_propertyid = hydro_observed_property.id')
+				->join('hydropoint', 'hydropoint.id = hydropoint_observed_property.mpointid');
+			if ($operator) {
+				$hydroQuery->where('hydropoint.operatorid = :operatorid')->addParameter('operatorid', $operator);
+			}
+			$hydroProperties = $hydroQuery->run();
+			foreach ($hydroProperties as $hydroProperty) {
+				$results[] = [
+					'value' => 'hydro_' . $hydroProperty['id'],
+					'name'  => $hydroProperty['symbol']
+				];
+			}
 		}
 
+		if ($type === false || $type === 'meteo') {
+			$meteoQuery = (new Select())->select(['DISTINCT(symbol)', 'meteo_observed_property.id'])->from('meteo_observed_property')
+				->join('meteopoint_observed_property', 'meteopoint_observed_property.observed_propertyid = meteo_observed_property.id')
+				->join('meteopoint', 'meteopoint.id = meteopoint_observed_property.mpointid');
+			if ($operator) {
+				$meteoQuery->where('meteopoint.operatorid = :operatorid')->addParameter('operatorid', $operator);
+			}
+			$meteoProperties = $meteoQuery->run();
+			foreach ($meteoProperties as $meteoProperty) {
+				$results[] = [
+					'value' => 'meteo_' . $meteoProperty['id'],
+					'name'  => $meteoProperty['symbol']
+				];
+			}
+		}
+
+		// Sort properties by symbol
+		usort($results, function ($a, $b) {
+			return strcasecmp($a['name'], $b['name']);
+		});
+
 		return new Response(json_encode($results));
+	}
+
+
+	/**
+	 * Update points and properties, show the values instead of ids
+	 *
+	 * @param array $records
+	 */
+	protected function modifyRecords(array &$records) {
+		$hydroPoints = HydroMonitoringPointQueries::getOptionList();
+		$meteoPoints = MeteoMonitoringPointQueries::getOptionList();
+		$hydroProperties = HydroObservedPropertyQueries::getOptionList('symbol');
+		$meteoProperties = MeteoObservedPropertyQueries::getOptionList('symbol');
+
+		foreach ($records as &$record) {
+			if (!empty($record['monitoringpoint_selector']) && $record['monitoringpoint_selector'] !== '*') {
+				$record['monitoringpoint_selector'] = implode(', ', array_map(function ($item) use ($hydroPoints, $meteoPoints) {
+					if (preg_match('/^(meteo|hydro)_(.*)$/', $item, $m)) {
+						return ${$m[1] . 'Points'}[$m[2]] ?? $item;
+					} else {
+						return $hydroPoints[$item] ?? $item;
+					}
+				}, explode(',', $record['monitoringpoint_selector'])));
+			}
+			if (!empty($record['observed_property_selector']) && $record['observed_property_selector'] !== '*') {
+				$record['observed_property_selector'] = implode(', ', array_map(function ($item) use ($hydroProperties, $meteoProperties) {
+					if (preg_match('/^(meteo|hydro)_(.*)$/', $item, $m)) {
+						return ${$m[1] . 'Properties'}[$m[2]] ?? $item;
+					} else {
+						return $hydroPoints[$item] ?? $item;
+					}
+				}, explode(',', $record['observed_property_selector'])));
+			}
+		}
 	}
 
 

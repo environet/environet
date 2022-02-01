@@ -45,7 +45,14 @@ abstract class MonitoringPointResultsCrud extends CrudPage {
 
 
 	/**
-	 * List page action for hydropoint measurement results.
+	 * Add addition custom fields for search
+	 * @return array
+	 */
+	abstract protected function getSearchFields(): array;
+
+
+	/**
+	 * List page action for hydropoint and meteopoint measurement results.
 	 *
 	 * @return Response
 	 * @throws RenderException
@@ -56,9 +63,13 @@ abstract class MonitoringPointResultsCrud extends CrudPage {
 			$query = $this->getBaseQuery();
 
 			if (($searchString = $this->request->getQueryParam('search'))) {
+				// Add addition custom fields for search
+				$additionalSearchFields = array_map(function ($field) {
+					return "p.$field";
+				}, $this->getSearchFields());
 				$query->search(
 					explode(' ', urldecode($searchString)),
-					['p.name', 'op.symbol']
+					array_merge(['p.name'], $additionalSearchFields)
 				);
 			}
 
@@ -90,14 +101,14 @@ abstract class MonitoringPointResultsCrud extends CrudPage {
 
 			//Add order by query condition
 			$query->clearOrderBy();
-			$query->sort(
-				$this->request->getQueryParam('order_by'),
-				$this->request->getQueryParam('order_dir', 'ASC')
-			);
+			$orderByField = $this->request->getQueryParam('order_by', 'r.time');
+			$orderByDir = $this->request->getQueryParam('order_dir', 'DESC');
+			$query->sort($orderByField, $orderByDir);
 
 			//Run query
 			$results = $query->run();
 		} catch (QueryException $exception) {
+			$orderByField = $orderByDir = null;
 			$results = [];
 		}
 
@@ -109,7 +120,18 @@ abstract class MonitoringPointResultsCrud extends CrudPage {
 		$listFilters = $this->getListFilters();
 		$pageTitle = $this->getTitle(self::PAGE_LIST);
 
-		return $this->render($this->getTemplate(), compact('results', 'totalCount', 'currentPage', 'maxPage', 'searchString', 'listFilters', 'precision', 'pageTitle'));
+		return $this->render($this->getTemplate(), compact(
+			'results',
+			'totalCount',
+			'currentPage',
+			'maxPage',
+			'searchString',
+			'listFilters',
+			'precision',
+			'pageTitle',
+			'orderByField',
+			'orderByDir'
+		));
 	}
 
 

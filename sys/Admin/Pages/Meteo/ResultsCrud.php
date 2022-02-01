@@ -42,8 +42,8 @@ class ResultsCrud extends MonitoringPointResultsCrud {
 				'op.symbol',
 				'r.value',
 				'r.time',
-                'r.is_forecast',
-                'r.is_obsolete',
+				'r.is_forecast',
+				'r.is_obsolete',
 				'r.created_at',
 				'ts.phenomenon_time_begin',
 				'ts.phenomenon_time_end',
@@ -69,7 +69,7 @@ class ResultsCrud extends MonitoringPointResultsCrud {
 			->select('DISTINCT(country)')
 			->from('meteopoint')
 			->orderBy('country', 'ASC')
-			->run(Query::FETCH_COLUMN));
+		->run(Query::FETCH_COLUMN));
 	}
 
 
@@ -82,7 +82,15 @@ class ResultsCrud extends MonitoringPointResultsCrud {
 			->select(['id', 'symbol as label'])
 			->from('meteo_observed_property')
 			->orderBy('symbol', 'ASC')
-			->run());
+		->run());
+	}
+
+
+	/**
+	 * @return string[]
+	 */
+	protected function getSearchFields(): array {
+		return ['ncd_pst'];
 	}
 
 

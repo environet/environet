@@ -1089,11 +1089,11 @@ To stop and start them manually, you may run <code>./environet data up</code> or
 <p>To get the latest version, simply run <code>git pull</code> in the repository folder.</p>
 <p>Depending on the git version it can be possible to run the following command to update the submodule (src folder) too: <code>git submodule update --init --recursive --remote</code></p>
 <h2 id="linux-with-ufw-security-settings">Linux with UFW security settings</h2>
-<p>If the nodes are hosted on a linux system, which using UFW firewall, there are some additional steps to make it secure, and do not open unneccessary ports. The recommended solution is to make some modification on UFW rules. The description of the compatibility problem, and the solution can be found here: <a href="https://github.com/chaifeng/ufw-docker" class="uri">https://github.com/chaifeng/ufw-docker</a></p>
+<p>If the nodes are hosted on a linux system, which using UFW firewall, there are some additional steps to make it secure, and do not open unneccessary ports. The recommended solution is to make some modification on UFW rules. The description of the compatibility problem, and the solution can be found here: <a href="https://github.com/chaifeng/ufw-docker">https://github.com/chaifeng/ufw-docker</a></p>
 <p><a name="20_distribution_node"></a></p>
 <h1 id="distribution-node">Distribution node</h1>
 <h2 id="overview">Overview</h2>
-<p>A Distribution node, in it’s minimal form, is a service aspect that’s able to maintain the central database and service API requests. In the first phase the domain of the distribution node is: <a href="https://environet.environ.hu" class="uri">https://environet.environ.hu</a></p>
+<p>A Distribution node, in it’s minimal form, is a service aspect that’s able to maintain the central database and service API requests. In the first phase the domain of the distribution node is: <a href="https://environet.environ.hu">https://environet.environ.hu</a></p>
 <h2 id="central-database">Central database</h2>
 <p>The distribution node has a database backend. It contains: * Data and configuration of hydro and meteo points * Measurement data tables of these monitoring points * User and access (ACL) tables (users, groups, permissions) * System runtime data</p>
 <p>Schema of the database can be found here: <a href="#21_database_structure">Database structure</a></p>
@@ -1109,13 +1109,11 @@ The detailed documentation of this endpoint can found here: <a href="#22_api_upl
 The detailed documentation of this endpoint can found here: <a href="#23_api_download">Download API documentation</a></p>
 <p><a name="21_setup"></a></p>
 <h1 id="setup-1">Setup</h1>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>Install the environet project. Refer to <a href="#11_setup">Setup</a>.</p></li>
-<li><p>Create the .env file in the root folder, with copying the .env.example.minimal file. This file contains the mandatory properties for the successful install.</p></li>
-</ol>
+<li><p>Create the .env file in the root folder, with copying the .env.example.minimal file. This file contains the mandatory properties for the successful install.</p>
 <p><code>cp .env.example.minimal .env</code></p>
-<p>Before next command it is possible the customize the database name, database username, and database password in the new .env file.</p>
-<ol start="3" style="list-style-type: decimal">
+<p>Before next command it is possible the customize the database name, database username, and database password in the new .env file.</p></li>
 <li><p>Create a distribution node configuration <code>./environet dist install</code></p></li>
 <li><p>Initialize database, and create admin user <code>./environet dist database init</code></p></li>
 </ol>
@@ -1130,10 +1128,9 @@ The detailed documentation of this endpoint can found here: <a href="#23_api_dow
 <li>Version compatibility: 12+</li>
 </ul>
 <h2 id="schema-diagram">Schema diagram</h2>
-<div class="figure">
-<img src="resources/model.jpg" alt="Schema diagram images" />
-<p class="caption">Schema diagram images</p>
-</div>
+<figure>
+<img src="resources/model.jpg" alt="" /><figcaption>Schema diagram images</figcaption>
+</figure>
 <h2 id="schema-sql-structure">Schema sql structure</h2>
 <p><a href="resources/schema.sql">Link to sql file</a></p>
 <p><a name="23_api_upload"></a></p>
@@ -1164,12 +1161,12 @@ The detailed documentation of this endpoint can found here: <a href="#23_api_dow
 </tbody>
 </table>
 <h3 id="signature-header">Signature header:</h3>
-<p>The pattern of the header: <code>Signature keyId=&quot;[username]&quot;,algorithm=&quot;rsa-sha256&quot;,signature=&quot;[signature]&quot;</code></p>
-<p>The <code>keyId</code> is the username of the uploader user. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user's private key from the from the body of the response, which is the XML data.</p>
+<p>The pattern of the header: <code>Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"</code></p>
+<p>The <code>keyId</code> is the username of the uploader user. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the from the body of the response, which is the XML data.</p>
 <hr />
 <h2 id="body">Body</h2>
 <p>The body of the response is the XML data.<br />
-The xml must be valid agains the environet's upload api schema: <a href="resources/environet.xsd">environet.xsd</a><br />
+The xml must be valid agains the environet’s upload api schema: <a href="resources/environet.xsd">environet.xsd</a><br />
 The public url of this schema is: <code>https://distribution-node.com/schemas/environet.xsd</code></p>
 <p>Sample input XML:</p>
 <pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
@@ -1204,19 +1201,19 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </ul>
 <h3 id="invalid-request">Invalid request</h3>
 <ul>
-<li><strong>Status code</strong>: 400</li>
-<li><strong>Content-type</strong>: application/xml</li>
-<li><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></li>
-<li><strong>Description</strong>: Input or processing error during the upload process. The reponse in an error xml which is valid agains environet' upload api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
+<li><p><strong>Status code</strong>: 400</p></li>
+<li><p><strong>Content-type</strong>: application/xml</p></li>
+<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
+<li><p><strong>Description</strong>: Input or processing error during the upload process. The reponse in an error xml which is valid agains environet’ upload api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span>
-<span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span>
-    <span class="kw">&lt;environet:Error&gt;</span>
-        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span>
-        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span>
-    <span class="kw">&lt;/environet:Error&gt;</span>
-<span class="kw">&lt;/environet:ErrorResponse&gt;</span></code></pre></div></li>
-<li><strong>Error codes</strong>
+<div class="sourceCode" id="cb2"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
+<li><p><strong>Error codes</strong></p>
 <ul>
 <li><code>101</code>: Unknown error</li>
 <li><code>102</code>: Server error</li>
@@ -1237,18 +1234,18 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </ul>
 <h3 id="server-error">Server error</h3>
 <ul>
-<li><strong>Status code</strong>: 500</li>
-<li><strong>Content-type</strong>: application/xml</li>
-<li><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></li>
-<li><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet's upload api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
+<li><p><strong>Status code</strong>: 500</p></li>
+<li><p><strong>Content-type</strong>: application/xml</p></li>
+<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
+<li><p><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet’s upload api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span>
-<span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span>
-    <span class="kw">&lt;environet:Error&gt;</span>
-        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span>
-        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span>
-    <span class="kw">&lt;/environet:Error&gt;</span>
-<span class="kw">&lt;/environet:ErrorResponse&gt;</span></code></pre></div></li>
+<div class="sourceCode" id="cb3"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
 </ul>
 <p><a name="24_api_download"></a></p>
 <h1 id="download-api-documentation">Download API documentation</h1>
@@ -1284,8 +1281,8 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </tbody>
 </table>
 <h3 id="signature-header-1">Signature header:</h3>
-<p>The pattern of the header: <code>Signature keyId=&quot;[username]&quot;,algorithm=&quot;rsa-sha256&quot;,signature=&quot;[signature]&quot;</code></p>
-<p>The <code>keyId</code> is the username of the user who wants to query data. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user's private key from the token in the query parameters.</p>
+<p>The pattern of the header: <code>Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"</code></p>
+<p>The <code>keyId</code> is the username of the user who wants to query data. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the token in the query parameters.</p>
 <h2 id="repsonses-1">Repsonses</h2>
 <h3 id="success-1">Success</h3>
 <ul>
@@ -1296,19 +1293,19 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </ul>
 <h3 id="invalid-request-1">Invalid request</h3>
 <ul>
-<li><strong>Status code</strong>: 400</li>
-<li><strong>Content-type</strong>: application/xml</li>
-<li><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></li>
-<li><strong>Description</strong>: The query request is invalid. The response is an xml which is valid agains environet's api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
+<li><p><strong>Status code</strong>: 400</p></li>
+<li><p><strong>Content-type</strong>: application/xml</p></li>
+<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
+<li><p><strong>Description</strong>: The query request is invalid. The response is an xml which is valid agains environet’s api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span>
-<span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span>
-    <span class="kw">&lt;environet:Error&gt;</span>
-        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span>
-        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span>
-    <span class="kw">&lt;/environet:Error&gt;</span>
-<span class="kw">&lt;/environet:ErrorResponse&gt;</span></code></pre></div></li>
-<li><strong>Error codes</strong>
+<div class="sourceCode" id="cb4"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
+<li><p><strong>Error codes</strong></p>
 <ul>
 <li><code>101</code>: Unknown error</li>
 <li><code>102</code>: Server error</li>
@@ -1328,18 +1325,18 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </ul>
 <h3 id="server-error-1">Server error</h3>
 <ul>
-<li><strong>Status code</strong>: 500</li>
-<li><strong>Content-type</strong>: application/xml</li>
-<li><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></li>
-<li><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet's api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
+<li><p><strong>Status code</strong>: 500</p></li>
+<li><p><strong>Content-type</strong>: application/xml</p></li>
+<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
+<li><p><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet’s api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span>
-<span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span>
-    <span class="kw">&lt;environet:Error&gt;</span>
-        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span>
-        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span>
-    <span class="kw">&lt;/environet:Error&gt;</span>
-<span class="kw">&lt;/environet:ErrorResponse&gt;</span></code></pre></div></li>
+<div class="sourceCode" id="cb5"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
 </ul>
 <p><a name="24_api_monitoring_points"></a></p>
 <h1 id="monitoring-points-api-documentation">Monitoring points API documentation</h1>
@@ -1369,111 +1366,111 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </tbody>
 </table>
 <h3 id="signature-header-2">Signature header:</h3>
-<p>The pattern of the header: <code>Signature keyId=&quot;[username]&quot;,algorithm=&quot;rsa-sha256&quot;,signature=&quot;[signature]&quot;</code></p>
-<p>The <code>keyId</code> is the username of the user who wants to query data. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user's private key from the token in the query parameters.</p>
+<p>The pattern of the header: <code>Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"</code></p>
+<p>The <code>keyId</code> is the username of the user who wants to query data. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the token in the query parameters.</p>
 <h2 id="repsonses-2">Repsonses</h2>
 <h3 id="success-2">Success</h3>
 <ul>
-<li><strong>Status code</strong>: 200</li>
-<li><strong>Content-type</strong>: application/json</li>
-<li><strong>Body</strong>: <code>JSON</code></li>
-<li><strong>Description</strong>: Request is OK, list the hydro and meteo points of user</li>
+<li><p><strong>Status code</strong>: 200</p></li>
+<li><p><strong>Content-type</strong>: application/json</p></li>
+<li><p><strong>Body</strong>: <code>JSON</code></p></li>
+<li><p><strong>Description</strong>: Request is OK, list the hydro and meteo points of user</p></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json"><span class="fu">{</span>
-    <span class="dt">&quot;hydro&quot;</span><span class="fu">:</span> <span class="ot">[</span>
-        <span class="fu">{</span>
-            <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span>
-            <span class="dt">&quot;station_classificationid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span>
-            <span class="dt">&quot;operatorid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span>
-            <span class="dt">&quot;bankid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span>
-            <span class="dt">&quot;eucd_riv&quot;</span><span class="fu">:</span> <span class="st">&quot;river&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;eucd_wgst&quot;</span><span class="fu">:</span> <span class="st">&quot;ABC123&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;ncd_wgst&quot;</span><span class="fu">:</span> <span class="st">&quot;ABC123&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;vertical_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;Vertical reference&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;long&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;lat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;z&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;maplong&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;maplat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;country&quot;</span><span class="fu">:</span> <span class="st">&quot;CountryCode&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;MPoint&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;location&quot;</span><span class="fu">:</span> <span class="st">&quot;Location&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;river_kilometer&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;catchment_area&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;gauge_zero&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;start_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-01-01 00:00:00&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;end_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-05-01 00:00:00&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;utc_offset&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span>
-            <span class="dt">&quot;river_basin&quot;</span><span class="fu">:</span> <span class="st">&quot;Basin&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;observed_properties&quot;</span><span class="fu">:</span> <span class="ot">[</span>
-                <span class="st">&quot;hydro_property&quot;</span>
-            <span class="ot">]</span>
-        <span class="fu">}</span>
-    <span class="ot">]</span><span class="fu">,</span>
-    <span class="dt">&quot;meteo&quot;</span><span class="fu">:</span> <span class="ot">[</span>
-        <span class="fu">{</span>
-            <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span>
-            <span class="dt">&quot;meteostation_classificationid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span>
-            <span class="dt">&quot;operatorid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span>
-            <span class="dt">&quot;eucd_pst&quot;</span><span class="fu">:</span> <span class="st">&quot;DEF456&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;ncd_pst&quot;</span><span class="fu">:</span> <span class="st">&quot;DEF456&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;vertical_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;Vertical reference&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;long&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;lat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;z&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;maplong&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;maplat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;country&quot;</span><span class="fu">:</span> <span class="st">&quot;CountryCode&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Name&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;location&quot;</span><span class="fu">:</span> <span class="st">&quot;Location&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;altitude&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;start_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-01-01 00:00:00&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;end_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-05-01 00:00:00&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;utc_offset&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span>
-            <span class="dt">&quot;river_basin&quot;</span><span class="fu">:</span> <span class="st">&quot;Basin&quot;</span><span class="fu">,</span>
-            <span class="dt">&quot;observed_properties&quot;</span><span class="fu">:</span> <span class="ot">[</span>
-                <span class="st">&quot;meteo_property&quot;</span>
-            <span class="ot">]</span>
-        <span class="fu">}</span>
-    <span class="ot">]</span>
-<span class="fu">}</span></code></pre></div></li>
+<div class="sourceCode" id="cb6"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>    <span class="dt">&quot;hydro&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>        <span class="fu">{</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>            <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a>            <span class="dt">&quot;station_classificationid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a>            <span class="dt">&quot;operatorid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a>            <span class="dt">&quot;bankid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>            <span class="dt">&quot;eucd_riv&quot;</span><span class="fu">:</span> <span class="st">&quot;river&quot;</span><span class="fu">,</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a>            <span class="dt">&quot;eucd_wgst&quot;</span><span class="fu">:</span> <span class="st">&quot;ABC123&quot;</span><span class="fu">,</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a>            <span class="dt">&quot;ncd_wgst&quot;</span><span class="fu">:</span> <span class="st">&quot;ABC123&quot;</span><span class="fu">,</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a>            <span class="dt">&quot;vertical_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;Vertical reference&quot;</span><span class="fu">,</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a>            <span class="dt">&quot;long&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a>            <span class="dt">&quot;lat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a>            <span class="dt">&quot;z&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a>            <span class="dt">&quot;maplong&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a>            <span class="dt">&quot;maplat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-17"><a href="#cb6-17"></a>            <span class="dt">&quot;country&quot;</span><span class="fu">:</span> <span class="st">&quot;CountryCode&quot;</span><span class="fu">,</span></span>
+<span id="cb6-18"><a href="#cb6-18"></a>            <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;MPoint&quot;</span><span class="fu">,</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a>            <span class="dt">&quot;location&quot;</span><span class="fu">:</span> <span class="st">&quot;Location&quot;</span><span class="fu">,</span></span>
+<span id="cb6-20"><a href="#cb6-20"></a>            <span class="dt">&quot;river_kilometer&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-21"><a href="#cb6-21"></a>            <span class="dt">&quot;catchment_area&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-22"><a href="#cb6-22"></a>            <span class="dt">&quot;gauge_zero&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-23"><a href="#cb6-23"></a>            <span class="dt">&quot;start_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-01-01 00:00:00&quot;</span><span class="fu">,</span></span>
+<span id="cb6-24"><a href="#cb6-24"></a>            <span class="dt">&quot;end_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-05-01 00:00:00&quot;</span><span class="fu">,</span></span>
+<span id="cb6-25"><a href="#cb6-25"></a>            <span class="dt">&quot;utc_offset&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb6-26"><a href="#cb6-26"></a>            <span class="dt">&quot;river_basin&quot;</span><span class="fu">:</span> <span class="st">&quot;Basin&quot;</span><span class="fu">,</span></span>
+<span id="cb6-27"><a href="#cb6-27"></a>            <span class="dt">&quot;observed_properties&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-28"><a href="#cb6-28"></a>                <span class="st">&quot;hydro_property&quot;</span></span>
+<span id="cb6-29"><a href="#cb6-29"></a>            <span class="ot">]</span></span>
+<span id="cb6-30"><a href="#cb6-30"></a>        <span class="fu">}</span></span>
+<span id="cb6-31"><a href="#cb6-31"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb6-32"><a href="#cb6-32"></a>    <span class="dt">&quot;meteo&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-33"><a href="#cb6-33"></a>        <span class="fu">{</span></span>
+<span id="cb6-34"><a href="#cb6-34"></a>            <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb6-35"><a href="#cb6-35"></a>            <span class="dt">&quot;meteostation_classificationid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb6-36"><a href="#cb6-36"></a>            <span class="dt">&quot;operatorid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb6-37"><a href="#cb6-37"></a>            <span class="dt">&quot;eucd_pst&quot;</span><span class="fu">:</span> <span class="st">&quot;DEF456&quot;</span><span class="fu">,</span></span>
+<span id="cb6-38"><a href="#cb6-38"></a>            <span class="dt">&quot;ncd_pst&quot;</span><span class="fu">:</span> <span class="st">&quot;DEF456&quot;</span><span class="fu">,</span></span>
+<span id="cb6-39"><a href="#cb6-39"></a>            <span class="dt">&quot;vertical_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;Vertical reference&quot;</span><span class="fu">,</span></span>
+<span id="cb6-40"><a href="#cb6-40"></a>            <span class="dt">&quot;long&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-41"><a href="#cb6-41"></a>            <span class="dt">&quot;lat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-42"><a href="#cb6-42"></a>            <span class="dt">&quot;z&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-43"><a href="#cb6-43"></a>            <span class="dt">&quot;maplong&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-44"><a href="#cb6-44"></a>            <span class="dt">&quot;maplat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-45"><a href="#cb6-45"></a>            <span class="dt">&quot;country&quot;</span><span class="fu">:</span> <span class="st">&quot;CountryCode&quot;</span><span class="fu">,</span></span>
+<span id="cb6-46"><a href="#cb6-46"></a>            <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Name&quot;</span><span class="fu">,</span></span>
+<span id="cb6-47"><a href="#cb6-47"></a>            <span class="dt">&quot;location&quot;</span><span class="fu">:</span> <span class="st">&quot;Location&quot;</span><span class="fu">,</span></span>
+<span id="cb6-48"><a href="#cb6-48"></a>            <span class="dt">&quot;altitude&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
+<span id="cb6-49"><a href="#cb6-49"></a>            <span class="dt">&quot;start_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-01-01 00:00:00&quot;</span><span class="fu">,</span></span>
+<span id="cb6-50"><a href="#cb6-50"></a>            <span class="dt">&quot;end_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-05-01 00:00:00&quot;</span><span class="fu">,</span></span>
+<span id="cb6-51"><a href="#cb6-51"></a>            <span class="dt">&quot;utc_offset&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb6-52"><a href="#cb6-52"></a>            <span class="dt">&quot;river_basin&quot;</span><span class="fu">:</span> <span class="st">&quot;Basin&quot;</span><span class="fu">,</span></span>
+<span id="cb6-53"><a href="#cb6-53"></a>            <span class="dt">&quot;observed_properties&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-54"><a href="#cb6-54"></a>                <span class="st">&quot;meteo_property&quot;</span></span>
+<span id="cb6-55"><a href="#cb6-55"></a>            <span class="ot">]</span></span>
+<span id="cb6-56"><a href="#cb6-56"></a>        <span class="fu">}</span></span>
+<span id="cb6-57"><a href="#cb6-57"></a>    <span class="ot">]</span></span>
+<span id="cb6-58"><a href="#cb6-58"></a><span class="fu">}</span></span></code></pre></div></li>
 </ul>
 <h3 id="invalid-request-2">Invalid request</h3>
 <ul>
-<li><strong>Status code</strong>: 400</li>
-<li><strong>Content-type</strong>: application/json</li>
-<li><strong>Body</strong>: <code>JSON</code></li>
-<li><strong>Description</strong>: The query request is invalid. The response is a json object with the error message, under error key.</li>
+<li><p><strong>Status code</strong>: 400</p></li>
+<li><p><strong>Content-type</strong>: application/json</p></li>
+<li><p><strong>Body</strong>: <code>JSON</code></p></li>
+<li><p><strong>Description</strong>: The query request is invalid. The response is a json object with the error message, under error key.</p></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json"><span class="fu">{</span>
- <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Error message&quot;</span>
-<span class="fu">}</span></code></pre></div></li>
+<div class="sourceCode" id="cb7"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">{</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Error message&quot;</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="fu">}</span></span></code></pre></div></li>
 </ul>
 <h3 id="server-error-2">Server error</h3>
 <ul>
-<li><strong>Status code</strong>: 500</li>
-<li><strong>Content-type</strong>: application/json</li>
-<li><strong>Body</strong>: <code>JSON</code></li>
-<li><strong>Description</strong>: Unidentified error during request. The response is a json object with the error message, under error key.</li>
+<li><p><strong>Status code</strong>: 500</p></li>
+<li><p><strong>Content-type</strong>: application/json</p></li>
+<li><p><strong>Body</strong>: <code>JSON</code></p></li>
+<li><p><strong>Description</strong>: Unidentified error during request. The response is a json object with the error message, under error key.</p></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json"><span class="fu">{</span>
- <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Error message&quot;</span>
-<span class="fu">}</span></code></pre></div></li>
+<div class="sourceCode" id="cb8"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1"></a><span class="fu">{</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Error message&quot;</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="fu">}</span></span></code></pre></div></li>
 </ul>
 <p><a name="25_0_admin_user_manual"></a></p>
 <h1 id="admin-user-manual">Admin user manual</h1>
-<p>This document's goals to represents the different parts of the administration area to help to understand how it works. Help you to see through how works the specified relationships and how you can handle them.</p>
+<p>This document’s goals to represents the different parts of the administration area to help to understand how it works. Help you to see through how works the specified relationships and how you can handle them.</p>
 <p><a name="25_10_upload_data"></a></p>
 <h2 id="upload-missing-and-processed-data">Upload missing and processed data</h2>
 <p>Upload missing data: <code>/admin/missing-data</code></p>
 <p>Upload processed data: <code>/admin/processed-data</code></p>
 <h3 id="concept-of-the-rules">Concept of the rules</h3>
-<p>The two pages &quot;Upload missing data&quot; and &quot;Upload processed data&quot; are similar in functionality.</p>
+<p>The two pages “Upload missing data” and “Upload processed data” are similar in functionality.</p>
 <p>On both pages you can upload multiple CSV files in a pre-defined format to upload missing or processed data for a monitoring point. A file contains data for a single monitoring point with multiple properties and data. The sample csv format is downloadable on the pages. A user can upload data only for allowed monitoring point, if the user is not a super administrator. This uploader in the background will call the standard <a href="#23_api_upload">upload api</a>, so all validation of this endpoint will work on this uploader too.</p>
 <p>The error/success messages will be separated per file, so if a file is invalid, you have to fix and upload only that file.</p>
 <p><a name="25_1_admin_general"></a></p>
 <h2 id="general-information">General information</h2>
-<p>Good to know, that on each list page, there are on the top right a search field. In the following each sections you can see a &quot;searchable&quot; part, where you can find in what kind of fields can the system search on the specified page.</p>
+<p>Good to know, that on each list page, there are on the top right a search field. In the following each sections you can see a “searchable” part, where you can find in what kind of fields can the system search on the specified page.</p>
 <p><a name="25_2_auth"></a></p>
 <h2 id="auth-pages">Auth pages</h2>
 <h4 id="login-page">Login page</h4>
@@ -1494,17 +1491,17 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>All of them are listed in the users grid.</p>
 <p>Each user, except the user type users have to have public key attached to themselves, because of they are communicate on API channel and it necessary to their authentication.</p>
 <h4 id="new-user">New user</h4>
-<p>You can add new user if you click the &quot;Add user&quot; button on the top left of the users list page.</p>
+<p>You can add new user if you click the “Add user” button on the top left of the users list page.</p>
 <p>Path: <code>/admin/users/add</code></p>
-<p>On the user's creating page, you have to fill the following mandatory fields: - name - email - it must be unique - username - it must be unique - permission or group</p>
-<p>The public key field is necessary only if we want to create a client or distrubition node user. In other case if you would like to create a &quot;system manager&quot; user, you have to fill to password field instead of public key.</p>
-<p>If you wouldn't like to assign a specified permission to the user, you must assign the user to a group, they will inherits the group's permissions.</p>
+<p>On the user’s creating page, you have to fill the following mandatory fields: - name - email - it must be unique - username - it must be unique - permission or group</p>
+<p>The public key field is necessary only if we want to create a client or distrubition node user. In other case if you would like to create a “system manager” user, you have to fill to password field instead of public key.</p>
+<p>If you wouldn’t like to assign a specified permission to the user, you must assign the user to a group, they will inherits the group’s permissions.</p>
 <h4 id="updating-user">Updating user</h4>
-<p>You can select a user to update if you click the &quot;Pencil&quot; icon at the end of the specific row.</p>
+<p>You can select a user to update if you click the “Pencil” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/users/edit?id=[user identifier]</code></p>
 <p>You can update all user datas that you gave on the creating page except the username field.</p>
 <h4 id="user-deleting">User deleting</h4>
-<p>You can delete a user if you click the &quot;Trash&quot; icon at the end of the specific row. If you clicked, it shows a confirm window, where you have to approve the deleting. In fact the deleted user will never physically deleted, we have to keep its datas by security reasons.</p>
+<p>You can delete a user if you click the “Trash” icon at the end of the specific row. If you clicked, it shows a confirm window, where you have to approve the deleting. In fact the deleted user will never physically deleted, we have to keep its datas by security reasons.</p>
 <p>Path: <code>/admin/users/delete?id=[user identifier]</code></p>
 <p><a name="25_5_groups"></a></p>
 <h2 id="groups">Groups</h2>
@@ -1512,15 +1509,15 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>Path: <code>/admin/groups</code></p>
 <p>Searchable: name</p>
 <h4 id="new-group">New group</h4>
-<p>You can add new group if you click the &quot;Add group&quot; button on the top left of the group list page.</p>
+<p>You can add new group if you click the “Add group” button on the top left of the group list page.</p>
 <p>Path: <code>/admin/groups/add</code></p>
-<p>On the group's creating page you have to fill the name of the group and you have to assign permission to the specified group. On the creating page, you can assign only one permission, but later you have possibility to add more of it.</p>
+<p>On the group’s creating page you have to fill the name of the group and you have to assign permission to the specified group. On the creating page, you can assign only one permission, but later you have possibility to add more of it.</p>
 <h4 id="updating-group">Updating group</h4>
-<p>You can select a group to update if you click the &quot;Pencil&quot; icon at the end of the specific row.</p>
+<p>You can select a group to update if you click the “Pencil” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/groups/edit?id=[group identifier]</code></p>
 <p>Here you can change the name of the group and you can assign more permission to it.</p>
 <h4 id="group-deleting">Group deleting</h4>
-<p>You can delete a group if you click the &quot;Trash&quot; icon at the end of the specific row. If you clicked, it shows a confirm window, where you have to approve the deleting. <strong>If any user or operator have already assigned to the specified group, the delete operation cannot be performed.</strong> First time you have to detach these relations and after that you can delete the group.</p>
+<p>You can delete a group if you click the “Trash” icon at the end of the specific row. If you clicked, it shows a confirm window, where you have to approve the deleting. <strong>If any user or operator have already assigned to the specified group, the delete operation cannot be performed.</strong> First time you have to detach these relations and after that you can delete the group.</p>
 <p>Path: <code>/admin/groups/delete?id=[group identifier]</code></p>
 <p><a name="25_6_operators"></a></p>
 <h2 id="operators">Operators</h2>
@@ -1528,18 +1525,18 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>Path: <code>/admin/operators</code></p>
 <p>Searchable: name, address, email</p>
 <h4 id="new-operator">New operator</h4>
-<p>You can add new operator if you click the &quot;Add operator&quot; button on the top left of the operator's list page.</p>
+<p>You can add new operator if you click the “Add operator” button on the top left of the operator’s list page.</p>
 <p>Path: <code>/admin/operators/add</code></p>
 <p>On the operators creating page, you have to fill the following mandatory fields:</p>
 <p>Operator data - name - phone - e-mail - url</p>
 <p>User data - name - username - email</p>
 <p>The user data is necessary because of each operator has to be assigned to at least one user.</p>
 <h4 id="updating-operator">Updating operator</h4>
-<p>You can select a operator to update if you click the &quot;Pencil&quot; icon at the end of the specific row.</p>
+<p>You can select a operator to update if you click the “Pencil” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/operators/edit?id=[operator identifier]</code></p>
-<p>Here you can change all of operator's data and you can assign more users or groups to the specific operator.</p>
+<p>Here you can change all of operator’s data and you can assign more users or groups to the specific operator.</p>
 <h4 id="operator-show-page">Operator show page</h4>
-<p>You can select a operator to show if you click the &quot;Eye&quot; icon at the end of the specific row.</p>
+<p>You can select a operator to show if you click the “Eye” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/operators/show?id=[operator identifier]</code></p>
 <p>Here you can see the stored data of the operators and its relations to direction of users and groups.</p>
 <h4 id="operator-deleting">Operator deleting</h4>
@@ -1552,15 +1549,15 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>Path: <code>/admin/hydro/monitoring-points</code></p>
 <p>Searchable: EUCD RIV, country, name, location</p>
 <h4 id="new-monitoring-point">New monitoring point</h4>
-<p>You can add new monitoring point if you click the &quot;Add monitoring point&quot; button on the top left of the hydro monitoring point list page.</p>
+<p>You can add new monitoring point if you click the “Add monitoring point” button on the top left of the hydro monitoring point list page.</p>
 <p>Path: <code>/admin/hydro/monitoring-points/add</code></p>
 <p>On the monitoring point creating page, you have to fill the following mandatory fields: - name - classification - operator - riverbank - river - observed properties</p>
 <h4 id="updating-monitoring-point">Updating monitoring point</h4>
-<p>You can select a monitoring point to update if you click the &quot;Pencil&quot; icon at the end of the specific row.</p>
+<p>You can select a monitoring point to update if you click the “Pencil” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/hydro/monitoring-points/edit?id=[monitoring point identifier]</code></p>
-<p>Here you can change all of monitoring point's data and you can assign more observed property to the specific monitoring point.</p>
+<p>Here you can change all of monitoring point’s data and you can assign more observed property to the specific monitoring point.</p>
 <h4 id="monitoring-point-show-page">Monitoring point show page</h4>
-<p>You can select a monitoring point to show if you click the &quot;Eye&quot; icon at the end of the specific row.</p>
+<p>You can select a monitoring point to show if you click the “Eye” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/hydro/monitoring-points/show?id=[monitoring point identifier]</code></p>
 <p>Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator, river and observed property.</p>
 <h4 id="monitoring-point-deleting">Monitoring point deleting</h4>
@@ -1572,15 +1569,15 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>Path: <code>/admin/hydro/observed-properties</code></p>
 <p>Searchable: symbol, description</p>
 <h4 id="new-observed-property">New observed property</h4>
-<p>You can add new observed property if you click the &quot;Add observed property&quot; button on the top left of the hydro observed property list page.</p>
+<p>You can add new observed property if you click the “Add observed property” button on the top left of the hydro observed property list page.</p>
 <p>Path: <code>/admin/hydro/observed-properties/add</code></p>
 <p>On the observed property creating page, you have to fill to following mandatory fields: - symbol - description - type - Processed, or real time data - default is real time</p>
 <h4 id="updating-observed-property">Updating observed property</h4>
-<p>You can select an observed property to update if you click the &quot;Pencil&quot; icon at the end of the specific row.</p>
+<p>You can select an observed property to update if you click the “Pencil” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/hydro/observed-properties/edit?id=[observed property identifier]</code></p>
-<p>Here you can change all of observed property's data.</p>
+<p>Here you can change all of observed property’s data.</p>
 <h4 id="observed-property-show-page">Observed property show page</h4>
-<p>You can select an observed property to show if you click the &quot;Eye&quot; icon at the end of the specific row.</p>
+<p>You can select an observed property to show if you click the “Eye” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/hydro/observed-properties/show?id=[observed property identifier]</code></p>
 <p>Here you can see the stored data of an observed property.</p>
 <h4 id="observed-property-deleting">Observed property deleting</h4>
@@ -1591,15 +1588,15 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>Path: <code>/admin/hydro/rivers</code></p>
 <p>Searchable: EUCD RIV</p>
 <h4 id="new-river">New river</h4>
-<p>You can add new river if you click the &quot;Add river&quot; button on the top left of the river list page.</p>
+<p>You can add new river if you click the “Add river” button on the top left of the river list page.</p>
 <p>Path: <code>/admin/hydro/rivers/add</code></p>
-<p>On the river's creating page, you have to fill to following mandatory fields: - cname - EUCD RIV</p>
+<p>On the river’s creating page, you have to fill to following mandatory fields: - cname - EUCD RIV</p>
 <h4 id="updating-river">Updating river</h4>
-<p>You can select a river to update if you click the &quot;Pencil&quot; icon at the end of the specific row.</p>
+<p>You can select a river to update if you click the “Pencil” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/hydro/rivers/edit?id=[river identifier]</code></p>
 <p>Here you can change the cname of the selected river.</p>
 <h4 id="river-show-page">River show page</h4>
-<p>You can select a river to show if you click the &quot;Eye&quot; icon at the end of the specific row.</p>
+<p>You can select a river to show if you click the “Eye” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/hydro/rivers/show?id=[river identifier]</code></p>
 <p>Here you can see the stored data of a river.</p>
 <h4 id="river-deleting">River deleting</h4>
@@ -1610,15 +1607,15 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>Path: <code>/admin/hydro/station-classifications</code></p>
 <p>Searchable: value</p>
 <h4 id="new-classification">New classification</h4>
-<p>You can add new station classification if you click the &quot;Add station classification&quot; button on the top left of the classification's list page.</p>
+<p>You can add new station classification if you click the “Add station classification” button on the top left of the classification’s list page.</p>
 <p>Path: <code>/admin/hydro/station-classifications/add</code></p>
-<p>On the classification's creating page, you have to fill to following mandatory fields: - value</p>
+<p>On the classification’s creating page, you have to fill to following mandatory fields: - value</p>
 <h4 id="updating-classification">Updating classification</h4>
-<p>You can select a station classification to update if you click the &quot;Pencil&quot; icon at the end of the specific row.</p>
+<p>You can select a station classification to update if you click the “Pencil” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/hydro/station-classifications/edit?id=[classification identifier]</code></p>
 <p>Here you can change the value of the selected station classification.</p>
 <h4 id="classification-show-page">Classification show page</h4>
-<p>You can select a station classification to show if you click the &quot;Eye&quot; icon at the end of the specific row.</p>
+<p>You can select a station classification to show if you click the “Eye” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/hydro/station-classifications/show?id=[classification identifier]</code></p>
 <p>Here you can see the stored data of a station classification.</p>
 <h4 id="classification-deleting">Classification deleting</h4>
@@ -1636,7 +1633,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>Path: <code>/admin/meteo/monitoring-points</code></p>
 <p>Searchable: country, name, location</p>
 <h4 id="new-monitoring-point-1">New monitoring point</h4>
-<p>You can add new monitoring point if you click the &quot;Add monitoring point&quot; button on the top left of the meteo monitoring point list page.</p>
+<p>You can add new monitoring point if you click the “Add monitoring point” button on the top left of the meteo monitoring point list page.</p>
 <p>Path: <code>/admin/meteo/monitoring-points/add</code></p>
 <p>On the monitoring point creating page, you have to fill the following mandatory fields:</p>
 <ul>
@@ -1646,11 +1643,11 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <li>observed properties</li>
 </ul>
 <h4 id="updating-monitoring-point-1">Updating monitoring point</h4>
-<p>You can select a monitoring point to update if you click the &quot;Pencil&quot; icon at the end of the specific row.</p>
+<p>You can select a monitoring point to update if you click the “Pencil” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/meteo/monitoring-points/edit?id=[monitoring point identifier]</code></p>
-<p>Here you can change all of monitoring point's data and you can assign more observed property to the specific monitoring point.</p>
+<p>Here you can change all of monitoring point’s data and you can assign more observed property to the specific monitoring point.</p>
 <h4 id="monitoring-point-show-page-1">Monitoring point show page</h4>
-<p>You can select a monitoring point to show if you click the &quot;Eye&quot; icon at the end of the specific row.</p>
+<p>You can select a monitoring point to show if you click the “Eye” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/meteo/monitoring-points/show?id=[monitoring point identifier]</code></p>
 <p>Here you can see the stored data of the monitoring point and its relations to direction of station classification, operator and observed property.</p>
 <h4 id="monitoring-point-deleting-1">Monitoring point deleting</h4>
@@ -1662,7 +1659,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>Path: <code>/admin/meteo/observed-properties</code></p>
 <p>Searchable: symbol, description</p>
 <h4 id="new-observed-property-1">New observed property</h4>
-<p>You can add new observed property if you click the &quot;Add observed property&quot; button on the top left of the meteo observed property list page.</p>
+<p>You can add new observed property if you click the “Add observed property” button on the top left of the meteo observed property list page.</p>
 <p>Path: <code>/admin/meteo/observed-properties/add</code></p>
 <p>On the observed property creating page, you have to fill to following mandatory fields:</p>
 <ul>
@@ -1671,11 +1668,11 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <li>type - Processed, or real time data - default is real time</li>
 </ul>
 <h4 id="updating-observed-property-1">Updating observed property</h4>
-<p>You can select an observed property to update if you click the &quot;Pencil&quot; icon at the end of the specific row.</p>
+<p>You can select an observed property to update if you click the “Pencil” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/meteo/observed-properties/edit?id=[observed property identifier]</code></p>
-<p>Here you can change all of observed property's data.</p>
+<p>Here you can change all of observed property’s data.</p>
 <h4 id="observed-property-show-page-1">Observed property show page</h4>
-<p>You can select an observed property to show if you click the &quot;Eye&quot; icon at the end of the specific row.</p>
+<p>You can select an observed property to show if you click the “Eye” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/meteo/observed-properties/show?id=[observed property identifier]</code></p>
 <p>Here you can see the stored data of an observed property.</p>
 <h4 id="observed-property-deleting-1">Observed property deleting</h4>
@@ -1686,15 +1683,15 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>Path: <code>/admin/meteo/station-classifications</code></p>
 <p>Searchable: value</p>
 <h4 id="new-classification-1">New classification</h4>
-<p>You can add new station classification if you click the &quot;Add station classification&quot; button on the top left of the classification's list page.</p>
+<p>You can add new station classification if you click the “Add station classification” button on the top left of the classification’s list page.</p>
 <p>Path: <code>/admin/meteo/station-classifications/add</code></p>
-<p>On the classification's creating page, you have to fill to following mandatory fields: - value</p>
+<p>On the classification’s creating page, you have to fill to following mandatory fields: - value</p>
 <h4 id="updating-classification-1">Updating classification</h4>
-<p>You can select a station classification to update if you click the &quot;Pencil&quot; icon at the end of the specific row.</p>
+<p>You can select a station classification to update if you click the “Pencil” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/meteo/station-classifications/edit?id=[classification identifier]</code></p>
 <p>Here you can change the value of the selected station classification.</p>
 <h4 id="classification-show-page-1">Classification show page</h4>
-<p>You can select a station classification to show if you click the &quot;Eye&quot; icon at the end of the specific row.</p>
+<p>You can select a station classification to show if you click the “Eye” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/meteo/station-classifications/show?id=[classification identifier]</code></p>
 <p>Here you can see the stored data of a station classification.</p>
 <h4 id="classification-deleting-1">Classification deleting</h4>
@@ -1708,25 +1705,23 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <h2 id="measurement-access-rules">Measurement access rules</h2>
 <h3 id="concept-of-the-rules-1">Concept of the rules</h3>
 <p>The access rules controls the time interval in which the data will be available for a user under the <a href="#24_api_download">download API</a> request.</p>
-<p>The rules have three required dimensions: * <strong>Monitoring point</strong> - the rule is for all data of the given monitoring point * <strong>Observed property</strong> - the rule is for all data of the observed property of the monitoring point * <strong>User groups</strong> - the rule will be applied if the requesting user is under these groups</p>
-<p>The rules has one additional optional dimension: * <strong>Operator</strong> - If an operator creates the rule, these property will be set automatically. An administrator can set is optionally. This property controls which rule will be visible under operator's acces rule list, and important in case of wildcard (<em>) rules. If the operator parameter is set, the wildcard (</em>) will be applied only for points/properties under the given operator.</p>
-<p>If the rule matches for a <a href="#24_api_download">download API</a> request (so the <strong>user</strong> getting data for the <strong>monitoring point</strong> and the <strong>observed property</strong>), the user can retrieve data only in the given time period. This period's end is the current date, and the start is controlled by the <code>years</code>, <code>months</code> and <code>days</code> paramter of the access rule.</p>
-<p>The monitoring point and the observed property can be a *, which will match all monitoring points (globally, or of an operator), or all properties.</p>
-<p>The rules will be &quot;merged&quot; before checking user's access level.</p>
+<p>The rules have three required dimensions: * <strong>Monitoring point</strong> - the rule is for all data of the given monitoring point * <strong>Observed property</strong> - the rule is for all data of the observed property of the monitoring point * <strong>User groups</strong> - the rule will be applied if the requesting user is under these groups * <strong>Operator</strong> - If an operator creates the rule, these property will be set automatically. An administrator can set it manually. This property controls which rule will be visible under operator’s access rule list, and important in case of wildcard (- ALL -) rules. If the operator parameter is set, the “ALL” option will be applied only for points/properties under the given operator.</p>
+<p>A rule matches, and will be checked during a download, if <strong>all</strong> of the conditions are met: * The group of user (who do the request) is in one of the groups of the rule * The result is related to the selected operator * The result is related to the selected operator’s selected monitoring points (in case of “ALL” all monitoring points will be selected) * The result is related to the selected observed properties (in case of “ALL” all properties will be selected)</p>
+<p>If the rule matches for a <a href="#24_api_download">download API</a> request (so the <strong>user</strong> getting data for the <strong>monitoring point</strong> and the <strong>observed property</strong>), the user can retrieve data only in the given time period. If multiple rules match, only those results will be return which fit in all of the intervals. This period’s end is the current date, and the start is controlled by the <code>years</code>, <code>months</code> and <code>days</code> paramter of the access rule.</p>
+<p>The rules will be “merged” before checking user’s access level.</p>
 <h4 id="rule-list">Rule list</h4>
-<p>On the list page all rules are visible, with the required and optional dimensions.</p>
+<p>On the list page all rules are visible, with dimensions.</p>
 <p>Path: <code>/admin/measurement-access-rules</code></p>
 <h4 id="new-access-rule">New access rule</h4>
-<p>You can add new access rule if you click the &quot;Add rule&quot; button on the top left of the rules list page.</p>
+<p>You can add new access rule if you click the “Add rule” button on the top left of the rules list page.</p>
 <p>Path: <code>/admin/measurements-access-rules/add</code></p>
-<p>On the rules's creating page, you have to fill the following mandatory fields: - Monitoring point selector - The ID of the monitoring point, or * for all - Observed property selector - The ID (symbol) of the monitoring point, or * for all - Groups - Multiple user groups can be selected - At least one of the time interval fields: years, months, days</p>
-<p>Optionally you can select an operator, in this case wildcard (*) will be applied for items only under the give operator.</p>
+<p>On the rules’s creating page, you have to fill the following mandatory fields: - Operator: Field is visible only for administrators, for operators it’s auto-selected - Monitoring point selector - Select some or all monitoring points - Observed property selector - Select some or all observed properties - Groups - Multiple user groups can be selected - At least one of the time interval fields: years, months, days</p>
 <h4 id="updating-access-rule">Updating access rule</h4>
-<p>You can select a rule to update if you click the &quot;Pencil&quot; icon at the end of the specific row.</p>
+<p>You can select a rule to update if you click the “Pencil” icon at the end of the specific row.</p>
 <p>Path: <code>/admin/measurements-access-rules/edit?id=[rule identifier]</code></p>
 <p>You can update all rule datas that you gave on the creating page.</p>
 <h4 id="rule-deleting">Rule deleting</h4>
-<p>You can delete a rule if you click the &quot;Trash&quot; icon at the end of the specific row. If you clicked, it shows a confirm window, where you have to approve the deleting.</p>
+<p>You can delete a rule if you click the “Trash” icon at the end of the specific row. If you clicked, it shows a confirm window, where you have to approve the deleting.</p>
 <p>Path: <code>/admin/measurements-access-rules/delete?id=[rule identifier]</code></p>
 <p><a name="30_data_node"></a></p>
 <h1 id="data-node">Data node</h1>
@@ -1770,49 +1765,49 @@ Private keys should be placed in the <code>conf/plugins/credentials</code> direc
 <table>
 <thead>
 <tr class="header">
-<th align="center"></th>
-<th align="center">Basic configuration file</th>
-<th align="center">FORMATS json file</th>
-<th align="center">CONVERSION json file</th>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">Basic configuration file</th>
+<th style="text-align: center;">FORMATS json file</th>
+<th style="text-align: center;">CONVERSION json file</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">CSV data file format</td>
-<td align="center">yes</td>
-<td align="center"></td>
-<td align="center"></td>
+<td style="text-align: center;">CSV data file format</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
 </tr>
 <tr class="even">
-<td align="center">XML data file format</td>
-<td align="center">yes</td>
-<td align="center">yes</td>
-<td align="center">yes</td>
+<td style="text-align: center;">XML data file format</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;">yes</td>
 </tr>
 <tr class="odd">
-<td align="center">Static URL / file names</td>
-<td align="center">yes</td>
-<td align="center"></td>
-<td align="center">yes</td>
+<td style="text-align: center;">Static URL / file names</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">yes</td>
 </tr>
 <tr class="even">
-<td align="center">Dynamic URL / file names</td>
-<td align="center">yes</td>
-<td align="center"></td>
-<td align="center">yes</td>
+<td style="text-align: center;">Dynamic URL / file names</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">yes</td>
 </tr>
 <tr class="odd">
-<td align="center">Data files in ZIP</td>
-<td align="center">yes</td>
-<td align="center"></td>
-<td align="center">yes</td>
+<td style="text-align: center;">Data files in ZIP</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">yes</td>
 </tr>
 </tbody>
 </table>
 <h3 id="basic-configuration-file">Basic configuration file</h3>
 <p>The basic configuration text files are located where the Data Node was installed to in sub-folder conf/plugins/configuration. In the basic configuration file, the way of the transport (called transport layer) is specified (FTP, HTTP, or a local file) and the format (called parser layer) of data file (CSV or XML).</p>
 <p>The configuration files have always three sections which configure the properties of the three layers: * Transport layer: Gets the data from local / remote file, or web API, etc. * Parser layer: Processes the received data to the format which will be compatible with the API endpoint of the distribution node. * API client layer: Sends the data to the distribution node.</p>
-<p>The format of the configuration file follows the standards of ini-files as documented here: <a href="https://en.wikipedia.org/wiki/INI_file" class="uri">https://en.wikipedia.org/wiki/INI_file</a> It must contain three sections, for transport, parser, and API client layers. So, the basic structure is like this:</p>
+<p>The format of the configuration file follows the standards of ini-files as documented here: <a href="https://en.wikipedia.org/wiki/INI_file">https://en.wikipedia.org/wiki/INI_file</a> It must contain three sections, for transport, parser, and API client layers. So, the basic structure is like this:</p>
 <pre><code>[transport]
 property = value
 
@@ -1877,7 +1872,7 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <h5 id="ftptransport">FtpTransport</h5>
 <p>Takes the data from a remote FTP server * <em>host</em> (required): Host of the FTP server * <em>secure</em> (required): 1, if the connection can be secured by SSL, otherwise 0 * <em>port</em> (optional): Port of the FTP server, if non-standard * <em>username</em> (required): FTP authentication username * <em>password</em> (required): FTP authentication password * <em>path</em> (required): The path of the directory which contains the data files, relative to the root of the FTP connection. * <em>filenamePattern</em> (required): Pattern of the filenames which should be processed by the transport. Asterisk (<code>*</code>) characters can be used for variable parts of the filename * <em>newestFileOnly</em> (required): If 1, only the newest file (by date) will be transported * <em>conversionsFilename</em> (required): If the layer has a conversion specification file, this is the file name of the CONVERSIONS json file, relative to the path of the configuration folder. * <em>lastNDaysOnly</em> (optional): Use only files with modification time newer than or equal N days from current day.</p>
 <h4 id="parser-layer-properties">Parser layer properties</h4>
-<p>Common properties: * <em>timeZone</em> (required): A valid timezone, in which the data is stored in the source. The times will be converted to UTC before the API client layer. Possible values: <a href="https://www.php.net/manual/en/timezones.php" class="uri">https://www.php.net/manual/en/timezones.php</a></p>
+<p>Common properties: * <em>timeZone</em> (required): A valid timezone, in which the data is stored in the source. The times will be converted to UTC before the API client layer. Possible values: <a href="https://www.php.net/manual/en/timezones.php">https://www.php.net/manual/en/timezones.php</a></p>
 <h5 id="csvparser">CsvParser</h5>
 <p>For files which are in CSV format * <em>csvDelimiter</em> (required): The character which separates values from each other * <em>nHeaderSkip</em> (optional): Number of lines which will be skipped before data * <em>mPointIdCol</em> (required): Number of column (zero based) which contains the ID of moni-toring point * <em>timeCol</em> (required, if time is in a column): Number of column (zero based) which contains the time * <em>skipValue</em> (optional): A specific value which should be parsed as a non-existent value * <em>timeFormat</em> (required, if time is in a column): Format of time if in a column * <em>timeInFilenameFormat</em> (required, if time is in filename): If defined, the time should be parsed from the filename, and not from a column * <em>properties[]</em> (required): The sign (abbreviation) of the observed property, and the col-umn number (zero based) in which the property value can be found. The name and the value must be separated by “;”. Example: “h;6”. This property can be defined multiple times, one per property * <em>propertyLevel</em> (required): In case of “column” the values of an observed property have their own column in the files. In case of “row” the rows have a column containing observed property symbols that specify which symbol the value belongs to. * <em>conversionsFilename</em> (optional): If the layer has a conversion specification file, this contains the path to the CONVERSIONS json file * <em>propertySymbolColumn</em> (required, if propertyLevel is row): Number of column which contains the symbol of the property * <em>propertyValueColumn</em> (required, if propertyLevel is row): Number of column which contains the value of the property</p>
 <h5 id="xmlparser">XmlParser</h5>
@@ -1895,149 +1890,149 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <p>There may be as many entries in the array as needed. The property “Parameter” determines the entity the information in the object is about. It may be one of the strings “MonitoringPoint”, “ObservedProp-ertyValue”, “ObservedPropertySymbol” and the date specific entities “Year”, “Month”, “Day”, “Hour”, “Minute”, “Date”, “Time” and “DateTime”, depending in which way the date is given in the XML file (in a single XML tag or in multiple separate tags)</p>
 <p>The property “Tag Hierarchy” is the path to the information specified by “Parameter”. It is an array of strings containing the tags names that need to be traversed in the specified order to get to the desired information.</p>
 <p>The following is an example of part of a data file of the German hydrological service, LfU. The monitor-ing point id is available by the tag hierarchy “hnd-daten”, “messstelle”, “nummer”. Tag hierarchy strings are given without angle brackets. In this example, date is given separately in the tags “jahr” (year), “monat” (month), “tag” (day), “stunde” (hour) and “minute” (minute).</p>
-<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;hnd-daten&gt;</span> 
-  <span class="kw">&lt;messstelle&gt;</span> 
-    <span class="kw">&lt;nummer&gt;</span>10026301<span class="kw">&lt;/nummer&gt;</span> 
-    <span class="kw">&lt;messwert&gt;</span> 
-      <span class="kw">&lt;datum&gt;</span> 
-        <span class="kw">&lt;jahr&gt;</span>2020<span class="kw">&lt;/jahr&gt;</span> 
-        <span class="kw">&lt;monat&gt;</span>06<span class="kw">&lt;/monat&gt;</span> 
-        <span class="kw">&lt;tag&gt;</span>09<span class="kw">&lt;/tag&gt;</span> 
-        <span class="kw">&lt;stunde&gt;</span>00<span class="kw">&lt;/stunde&gt;</span> 
-        <span class="kw">&lt;minute&gt;</span>00<span class="kw">&lt;/minute&gt;</span> 
-      <span class="kw">&lt;/datum&gt;</span> 
-      <span class="kw">&lt;wert&gt;</span>87,2<span class="kw">&lt;/wert&gt;</span> 
-    <span class="kw">&lt;/messwert&gt;</span> 
-    <span class="co">&lt;!-- more data skipped in this example--&gt;</span> 
-  <span class="kw">&lt;/messstelle&gt;</span> 
-<span class="kw">&lt;/hnd-daten&gt;</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw">&lt;hnd-daten&gt;</span> </span>
+<span id="cb12-2"><a href="#cb12-2"></a>  <span class="kw">&lt;messstelle&gt;</span> </span>
+<span id="cb12-3"><a href="#cb12-3"></a>    <span class="kw">&lt;nummer&gt;</span>10026301<span class="kw">&lt;/nummer&gt;</span> </span>
+<span id="cb12-4"><a href="#cb12-4"></a>    <span class="kw">&lt;messwert&gt;</span> </span>
+<span id="cb12-5"><a href="#cb12-5"></a>      <span class="kw">&lt;datum&gt;</span> </span>
+<span id="cb12-6"><a href="#cb12-6"></a>        <span class="kw">&lt;jahr&gt;</span>2020<span class="kw">&lt;/jahr&gt;</span> </span>
+<span id="cb12-7"><a href="#cb12-7"></a>        <span class="kw">&lt;monat&gt;</span>06<span class="kw">&lt;/monat&gt;</span> </span>
+<span id="cb12-8"><a href="#cb12-8"></a>        <span class="kw">&lt;tag&gt;</span>09<span class="kw">&lt;/tag&gt;</span> </span>
+<span id="cb12-9"><a href="#cb12-9"></a>        <span class="kw">&lt;stunde&gt;</span>00<span class="kw">&lt;/stunde&gt;</span> </span>
+<span id="cb12-10"><a href="#cb12-10"></a>        <span class="kw">&lt;minute&gt;</span>00<span class="kw">&lt;/minute&gt;</span> </span>
+<span id="cb12-11"><a href="#cb12-11"></a>      <span class="kw">&lt;/datum&gt;</span> </span>
+<span id="cb12-12"><a href="#cb12-12"></a>      <span class="kw">&lt;wert&gt;</span>87,2<span class="kw">&lt;/wert&gt;</span> </span>
+<span id="cb12-13"><a href="#cb12-13"></a>    <span class="kw">&lt;/messwert&gt;</span> </span>
+<span id="cb12-14"><a href="#cb12-14"></a>    <span class="co">&lt;!-- more data skipped in this example--&gt;</span> </span>
+<span id="cb12-15"><a href="#cb12-15"></a>  <span class="kw">&lt;/messstelle&gt;</span> </span>
+<span id="cb12-16"><a href="#cb12-16"></a><span class="kw">&lt;/hnd-daten&gt;</span></span></code></pre></div>
 <p>The property “Attribute” is used if the desired value is not enclosed in the tag, but it is an attribute of the tag. In this case, “Attribute” is the name of the attribute, else an empty string.</p>
 <p>The property “optional” is boolean (so it may have the values true and false) and specifies whether the entry is optional or not. The meaning of the other properties “Value” and “Unit” depends on the prop-erty “Parameter” and is described in the following sections.</p>
 <p>A corresponding example for the configuration to parse the XML format of LfU is shown here:</p>
-<div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json"><span class="ot">[</span>
-  <span class="fu">{</span> 
-    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;MonitoringPoint&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;MPID&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;nummer&quot;</span> <span class="ot">]</span>
-  <span class="fu">}</span><span class="ot">,</span> 
-  <span class="fu">{</span> 
-    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Year&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;Y&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;jahr&quot;</span> <span class="ot">]</span> 
-  <span class="fu">}</span><span class="ot">,</span> 
-  <span class="fu">{</span> 
-    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Month&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;m&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;monat&quot;</span> <span class="ot">]</span> 
-  <span class="fu">}</span><span class="ot">,</span> 
-  <span class="fu">{</span> 
-    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Day&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;d&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;tag&quot;</span> <span class="ot">]</span> 
-  <span class="fu">}</span><span class="ot">,</span> 
-  <span class="fu">{</span> 
-    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Hour&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;H&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;stunde&quot;</span> <span class="ot">]</span> 
-  <span class="fu">}</span><span class="ot">,</span> 
-  <span class="fu">{</span> 
-    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Minute&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;i&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;minute&quot;</span> <span class="ot">]</span>
-  <span class="fu">}</span><span class="ot">,</span> 
-  <span class="fu">{</span> 
-    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;h&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Unit&quot;</span><span class="fu">:</span> <span class="st">&quot;cm&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> 
-  <span class="fu">}</span><span class="ot">,</span> 
-  <span class="fu">{</span> 
-    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> 
-    <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;Q&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Unit&quot;</span><span class="fu">:</span> <span class="st">&quot;m3/s&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> 
-  <span class="fu">}</span><span class="ot">,</span> 
-  <span class="fu">{</span> 
-    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;P_total_hourly&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Unit&quot;</span><span class="fu">:</span> <span class="st">&quot;mm&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> 
-  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> 
-  <span class="fu">}</span> 
-<span class="ot">]</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb13-1"><a href="#cb13-1"></a><span class="ot">[</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>  <span class="fu">{</span> </span>
+<span id="cb13-3"><a href="#cb13-3"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;MonitoringPoint&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-4"><a href="#cb13-4"></a>  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;MPID&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-5"><a href="#cb13-5"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-6"><a href="#cb13-6"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;nummer&quot;</span> <span class="ot">]</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a>  <span class="fu">}</span><span class="ot">,</span> </span>
+<span id="cb13-8"><a href="#cb13-8"></a>  <span class="fu">{</span> </span>
+<span id="cb13-9"><a href="#cb13-9"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Year&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-10"><a href="#cb13-10"></a>  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;Y&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-11"><a href="#cb13-11"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-12"><a href="#cb13-12"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;jahr&quot;</span> <span class="ot">]</span> </span>
+<span id="cb13-13"><a href="#cb13-13"></a>  <span class="fu">}</span><span class="ot">,</span> </span>
+<span id="cb13-14"><a href="#cb13-14"></a>  <span class="fu">{</span> </span>
+<span id="cb13-15"><a href="#cb13-15"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Month&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-16"><a href="#cb13-16"></a>  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;m&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-17"><a href="#cb13-17"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-18"><a href="#cb13-18"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;monat&quot;</span> <span class="ot">]</span> </span>
+<span id="cb13-19"><a href="#cb13-19"></a>  <span class="fu">}</span><span class="ot">,</span> </span>
+<span id="cb13-20"><a href="#cb13-20"></a>  <span class="fu">{</span> </span>
+<span id="cb13-21"><a href="#cb13-21"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Day&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-22"><a href="#cb13-22"></a>  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;d&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-23"><a href="#cb13-23"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-24"><a href="#cb13-24"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;tag&quot;</span> <span class="ot">]</span> </span>
+<span id="cb13-25"><a href="#cb13-25"></a>  <span class="fu">}</span><span class="ot">,</span> </span>
+<span id="cb13-26"><a href="#cb13-26"></a>  <span class="fu">{</span> </span>
+<span id="cb13-27"><a href="#cb13-27"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Hour&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-28"><a href="#cb13-28"></a>  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;H&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-29"><a href="#cb13-29"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-30"><a href="#cb13-30"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;stunde&quot;</span> <span class="ot">]</span> </span>
+<span id="cb13-31"><a href="#cb13-31"></a>  <span class="fu">}</span><span class="ot">,</span> </span>
+<span id="cb13-32"><a href="#cb13-32"></a>  <span class="fu">{</span> </span>
+<span id="cb13-33"><a href="#cb13-33"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Minute&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-34"><a href="#cb13-34"></a>  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;i&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-35"><a href="#cb13-35"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-36"><a href="#cb13-36"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;minute&quot;</span> <span class="ot">]</span></span>
+<span id="cb13-37"><a href="#cb13-37"></a>  <span class="fu">}</span><span class="ot">,</span> </span>
+<span id="cb13-38"><a href="#cb13-38"></a>  <span class="fu">{</span> </span>
+<span id="cb13-39"><a href="#cb13-39"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-40"><a href="#cb13-40"></a>  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;h&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-41"><a href="#cb13-41"></a>  <span class="dt">&quot;Unit&quot;</span><span class="fu">:</span> <span class="st">&quot;cm&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-42"><a href="#cb13-42"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-43"><a href="#cb13-43"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> </span>
+<span id="cb13-44"><a href="#cb13-44"></a>  <span class="fu">}</span><span class="ot">,</span> </span>
+<span id="cb13-45"><a href="#cb13-45"></a>  <span class="fu">{</span> </span>
+<span id="cb13-46"><a href="#cb13-46"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-47"><a href="#cb13-47"></a>    <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;Q&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-48"><a href="#cb13-48"></a>  <span class="dt">&quot;Unit&quot;</span><span class="fu">:</span> <span class="st">&quot;m3/s&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-49"><a href="#cb13-49"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-50"><a href="#cb13-50"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> </span>
+<span id="cb13-51"><a href="#cb13-51"></a>  <span class="fu">}</span><span class="ot">,</span> </span>
+<span id="cb13-52"><a href="#cb13-52"></a>  <span class="fu">{</span> </span>
+<span id="cb13-53"><a href="#cb13-53"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-54"><a href="#cb13-54"></a>  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;P_total_hourly&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-55"><a href="#cb13-55"></a>  <span class="dt">&quot;Unit&quot;</span><span class="fu">:</span> <span class="st">&quot;mm&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-56"><a href="#cb13-56"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
+<span id="cb13-57"><a href="#cb13-57"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> </span>
+<span id="cb13-58"><a href="#cb13-58"></a>  <span class="fu">}</span> </span>
+<span id="cb13-59"><a href="#cb13-59"></a><span class="ot">]</span></span></code></pre></div>
 <h4 id="date-specifications">Date specifications</h4>
 <p>A date specification has the property “Parameter” set to “Year”, “Month”, “Day”, “Hour”, “Minute”, “Date”, “Time” or “DateTime”, depending on the exact information specified. For date fields, “Value” is the format of the given date. For example, a datetime format would be “Y-m-d H:i:s” and would describe “2020-01-31 23:40:41”.</p>
 <table>
 <thead>
 <tr class="header">
-<th align="center">Character</th>
-<th align="center">Meaning</th>
-<th align="center">Example</th>
+<th style="text-align: center;">Character</th>
+<th style="text-align: center;">Meaning</th>
+<th style="text-align: center;">Example</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">Y</td>
-<td align="center">4-digit year</td>
-<td align="center">2020</td>
+<td style="text-align: center;">Y</td>
+<td style="text-align: center;">4-digit year</td>
+<td style="text-align: center;">2020</td>
 </tr>
 <tr class="even">
-<td align="center">y</td>
-<td align="center">2-digit year</td>
-<td align="center">20</td>
+<td style="text-align: center;">y</td>
+<td style="text-align: center;">2-digit year</td>
+<td style="text-align: center;">20</td>
 </tr>
 <tr class="odd">
-<td align="center">m</td>
-<td align="center">Month with leading zeros, from 01 to 12</td>
-<td align="center">01</td>
+<td style="text-align: center;">m</td>
+<td style="text-align: center;">Month with leading zeros, from 01 to 12</td>
+<td style="text-align: center;">01</td>
 </tr>
 <tr class="even">
-<td align="center">n</td>
-<td align="center">Month without leading zeros, from 1 to 12</td>
-<td align="center">1</td>
+<td style="text-align: center;">n</td>
+<td style="text-align: center;">Month without leading zeros, from 1 to 12</td>
+<td style="text-align: center;">1</td>
 </tr>
 <tr class="odd">
-<td align="center">M</td>
-<td align="center">Month, short textual representation, Jan through Dec</td>
-<td align="center">Jan</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: center;">Month, short textual representation, Jan through Dec</td>
+<td style="text-align: center;">Jan</td>
 </tr>
 <tr class="even">
-<td align="center">d</td>
-<td align="center">Day of the month with leading zeros, 01 to 31</td>
-<td align="center">09</td>
+<td style="text-align: center;">d</td>
+<td style="text-align: center;">Day of the month with leading zeros, 01 to 31</td>
+<td style="text-align: center;">09</td>
 </tr>
 <tr class="odd">
-<td align="center">j</td>
-<td align="center">Day of the month without leading zeros, 1 to 31</td>
-<td align="center">9</td>
+<td style="text-align: center;">j</td>
+<td style="text-align: center;">Day of the month without leading zeros, 1 to 31</td>
+<td style="text-align: center;">9</td>
 </tr>
 <tr class="even">
-<td align="center">H</td>
-<td align="center">Hour with leading zeros, 24-hour format, 01 through 23</td>
-<td align="center">05</td>
+<td style="text-align: center;">H</td>
+<td style="text-align: center;">Hour with leading zeros, 24-hour format, 01 through 23</td>
+<td style="text-align: center;">05</td>
 </tr>
 <tr class="odd">
-<td align="center">G</td>
-<td align="center">Hour without leading zeros, 24-hour format, 1 through 23</td>
-<td align="center">5</td>
+<td style="text-align: center;">G</td>
+<td style="text-align: center;">Hour without leading zeros, 24-hour format, 1 through 23</td>
+<td style="text-align: center;">5</td>
 </tr>
 <tr class="even">
-<td align="center">i</td>
-<td align="center">Minutes with leading zeros, 00 to 59</td>
-<td align="center">04</td>
+<td style="text-align: center;">i</td>
+<td style="text-align: center;">Minutes with leading zeros, 00 to 59</td>
+<td style="text-align: center;">04</td>
 </tr>
 <tr class="odd">
-<td align="center">s</td>
-<td align="center">Seconds with leading zeros, 00 to 59</td>
-<td align="center">03</td>
+<td style="text-align: center;">s</td>
+<td style="text-align: center;">Seconds with leading zeros, 00 to 59</td>
+<td style="text-align: center;">03</td>
 </tr>
 </tbody>
 </table>
@@ -2047,38 +2042,38 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <table>
 <thead>
 <tr class="header">
-<th align="center">Symbol</th>
-<th align="center">Meaning</th>
+<th style="text-align: center;">Symbol</th>
+<th style="text-align: center;">Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">h</td>
-<td align="center">Water level</td>
+<td style="text-align: center;">h</td>
+<td style="text-align: center;">Water level</td>
 </tr>
 <tr class="even">
-<td align="center">Q</td>
-<td align="center">River discharge</td>
+<td style="text-align: center;">Q</td>
+<td style="text-align: center;">River discharge</td>
 </tr>
 <tr class="odd">
-<td align="center">tw</td>
-<td align="center">Water temperature</td>
+<td style="text-align: center;">tw</td>
+<td style="text-align: center;">Water temperature</td>
 </tr>
 <tr class="even">
-<td align="center">P_total_hourly</td>
-<td align="center">Total precipitation within an hour</td>
+<td style="text-align: center;">P_total_hourly</td>
+<td style="text-align: center;">Total precipitation within an hour</td>
 </tr>
 <tr class="odd">
-<td align="center">P_total_daily</td>
-<td align="center">Total precipitation within a day</td>
+<td style="text-align: center;">P_total_daily</td>
+<td style="text-align: center;">Total precipitation within a day</td>
 </tr>
 <tr class="even">
-<td align="center">ta</td>
-<td align="center">Air temperature</td>
+<td style="text-align: center;">ta</td>
+<td style="text-align: center;">Air temperature</td>
 </tr>
 <tr class="odd">
-<td align="center">p</td>
-<td align="center">Atmospheric pressure</td>
+<td style="text-align: center;">p</td>
+<td style="text-align: center;">Atmospheric pressure</td>
 </tr>
 </tbody>
 </table>
@@ -2089,25 +2084,25 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <p>In case the observed property symbol for a measurement section in the XML file is not fixed, but given dynamically in an own tag, it may be specified with an entry in which the property “Parameter” is “ObservedPropertySymbol”. The property “Value” in this case refers to the observed property conver-sion in CONVERSIONS json file by specifying a variable name.</p>
 <h4 id="conversions-file-conversions-specification">CONVERSIONS-file: Conversions Specification</h4>
 <p>The basic idea is to generalize the URL pattern (whether it is an FTP server or a Web-API) by inserting variables. For example, if the measuring station is directly anchored in the URL, it is replaced by the variable [station]. With this method, data conversion from national data formats to the common data format HyMeDEM can be covered in all countries. The CONVERSIONS json file may be specified in one of the following cases: * More complex data access, for example a Web API where variables are needed to be filled in * Access to data in zip files * Need for Observable property symbol conversion (between data provider notation and Hy-MeDES EnviroNet notation) * Need for Monitoring Point id conversions Data access is specified by URL patterns with parameters and variable values which are filled in dy-namically depending on what to query. The conversions are specified by translation tables and connected with a variable name to be used in an URL pattern or in an XML file if needed. The CONVERSIONS json file contains an object with three properties: * generalInformation * monitoringPointConversions * observedPropertyConversions An example of a CONVERSIONS json file for XYZ is shown here:</p>
-<div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json"><span class="fu">{</span> 
-    <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> 
-        <span class="dt">&quot;URLPattern&quot;</span><span class="fu">:</span> <span class="st">&quot;https://xyz.de/webservices/export.php?user=[USERNAME]&amp;pw=[PASSWORD] &amp;pgnr=[MPID]&amp;werte=[OBS]&amp;tage=1&amp;modus=xml&quot;</span> 
-  <span class="fu">},</span> 
-  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> 
-    <span class="dt">&quot;MPID&quot;</span><span class="fu">:</span> <span class="st">&quot;#&quot;</span> 
-  <span class="fu">},</span> 
-  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> 
-    <span class="dt">&quot;h&quot;</span><span class="fu">:</span> <span class="fu">{</span> 
-      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;W&quot;</span> 
-    <span class="fu">},</span> 
-    <span class="dt">&quot;Q&quot;</span><span class="fu">:</span> <span class="fu">{</span> 
-      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;Q&quot;</span> 
-    <span class="fu">},</span> 
-    <span class="dt">&quot;P_total_hourly&quot;</span><span class="fu">:</span> <span class="fu">{</span> 
-      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;N&quot;</span> 
-    <span class="fu">}</span> 
-  <span class="fu">}</span> 
-<span class="fu">}</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb14-1"><a href="#cb14-1"></a><span class="fu">{</span> </span>
+<span id="cb14-2"><a href="#cb14-2"></a>    <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
+<span id="cb14-3"><a href="#cb14-3"></a>        <span class="dt">&quot;URLPattern&quot;</span><span class="fu">:</span> <span class="st">&quot;https://xyz.de/webservices/export.php?user=[USERNAME]&amp;pw=[PASSWORD] &amp;pgnr=[MPID]&amp;werte=[OBS]&amp;tage=1&amp;modus=xml&quot;</span> </span>
+<span id="cb14-4"><a href="#cb14-4"></a>  <span class="fu">},</span> </span>
+<span id="cb14-5"><a href="#cb14-5"></a>  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
+<span id="cb14-6"><a href="#cb14-6"></a>    <span class="dt">&quot;MPID&quot;</span><span class="fu">:</span> <span class="st">&quot;#&quot;</span> </span>
+<span id="cb14-7"><a href="#cb14-7"></a>  <span class="fu">},</span> </span>
+<span id="cb14-8"><a href="#cb14-8"></a>  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
+<span id="cb14-9"><a href="#cb14-9"></a>    <span class="dt">&quot;h&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
+<span id="cb14-10"><a href="#cb14-10"></a>      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;W&quot;</span> </span>
+<span id="cb14-11"><a href="#cb14-11"></a>    <span class="fu">},</span> </span>
+<span id="cb14-12"><a href="#cb14-12"></a>    <span class="dt">&quot;Q&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
+<span id="cb14-13"><a href="#cb14-13"></a>      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;Q&quot;</span> </span>
+<span id="cb14-14"><a href="#cb14-14"></a>    <span class="fu">},</span> </span>
+<span id="cb14-15"><a href="#cb14-15"></a>    <span class="dt">&quot;P_total_hourly&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
+<span id="cb14-16"><a href="#cb14-16"></a>      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;N&quot;</span> </span>
+<span id="cb14-17"><a href="#cb14-17"></a>    <span class="fu">}</span> </span>
+<span id="cb14-18"><a href="#cb14-18"></a>  <span class="fu">}</span> </span>
+<span id="cb14-19"><a href="#cb14-19"></a><span class="fu">}</span></span></code></pre></div>
 <h5 id="data-access">Data Access</h5>
 <p>The property “URLPattern” of the property “generalInformation” contains the URL pattern of the data access. In the URL, parameters that vary, such as the measuring station or the observable, are replaced by variables. Variable names are enclosed in square brackets [ ] and will be replaced by the variable definition on runtime. As an example, XYZ is used. The URL pattern for getting the data from the server is:</p>
 <pre><code>https://xyz.de/webservices/ex-port.php?user=[USERNAME]&amp;pw=[PASSWORD]&amp;pgnr=[MPID]&amp;werte=[OBS]&amp;tage=1&amp;modus=xml</code></pre>
@@ -2133,38 +2128,38 @@ stundenwerte_RR_00164_akt.zip|produkt_rr_stunde_*_00164.txt</code></pre>
 <p>In the example the [INT1] variable stands for the interval and will be replaced in the URL by “hourly”.</p>
 <p>The time interval is also coded in different ways in the same URL-call: [INT] is replaced by “hourly”, [INT2] by “stunde”. [INT3] is replaced by “stundenwerte”.</p>
 <p>The station name [MPID1] will be replaced by the national station number 164 padded with zeros. In the following, the corresponding CONFIGURATION json file is shown. This example does not need a FORMATS json file, because files are served in CSV format.</p>
-<div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json"><span class="fu">{</span> 
-  <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> 
-    <span class="dt">&quot;URLPattern&quot;</span><span class="fu">:</span> <span class="st">&quot;https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/[INT1]/[OBS2]/recent/[INT3]_[OBS1]_[MPID1]_akt.zip|produkt_[OBS3]_[INT2]_*_[MPID1].txt&quot;</span> 
-  <span class="fu">},</span> 
-  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> 
-    <span class="dt">&quot;MPID1&quot;</span><span class="fu">:</span> <span class="st">&quot;#####&quot;</span><span class="fu">,</span> 
-    <span class="dt">&quot;MPID2&quot;</span><span class="fu">:</span> <span class="st">&quot;#&quot;</span> 
-  <span class="fu">},</span> 
-  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> 
-    <span class="dt">&quot;P_total_hourly&quot;</span><span class="fu">:</span> <span class="fu">{</span> 
-      <span class="dt">&quot;OBS1&quot;</span><span class="fu">:</span> <span class="st">&quot;RR&quot;</span><span class="fu">,</span> 
-      <span class="dt">&quot;OBS2&quot;</span><span class="fu">:</span> <span class="st">&quot;precipitation&quot;</span><span class="fu">,</span> 
-      <span class="dt">&quot;OBS3&quot;</span><span class="fu">:</span> <span class="st">&quot;rr&quot;</span><span class="fu">,</span> 
-      <span class="dt">&quot;INT1&quot;</span><span class="fu">:</span> <span class="st">&quot;hourly&quot;</span><span class="fu">,</span> 
-      <span class="dt">&quot;INT2&quot;</span><span class="fu">:</span> <span class="st">&quot;stunde&quot;</span><span class="fu">,</span> 
-      <span class="dt">&quot;INT3&quot;</span><span class="fu">:</span> <span class="st">&quot;stundenwerte&quot;</span> 
-    <span class="fu">},</span> 
-    <span class="dt">&quot;ta&quot;</span><span class="fu">:</span> <span class="fu">{</span> 
-      <span class="dt">&quot;OBS1&quot;</span><span class="fu">:</span> <span class="st">&quot;TU&quot;</span><span class="fu">,</span> 
-      <span class="dt">&quot;OBS2&quot;</span><span class="fu">:</span> <span class="st">&quot;air_temperature&quot;</span><span class="fu">,</span> 
-      <span class="dt">&quot;OBS3&quot;</span><span class="fu">:</span> <span class="st">&quot;tu&quot;</span><span class="fu">,</span> 
-      <span class="dt">&quot;INT1&quot;</span><span class="fu">:</span> <span class="st">&quot;hourly&quot;</span><span class="fu">,</span> 
-      <span class="dt">&quot;INT2&quot;</span><span class="fu">:</span> <span class="st">&quot;stunde&quot;</span><span class="fu">,</span> 
-      <span class="dt">&quot;INT3&quot;</span><span class="fu">:</span> <span class="st">&quot;stundenwerte&quot;</span> 
-    <span class="fu">}</span> 
-  <span class="fu">}</span> 
-<span class="fu">}</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb19-1"><a href="#cb19-1"></a><span class="fu">{</span> </span>
+<span id="cb19-2"><a href="#cb19-2"></a>  <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
+<span id="cb19-3"><a href="#cb19-3"></a>    <span class="dt">&quot;URLPattern&quot;</span><span class="fu">:</span> <span class="st">&quot;https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/[INT1]/[OBS2]/recent/[INT3]_[OBS1]_[MPID1]_akt.zip|produkt_[OBS3]_[INT2]_*_[MPID1].txt&quot;</span> </span>
+<span id="cb19-4"><a href="#cb19-4"></a>  <span class="fu">},</span> </span>
+<span id="cb19-5"><a href="#cb19-5"></a>  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
+<span id="cb19-6"><a href="#cb19-6"></a>    <span class="dt">&quot;MPID1&quot;</span><span class="fu">:</span> <span class="st">&quot;#####&quot;</span><span class="fu">,</span> </span>
+<span id="cb19-7"><a href="#cb19-7"></a>    <span class="dt">&quot;MPID2&quot;</span><span class="fu">:</span> <span class="st">&quot;#&quot;</span> </span>
+<span id="cb19-8"><a href="#cb19-8"></a>  <span class="fu">},</span> </span>
+<span id="cb19-9"><a href="#cb19-9"></a>  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
+<span id="cb19-10"><a href="#cb19-10"></a>    <span class="dt">&quot;P_total_hourly&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
+<span id="cb19-11"><a href="#cb19-11"></a>      <span class="dt">&quot;OBS1&quot;</span><span class="fu">:</span> <span class="st">&quot;RR&quot;</span><span class="fu">,</span> </span>
+<span id="cb19-12"><a href="#cb19-12"></a>      <span class="dt">&quot;OBS2&quot;</span><span class="fu">:</span> <span class="st">&quot;precipitation&quot;</span><span class="fu">,</span> </span>
+<span id="cb19-13"><a href="#cb19-13"></a>      <span class="dt">&quot;OBS3&quot;</span><span class="fu">:</span> <span class="st">&quot;rr&quot;</span><span class="fu">,</span> </span>
+<span id="cb19-14"><a href="#cb19-14"></a>      <span class="dt">&quot;INT1&quot;</span><span class="fu">:</span> <span class="st">&quot;hourly&quot;</span><span class="fu">,</span> </span>
+<span id="cb19-15"><a href="#cb19-15"></a>      <span class="dt">&quot;INT2&quot;</span><span class="fu">:</span> <span class="st">&quot;stunde&quot;</span><span class="fu">,</span> </span>
+<span id="cb19-16"><a href="#cb19-16"></a>      <span class="dt">&quot;INT3&quot;</span><span class="fu">:</span> <span class="st">&quot;stundenwerte&quot;</span> </span>
+<span id="cb19-17"><a href="#cb19-17"></a>    <span class="fu">},</span> </span>
+<span id="cb19-18"><a href="#cb19-18"></a>    <span class="dt">&quot;ta&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
+<span id="cb19-19"><a href="#cb19-19"></a>      <span class="dt">&quot;OBS1&quot;</span><span class="fu">:</span> <span class="st">&quot;TU&quot;</span><span class="fu">,</span> </span>
+<span id="cb19-20"><a href="#cb19-20"></a>      <span class="dt">&quot;OBS2&quot;</span><span class="fu">:</span> <span class="st">&quot;air_temperature&quot;</span><span class="fu">,</span> </span>
+<span id="cb19-21"><a href="#cb19-21"></a>      <span class="dt">&quot;OBS3&quot;</span><span class="fu">:</span> <span class="st">&quot;tu&quot;</span><span class="fu">,</span> </span>
+<span id="cb19-22"><a href="#cb19-22"></a>      <span class="dt">&quot;INT1&quot;</span><span class="fu">:</span> <span class="st">&quot;hourly&quot;</span><span class="fu">,</span> </span>
+<span id="cb19-23"><a href="#cb19-23"></a>      <span class="dt">&quot;INT2&quot;</span><span class="fu">:</span> <span class="st">&quot;stunde&quot;</span><span class="fu">,</span> </span>
+<span id="cb19-24"><a href="#cb19-24"></a>      <span class="dt">&quot;INT3&quot;</span><span class="fu">:</span> <span class="st">&quot;stundenwerte&quot;</span> </span>
+<span id="cb19-25"><a href="#cb19-25"></a>    <span class="fu">}</span> </span>
+<span id="cb19-26"><a href="#cb19-26"></a>  <span class="fu">}</span> </span>
+<span id="cb19-27"><a href="#cb19-27"></a><span class="fu">}</span></span></code></pre></div>
 <p><a name="41_key_gen"></a></p>
 <h1 id="ssl-key-pair-generation-guide">SSL key pair generation guide</h1>
 <h2 id="windows">Windows</h2>
 <p>It is recommended to use the following:</p>
-<p><a href="https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip" class="uri">https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip</a></p>
+<p><a href="https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip">https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip</a></p>
 <p>Download and extract it to an optional place. In the package, you can find the executable file at the: <em>bin/openssl.exe</em></p>
 <p>If you open the exe, it will prompt a command window, wherein you have to type the following lines:</p>
 <p><strong>1.</strong> Private key generation:<br />
@@ -2173,10 +2168,10 @@ stundenwerte_RR_00164_akt.zip|produkt_rr_stunde_*_00164.txt</code></pre>
 <code>rsa -in private.pem -out public.pem -outform PEM -pubout</code></p>
 <h2 id="linux">Linux</h2>
 <p>You have to download one from the following link:</p>
-<p><a href="https://www.openssl.org/source/" class="uri">https://www.openssl.org/source/</a></p>
+<p><a href="https://www.openssl.org/source/">https://www.openssl.org/source/</a></p>
 <p>After that you have to extract and install it.</p>
 <p>Here you can find a detailed description about the installation:</p>
-<p><a href="https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/" class="uri">https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/</a></p>
+<p><a href="https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/">https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/</a></p>
 <p>After the installation you have to run these commands:</p>
 <p><strong>1.</strong> Private key generation:<br />
 <code>openssl genrsa -out private.pem 2048</code></p>
@@ -2184,7 +2179,7 @@ stundenwerte_RR_00164_akt.zip|produkt_rr_stunde_*_00164.txt</code></pre>
 <code>openssl rsa -in private.pem -out public.pem -outform PEM -pubout</code></p>
 <p><a name="51_tools"></a></p>
 <h1 id="other-environet-tools">Other Environet tools</h1>
-<p>Useful CLI tools which are available through the './environet' wrapper script.</p>
+<p>Useful CLI tools which are available through the ‘./environet’ wrapper script.</p>
 <h3 id="data-node-cleanup">Data node cleanup</h3>
 <p>Command: <code>./environet data cleanup</code></p>
 <p>Description: Cleanup data node, delete unnecessary, old files.</p>
@@ -2194,7 +2189,7 @@ stundenwerte_RR_00164_akt.zip|produkt_rr_stunde_*_00164.txt</code></pre>
 <p>Based on these data a keypair will be generated, and stored in the destination folder.</p>
 <h3 id="sign-content">Sign content</h3>
 <p>Command: <code>./environet dist|data tool sign</code></p>
-<p>Description: With this command you gen sign a content (a string, or a file) with a private key. The command will ask for: * Relative path of private key file * How do you want to enter the content (file, or pasted string) * The file path (in case of 'file' mode) or the raw string (in case of 'pasted string' mode) * Generate md5 hash before sigining, or not</p>
+<p>Description: With this command you gen sign a content (a string, or a file) with a private key. The command will ask for: * Relative path of private key file * How do you want to enter the content (file, or pasted string) * The file path (in case of ‘file’ mode) or the raw string (in case of ‘pasted string’ mode) * Generate md5 hash before sigining, or not</p>
 <p>Based on the input data a base64 encoded signature will be generated, which can be used in the Authorization header of any api request.</p>
 <h3 id="exporting-database">Exporting database</h3>
 <p>Command: <code>./environet dist database export</code></p>

@@ -189,3 +189,7 @@ section#main-content {
 		flex-flow: nowrap;
 	}
 }
+
+.ss-main .ss-multi-selected .ss-values .ss-value {
+	animation: none !important;
+}
