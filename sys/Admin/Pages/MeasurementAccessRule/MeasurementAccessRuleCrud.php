@@ -57,6 +57,11 @@ class MeasurementAccessRuleCrud extends CrudPage {
 	protected $successAddMessage = 'Measurement access rule successfully added';
 
 	/**
+	 * @inheritdoc
+	 */
+	protected $successEditMessage = 'Measurement access rule successfully saved';
+
+	/**
 	 * @var string
 	 */
 	protected $readOwnPermissionName = 'admin.measurementaccessrules.readown';

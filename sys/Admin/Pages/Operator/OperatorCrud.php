@@ -51,6 +51,11 @@ class OperatorCrud extends CrudPage {
 	 */
 	protected $successAddMessage = 'Operator successfully added';
 
+	/**
+	 * @inheritdoc
+	 */
+	protected $successEditMessage = 'Operator successfully saved';
+
 
 	/**
 	 * @param bool $plural

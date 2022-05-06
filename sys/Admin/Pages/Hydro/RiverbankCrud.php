@@ -44,7 +44,12 @@ class RiverbankCrud extends CrudPage {
 	/**
 	 * @inheritdoc
 	 */
-	protected $successAddMessage = 'Riverbank successfully saved';
+	protected $successAddMessage = 'Riverbank successfully added';
+
+	/**
+	 * @inheritdoc
+	 */
+	protected $successEditMessage = 'Riverbank successfully saved';
 
 
 	/**

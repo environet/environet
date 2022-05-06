@@ -25,7 +25,12 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	/**
 	 * @inheritdoc
 	 */
-	protected $successAddMessage = 'Monitoring point successfully saved';
+	protected $successAddMessage = 'Monitoring point successfully added';
+
+	/**
+	 * @inheritdoc
+	 */
+	protected $successEditMessage = 'Monitoring point successfully saved';
 
 	/**
 	 * Heading line of input CSV

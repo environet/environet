@@ -53,6 +53,11 @@ class WarningLevelCrud extends CrudPage {
 	protected $successAddMessage = 'Warning level successfully added';
 
 	/**
+	 * @inheritdoc
+	 */
+	protected $successEditMessage = 'Warning level successfully saved';
+
+	/**
 	 * @var string
 	 */
 	protected $readOwnPermissionName = 'admin.warninglevels.readown';

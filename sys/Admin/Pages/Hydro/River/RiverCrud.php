@@ -46,7 +46,12 @@ class RiverCrud extends CrudPage {
 	/**
 	 * @inheritdoc
 	 */
-	protected $successAddMessage = 'River successfully saved';
+	protected $successAddMessage = 'River successfully added';
+
+	/**
+	 * @inheritdoc
+	 */
+	protected $successEditMessage = 'River successfully saved';
 
 
 	/**
@@ -157,7 +162,7 @@ class RiverCrud extends CrudPage {
 		//Data is valid, save it, add success message, and redirect to index page
 		try {
 			$this->queriesClass::save($postData, $id, 'eucd_riv');
-			$this->addMessage($this->successAddMessage, self::MESSAGE_SUCCESS);
+			$this->addMessage(is_null($id) ? $this->successAddMessage : $this->successEditMessage, self::MESSAGE_SUCCESS);
 
 			return $this->redirect($this->listPagePath);
 		} catch (QueryException $e) {

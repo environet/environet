@@ -46,7 +46,12 @@ class ObservedPropertyCrud extends CrudPage {
 	/**
 	 * @inheritdoc
 	 */
-	protected $successAddMessage = 'Observed property successfully saved';
+	protected $successAddMessage = 'Observed property successfully added';
+
+	/**
+	 * @inheritdoc
+	 */
+	protected $successEditMessage = 'Observed property successfully saved';
 
 
 	/**

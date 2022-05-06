@@ -48,6 +48,12 @@ abstract class CrudPage extends BasePage {
 	protected $successAddMessage;
 
 	/**
+	 * Success edit message.
+	 * @var string
+	 */
+	protected $successEditMessage;
+
+	/**
 	 * Template file for edit and add operations.
 	 * @var string
 	 */
@@ -231,7 +237,7 @@ abstract class CrudPage extends BasePage {
 
 		//Data is valid, save it, add success message, and redirect to index page
 		$this->queriesClass::save($postData, $id);
-		$this->addMessage($this->successAddMessage, self::MESSAGE_SUCCESS);
+		$this->addMessage(is_null($id) ? $this->successAddMessage : $this->successEditMessage, self::MESSAGE_SUCCESS);
 
 		return $this->redirect($this->getListPageLinkWithState());
 	}

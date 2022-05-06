@@ -50,7 +50,12 @@ class WarningLevelGroupCrud extends CrudPage {
 	/**
 	 * @inheritdoc
 	 */
-	protected $successAddMessage = 'Warning level group successfully saved';
+	protected $successAddMessage = 'Warning level group successfully added';
+
+	/**
+	 * @inheritdoc
+	 */
+	protected $successEditMessage = 'Warning level group successfully saved';
 
 
 	/**

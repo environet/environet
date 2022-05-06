@@ -50,7 +50,12 @@ class UserCrud extends CrudPage {
 	/**
 	 * @inheritdoc
 	 */
-	protected $successAddMessage = 'User successfully saved';
+	protected $successAddMessage = 'User successfully added';
+
+	/**
+	 * @inheritdoc
+	 */
+	protected $successEditMessage = 'User successfully saved';
 
 
 	/**

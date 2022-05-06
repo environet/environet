@@ -52,7 +52,12 @@ class GroupCrud extends CrudPage {
 	/**
 	 * @inheritdoc
 	 */
-	protected $successAddMessage = 'Group successfully saved';
+	protected $successAddMessage = 'Group successfully added';
+
+	/**
+	 * @inheritdoc
+	 */
+	protected $successEditMessage = 'Group successfully saved';
 
 
 	/**

@@ -43,7 +43,12 @@ class StationClassificationCrud extends CrudPage {
 	/**
 	 * @inheritdoc
 	 */
-	protected $successAddMessage = 'Station classification successfully saved';
+	protected $successAddMessage = 'Station classification successfully added';
+
+	/**
+	 * @inheritdoc
+	 */
+	protected $successEditMessage = 'Station classification successfully saved';
 
 
 	/**
