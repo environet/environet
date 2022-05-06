@@ -208,10 +208,6 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	 */
 	public function unserialize($serialized) {
 		if ($serialized === '*') {
-			if (!$this->operatorIdentity) {
-				throw new Exception('Missing operator!');
-			}
-
 			if ($this->type === MPOINT_TYPE_HYDRO) {
 				$serialized = $this->getHydroPropertiesByOperator();
 			} elseif ($this->type === MPOINT_TYPE_METEO) {

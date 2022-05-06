@@ -55,9 +55,9 @@ abstract class Selector {
 	 * @return Identity
 	 * @throws QueryException
 	 * @uses \Environet\Sys\General\Db\Query\Select::run()
-	 * @see  Identity
+	 * @see  Identity|null
 	 */
-	protected function getOperatorIdentity($operatorId): Identity {
+	protected function getOperatorIdentity($operatorId): ?Identity {
 		$user = (new Select())
 			->select('users.*')
 			->from('users')
@@ -66,7 +66,7 @@ abstract class Selector {
 			->limit(1)
 			->run(Query::FETCH_FIRST);
 
-		return new Identity($user['id'], $user);
+		return isset($user['id']) ? new Identity($user['id'], $user) : null;
 	}
 
 
