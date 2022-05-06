@@ -1088,12 +1088,13 @@ It should output the currently installed version number.</p>
 To stop and start them manually, you may run <code>./environet data up</code> or <code>./environet data down</code> (<code>./environet dist up</code> and <code>./environet dist down</code> in case of a distribution node).</p>
 <p>To get the latest version, simply run <code>git pull</code> in the repository folder.</p>
 <p>Depending on the git version it can be possible to run the following command to update the submodule (src folder) too: <code>git submodule update --init --recursive --remote</code></p>
+<p>If a Dockerfile of a container has been changed in the new version, after <code>./environet dist/data down</code> but before <code>./environet dist/data up</code> it’s necessary to run <code>./environet dist/data build</code>.</p>
 <h2 id="linux-with-ufw-security-settings">Linux with UFW security settings</h2>
-<p>If the nodes are hosted on a linux system, which using UFW firewall, there are some additional steps to make it secure, and do not open unneccessary ports. The recommended solution is to make some modification on UFW rules. The description of the compatibility problem, and the solution can be found here: <a href="https://github.com/chaifeng/ufw-docker">https://github.com/chaifeng/ufw-docker</a></p>
+<p>If the nodes are hosted on a linux system, which using UFW firewall, there are some additional steps to make it secure, and do not open unneccessary ports. The recommended solution is to make some modification on UFW rules. The description of the compatibility problem, and the solution can be found here: <a href="https://github.com/chaifeng/ufw-docker" class="uri">https://github.com/chaifeng/ufw-docker</a></p>
 <p><a name="20_distribution_node"></a></p>
 <h1 id="distribution-node">Distribution node</h1>
 <h2 id="overview">Overview</h2>
-<p>A Distribution node, in it’s minimal form, is a service aspect that’s able to maintain the central database and service API requests. In the first phase the domain of the distribution node is: <a href="https://environet.environ.hu">https://environet.environ.hu</a></p>
+<p>A Distribution node, in it’s minimal form, is a service aspect that’s able to maintain the central database and service API requests. In the first phase the domain of the distribution node is: <a href="https://environet.environ.hu" class="uri">https://environet.environ.hu</a></p>
 <h2 id="central-database">Central database</h2>
 <p>The distribution node has a database backend. It contains: * Data and configuration of hydro and meteo points * Measurement data tables of these monitoring points * User and access (ACL) tables (users, groups, permissions) * System runtime data</p>
 <p>Schema of the database can be found here: <a href="#21_database_structure">Database structure</a></p>
@@ -1129,7 +1130,7 @@ The detailed documentation of this endpoint can found here: <a href="#23_api_dow
 </ul>
 <h2 id="schema-diagram">Schema diagram</h2>
 <figure>
-<img src="resources/model.jpg" alt="" /><figcaption>Schema diagram images</figcaption>
+<img src="resources/model.jpg" alt="Schema diagram images" /><figcaption>Schema diagram images</figcaption>
 </figure>
 <h2 id="schema-sql-structure">Schema sql structure</h2>
 <p><a href="resources/schema.sql">Link to sql file</a></p>
@@ -1161,7 +1162,7 @@ The detailed documentation of this endpoint can found here: <a href="#23_api_dow
 </tbody>
 </table>
 <h3 id="signature-header">Signature header:</h3>
-<p>The pattern of the header: <code>Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"</code></p>
+<p>The pattern of the header: <code>Signature keyId=&quot;[username]&quot;,algorithm=&quot;rsa-sha256&quot;,signature=&quot;[signature]&quot;</code></p>
 <p>The <code>keyId</code> is the username of the uploader user. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the from the body of the response, which is the XML data.</p>
 <hr />
 <h2 id="body">Body</h2>
@@ -1201,19 +1202,19 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </ul>
 <h3 id="invalid-request">Invalid request</h3>
 <ul>
-<li><p><strong>Status code</strong>: 400</p></li>
-<li><p><strong>Content-type</strong>: application/xml</p></li>
-<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
-<li><p><strong>Description</strong>: Input or processing error during the upload process. The reponse in an error xml which is valid agains environet’ upload api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
+<li><strong>Status code</strong>: 400</li>
+<li><strong>Content-type</strong>: application/xml</li>
+<li><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></li>
+<li><strong>Description</strong>: Input or processing error during the upload process. The reponse in an error xml which is valid agains environet’ upload api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb2-3"><a href="#cb2-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
-<span id="cb2-5"><a href="#cb2-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
-<span id="cb2-6"><a href="#cb2-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
-<span id="cb2-7"><a href="#cb2-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
-<li><p><strong>Error codes</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></a>
+<a class="sourceLine" id="cb2-3" title="3">    <span class="kw">&lt;environet:Error&gt;</span></a>
+<a class="sourceLine" id="cb2-4" title="4">        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span></a>
+<a class="sourceLine" id="cb2-5" title="5">        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></a>
+<a class="sourceLine" id="cb2-6" title="6">    <span class="kw">&lt;/environet:Error&gt;</span></a>
+<a class="sourceLine" id="cb2-7" title="7"><span class="kw">&lt;/environet:ErrorResponse&gt;</span></a></code></pre></div></li>
+<li><strong>Error codes</strong>
 <ul>
 <li><code>101</code>: Unknown error</li>
 <li><code>102</code>: Server error</li>
@@ -1234,18 +1235,18 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </ul>
 <h3 id="server-error">Server error</h3>
 <ul>
-<li><p><strong>Status code</strong>: 500</p></li>
-<li><p><strong>Content-type</strong>: application/xml</p></li>
-<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
-<li><p><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet’s upload api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
+<li><strong>Status code</strong>: 500</li>
+<li><strong>Content-type</strong>: application/xml</li>
+<li><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></li>
+<li><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet’s upload api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb3-3"><a href="#cb3-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
-<span id="cb3-4"><a href="#cb3-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
-<span id="cb3-5"><a href="#cb3-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
-<span id="cb3-6"><a href="#cb3-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
-<span id="cb3-7"><a href="#cb3-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb3"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></a>
+<a class="sourceLine" id="cb3-3" title="3">    <span class="kw">&lt;environet:Error&gt;</span></a>
+<a class="sourceLine" id="cb3-4" title="4">        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span></a>
+<a class="sourceLine" id="cb3-5" title="5">        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></a>
+<a class="sourceLine" id="cb3-6" title="6">    <span class="kw">&lt;/environet:Error&gt;</span></a>
+<a class="sourceLine" id="cb3-7" title="7"><span class="kw">&lt;/environet:ErrorResponse&gt;</span></a></code></pre></div></li>
 </ul>
 <p><a name="24_api_download"></a></p>
 <h1 id="download-api-documentation">Download API documentation</h1>
@@ -1281,7 +1282,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </tbody>
 </table>
 <h3 id="signature-header-1">Signature header:</h3>
-<p>The pattern of the header: <code>Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"</code></p>
+<p>The pattern of the header: <code>Signature keyId=&quot;[username]&quot;,algorithm=&quot;rsa-sha256&quot;,signature=&quot;[signature]&quot;</code></p>
 <p>The <code>keyId</code> is the username of the user who wants to query data. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the token in the query parameters.</p>
 <h2 id="repsonses-1">Repsonses</h2>
 <h3 id="success-1">Success</h3>
@@ -1293,19 +1294,19 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </ul>
 <h3 id="invalid-request-1">Invalid request</h3>
 <ul>
-<li><p><strong>Status code</strong>: 400</p></li>
-<li><p><strong>Content-type</strong>: application/xml</p></li>
-<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
-<li><p><strong>Description</strong>: The query request is invalid. The response is an xml which is valid agains environet’s api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
+<li><strong>Status code</strong>: 400</li>
+<li><strong>Content-type</strong>: application/xml</li>
+<li><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></li>
+<li><strong>Description</strong>: The query request is invalid. The response is an xml which is valid agains environet’s api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
-<span id="cb4-4"><a href="#cb4-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
-<span id="cb4-5"><a href="#cb4-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
-<span id="cb4-6"><a href="#cb4-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
-<span id="cb4-7"><a href="#cb4-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
-<li><p><strong>Error codes</strong></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></a>
+<a class="sourceLine" id="cb4-3" title="3">    <span class="kw">&lt;environet:Error&gt;</span></a>
+<a class="sourceLine" id="cb4-4" title="4">        <span class="kw">&lt;environet:ErrorCode&gt;</span>101<span class="kw">&lt;/environet:ErrorCode&gt;</span></a>
+<a class="sourceLine" id="cb4-5" title="5">        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></a>
+<a class="sourceLine" id="cb4-6" title="6">    <span class="kw">&lt;/environet:Error&gt;</span></a>
+<a class="sourceLine" id="cb4-7" title="7"><span class="kw">&lt;/environet:ErrorResponse&gt;</span></a></code></pre></div></li>
+<li><strong>Error codes</strong>
 <ul>
 <li><code>101</code>: Unknown error</li>
 <li><code>102</code>: Server error</li>
@@ -1325,18 +1326,18 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </ul>
 <h3 id="server-error-1">Server error</h3>
 <ul>
-<li><p><strong>Status code</strong>: 500</p></li>
-<li><p><strong>Content-type</strong>: application/xml</p></li>
-<li><p><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></p></li>
-<li><p><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet’s api schema: <a href="resources/environet.xsd">environet.xsd</a></p></li>
+<li><strong>Status code</strong>: 500</li>
+<li><strong>Content-type</strong>: application/xml</li>
+<li><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></li>
+<li><strong>Description</strong>: Unidentified error during request. The response is an xml which is valid agains environet’s api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb5-3"><a href="#cb5-3"></a>    <span class="kw">&lt;environet:Error&gt;</span></span>
-<span id="cb5-4"><a href="#cb5-4"></a>        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a>        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></span>
-<span id="cb5-6"><a href="#cb5-6"></a>    <span class="kw">&lt;/environet:Error&gt;</span></span>
-<span id="cb5-7"><a href="#cb5-7"></a><span class="kw">&lt;/environet:ErrorResponse&gt;</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb5"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></a>
+<a class="sourceLine" id="cb5-3" title="3">    <span class="kw">&lt;environet:Error&gt;</span></a>
+<a class="sourceLine" id="cb5-4" title="4">        <span class="kw">&lt;environet:ErrorCode&gt;</span>500<span class="kw">&lt;/environet:ErrorCode&gt;</span></a>
+<a class="sourceLine" id="cb5-5" title="5">        <span class="kw">&lt;environet:ErrorMessage&gt;</span>Error<span class="kw">&lt;/environet:ErrorMessage&gt;</span></a>
+<a class="sourceLine" id="cb5-6" title="6">    <span class="kw">&lt;/environet:Error&gt;</span></a>
+<a class="sourceLine" id="cb5-7" title="7"><span class="kw">&lt;/environet:ErrorResponse&gt;</span></a></code></pre></div></li>
 </ul>
 <p><a name="24_api_monitoring_points"></a></p>
 <h1 id="monitoring-points-api-documentation">Monitoring points API documentation</h1>
@@ -1366,96 +1367,96 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </tbody>
 </table>
 <h3 id="signature-header-2">Signature header:</h3>
-<p>The pattern of the header: <code>Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"</code></p>
+<p>The pattern of the header: <code>Signature keyId=&quot;[username]&quot;,algorithm=&quot;rsa-sha256&quot;,signature=&quot;[signature]&quot;</code></p>
 <p>The <code>keyId</code> is the username of the user who wants to query data. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the token in the query parameters.</p>
 <h2 id="repsonses-2">Repsonses</h2>
 <h3 id="success-2">Success</h3>
 <ul>
-<li><p><strong>Status code</strong>: 200</p></li>
-<li><p><strong>Content-type</strong>: application/json</p></li>
-<li><p><strong>Body</strong>: <code>JSON</code></p></li>
-<li><p><strong>Description</strong>: Request is OK, list the hydro and meteo points of user</p></li>
+<li><strong>Status code</strong>: 200</li>
+<li><strong>Content-type</strong>: application/json</li>
+<li><strong>Body</strong>: <code>JSON</code></li>
+<li><strong>Description</strong>: Request is OK, list the hydro and meteo points of user</li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">{</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a>    <span class="dt">&quot;hydro&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb6-3"><a href="#cb6-3"></a>        <span class="fu">{</span></span>
-<span id="cb6-4"><a href="#cb6-4"></a>            <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a>            <span class="dt">&quot;station_classificationid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
-<span id="cb6-6"><a href="#cb6-6"></a>            <span class="dt">&quot;operatorid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
-<span id="cb6-7"><a href="#cb6-7"></a>            <span class="dt">&quot;bankid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
-<span id="cb6-8"><a href="#cb6-8"></a>            <span class="dt">&quot;eucd_riv&quot;</span><span class="fu">:</span> <span class="st">&quot;river&quot;</span><span class="fu">,</span></span>
-<span id="cb6-9"><a href="#cb6-9"></a>            <span class="dt">&quot;eucd_wgst&quot;</span><span class="fu">:</span> <span class="st">&quot;ABC123&quot;</span><span class="fu">,</span></span>
-<span id="cb6-10"><a href="#cb6-10"></a>            <span class="dt">&quot;ncd_wgst&quot;</span><span class="fu">:</span> <span class="st">&quot;ABC123&quot;</span><span class="fu">,</span></span>
-<span id="cb6-11"><a href="#cb6-11"></a>            <span class="dt">&quot;vertical_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;Vertical reference&quot;</span><span class="fu">,</span></span>
-<span id="cb6-12"><a href="#cb6-12"></a>            <span class="dt">&quot;long&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
-<span id="cb6-13"><a href="#cb6-13"></a>            <span class="dt">&quot;lat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
-<span id="cb6-14"><a href="#cb6-14"></a>            <span class="dt">&quot;z&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
-<span id="cb6-15"><a href="#cb6-15"></a>            <span class="dt">&quot;maplong&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
-<span id="cb6-16"><a href="#cb6-16"></a>            <span class="dt">&quot;maplat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
-<span id="cb6-17"><a href="#cb6-17"></a>            <span class="dt">&quot;country&quot;</span><span class="fu">:</span> <span class="st">&quot;CountryCode&quot;</span><span class="fu">,</span></span>
-<span id="cb6-18"><a href="#cb6-18"></a>            <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;MPoint&quot;</span><span class="fu">,</span></span>
-<span id="cb6-19"><a href="#cb6-19"></a>            <span class="dt">&quot;location&quot;</span><span class="fu">:</span> <span class="st">&quot;Location&quot;</span><span class="fu">,</span></span>
-<span id="cb6-20"><a href="#cb6-20"></a>            <span class="dt">&quot;river_kilometer&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
-<span id="cb6-21"><a href="#cb6-21"></a>            <span class="dt">&quot;catchment_area&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
-<span id="cb6-22"><a href="#cb6-22"></a>            <span class="dt">&quot;gauge_zero&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
-<span id="cb6-23"><a href="#cb6-23"></a>            <span class="dt">&quot;start_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-01-01 00:00:00&quot;</span><span class="fu">,</span></span>
-<span id="cb6-24"><a href="#cb6-24"></a>            <span class="dt">&quot;end_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-05-01 00:00:00&quot;</span><span class="fu">,</span></span>
-<span id="cb6-25"><a href="#cb6-25"></a>            <span class="dt">&quot;utc_offset&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
-<span id="cb6-26"><a href="#cb6-26"></a>            <span class="dt">&quot;river_basin&quot;</span><span class="fu">:</span> <span class="st">&quot;Basin&quot;</span><span class="fu">,</span></span>
-<span id="cb6-27"><a href="#cb6-27"></a>            <span class="dt">&quot;observed_properties&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb6-28"><a href="#cb6-28"></a>                <span class="st">&quot;hydro_property&quot;</span></span>
-<span id="cb6-29"><a href="#cb6-29"></a>            <span class="ot">]</span></span>
-<span id="cb6-30"><a href="#cb6-30"></a>        <span class="fu">}</span></span>
-<span id="cb6-31"><a href="#cb6-31"></a>    <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb6-32"><a href="#cb6-32"></a>    <span class="dt">&quot;meteo&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb6-33"><a href="#cb6-33"></a>        <span class="fu">{</span></span>
-<span id="cb6-34"><a href="#cb6-34"></a>            <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
-<span id="cb6-35"><a href="#cb6-35"></a>            <span class="dt">&quot;meteostation_classificationid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
-<span id="cb6-36"><a href="#cb6-36"></a>            <span class="dt">&quot;operatorid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
-<span id="cb6-37"><a href="#cb6-37"></a>            <span class="dt">&quot;eucd_pst&quot;</span><span class="fu">:</span> <span class="st">&quot;DEF456&quot;</span><span class="fu">,</span></span>
-<span id="cb6-38"><a href="#cb6-38"></a>            <span class="dt">&quot;ncd_pst&quot;</span><span class="fu">:</span> <span class="st">&quot;DEF456&quot;</span><span class="fu">,</span></span>
-<span id="cb6-39"><a href="#cb6-39"></a>            <span class="dt">&quot;vertical_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;Vertical reference&quot;</span><span class="fu">,</span></span>
-<span id="cb6-40"><a href="#cb6-40"></a>            <span class="dt">&quot;long&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
-<span id="cb6-41"><a href="#cb6-41"></a>            <span class="dt">&quot;lat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
-<span id="cb6-42"><a href="#cb6-42"></a>            <span class="dt">&quot;z&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
-<span id="cb6-43"><a href="#cb6-43"></a>            <span class="dt">&quot;maplong&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
-<span id="cb6-44"><a href="#cb6-44"></a>            <span class="dt">&quot;maplat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
-<span id="cb6-45"><a href="#cb6-45"></a>            <span class="dt">&quot;country&quot;</span><span class="fu">:</span> <span class="st">&quot;CountryCode&quot;</span><span class="fu">,</span></span>
-<span id="cb6-46"><a href="#cb6-46"></a>            <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Name&quot;</span><span class="fu">,</span></span>
-<span id="cb6-47"><a href="#cb6-47"></a>            <span class="dt">&quot;location&quot;</span><span class="fu">:</span> <span class="st">&quot;Location&quot;</span><span class="fu">,</span></span>
-<span id="cb6-48"><a href="#cb6-48"></a>            <span class="dt">&quot;altitude&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></span>
-<span id="cb6-49"><a href="#cb6-49"></a>            <span class="dt">&quot;start_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-01-01 00:00:00&quot;</span><span class="fu">,</span></span>
-<span id="cb6-50"><a href="#cb6-50"></a>            <span class="dt">&quot;end_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-05-01 00:00:00&quot;</span><span class="fu">,</span></span>
-<span id="cb6-51"><a href="#cb6-51"></a>            <span class="dt">&quot;utc_offset&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
-<span id="cb6-52"><a href="#cb6-52"></a>            <span class="dt">&quot;river_basin&quot;</span><span class="fu">:</span> <span class="st">&quot;Basin&quot;</span><span class="fu">,</span></span>
-<span id="cb6-53"><a href="#cb6-53"></a>            <span class="dt">&quot;observed_properties&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb6-54"><a href="#cb6-54"></a>                <span class="st">&quot;meteo_property&quot;</span></span>
-<span id="cb6-55"><a href="#cb6-55"></a>            <span class="ot">]</span></span>
-<span id="cb6-56"><a href="#cb6-56"></a>        <span class="fu">}</span></span>
-<span id="cb6-57"><a href="#cb6-57"></a>    <span class="ot">]</span></span>
-<span id="cb6-58"><a href="#cb6-58"></a><span class="fu">}</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb6"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb6-1" title="1"><span class="fu">{</span></a>
+<a class="sourceLine" id="cb6-2" title="2">    <span class="dt">&quot;hydro&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+<a class="sourceLine" id="cb6-3" title="3">        <span class="fu">{</span></a>
+<a class="sourceLine" id="cb6-4" title="4">            <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-5" title="5">            <span class="dt">&quot;station_classificationid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-6" title="6">            <span class="dt">&quot;operatorid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-7" title="7">            <span class="dt">&quot;bankid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-8" title="8">            <span class="dt">&quot;eucd_riv&quot;</span><span class="fu">:</span> <span class="st">&quot;river&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-9" title="9">            <span class="dt">&quot;eucd_wgst&quot;</span><span class="fu">:</span> <span class="st">&quot;ABC123&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-10" title="10">            <span class="dt">&quot;ncd_wgst&quot;</span><span class="fu">:</span> <span class="st">&quot;ABC123&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-11" title="11">            <span class="dt">&quot;vertical_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;Vertical reference&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-12" title="12">            <span class="dt">&quot;long&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-13" title="13">            <span class="dt">&quot;lat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-14" title="14">            <span class="dt">&quot;z&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-15" title="15">            <span class="dt">&quot;maplong&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-16" title="16">            <span class="dt">&quot;maplat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-17" title="17">            <span class="dt">&quot;country&quot;</span><span class="fu">:</span> <span class="st">&quot;CountryCode&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-18" title="18">            <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;MPoint&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-19" title="19">            <span class="dt">&quot;location&quot;</span><span class="fu">:</span> <span class="st">&quot;Location&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-20" title="20">            <span class="dt">&quot;river_kilometer&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-21" title="21">            <span class="dt">&quot;catchment_area&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-22" title="22">            <span class="dt">&quot;gauge_zero&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-23" title="23">            <span class="dt">&quot;start_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-01-01 00:00:00&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-24" title="24">            <span class="dt">&quot;end_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-05-01 00:00:00&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-25" title="25">            <span class="dt">&quot;utc_offset&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-26" title="26">            <span class="dt">&quot;river_basin&quot;</span><span class="fu">:</span> <span class="st">&quot;Basin&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-27" title="27">            <span class="dt">&quot;observed_properties&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+<a class="sourceLine" id="cb6-28" title="28">                <span class="st">&quot;hydro_property&quot;</span></a>
+<a class="sourceLine" id="cb6-29" title="29">            <span class="ot">]</span></a>
+<a class="sourceLine" id="cb6-30" title="30">        <span class="fu">}</span></a>
+<a class="sourceLine" id="cb6-31" title="31">    <span class="ot">]</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-32" title="32">    <span class="dt">&quot;meteo&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+<a class="sourceLine" id="cb6-33" title="33">        <span class="fu">{</span></a>
+<a class="sourceLine" id="cb6-34" title="34">            <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-35" title="35">            <span class="dt">&quot;meteostation_classificationid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-36" title="36">            <span class="dt">&quot;operatorid&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-37" title="37">            <span class="dt">&quot;eucd_pst&quot;</span><span class="fu">:</span> <span class="st">&quot;DEF456&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-38" title="38">            <span class="dt">&quot;ncd_pst&quot;</span><span class="fu">:</span> <span class="st">&quot;DEF456&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-39" title="39">            <span class="dt">&quot;vertical_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;Vertical reference&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-40" title="40">            <span class="dt">&quot;long&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-41" title="41">            <span class="dt">&quot;lat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-42" title="42">            <span class="dt">&quot;z&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-43" title="43">            <span class="dt">&quot;maplong&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-44" title="44">            <span class="dt">&quot;maplat&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-45" title="45">            <span class="dt">&quot;country&quot;</span><span class="fu">:</span> <span class="st">&quot;CountryCode&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-46" title="46">            <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Name&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-47" title="47">            <span class="dt">&quot;location&quot;</span><span class="fu">:</span> <span class="st">&quot;Location&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-48" title="48">            <span class="dt">&quot;altitude&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0000000000&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-49" title="49">            <span class="dt">&quot;start_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-01-01 00:00:00&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-50" title="50">            <span class="dt">&quot;end_time&quot;</span><span class="fu">:</span> <span class="st">&quot;2020-05-01 00:00:00&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-51" title="51">            <span class="dt">&quot;utc_offset&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-52" title="52">            <span class="dt">&quot;river_basin&quot;</span><span class="fu">:</span> <span class="st">&quot;Basin&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb6-53" title="53">            <span class="dt">&quot;observed_properties&quot;</span><span class="fu">:</span> <span class="ot">[</span></a>
+<a class="sourceLine" id="cb6-54" title="54">                <span class="st">&quot;meteo_property&quot;</span></a>
+<a class="sourceLine" id="cb6-55" title="55">            <span class="ot">]</span></a>
+<a class="sourceLine" id="cb6-56" title="56">        <span class="fu">}</span></a>
+<a class="sourceLine" id="cb6-57" title="57">    <span class="ot">]</span></a>
+<a class="sourceLine" id="cb6-58" title="58"><span class="fu">}</span></a></code></pre></div></li>
 </ul>
 <h3 id="invalid-request-2">Invalid request</h3>
 <ul>
-<li><p><strong>Status code</strong>: 400</p></li>
-<li><p><strong>Content-type</strong>: application/json</p></li>
-<li><p><strong>Body</strong>: <code>JSON</code></p></li>
-<li><p><strong>Description</strong>: The query request is invalid. The response is a json object with the error message, under error key.</p></li>
+<li><strong>Status code</strong>: 400</li>
+<li><strong>Content-type</strong>: application/json</li>
+<li><strong>Body</strong>: <code>JSON</code></li>
+<li><strong>Description</strong>: The query request is invalid. The response is a json object with the error message, under error key.</li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">{</span></span>
-<span id="cb7-2"><a href="#cb7-2"></a> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Error message&quot;</span></span>
-<span id="cb7-3"><a href="#cb7-3"></a><span class="fu">}</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb7"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb7-1" title="1"><span class="fu">{</span></a>
+<a class="sourceLine" id="cb7-2" title="2"> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Error message&quot;</span></a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="fu">}</span></a></code></pre></div></li>
 </ul>
 <h3 id="server-error-2">Server error</h3>
 <ul>
-<li><p><strong>Status code</strong>: 500</p></li>
-<li><p><strong>Content-type</strong>: application/json</p></li>
-<li><p><strong>Body</strong>: <code>JSON</code></p></li>
-<li><p><strong>Description</strong>: Unidentified error during request. The response is a json object with the error message, under error key.</p></li>
+<li><strong>Status code</strong>: 500</li>
+<li><strong>Content-type</strong>: application/json</li>
+<li><strong>Body</strong>: <code>JSON</code></li>
+<li><strong>Description</strong>: Unidentified error during request. The response is a json object with the error message, under error key.</li>
 <li><p><strong>Body example</strong>:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1"></a><span class="fu">{</span></span>
-<span id="cb8-2"><a href="#cb8-2"></a> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Error message&quot;</span></span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="fu">}</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb8"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb8-1" title="1"><span class="fu">{</span></a>
+<a class="sourceLine" id="cb8-2" title="2"> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Error message&quot;</span></a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="fu">}</span></a></code></pre></div></li>
 </ul>
 <p><a name="25_0_admin_user_manual"></a></p>
 <h1 id="admin-user-manual">Admin user manual</h1>
@@ -1807,7 +1808,7 @@ Private keys should be placed in the <code>conf/plugins/credentials</code> direc
 <h3 id="basic-configuration-file">Basic configuration file</h3>
 <p>The basic configuration text files are located where the Data Node was installed to in sub-folder conf/plugins/configuration. In the basic configuration file, the way of the transport (called transport layer) is specified (FTP, HTTP, or a local file) and the format (called parser layer) of data file (CSV or XML).</p>
 <p>The configuration files have always three sections which configure the properties of the three layers: * Transport layer: Gets the data from local / remote file, or web API, etc. * Parser layer: Processes the received data to the format which will be compatible with the API endpoint of the distribution node. * API client layer: Sends the data to the distribution node.</p>
-<p>The format of the configuration file follows the standards of ini-files as documented here: <a href="https://en.wikipedia.org/wiki/INI_file">https://en.wikipedia.org/wiki/INI_file</a> It must contain three sections, for transport, parser, and API client layers. So, the basic structure is like this:</p>
+<p>The format of the configuration file follows the standards of ini-files as documented here: <a href="https://en.wikipedia.org/wiki/INI_file" class="uri">https://en.wikipedia.org/wiki/INI_file</a> It must contain three sections, for transport, parser, and API client layers. So, the basic structure is like this:</p>
 <pre><code>[transport]
 property = value
 
@@ -1872,7 +1873,7 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <h5 id="ftptransport">FtpTransport</h5>
 <p>Takes the data from a remote FTP server * <em>host</em> (required): Host of the FTP server * <em>secure</em> (required): 1, if the connection can be secured by SSL, otherwise 0 * <em>port</em> (optional): Port of the FTP server, if non-standard * <em>username</em> (required): FTP authentication username * <em>password</em> (required): FTP authentication password * <em>path</em> (required): The path of the directory which contains the data files, relative to the root of the FTP connection. * <em>filenamePattern</em> (required): Pattern of the filenames which should be processed by the transport. Asterisk (<code>*</code>) characters can be used for variable parts of the filename * <em>newestFileOnly</em> (required): If 1, only the newest file (by date) will be transported * <em>conversionsFilename</em> (required): If the layer has a conversion specification file, this is the file name of the CONVERSIONS json file, relative to the path of the configuration folder. * <em>lastNDaysOnly</em> (optional): Use only files with modification time newer than or equal N days from current day.</p>
 <h4 id="parser-layer-properties">Parser layer properties</h4>
-<p>Common properties: * <em>timeZone</em> (required): A valid timezone, in which the data is stored in the source. The times will be converted to UTC before the API client layer. Possible values: <a href="https://www.php.net/manual/en/timezones.php">https://www.php.net/manual/en/timezones.php</a></p>
+<p>Common properties: * <em>timeZone</em> (required): A valid timezone, in which the data is stored in the source. The times will be converted to UTC before the API client layer. Possible values: <a href="https://www.php.net/manual/en/timezones.php" class="uri">https://www.php.net/manual/en/timezones.php</a></p>
 <h5 id="csvparser">CsvParser</h5>
 <p>For files which are in CSV format * <em>csvDelimiter</em> (required): The character which separates values from each other * <em>nHeaderSkip</em> (optional): Number of lines which will be skipped before data * <em>mPointIdCol</em> (required): Number of column (zero based) which contains the ID of moni-toring point * <em>timeCol</em> (required, if time is in a column): Number of column (zero based) which contains the time * <em>skipValue</em> (optional): A specific value which should be parsed as a non-existent value * <em>timeFormat</em> (required, if time is in a column): Format of time if in a column * <em>timeInFilenameFormat</em> (required, if time is in filename): If defined, the time should be parsed from the filename, and not from a column * <em>properties[]</em> (required): The sign (abbreviation) of the observed property, and the col-umn number (zero based) in which the property value can be found. The name and the value must be separated by “;”. Example: “h;6”. This property can be defined multiple times, one per property * <em>propertyLevel</em> (required): In case of “column” the values of an observed property have their own column in the files. In case of “row” the rows have a column containing observed property symbols that specify which symbol the value belongs to. * <em>conversionsFilename</em> (optional): If the layer has a conversion specification file, this contains the path to the CONVERSIONS json file * <em>propertySymbolColumn</em> (required, if propertyLevel is row): Number of column which contains the symbol of the property * <em>propertyValueColumn</em> (required, if propertyLevel is row): Number of column which contains the value of the property</p>
 <h5 id="xmlparser">XmlParser</h5>
@@ -1890,84 +1891,84 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <p>There may be as many entries in the array as needed. The property “Parameter” determines the entity the information in the object is about. It may be one of the strings “MonitoringPoint”, “ObservedProp-ertyValue”, “ObservedPropertySymbol” and the date specific entities “Year”, “Month”, “Day”, “Hour”, “Minute”, “Date”, “Time” and “DateTime”, depending in which way the date is given in the XML file (in a single XML tag or in multiple separate tags)</p>
 <p>The property “Tag Hierarchy” is the path to the information specified by “Parameter”. It is an array of strings containing the tags names that need to be traversed in the specified order to get to the desired information.</p>
 <p>The following is an example of part of a data file of the German hydrological service, LfU. The monitor-ing point id is available by the tag hierarchy “hnd-daten”, “messstelle”, “nummer”. Tag hierarchy strings are given without angle brackets. In this example, date is given separately in the tags “jahr” (year), “monat” (month), “tag” (day), “stunde” (hour) and “minute” (minute).</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw">&lt;hnd-daten&gt;</span> </span>
-<span id="cb12-2"><a href="#cb12-2"></a>  <span class="kw">&lt;messstelle&gt;</span> </span>
-<span id="cb12-3"><a href="#cb12-3"></a>    <span class="kw">&lt;nummer&gt;</span>10026301<span class="kw">&lt;/nummer&gt;</span> </span>
-<span id="cb12-4"><a href="#cb12-4"></a>    <span class="kw">&lt;messwert&gt;</span> </span>
-<span id="cb12-5"><a href="#cb12-5"></a>      <span class="kw">&lt;datum&gt;</span> </span>
-<span id="cb12-6"><a href="#cb12-6"></a>        <span class="kw">&lt;jahr&gt;</span>2020<span class="kw">&lt;/jahr&gt;</span> </span>
-<span id="cb12-7"><a href="#cb12-7"></a>        <span class="kw">&lt;monat&gt;</span>06<span class="kw">&lt;/monat&gt;</span> </span>
-<span id="cb12-8"><a href="#cb12-8"></a>        <span class="kw">&lt;tag&gt;</span>09<span class="kw">&lt;/tag&gt;</span> </span>
-<span id="cb12-9"><a href="#cb12-9"></a>        <span class="kw">&lt;stunde&gt;</span>00<span class="kw">&lt;/stunde&gt;</span> </span>
-<span id="cb12-10"><a href="#cb12-10"></a>        <span class="kw">&lt;minute&gt;</span>00<span class="kw">&lt;/minute&gt;</span> </span>
-<span id="cb12-11"><a href="#cb12-11"></a>      <span class="kw">&lt;/datum&gt;</span> </span>
-<span id="cb12-12"><a href="#cb12-12"></a>      <span class="kw">&lt;wert&gt;</span>87,2<span class="kw">&lt;/wert&gt;</span> </span>
-<span id="cb12-13"><a href="#cb12-13"></a>    <span class="kw">&lt;/messwert&gt;</span> </span>
-<span id="cb12-14"><a href="#cb12-14"></a>    <span class="co">&lt;!-- more data skipped in this example--&gt;</span> </span>
-<span id="cb12-15"><a href="#cb12-15"></a>  <span class="kw">&lt;/messstelle&gt;</span> </span>
-<span id="cb12-16"><a href="#cb12-16"></a><span class="kw">&lt;/hnd-daten&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">&lt;hnd-daten&gt;</span> </a>
+<a class="sourceLine" id="cb12-2" title="2">  <span class="kw">&lt;messstelle&gt;</span> </a>
+<a class="sourceLine" id="cb12-3" title="3">    <span class="kw">&lt;nummer&gt;</span>10026301<span class="kw">&lt;/nummer&gt;</span> </a>
+<a class="sourceLine" id="cb12-4" title="4">    <span class="kw">&lt;messwert&gt;</span> </a>
+<a class="sourceLine" id="cb12-5" title="5">      <span class="kw">&lt;datum&gt;</span> </a>
+<a class="sourceLine" id="cb12-6" title="6">        <span class="kw">&lt;jahr&gt;</span>2020<span class="kw">&lt;/jahr&gt;</span> </a>
+<a class="sourceLine" id="cb12-7" title="7">        <span class="kw">&lt;monat&gt;</span>06<span class="kw">&lt;/monat&gt;</span> </a>
+<a class="sourceLine" id="cb12-8" title="8">        <span class="kw">&lt;tag&gt;</span>09<span class="kw">&lt;/tag&gt;</span> </a>
+<a class="sourceLine" id="cb12-9" title="9">        <span class="kw">&lt;stunde&gt;</span>00<span class="kw">&lt;/stunde&gt;</span> </a>
+<a class="sourceLine" id="cb12-10" title="10">        <span class="kw">&lt;minute&gt;</span>00<span class="kw">&lt;/minute&gt;</span> </a>
+<a class="sourceLine" id="cb12-11" title="11">      <span class="kw">&lt;/datum&gt;</span> </a>
+<a class="sourceLine" id="cb12-12" title="12">      <span class="kw">&lt;wert&gt;</span>87,2<span class="kw">&lt;/wert&gt;</span> </a>
+<a class="sourceLine" id="cb12-13" title="13">    <span class="kw">&lt;/messwert&gt;</span> </a>
+<a class="sourceLine" id="cb12-14" title="14">    <span class="co">&lt;!-- more data skipped in this example--&gt;</span> </a>
+<a class="sourceLine" id="cb12-15" title="15">  <span class="kw">&lt;/messstelle&gt;</span> </a>
+<a class="sourceLine" id="cb12-16" title="16"><span class="kw">&lt;/hnd-daten&gt;</span></a></code></pre></div>
 <p>The property “Attribute” is used if the desired value is not enclosed in the tag, but it is an attribute of the tag. In this case, “Attribute” is the name of the attribute, else an empty string.</p>
 <p>The property “optional” is boolean (so it may have the values true and false) and specifies whether the entry is optional or not. The meaning of the other properties “Value” and “Unit” depends on the prop-erty “Parameter” and is described in the following sections.</p>
 <p>A corresponding example for the configuration to parse the XML format of LfU is shown here:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb13-1"><a href="#cb13-1"></a><span class="ot">[</span></span>
-<span id="cb13-2"><a href="#cb13-2"></a>  <span class="fu">{</span> </span>
-<span id="cb13-3"><a href="#cb13-3"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;MonitoringPoint&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-4"><a href="#cb13-4"></a>  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;MPID&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-5"><a href="#cb13-5"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-6"><a href="#cb13-6"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;nummer&quot;</span> <span class="ot">]</span></span>
-<span id="cb13-7"><a href="#cb13-7"></a>  <span class="fu">}</span><span class="ot">,</span> </span>
-<span id="cb13-8"><a href="#cb13-8"></a>  <span class="fu">{</span> </span>
-<span id="cb13-9"><a href="#cb13-9"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Year&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-10"><a href="#cb13-10"></a>  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;Y&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-11"><a href="#cb13-11"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-12"><a href="#cb13-12"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;jahr&quot;</span> <span class="ot">]</span> </span>
-<span id="cb13-13"><a href="#cb13-13"></a>  <span class="fu">}</span><span class="ot">,</span> </span>
-<span id="cb13-14"><a href="#cb13-14"></a>  <span class="fu">{</span> </span>
-<span id="cb13-15"><a href="#cb13-15"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Month&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-16"><a href="#cb13-16"></a>  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;m&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-17"><a href="#cb13-17"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-18"><a href="#cb13-18"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;monat&quot;</span> <span class="ot">]</span> </span>
-<span id="cb13-19"><a href="#cb13-19"></a>  <span class="fu">}</span><span class="ot">,</span> </span>
-<span id="cb13-20"><a href="#cb13-20"></a>  <span class="fu">{</span> </span>
-<span id="cb13-21"><a href="#cb13-21"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Day&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-22"><a href="#cb13-22"></a>  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;d&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-23"><a href="#cb13-23"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-24"><a href="#cb13-24"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;tag&quot;</span> <span class="ot">]</span> </span>
-<span id="cb13-25"><a href="#cb13-25"></a>  <span class="fu">}</span><span class="ot">,</span> </span>
-<span id="cb13-26"><a href="#cb13-26"></a>  <span class="fu">{</span> </span>
-<span id="cb13-27"><a href="#cb13-27"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Hour&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-28"><a href="#cb13-28"></a>  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;H&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-29"><a href="#cb13-29"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-30"><a href="#cb13-30"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;stunde&quot;</span> <span class="ot">]</span> </span>
-<span id="cb13-31"><a href="#cb13-31"></a>  <span class="fu">}</span><span class="ot">,</span> </span>
-<span id="cb13-32"><a href="#cb13-32"></a>  <span class="fu">{</span> </span>
-<span id="cb13-33"><a href="#cb13-33"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Minute&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-34"><a href="#cb13-34"></a>  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;i&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-35"><a href="#cb13-35"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-36"><a href="#cb13-36"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;minute&quot;</span> <span class="ot">]</span></span>
-<span id="cb13-37"><a href="#cb13-37"></a>  <span class="fu">}</span><span class="ot">,</span> </span>
-<span id="cb13-38"><a href="#cb13-38"></a>  <span class="fu">{</span> </span>
-<span id="cb13-39"><a href="#cb13-39"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-40"><a href="#cb13-40"></a>  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;h&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-41"><a href="#cb13-41"></a>  <span class="dt">&quot;Unit&quot;</span><span class="fu">:</span> <span class="st">&quot;cm&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-42"><a href="#cb13-42"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-43"><a href="#cb13-43"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> </span>
-<span id="cb13-44"><a href="#cb13-44"></a>  <span class="fu">}</span><span class="ot">,</span> </span>
-<span id="cb13-45"><a href="#cb13-45"></a>  <span class="fu">{</span> </span>
-<span id="cb13-46"><a href="#cb13-46"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-47"><a href="#cb13-47"></a>    <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;Q&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-48"><a href="#cb13-48"></a>  <span class="dt">&quot;Unit&quot;</span><span class="fu">:</span> <span class="st">&quot;m3/s&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-49"><a href="#cb13-49"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-50"><a href="#cb13-50"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> </span>
-<span id="cb13-51"><a href="#cb13-51"></a>  <span class="fu">}</span><span class="ot">,</span> </span>
-<span id="cb13-52"><a href="#cb13-52"></a>  <span class="fu">{</span> </span>
-<span id="cb13-53"><a href="#cb13-53"></a>    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-54"><a href="#cb13-54"></a>  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;P_total_hourly&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-55"><a href="#cb13-55"></a>  <span class="dt">&quot;Unit&quot;</span><span class="fu">:</span> <span class="st">&quot;mm&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-56"><a href="#cb13-56"></a>  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </span>
-<span id="cb13-57"><a href="#cb13-57"></a>  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> </span>
-<span id="cb13-58"><a href="#cb13-58"></a>  <span class="fu">}</span> </span>
-<span id="cb13-59"><a href="#cb13-59"></a><span class="ot">]</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb13-1" title="1"><span class="ot">[</span></a>
+<a class="sourceLine" id="cb13-2" title="2">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb13-3" title="3">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;MonitoringPoint&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-4" title="4">  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;MPID&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-5" title="5">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-6" title="6">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;nummer&quot;</span> <span class="ot">]</span></a>
+<a class="sourceLine" id="cb13-7" title="7">  <span class="fu">}</span><span class="ot">,</span> </a>
+<a class="sourceLine" id="cb13-8" title="8">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb13-9" title="9">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Year&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-10" title="10">  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;Y&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-11" title="11">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-12" title="12">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;jahr&quot;</span> <span class="ot">]</span> </a>
+<a class="sourceLine" id="cb13-13" title="13">  <span class="fu">}</span><span class="ot">,</span> </a>
+<a class="sourceLine" id="cb13-14" title="14">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb13-15" title="15">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Month&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-16" title="16">  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;m&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-17" title="17">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-18" title="18">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;monat&quot;</span> <span class="ot">]</span> </a>
+<a class="sourceLine" id="cb13-19" title="19">  <span class="fu">}</span><span class="ot">,</span> </a>
+<a class="sourceLine" id="cb13-20" title="20">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb13-21" title="21">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Day&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-22" title="22">  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;d&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-23" title="23">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-24" title="24">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;tag&quot;</span> <span class="ot">]</span> </a>
+<a class="sourceLine" id="cb13-25" title="25">  <span class="fu">}</span><span class="ot">,</span> </a>
+<a class="sourceLine" id="cb13-26" title="26">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb13-27" title="27">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Hour&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-28" title="28">  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;H&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-29" title="29">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-30" title="30">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;stunde&quot;</span> <span class="ot">]</span> </a>
+<a class="sourceLine" id="cb13-31" title="31">  <span class="fu">}</span><span class="ot">,</span> </a>
+<a class="sourceLine" id="cb13-32" title="32">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb13-33" title="33">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Minute&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-34" title="34">  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;i&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-35" title="35">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-36" title="36">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;minute&quot;</span> <span class="ot">]</span></a>
+<a class="sourceLine" id="cb13-37" title="37">  <span class="fu">}</span><span class="ot">,</span> </a>
+<a class="sourceLine" id="cb13-38" title="38">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb13-39" title="39">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-40" title="40">  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;h&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-41" title="41">  <span class="dt">&quot;Unit&quot;</span><span class="fu">:</span> <span class="st">&quot;cm&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-42" title="42">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-43" title="43">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> </a>
+<a class="sourceLine" id="cb13-44" title="44">  <span class="fu">}</span><span class="ot">,</span> </a>
+<a class="sourceLine" id="cb13-45" title="45">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb13-46" title="46">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-47" title="47">    <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;Q&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-48" title="48">  <span class="dt">&quot;Unit&quot;</span><span class="fu">:</span> <span class="st">&quot;m3/s&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-49" title="49">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-50" title="50">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> </a>
+<a class="sourceLine" id="cb13-51" title="51">  <span class="fu">}</span><span class="ot">,</span> </a>
+<a class="sourceLine" id="cb13-52" title="52">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb13-53" title="53">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-54" title="54">  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;P_total_hourly&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-55" title="55">  <span class="dt">&quot;Unit&quot;</span><span class="fu">:</span> <span class="st">&quot;mm&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-56" title="56">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb13-57" title="57">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> </a>
+<a class="sourceLine" id="cb13-58" title="58">  <span class="fu">}</span> </a>
+<a class="sourceLine" id="cb13-59" title="59"><span class="ot">]</span></a></code></pre></div>
 <h4 id="date-specifications">Date specifications</h4>
 <p>A date specification has the property “Parameter” set to “Year”, “Month”, “Day”, “Hour”, “Minute”, “Date”, “Time” or “DateTime”, depending on the exact information specified. For date fields, “Value” is the format of the given date. For example, a datetime format would be “Y-m-d H:i:s” and would describe “2020-01-31 23:40:41”.</p>
 <table>
@@ -2084,25 +2085,25 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <p>In case the observed property symbol for a measurement section in the XML file is not fixed, but given dynamically in an own tag, it may be specified with an entry in which the property “Parameter” is “ObservedPropertySymbol”. The property “Value” in this case refers to the observed property conver-sion in CONVERSIONS json file by specifying a variable name.</p>
 <h4 id="conversions-file-conversions-specification">CONVERSIONS-file: Conversions Specification</h4>
 <p>The basic idea is to generalize the URL pattern (whether it is an FTP server or a Web-API) by inserting variables. For example, if the measuring station is directly anchored in the URL, it is replaced by the variable [station]. With this method, data conversion from national data formats to the common data format HyMeDEM can be covered in all countries. The CONVERSIONS json file may be specified in one of the following cases: * More complex data access, for example a Web API where variables are needed to be filled in * Access to data in zip files * Need for Observable property symbol conversion (between data provider notation and Hy-MeDES EnviroNet notation) * Need for Monitoring Point id conversions Data access is specified by URL patterns with parameters and variable values which are filled in dy-namically depending on what to query. The conversions are specified by translation tables and connected with a variable name to be used in an URL pattern or in an XML file if needed. The CONVERSIONS json file contains an object with three properties: * generalInformation * monitoringPointConversions * observedPropertyConversions An example of a CONVERSIONS json file for XYZ is shown here:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb14-1"><a href="#cb14-1"></a><span class="fu">{</span> </span>
-<span id="cb14-2"><a href="#cb14-2"></a>    <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
-<span id="cb14-3"><a href="#cb14-3"></a>        <span class="dt">&quot;URLPattern&quot;</span><span class="fu">:</span> <span class="st">&quot;https://xyz.de/webservices/export.php?user=[USERNAME]&amp;pw=[PASSWORD] &amp;pgnr=[MPID]&amp;werte=[OBS]&amp;tage=1&amp;modus=xml&quot;</span> </span>
-<span id="cb14-4"><a href="#cb14-4"></a>  <span class="fu">},</span> </span>
-<span id="cb14-5"><a href="#cb14-5"></a>  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
-<span id="cb14-6"><a href="#cb14-6"></a>    <span class="dt">&quot;MPID&quot;</span><span class="fu">:</span> <span class="st">&quot;#&quot;</span> </span>
-<span id="cb14-7"><a href="#cb14-7"></a>  <span class="fu">},</span> </span>
-<span id="cb14-8"><a href="#cb14-8"></a>  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
-<span id="cb14-9"><a href="#cb14-9"></a>    <span class="dt">&quot;h&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
-<span id="cb14-10"><a href="#cb14-10"></a>      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;W&quot;</span> </span>
-<span id="cb14-11"><a href="#cb14-11"></a>    <span class="fu">},</span> </span>
-<span id="cb14-12"><a href="#cb14-12"></a>    <span class="dt">&quot;Q&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
-<span id="cb14-13"><a href="#cb14-13"></a>      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;Q&quot;</span> </span>
-<span id="cb14-14"><a href="#cb14-14"></a>    <span class="fu">},</span> </span>
-<span id="cb14-15"><a href="#cb14-15"></a>    <span class="dt">&quot;P_total_hourly&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
-<span id="cb14-16"><a href="#cb14-16"></a>      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;N&quot;</span> </span>
-<span id="cb14-17"><a href="#cb14-17"></a>    <span class="fu">}</span> </span>
-<span id="cb14-18"><a href="#cb14-18"></a>  <span class="fu">}</span> </span>
-<span id="cb14-19"><a href="#cb14-19"></a><span class="fu">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb14-1" title="1"><span class="fu">{</span> </a>
+<a class="sourceLine" id="cb14-2" title="2">    <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb14-3" title="3">        <span class="dt">&quot;URLPattern&quot;</span><span class="fu">:</span> <span class="st">&quot;https://xyz.de/webservices/export.php?user=[USERNAME]&amp;pw=[PASSWORD] &amp;pgnr=[MPID]&amp;werte=[OBS]&amp;tage=1&amp;modus=xml&quot;</span> </a>
+<a class="sourceLine" id="cb14-4" title="4">  <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb14-5" title="5">  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb14-6" title="6">    <span class="dt">&quot;MPID&quot;</span><span class="fu">:</span> <span class="st">&quot;#&quot;</span> </a>
+<a class="sourceLine" id="cb14-7" title="7">  <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb14-8" title="8">  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb14-9" title="9">    <span class="dt">&quot;h&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb14-10" title="10">      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;W&quot;</span> </a>
+<a class="sourceLine" id="cb14-11" title="11">    <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb14-12" title="12">    <span class="dt">&quot;Q&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb14-13" title="13">      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;Q&quot;</span> </a>
+<a class="sourceLine" id="cb14-14" title="14">    <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb14-15" title="15">    <span class="dt">&quot;P_total_hourly&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb14-16" title="16">      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;N&quot;</span> </a>
+<a class="sourceLine" id="cb14-17" title="17">    <span class="fu">}</span> </a>
+<a class="sourceLine" id="cb14-18" title="18">  <span class="fu">}</span> </a>
+<a class="sourceLine" id="cb14-19" title="19"><span class="fu">}</span></a></code></pre></div>
 <h5 id="data-access">Data Access</h5>
 <p>The property “URLPattern” of the property “generalInformation” contains the URL pattern of the data access. In the URL, parameters that vary, such as the measuring station or the observable, are replaced by variables. Variable names are enclosed in square brackets [ ] and will be replaced by the variable definition on runtime. As an example, XYZ is used. The URL pattern for getting the data from the server is:</p>
 <pre><code>https://xyz.de/webservices/ex-port.php?user=[USERNAME]&amp;pw=[PASSWORD]&amp;pgnr=[MPID]&amp;werte=[OBS]&amp;tage=1&amp;modus=xml</code></pre>
@@ -2128,38 +2129,38 @@ stundenwerte_RR_00164_akt.zip|produkt_rr_stunde_*_00164.txt</code></pre>
 <p>In the example the [INT1] variable stands for the interval and will be replaced in the URL by “hourly”.</p>
 <p>The time interval is also coded in different ways in the same URL-call: [INT] is replaced by “hourly”, [INT2] by “stunde”. [INT3] is replaced by “stundenwerte”.</p>
 <p>The station name [MPID1] will be replaced by the national station number 164 padded with zeros. In the following, the corresponding CONFIGURATION json file is shown. This example does not need a FORMATS json file, because files are served in CSV format.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb19-1"><a href="#cb19-1"></a><span class="fu">{</span> </span>
-<span id="cb19-2"><a href="#cb19-2"></a>  <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
-<span id="cb19-3"><a href="#cb19-3"></a>    <span class="dt">&quot;URLPattern&quot;</span><span class="fu">:</span> <span class="st">&quot;https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/[INT1]/[OBS2]/recent/[INT3]_[OBS1]_[MPID1]_akt.zip|produkt_[OBS3]_[INT2]_*_[MPID1].txt&quot;</span> </span>
-<span id="cb19-4"><a href="#cb19-4"></a>  <span class="fu">},</span> </span>
-<span id="cb19-5"><a href="#cb19-5"></a>  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
-<span id="cb19-6"><a href="#cb19-6"></a>    <span class="dt">&quot;MPID1&quot;</span><span class="fu">:</span> <span class="st">&quot;#####&quot;</span><span class="fu">,</span> </span>
-<span id="cb19-7"><a href="#cb19-7"></a>    <span class="dt">&quot;MPID2&quot;</span><span class="fu">:</span> <span class="st">&quot;#&quot;</span> </span>
-<span id="cb19-8"><a href="#cb19-8"></a>  <span class="fu">},</span> </span>
-<span id="cb19-9"><a href="#cb19-9"></a>  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
-<span id="cb19-10"><a href="#cb19-10"></a>    <span class="dt">&quot;P_total_hourly&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
-<span id="cb19-11"><a href="#cb19-11"></a>      <span class="dt">&quot;OBS1&quot;</span><span class="fu">:</span> <span class="st">&quot;RR&quot;</span><span class="fu">,</span> </span>
-<span id="cb19-12"><a href="#cb19-12"></a>      <span class="dt">&quot;OBS2&quot;</span><span class="fu">:</span> <span class="st">&quot;precipitation&quot;</span><span class="fu">,</span> </span>
-<span id="cb19-13"><a href="#cb19-13"></a>      <span class="dt">&quot;OBS3&quot;</span><span class="fu">:</span> <span class="st">&quot;rr&quot;</span><span class="fu">,</span> </span>
-<span id="cb19-14"><a href="#cb19-14"></a>      <span class="dt">&quot;INT1&quot;</span><span class="fu">:</span> <span class="st">&quot;hourly&quot;</span><span class="fu">,</span> </span>
-<span id="cb19-15"><a href="#cb19-15"></a>      <span class="dt">&quot;INT2&quot;</span><span class="fu">:</span> <span class="st">&quot;stunde&quot;</span><span class="fu">,</span> </span>
-<span id="cb19-16"><a href="#cb19-16"></a>      <span class="dt">&quot;INT3&quot;</span><span class="fu">:</span> <span class="st">&quot;stundenwerte&quot;</span> </span>
-<span id="cb19-17"><a href="#cb19-17"></a>    <span class="fu">},</span> </span>
-<span id="cb19-18"><a href="#cb19-18"></a>    <span class="dt">&quot;ta&quot;</span><span class="fu">:</span> <span class="fu">{</span> </span>
-<span id="cb19-19"><a href="#cb19-19"></a>      <span class="dt">&quot;OBS1&quot;</span><span class="fu">:</span> <span class="st">&quot;TU&quot;</span><span class="fu">,</span> </span>
-<span id="cb19-20"><a href="#cb19-20"></a>      <span class="dt">&quot;OBS2&quot;</span><span class="fu">:</span> <span class="st">&quot;air_temperature&quot;</span><span class="fu">,</span> </span>
-<span id="cb19-21"><a href="#cb19-21"></a>      <span class="dt">&quot;OBS3&quot;</span><span class="fu">:</span> <span class="st">&quot;tu&quot;</span><span class="fu">,</span> </span>
-<span id="cb19-22"><a href="#cb19-22"></a>      <span class="dt">&quot;INT1&quot;</span><span class="fu">:</span> <span class="st">&quot;hourly&quot;</span><span class="fu">,</span> </span>
-<span id="cb19-23"><a href="#cb19-23"></a>      <span class="dt">&quot;INT2&quot;</span><span class="fu">:</span> <span class="st">&quot;stunde&quot;</span><span class="fu">,</span> </span>
-<span id="cb19-24"><a href="#cb19-24"></a>      <span class="dt">&quot;INT3&quot;</span><span class="fu">:</span> <span class="st">&quot;stundenwerte&quot;</span> </span>
-<span id="cb19-25"><a href="#cb19-25"></a>    <span class="fu">}</span> </span>
-<span id="cb19-26"><a href="#cb19-26"></a>  <span class="fu">}</span> </span>
-<span id="cb19-27"><a href="#cb19-27"></a><span class="fu">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb19-1" title="1"><span class="fu">{</span> </a>
+<a class="sourceLine" id="cb19-2" title="2">  <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb19-3" title="3">    <span class="dt">&quot;URLPattern&quot;</span><span class="fu">:</span> <span class="st">&quot;https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/[INT1]/[OBS2]/recent/[INT3]_[OBS1]_[MPID1]_akt.zip|produkt_[OBS3]_[INT2]_*_[MPID1].txt&quot;</span> </a>
+<a class="sourceLine" id="cb19-4" title="4">  <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb19-5" title="5">  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb19-6" title="6">    <span class="dt">&quot;MPID1&quot;</span><span class="fu">:</span> <span class="st">&quot;#####&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb19-7" title="7">    <span class="dt">&quot;MPID2&quot;</span><span class="fu">:</span> <span class="st">&quot;#&quot;</span> </a>
+<a class="sourceLine" id="cb19-8" title="8">  <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb19-9" title="9">  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb19-10" title="10">    <span class="dt">&quot;P_total_hourly&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb19-11" title="11">      <span class="dt">&quot;OBS1&quot;</span><span class="fu">:</span> <span class="st">&quot;RR&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb19-12" title="12">      <span class="dt">&quot;OBS2&quot;</span><span class="fu">:</span> <span class="st">&quot;precipitation&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb19-13" title="13">      <span class="dt">&quot;OBS3&quot;</span><span class="fu">:</span> <span class="st">&quot;rr&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb19-14" title="14">      <span class="dt">&quot;INT1&quot;</span><span class="fu">:</span> <span class="st">&quot;hourly&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb19-15" title="15">      <span class="dt">&quot;INT2&quot;</span><span class="fu">:</span> <span class="st">&quot;stunde&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb19-16" title="16">      <span class="dt">&quot;INT3&quot;</span><span class="fu">:</span> <span class="st">&quot;stundenwerte&quot;</span> </a>
+<a class="sourceLine" id="cb19-17" title="17">    <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb19-18" title="18">    <span class="dt">&quot;ta&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb19-19" title="19">      <span class="dt">&quot;OBS1&quot;</span><span class="fu">:</span> <span class="st">&quot;TU&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb19-20" title="20">      <span class="dt">&quot;OBS2&quot;</span><span class="fu">:</span> <span class="st">&quot;air_temperature&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb19-21" title="21">      <span class="dt">&quot;OBS3&quot;</span><span class="fu">:</span> <span class="st">&quot;tu&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb19-22" title="22">      <span class="dt">&quot;INT1&quot;</span><span class="fu">:</span> <span class="st">&quot;hourly&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb19-23" title="23">      <span class="dt">&quot;INT2&quot;</span><span class="fu">:</span> <span class="st">&quot;stunde&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb19-24" title="24">      <span class="dt">&quot;INT3&quot;</span><span class="fu">:</span> <span class="st">&quot;stundenwerte&quot;</span> </a>
+<a class="sourceLine" id="cb19-25" title="25">    <span class="fu">}</span> </a>
+<a class="sourceLine" id="cb19-26" title="26">  <span class="fu">}</span> </a>
+<a class="sourceLine" id="cb19-27" title="27"><span class="fu">}</span></a></code></pre></div>
 <p><a name="41_key_gen"></a></p>
 <h1 id="ssl-key-pair-generation-guide">SSL key pair generation guide</h1>
 <h2 id="windows">Windows</h2>
 <p>It is recommended to use the following:</p>
-<p><a href="https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip">https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip</a></p>
+<p><a href="https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip" class="uri">https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip</a></p>
 <p>Download and extract it to an optional place. In the package, you can find the executable file at the: <em>bin/openssl.exe</em></p>
 <p>If you open the exe, it will prompt a command window, wherein you have to type the following lines:</p>
 <p><strong>1.</strong> Private key generation:<br />
@@ -2168,10 +2169,10 @@ stundenwerte_RR_00164_akt.zip|produkt_rr_stunde_*_00164.txt</code></pre>
 <code>rsa -in private.pem -out public.pem -outform PEM -pubout</code></p>
 <h2 id="linux">Linux</h2>
 <p>You have to download one from the following link:</p>
-<p><a href="https://www.openssl.org/source/">https://www.openssl.org/source/</a></p>
+<p><a href="https://www.openssl.org/source/" class="uri">https://www.openssl.org/source/</a></p>
 <p>After that you have to extract and install it.</p>
 <p>Here you can find a detailed description about the installation:</p>
-<p><a href="https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/">https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/</a></p>
+<p><a href="https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/" class="uri">https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/</a></p>
 <p>After the installation you have to run these commands:</p>
 <p><strong>1.</strong> Private key generation:<br />
 <code>openssl genrsa -out private.pem 2048</code></p>
@@ -2194,6 +2195,9 @@ stundenwerte_RR_00164_akt.zip|produkt_rr_stunde_*_00164.txt</code></pre>
 <h3 id="exporting-database">Exporting database</h3>
 <p>Command: <code>./environet dist database export</code></p>
 <p>Description: This commands exports the database content of the distribution node to a file under data/export folder. The filename of the exported file will be written to the console after successful export.</p>
+<h3 id="generating-html-documentation-and-merged-markdown">Generating HTML documentation and merged markdown</h3>
+<p>Command: <code>./environet dist generate-merged-html</code></p>
+<p>Description: During development, when markdown documentation has been changed, it’s necessary to generate updated HTML documentation and merged markdown file. It’s possible with this command.</p>
 
 
 </body>

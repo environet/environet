@@ -40,3 +40,11 @@ Command: `./environet dist database export`
 Description:
 This commands exports the database content of the distribution node to a file under data/export folder. The filename of the exported file will be written to the console after successful export.
 
+### Generating HTML documentation and merged markdown
+
+Command: `./environet dist generate-merged-html`
+
+Description:
+During development, when markdown documentation has been changed, it's necessary to generate updated HTML documentation and merged markdown file.
+It's possible with this command.
+

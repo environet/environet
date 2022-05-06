@@ -107,6 +107,8 @@ To get the latest version, simply run `git pull` in the repository folder.
 Depending on the git version it can be possible to run the following command to update the submodule (src folder) too:
 `git submodule update --init --recursive --remote`
 
+If a Dockerfile of a container has been changed in the new version, after `./environet dist/data down` but before `./environet dist/data up` it's necessary to run `./environet dist/data build`.
+
 ## Linux with UFW security settings
 
 If the nodes are hosted on a linux system, which using UFW firewall, there are some additional steps to make it secure, and do not open unneccessary ports.
@@ -1692,6 +1694,14 @@ Command: `./environet dist database export`
 
 Description:
 This commands exports the database content of the distribution node to a file under data/export folder. The filename of the exported file will be written to the console after successful export.
+
+### Generating HTML documentation and merged markdown
+
+Command: `./environet dist generate-merged-html`
+
+Description:
+During development, when markdown documentation has been changed, it's necessary to generate updated HTML documentation and merged markdown file.
+It's possible with this command.
 
 
 
