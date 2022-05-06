@@ -3,7 +3,6 @@
 
 namespace Environet\Sys\General\Db;
 
-
 use DateTime;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
@@ -158,6 +157,42 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 		} catch (QueryException $exception) {
 			return null;
 		}
+	}
+
+
+	/**
+	 * Generate eucd, prefix with country code (if not yet prefixes), and append type (if not yet appended)
+	 *
+	 * @param string $ncd
+	 * @param string $country
+	 *
+	 * @return string
+	 */
+	public static function generateEUCD(string $ncd, string $country): ?string {
+		$typeSuffix = '_' . strtoupper(static::getType());
+
+		$country = strtoupper($country);
+		$typeSuffix = strtoupper($typeSuffix);
+
+		$eucd = $ncd;
+
+		if (preg_match('/^' . $country . '/i', $eucd)) {
+			//NCD is already prefixed with country code, make country code upper case
+			$eucd = preg_replace('/^' . $country . '(.*)$/i', $country . '$1', $eucd);
+		} else {
+			//NCD is not prefixed with country code, prefix it
+			$eucd = $country . $eucd;
+		}
+
+		if (preg_match('/' . $typeSuffix . '$/i', $eucd)) {
+			//NCD is already suffixed with type, make this suffix uppercase
+			$eucd = preg_replace('/^(.*)' . $typeSuffix . '$/i', '$1' . $typeSuffix, $eucd);
+		} else {
+			//NCD is not suffixed with type, append it
+			$eucd .= $typeSuffix;
+		}
+
+		return $eucd;
 	}
 
 

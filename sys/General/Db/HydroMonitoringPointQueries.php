@@ -198,7 +198,7 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 
 			//boolean
 			'is_active'                => isset($data['is_active']) && $data['is_active'] !== '' ? (bool) $data['is_active'] : null,
-            'is_out_of_order'          => isset($data['is_out_of_order']) && $data['is_out_of_order'] !== '' ? (bool) $data['is_out_of_order'] : null,
+			'is_out_of_order'          => isset($data['is_out_of_order']) && $data['is_out_of_order'] !== '' ? (bool) $data['is_out_of_order'] : null,
 		];
 
 		//Save only fields which have been provided in data array
@@ -286,17 +286,6 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 	 */
 	public static function getDeleteEventType(): string {
 		return EventLogger::EVENT_TYPE_HYDRO_MP_DELETE;
-	}
-
-
-	/**
-	 * @param string $ncd
-	 * @param string $country
-	 *
-	 * @return string
-	 */
-	public static function generateEUCD(string $ncd, string $country): ?string {
-		return $country . $ncd . '_HYDRO';
 	}
 
 

@@ -247,15 +247,4 @@ class MeteoMonitoringPointQueries extends AbstractMonitoringPointQueries {
 	}
 
 
-	/**
-	 * @param string $ncd
-	 * @param string $country
-	 *
-	 * @return string
-	 */
-	public static function generateEUCD(string $ncd, string $country): string {
-		return $country . $ncd . '_METEO';
-	}
-
-
 }
