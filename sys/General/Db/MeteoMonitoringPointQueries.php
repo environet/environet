@@ -184,6 +184,7 @@ class MeteoMonitoringPointQueries extends AbstractMonitoringPointQueries {
 			//strings
 			'name'                          => $data['name'] ?? null,
 			'ncd_pst'                       => $data['ncd_pst'] ?? null,
+			'eucd_pst'                      => $data['eucd_pst'] ?? null,
 			'country'                       => $data['country'] ?? null,
 			'location'                      => $data['location'] ?? null,
 			'river_basin'                   => $data['river_basin'] ?? null,
@@ -216,7 +217,7 @@ class MeteoMonitoringPointQueries extends AbstractMonitoringPointQueries {
 			return array_key_exists($key, $data);
 		}, ARRAY_FILTER_USE_KEY);
 
-		if (!empty($returnData['ncd_pst']) && !empty($returnData['country'])) {
+		if (empty($returnData['eucd_pst']) && !empty($returnData['ncd_pst']) && !empty($returnData['country'])) {
 			$returnData['eucd_pst'] = self::generateEUCD($returnData['ncd_pst'], $returnData['country']);
 		}
 

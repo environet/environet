@@ -15,9 +15,21 @@
             <label for="ncd_pst">NCD PST</label>
             <input type="text" name="ncd_pst" id="ncd_pst" class="form-control <?=isFieldInvalidClass('ncd_pst', get_defined_vars());?>" required value="<?=formFieldValue('ncd_pst', $record);?>" />
 			<div class="invalid-feedback">
-		        <?=getFieldInvalidMessage('ncd_pst', get_defined_vars(), 'Please provide a valid Ncd wgst value!');?>
+		        <?=getFieldInvalidMessage('ncd_pst', get_defined_vars(), 'Please provide a valid Ncd pst value!');?>
 			</div>
         </div>
+
+		<?php if($request->getIdentity()->hasPermissions(['admin.all']) || $request->getIdentity()->hasPermissions(['admin.meteo.monitoringpoints.update'])): ?>
+			<div class="form-group">
+				<label for="eucd_pst">EUCD PST
+					<?php if($record) : ?>
+						<small>(Current value: <?=$record['eucd_pst'] ?? null;?>)</small>
+					<?php endif; ?>
+				</label>
+				<input type="text" name="eucd_pst" id="eucd_pst" class="form-control <?=isFieldInvalidClass('eucd_pst', get_defined_vars());?>" value="<?=formFieldValue('eucd_pst');?>" autocomplete="off" />
+				<small class="help-block text-muted">Fill it only if you want to set a custom value instead of auto-generated.</small>
+			</div>
+		<?php endif; ?>
 
 		<div class="form-check">
 			<input type="hidden" name="is_active" value="0"/>

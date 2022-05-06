@@ -170,6 +170,7 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 			// strings
 			'name'                     => $data['name'] ?? null,
 			'ncd_wgst'                 => $data['ncd_wgst'] ?? null,
+			'eucd_wgst'                => $data['eucd_wgst'] ?? null,
 			'country'                  => $data['country'] ?? null,
 			'location'                 => $data['location'] ?? null,
 			'river_basin'              => $data['river_basin'] ?? null,
@@ -206,7 +207,7 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 			return array_key_exists($key, $data);
 		}, ARRAY_FILTER_USE_KEY);
 
-		if (!empty($returnData['ncd_wgst']) && !empty($returnData['country'])) {
+		if (empty($returnData['eucd_wgst']) && !empty($returnData['ncd_wgst']) && !empty($returnData['country'])) {
 			$returnData['eucd_wgst'] = self::generateEUCD($returnData['ncd_wgst'], $returnData['country']);
 		}
 
