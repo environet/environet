@@ -133,7 +133,15 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		//Build results for each section
 		$results = [];
 		foreach ($sections as $sectionNum => $section) {
-			$results[] = $this->processSection($sectionNum, $section['meta'], $section['values']);
+			try {
+				$sectionResult = $this->processSection($sectionNum, $section['meta'], $section['values']);
+				if (!is_null($sectionResult)) {
+					$results[] = $sectionResult;
+				}
+			} catch (CreateInputXmlException $e) {
+				Console::getInstance()->writeLog(sprintf('Parsing of section %s in file %s failed, response: %s', $sectionNum, $resource->name, $e->getMessage()), true, true);
+				continue;
+			}
 		}
 
 		return $results;
@@ -240,6 +248,10 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 				'time'  => $date->format('Y-m-d\TH:i:sP'),
 				'value' => $value
 			];
+		}
+
+		if (empty($propertyValues)) {
+			return null;
 		}
 
 		//Build XML
