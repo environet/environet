@@ -93,7 +93,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 				if (count($propMap) !== 2) {
 					continue;
 				}
-				$this->propertyMap[$propMap[0]] = strtoupper($propMap[1]);
+				$this->propertyMap[$propMap[0]] = $propMap[1];
 			}
 		}
 		parent::__construct($config);
@@ -213,13 +213,17 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		$mPointId = $metaData['SANR'];
 		$propertyNameZrxp = strtoupper($metaData['CNR']);
 
+		$propertyMapFlipped = array_flip(array_map(function ($property) {
+			return strtoupper($property);
+		}, $this->propertyMap));
+
 		//Find the db-symbol of property
-		if (!array_key_exists($propertyNameZrxp, array_flip($this->propertyMap))) {
+		if (!array_key_exists($propertyNameZrxp, $propertyMapFlipped)) {
 			Console::getInstance()->writeLog(sprintf('Property mapping for property %s isn\'t found in configuration', $propertyNameZrxp), true);
 
 			return null;
 		}
-		$propertyNameDb = array_flip($this->propertyMap)[$propertyNameZrxp];
+		$propertyNameDb = $propertyMapFlipped[$propertyNameZrxp];
 
 		//Iterate over value lines, and parse the values and times
 		$propertyValues = [];
