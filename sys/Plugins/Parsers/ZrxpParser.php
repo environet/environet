@@ -90,10 +90,15 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		if (!empty($config['properties'])) {
 			foreach ($config['properties'] as $propMap) {
 				$propMap = explode(';', $propMap);
-				if (count($propMap) !== 2) {
+				if (count($propMap) !== 2 && count($propMap) !== 4) {
 					continue;
 				}
-				$this->propertyMap[$propMap[0]] = $propMap[1];
+				//Key by property name in file
+				$this->propertyMap[$propMap[0]] = array_filter([
+					'property'                => str_replace('____', ';', $propMap[1]),
+					'additionalMetadataKey'   => isset($propMap[2]) ? str_replace('____', ';', $propMap[2]) : null,
+					'additionalMetadataValue' => isset($propMap[3]) ? str_replace('____', ';', $propMap[3]) : null,
+				], fn ($item) => !is_null($item));
 			}
 		}
 		parent::__construct($config);
@@ -213,17 +218,13 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		$mPointId = $metaData['SANR'];
 		$propertyNameZrxp = strtoupper($metaData['CNR']);
 
-		$propertyMapFlipped = array_flip(array_map(function ($property) {
-			return strtoupper($property);
-		}, $this->propertyMap));
-
+		$propertyNameDb = $this->findProperty($propertyNameZrxp, $metaData);
 		//Find the db-symbol of property
-		if (!array_key_exists($propertyNameZrxp, $propertyMapFlipped)) {
+		if (is_null($propertyNameDb)) {
 			Console::getInstance()->writeLog(sprintf('Property mapping for property %s isn\'t found in configuration', $propertyNameZrxp), true);
 
 			return null;
 		}
-		$propertyNameDb = $propertyMapFlipped[$propertyNameZrxp];
 
 		//Iterate over value lines, and parse the values and times
 		$propertyValues = [];
@@ -321,9 +322,15 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		$console->writeLine('Name of observed properties in ZRXP files can be different as in the distribution node, so you have to create a map of properties.');
 		$properties = [];
 		do {
-			$propDb = $console->ask("Property's symbol as it is defined on distribution node:");
-			$propZrxp = $console->ask("Property's name in ZRXP file (value if CNR property, the characters after 'CNR' and before separator):");
-			$properties[] = $propDb . ';' . $propZrxp;
+			$propertyConfig = [];
+			$propertyConfig[] = $propDb = $console->ask("Property's symbol as it is defined on distribution node:");
+			$propertyConfig[] = $propZrxp = $console->ask("Property's name in ZRXP file (value if CNR property, the characters after 'CNR' and before separator):");
+			if ($console->askYesNo("Do you want to find match under other metadata to identify the property (e.g. interval in TSPATH)", false)) {
+				$propertyConfig[] = $propAdditionalMetadataKey = $console->ask("Identifier of metadata (e.g. TSPATH):");
+				$propertyConfig[] = $propAdditionalMetadataValue = $console->ask("Match string in the value of " . $propAdditionalMetadataKey . " (e.g. Precip/MDay.Total):");
+			}
+
+			$properties[] = implode(';', $propertyConfig);
 		} while ($console->askYesNo('Do you want to add more properties?'));
 
 		$config = [
@@ -343,8 +350,12 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		$config = '';
 		$config .= 'zrxpVersion = ' . $this->zrxpVersion . "\n";
 
-		foreach ($this->propertyMap as $dbProp => $zrxpProp) {
-			$config .= 'properties[] = "' . $dbProp . ';' . $zrxpProp . "\"\n";
+		foreach ($this->propertyMap as $dbProp => $propertyConfig) {
+			//Replace ; to ____ in values
+			$dbProp = str_replace(';', '____', $dbProp);
+			$propertyConfig = array_map(fn($configItem) => str_replace(';', '____', $configItem), $propertyConfig);
+
+			$config .= 'properties[] = "' . $dbProp . ';' . implode(';', $propertyConfig) . "\"\n";
 		}
 
 		return $config;
@@ -364,6 +375,39 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	 */
 	public static function getHelp(): string {
 		return 'For parsing data in ZRXP format.';
+	}
+
+
+	/**
+	 * Find a property in the mapping with or without addition metadata parsing
+	 *
+	 * @param string $propertyNameZrxp
+	 * @param array  $metadata
+	 *
+	 * @return string|null
+	 */
+	protected function findProperty(string $propertyNameZrxp, array $metadata): ?string {
+		$propertyNameZrxp = strtoupper($propertyNameZrxp);
+		foreach ($this->propertyMap as $dbProp => $propertyConfig) {
+			if (strtoupper($propertyConfig['property']) !== $propertyNameZrxp) {
+				//Property name not matching, skip
+				continue;
+			}
+			$mdKey = $propertyConfig['additionalMetadataKey'] ? strtoupper($propertyConfig['additionalMetadataKey']) : null;
+			$mdValue = $propertyConfig['additionalMetadataValue'] ? strtoupper($propertyConfig['additionalMetadataValue']) : null;
+			if (!empty($mdKey) && //Has additional metadata config
+				!empty($mdValue) && //Additional metadata value not empty
+				(empty($metadata[$mdKey]) || strpos(strtoupper($metadata[$mdKey]), $mdValue) === false) //Metadata value of file empty, or not matching with the pattern
+			) {
+				//Metadata not matched
+				continue;
+			}
+
+			//Found a match
+			return $dbProp;
+		}
+
+		return null;
 	}
 
 
