@@ -23,7 +23,7 @@ defined('REGEX_EMAIL') || define('REGEX_EMAIL', '/^((?!\.)[\w\-_.\+]*[^.])(@\w+)
 defined('REGEX_ALPHANUMERIC') || define('REGEX_ALPHANUMERIC', '/[a-zA-Z0-9_-]/i');
 defined('REGEX_USERNAME') || define('REGEX_USERNAME', REGEX_ALPHANUMERIC);
 defined('REGEX_URL') || define('REGEX_URL', '/^(?:http(s)?:\/\/)?[\w.\-]+(?:\.[\w\.\-]+)+[\w\-\._~:\/?#[\]@!\$&\'\(\)\*\+,;=.]+$/i');
-defined('REGEX_RIVERCODE') || define('REGEX_RIVERCODE', '/^[a-zA-Z_-]*$/i');
+defined('REGEX_RIVERCODE') || define('REGEX_RIVERCODE', '/^[a-zA-Z0-9 _.-]*$/i');
 
 
 /**
