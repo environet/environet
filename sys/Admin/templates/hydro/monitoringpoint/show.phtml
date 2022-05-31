@@ -11,35 +11,20 @@
         <dt class="col-sm-3">Name</dt>
         <dd class="col-sm-9"><?=$record['name'] ?? '';?></dd>
 
-        <dt class="col-sm-3">EUCD WGST</dt>
-        <dd class="col-sm-9"><?=$record['eucd_wgst'] ?? '';?></dd>
+    		<dt class="col-sm-3">Country code</dt>
+    		<dd class="col-sm-9"><?=$record['country'] ?? '';?></dd>
 
-        <dt class="col-sm-3">NCD WGST</dt>
+        <dt class="col-sm-3">National code of the water gauge station</dt>
         <dd class="col-sm-9"><?=$record['ncd_wgst'] ?? '';?></dd>
 
-		<dt class="col-sm-3">Operator</dt>
-		<dd class="col-sm-9">
-		    <?php if(!empty($record['operator'])): ?>
-				<a href="/admin/operators/show?id=<?= $record['operator']['id'] ;?>">#<?= $record['operator']['id'] ?></a>
-				<span><?=$record['operator']['name'] ?? null;?></span>
-		    <?php endif; ?>
-		</dd>
+        <dt class="col-sm-3">International code of the water gauge station</dt>
+        <dd class="col-sm-9"><?=$record['eucd_wgst'] ?? '';?></dd>
 
-		<dt class="col-sm-3">River</dt>
-		<dd class="col-sm-9">
-		    <?php if(!empty($record['river'])): ?>
-				<a href="/admin/hydro/rivers/show?id=<?= $record['river']['eucd_riv'] ;?>">#<?= $record['river']['eucd_riv'] ?></a>
-		    <?php endif; ?>
-		</dd>
+        <dt class="col-sm-3">Is active</dt>
+        <dd class="col-sm-9"><?=$record['is_active'] ? 'Yes' : 'No';?></dd>
 
-		<dt class="col-sm-3">Country</dt>
-		<dd class="col-sm-9"><?=$record['country'] ?? '';?></dd>
-
-		<dt class="col-sm-3">Location</dt>
-		<dd class="col-sm-9"><?=$record['location'] ?? '';?></dd>
-
-		<dt class="col-sm-3">River basin</dt>
-		<dd class="col-sm-9"><?=$record['river_basin'] ?? '';?></dd>
+        <dt class="col-sm-3">Is out of order</dt>
+        <dd class="col-sm-9"><?=$record['is_out_of_order'] ? 'Yes' : 'No';?></dd>
 
         <dt class="col-sm-3">Latitude coordinate</dt>
         <dd class="col-sm-9"><?=$record['lat'] ?? '';?></dd>
@@ -49,12 +34,38 @@
 
         <dt class="col-sm-3">Z coordinate</dt>
         <dd class="col-sm-9"><?=$record['z'] ?? '';?></dd>
-
+<!-- Not editable, not used:
         <dt class="col-sm-3">Map Latitude coordinate</dt>
         <dd class="col-sm-9"><?=$record['maplat'] ?? '';?></dd>
 
         <dt class="col-sm-3">Map Longitude coordinate</dt>
         <dd class="col-sm-9"><?=$record['maplong'] ?? '';?></dd>
+
+        <dt class="col-sm-3">UTC Offset</dt>
+        <dd class="col-sm-9"><?=$record['utc_offset'] ?? '';?></dd>
+-->
+        <dt class="col-sm-3">Gauge zero</dt>
+        <dd class="col-sm-9"><?=$record['gauge_zero'] ?? '';?></dd>
+
+        <dt class="col-sm-3">Vertical reference</dt>
+        <dd class="col-sm-9"><?=$record['vertical_reference'] ?? '';?></dd>
+
+    		<dt class="col-sm-3">Location</dt>
+    		<dd class="col-sm-9"><?=$record['location'] ?? '';?></dd>
+
+    		<dt class="col-sm-3">River</dt>
+    		<dd class="col-sm-9">
+    		    <?php if(!empty($record['river'])): ?>
+    				<a href="/admin/hydro/rivers/show?id=<?= $record['river']['eucd_riv'] ;?>">#<?= $record['river']['eucd_riv'] ?></a>
+    		    <?php endif; ?>
+    		</dd>
+
+        <dt class="col-sm-3">Riverbank</dt>
+        <dd class="col-sm-9">
+			<?php if(!empty($record['riverbank'])): ?>
+                <span><?=$record['riverbank']['value'] ?? null;?></span>
+			<?php endif; ?>
+        </dd>
 
         <dt class="col-sm-3">River kilometer</dt>
         <dd class="col-sm-9"><?=$record['river_kilometer'] ?? '';?></dd>
@@ -62,20 +73,14 @@
         <dt class="col-sm-3">Catchment area</dt>
         <dd class="col-sm-9"><?=$record['catchment_area'] ?? '';?></dd>
 
-        <dt class="col-sm-3">Gauge zero</dt>
-        <dd class="col-sm-9"><?=$record['gauge_zero'] ?? '';?></dd>
+    		<dt class="col-sm-3">River basin</dt>
+    		<dd class="col-sm-9"><?=$record['river_basin'] ?? '';?></dd>
 
         <dt class="col-sm-3">Start time</dt>
         <dd class="col-sm-9"><?=$record['start_time'] ?? '';?></dd>
 
         <dt class="col-sm-3">End time</dt>
         <dd class="col-sm-9"><?=$record['end_time'] ?? '';?></dd>
-
-        <dt class="col-sm-3">UTC Offset</dt>
-        <dd class="col-sm-9"><?=$record['utc_offset'] ?? '';?></dd>
-
-        <dt class="col-sm-3">Vertical reference</dt>
-        <dd class="col-sm-9"><?=$record['vertical_reference'] ?? '';?></dd>
 
         <dt class="col-sm-3">Station classification</dt>
         <dd class="col-sm-9">
@@ -85,19 +90,20 @@
             <?php endif; ?>
         </dd>
 
-        <dt class="col-sm-3">Riverbank</dt>
-        <dd class="col-sm-9">
-			<?php if(!empty($record['riverbank'])): ?>
-                <span><?=$record['riverbank']['value'] ?? null;?></span>
-			<?php endif; ?>
-        </dd>
+    		<dt class="col-sm-3">Operator</dt>
+    		<dd class="col-sm-9">
+    		    <?php if(!empty($record['operator'])): ?>
+    				<a href="/admin/operators/show?id=<?= $record['operator']['id'] ;?>">#<?= $record['operator']['id'] ?></a>
+    				<span><?=$record['operator']['name'] ?? null;?></span>
+    		    <?php endif; ?>
+    		</dd>
 
-		<dt class="col-sm-3">Observerd properties</dt>
-		<dd class="col-sm-9">
-		    <?php foreach ($record['showObservedProperty'] ?: [] as $property) { ?>
-				<a href="/admin/hydro/observed-properties/edit?id=<?=$property['id'];?>">#<?=$property['symbol'] ?? null;?></a><br>
-		    <?php } ?>
-		</dd>
+    		<dt class="col-sm-3">Observerd properties</dt>
+    		<dd class="col-sm-9">
+    		    <?php foreach ($record['showObservedProperty'] ?: [] as $property) { ?>
+    				<a href="/admin/hydro/observed-properties/edit?id=<?=$property['id'];?>">#<?=$property['symbol'] ?? null;?></a><br>
+    		    <?php } ?>
+    		</dd>
     </dl>
 </div>
 <?php include __DIR__ . '../../../layouts/after_app.phtml'; ?>

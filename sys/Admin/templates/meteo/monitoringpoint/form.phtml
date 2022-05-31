@@ -6,22 +6,30 @@
         <div class="form-group">
             <label for="name">Name</label>
             <input type="text" name="name" id="name" class="form-control <?=isFieldInvalidClass('name', get_defined_vars());?>" required value="<?=formFieldValue('name', $record);?>" />
-			<div class="invalid-feedback">
-		        <?=getFieldInvalidMessage('name', get_defined_vars(), 'Please provide a valid name!');?>
-			</div>
+      			<div class="invalid-feedback">
+      		        <?=getFieldInvalidMessage('name', get_defined_vars(), 'Please provide a valid name!');?>
+      			</div>
         </div>
 
         <div class="form-group">
-            <label for="ncd_pst">NCD PST</label>
+            <label for="country">Country code (ISO3166-1 ALPHA-2)</label>
+            <input type="text" name="country" id="country" maxlength="2" class="form-control <?=isFieldInvalidClass('country', get_defined_vars());?>" value="<?=formFieldValue('country', $record);?>" />
+      			<div class="invalid-feedback">
+      		        <?=getFieldInvalidMessage('country', get_defined_vars());?>
+      			</div>
+    		</div>
+
+        <div class="form-group">
+            <label for="ncd_pst">National code of the meteorological station</label>
             <input type="text" name="ncd_pst" id="ncd_pst" class="form-control <?=isFieldInvalidClass('ncd_pst', get_defined_vars());?>" required value="<?=formFieldValue('ncd_pst', $record);?>" />
-			<div class="invalid-feedback">
-		        <?=getFieldInvalidMessage('ncd_pst', get_defined_vars(), 'Please provide a valid Ncd pst value!');?>
-			</div>
+      			<div class="invalid-feedback">
+      		        <?=getFieldInvalidMessage('ncd_pst', get_defined_vars(), 'Please provide a valid national code value!');?>
+      			</div>
         </div>
 
 		<?php if($request->getIdentity()->hasPermissions(['admin.all']) || $request->getIdentity()->hasPermissions(['admin.meteo.monitoringpoints.update'])): ?>
 			<div class="form-group">
-				<label for="eucd_pst">EUCD PST
+				<label for="eucd_pst">International code of the meteorological station
 					<?php if($record) : ?>
 						<small>(Current value: <?=$record['eucd_pst'] ?? null;?>)</small>
 					<?php endif; ?>
@@ -40,21 +48,8 @@
         <div class="form-check">
             <input type="hidden" name="is_out_of_order" value="0"/>
             <input type="checkbox" name="is_out_of_order" id="is_out_of_order" value="1" class="form-check-input" <?=formFieldValue('is_out_of_order', $record) ? 'checked' : '';?>/>
-            <label for="is_out_of_order">Is Ouf of Order</label>
+            <label for="is_out_of_order">Is ouf of order</label>
         </div>
-
-        <div class="form-group">
-            <label for="vertical_reference">Vertical reference</label>
-            <input type="text" name="vertical_reference" id="vertical_reference" class="form-control" value="<?=formFieldValue('vertical_reference', $record);?>" />
-        </div>
-
-        <div class="form-group">
-            <label for="country">Country</label>
-            <input type="text" name="country" id="country" maxlength="2" class="form-control <?=isFieldInvalidClass('country', get_defined_vars());?>" value="<?=formFieldValue('country', $record);?>" />
-			<div class="invalid-feedback">
-		        <?=getFieldInvalidMessage('country', get_defined_vars());?>
-			</div>
-		</div>
 
         <div class="form-group">
             <label for="lat">Latitude coordinate</label>
@@ -74,6 +69,11 @@
         <div class="form-group">
             <label for="altitude">Altitude</label>
             <input type="number" name="altitude" id="altitude" step="0.000001" class="form-control" value="<?=formFieldValue('altitude', $record);?>" />
+        </div>
+
+        <div class="form-group">
+            <label for="vertical_reference">Vertical reference</label>
+            <input type="text" name="vertical_reference" id="vertical_reference" class="form-control" value="<?=formFieldValue('vertical_reference', $record);?>" />
         </div>
 
         <div class="form-group">

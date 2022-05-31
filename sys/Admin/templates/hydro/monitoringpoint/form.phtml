@@ -12,16 +12,24 @@
         </div>
 
         <div class="form-group">
-            <label for="ncd_wgst">NCD WGST</label>
+            <label for="country">Country code (ISO3166-1 ALPHA-2)</label>
+            <input type="text" name="country" id="country" maxlength="2" class="form-control <?=isFieldInvalidClass('country', get_defined_vars());?>" value="<?=formFieldValue('country', $record);?>" />
+      			<div class="invalid-feedback">
+      		        <?=getFieldInvalidMessage('country', get_defined_vars());?>
+      			</div>
+        </div>
+
+        <div class="form-group">
+            <label for="ncd_wgst">National code of the water gauge station</label>
             <input type="text" name="ncd_wgst" id="ncd_wgst" class="form-control <?=isFieldInvalidClass('ncd_wgst', get_defined_vars());?>" required value="<?=formFieldValue('ncd_wgst', $record);?>" />
             <div class="invalid-feedback">
-	            <?=getFieldInvalidMessage('ncd_wgst', get_defined_vars(), 'Please provide a valid Ncd wgst value!');?>
+	            <?=getFieldInvalidMessage('ncd_wgst', get_defined_vars(), 'Please provide a valid national code value!');?>
             </div>
         </div>
 
 		<?php if($request->getIdentity()->hasPermissions(['admin.all']) || $request->getIdentity()->hasPermissions(['admin.hydro.monitoringpoints.update'])): ?>
 			<div class="form-group">
-				<label for="eucd_wgst">EUCD WGST
+				<label for="eucd_wgst">International code of the water gauge station
 					<?php if($record) : ?>
 						<small>(Current value: <?=$record['eucd_wgst'] ?? null;?>)</small>
 					<?php endif; ?>
@@ -40,20 +48,7 @@
         <div class="form-check">
             <input type="hidden" name="is_out_of_order" value="0"/>
             <input type="checkbox" name="is_out_of_order" id="is_out_of_order" value="1" class="form-check-input" <?=formFieldValue('is_out_of_order', $record) ? 'checked' : '';?>/>
-            <label for="is_out_of_order">Is Ouf of Order</label>
-        </div>
-
-        <div class="form-group">
-            <label for="vertical_reference">Vertical reference</label>
-            <input type="text" name="vertical_reference" id="vertical_reference" class="form-control" value="<?=formFieldValue('vertical_reference', $record);?>" />
-        </div>
-
-        <div class="form-group">
-            <label for="country">Country</label>
-            <input type="text" name="country" id="country" maxlength="2" class="form-control <?=isFieldInvalidClass('country', get_defined_vars());?>" value="<?=formFieldValue('country', $record);?>" />
-			<div class="invalid-feedback">
-		        <?=getFieldInvalidMessage('country', get_defined_vars());?>
-			</div>
+            <label for="is_out_of_order">Is ouf of order</label>
         </div>
 
         <div class="form-group">
@@ -72,23 +67,48 @@
         </div>
 
         <div class="form-group">
+            <label for="gauge_zero">Gauge zero</label>
+            <input type="number" name="gauge_zero" id="gauge_zero" step="0.000001"  class="form-control" value="<?=formFieldValue('gauge_zero', $record);?>" />
+        </div>
+
+        <div class="form-group">
+            <label for="vertical_reference">Vertical reference</label>
+            <input type="text" name="vertical_reference" id="vertical_reference" class="form-control" value="<?=formFieldValue('vertical_reference', $record);?>" />
+        </div>
+
+        <div class="form-group">
             <label for="location">Location</label>
             <input type="text" name="location" id="location" class="form-control" value="<?=formFieldValue('location', $record);?>" />
         </div>
 
+        <fieldset class="form-group">
+            <legend><?=__('River');?></legend>
+    			<?php $selectedRiver = formFieldValue('river', $record); ?>
+            <div class="field">
+                <select name="river">
+					<?=selectOptions($rivers, $selectedRiver ?? null, ' - '.__('No river').' - ');?>
+                </select>
+            </div>
+        </fieldset>
+
+        <fieldset class="form-group">
+            <legend><?=__('Riverbank');?></legend>
+			<?php $selectedRiverbank = formFieldValue('riverbank', $record); ?>
+            <div class="field">
+                <select name="riverbank">
+					<?=selectOptions($riverbanks, $selectedRiverbank ?? null, ' - '.__('No riverbank').' - ');?>
+                </select>
+            </div>
+        </fieldset>
+
         <div class="form-group">
             <label for="river_kilometer">River kilometer</label>
-            <input type="number" name="river_kilometer" id="river_kilometer" step="0.000001"  class="form-control" value="<?=formFieldValue('river_kilometer', $record);?>" />
+            <input type="number" name="river_kilometer" id="river_kilometer" step="0.001"  class="form-control" value="<?=formFieldValue('river_kilometer', $record);?>" />
         </div>
 
         <div class="form-group">
-            <label for="catchment_area">Catchment area</label>
-            <input type="number" name="catchment_area" id="catchment_area" step="0.000001"  class="form-control" value="<?=formFieldValue('catchment_area', $record);?>" />
-        </div>
-
-        <div class="form-group">
-            <label for="gauge_zero">Gauge zero</label>
-            <input type="number" name="gauge_zero" id="gauge_zero" step="0.000001"  class="form-control" value="<?=formFieldValue('gauge_zero', $record);?>" />
+            <label for="catchment_area">Catchment area in km²</label>
+            <input type="number" name="catchment_area" id="catchment_area" step="0.001" min="0" class="form-control" value="<?=formFieldValue('catchment_area', $record);?>" />
         </div>
 
         <div class="form-group">
@@ -126,26 +146,6 @@
 				<div class="invalid-feedback">
 		            <?=getFieldInvalidMessage('operator', get_defined_vars());?>
 				</div>
-            </div>
-        </fieldset>
-
-        <fieldset class="form-group">
-            <legend><?=__('Riverbank');?></legend>
-			<?php $selectedRiverbank = formFieldValue('riverbank', $record); ?>
-            <div class="field">
-                <select name="riverbank">
-					<?=selectOptions($riverbanks, $selectedRiverbank ?? null, ' - '.__('No riverbank').' - ');?>
-                </select>
-            </div>
-        </fieldset>
-
-        <fieldset class="form-group">
-            <legend><?=__('River');?></legend>
-			<?php $selectedRiver = formFieldValue('river', $record); ?>
-            <div class="field">
-                <select name="river">
-					<?=selectOptions($rivers, $selectedRiver ?? null, ' - '.__('No river').' - ');?>
-                </select>
             </div>
         </fieldset>
 
