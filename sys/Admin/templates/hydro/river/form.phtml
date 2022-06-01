@@ -5,7 +5,7 @@
 		<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
 		<?php if ( is_null($record) ): ?>
         <div class="form-group">
-            <label for="eucd_riv">EUCD RIV</label>
+            <label for="eucd_riv">International code of the river</label>
             <input type="text" name="eucd_riv" id="eucd_riv" class="form-control <?=isFieldInvalidClass('eucd_riv', get_defined_vars());?>"  value="<?=formFieldValue('eucd_riv', $record);?>" />
 			<div class="invalid-feedback">
 		        <?=getFieldInvalidMessage('eucd_riv', get_defined_vars());?>
@@ -13,7 +13,7 @@
         </div>
 		<?php endif; ?>
         <div class="form-group">
-            <label for="cname">Cname</label>
+            <label for="cname">Name</label>
             <input type="text" name="cname" id="cname" class="form-control <?=isFieldInvalidClass('cname', get_defined_vars());?>"  value="<?=formFieldValue('cname', $record);?>" />
 			<div class="invalid-feedback">
 		        <?=getFieldInvalidMessage('cname', get_defined_vars());?>
