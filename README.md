@@ -1319,6 +1319,19 @@ For files which are in CSV format
 * _propertySymbolColumn_ (required, if propertyLevel is row): Number of column which contains the symbol of the property
 * _propertyValueColumn_ (required, if propertyLevel is row): Number of column which contains the value of the property
 
+##### ZrxpParser
+
+For files which are in ZRXP format
+* _zrxpVersion_ (required): Main version of the ZRXP file. Possible values are 2 and 3
+* _properties[]_ (required): One property configuration can has 2 or 4 parts, parts are separated with `;`. Example: `h;H;TSPATH;/Daily`
+  * The sign (abbreviation) of the observed property as it is defined on the distibution node. In example it is the `h` property
+  * The CNR property's value in ZRXP file. In case of the example the ZRXP file has a CNRH metadata.
+  * (optional): A ZRXP-property, which should contain a value (defined in the next part), and the property will match only if this condition is true. 
+    In the example the value will be searched in TSPATH property.
+  * (optional): The value which must in the value of the additional match property, which is defined in the previous part.
+    In the example the property will match only if TSPATH metadata property contains the `/Daily` subtext.
+
+
 ##### XmlParser
 
 For files which are in XML format
