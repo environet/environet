@@ -3,7 +3,7 @@
 ## Windows
 It is recommended to use the following:
 
-[https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip](https://itefix.net/dl/free-software/openssl_tool_win_x64_1.0.0.zip)
+[itefix.net OpenSSL tool for Windows](https://itefix.net/openssl-tool)
 
 Download and extract it to an optional place. In the package, you can find the executable file at the: 
 *bin/openssl.exe*
