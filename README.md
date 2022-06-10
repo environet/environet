@@ -1172,7 +1172,7 @@ Private keys should be placed in the `conf/plugins/credentials` directory, which
 ## Uploader plugin configuration files (conversion filters)
 
 The purpose of the conversion filters is to provide a translation from the data format of the data pro-vider to the common data format of HyMeDES EnviroNet platform.
-In general, there are the following ways to provide the data: via an FTP-server, via a web API, via HTTP or via a local file stored on the data node. The data is encoded in CSV-file or XML-file.
+In general, there are the following ways to provide the data: via an FTP-server, via a web API, via HTTP or via a local file stored on the data node. The data is encoded in ZRXP-file, CSV-file or XML-file.
 The country-specific settings for data conversion (conversion filters) are done via a basic configuration text file with keyword value pairs and optionally two JSON files. The JSON files are referred to in the basic configuration file. In most cases, the JSON configuration files are not needed.
 
 There are two options to provide the data: Pushing the data (option A) or pulling the data (option B). In the case of option A, a data node is running on a server of the data provider. It regularly accesses the data files and sends them to HyMeDES EnviroNet. In option B, HyMeDES EnviroNet accesses a server of the data provider and pulls data files from it.
@@ -1184,13 +1184,14 @@ Required files for different use cases are depicted in the following table:
 || Basic configuration file | FORMATS json file | CONVERSION json file |
 | :---: | :---: | :---: | :---: |
 | CSV data file format | yes | | |
+| ZRXP data file format | yes | | |
 | XML data file format | yes | yes | yes |
 | Static URL / file names | yes | | yes |
 | Dynamic URL / file names | yes | | yes |
 | Data files in ZIP | yes | | yes |
 
 ### Basic configuration file
-The basic configuration text files are located where the Data Node was installed to in sub-folder conf/plugins/configuration. In the basic configuration file, the way of the transport (called transport layer) is specified (FTP, HTTP, or a local file) and the format (called parser layer) of data file (CSV or XML).
+The basic configuration text files are located where the Data Node was installed to in sub-folder conf/plugins/configuration. In the basic configuration file, the way of the transport (called transport layer) is specified (FTP, HTTP, or a local file) and the format (called parser layer) of data file (ZRXP, CSV or XML).
 
 The configuration files have always three sections which configure the properties of the three layers:
 * Transport layer: Gets the data from local / remote file, or web API, etc.
@@ -1318,6 +1319,19 @@ For files which are in CSV format
 * _conversionsFilename_ (optional): If the layer has a conversion specification file, this contains the path to the CONVERSIONS json file
 * _propertySymbolColumn_ (required, if propertyLevel is row): Number of column which contains the symbol of the property
 * _propertyValueColumn_ (required, if propertyLevel is row): Number of column which contains the value of the property
+
+##### ZrxpParser
+
+For files which are in ZRXP format
+* _zrxpVersion_ (required): Main version of the ZRXP file. Possible values are 2 and 3
+* _properties[]_ (required): One property configuration can has 2 or 4 parts, parts are separated with `;`. Example: `h;H;TSPATH;/Daily`
+  * The sign (abbreviation) of the observed property as it is defined on the distibution node. In example it is the `h` property
+  * The CNR property's value in ZRXP file. In case of the example the ZRXP file has a CNRH metadata.
+  * (optional): A ZRXP-property, which should contain a value (defined in the next part), and the property will match only if this condition is true. 
+    In the example the value will be searched in TSPATH property.
+  * (optional): The value which must in the value of the additional match property, which is defined in the previous part.
+    In the example the property will match only if TSPATH metadata property contains the `/Daily` subtext.
+
 
 ##### XmlParser
 
