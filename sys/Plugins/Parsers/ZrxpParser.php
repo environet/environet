@@ -98,7 +98,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 					'property'                => str_replace('____', ';', $propMap[1]),
 					'additionalMetadataKey'   => isset($propMap[2]) ? str_replace('____', ';', $propMap[2]) : null,
 					'additionalMetadataValue' => isset($propMap[3]) ? str_replace('____', ';', $propMap[3]) : null,
-				], fn ($item) => !is_null($item));
+				], fn($item) => !is_null($item));
 			}
 		}
 		parent::__construct($config);
@@ -214,9 +214,20 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		//Parse timezone
 		$timezone = $this->parseTimezone($metaData['TZ']);
 
-		//Define mpoint id, and property name
+		//Define mpoint id, and property name (based on CNR or CNAME)
 		$mPointId = $metaData['SANR'];
-		$propertyNameZrxp = strtoupper($metaData['CNR']);
+		$propertyNameZrxp = null;
+		if (isset($metaData['CNR'])) {
+			$propertyNameZrxp = strtoupper($metaData['CNR']);
+		} elseif (isset($metaData['CNAME'])) {
+			$propertyNameZrxp = strtoupper($metaData['CNAME']);
+		}
+
+		if (is_null($propertyNameZrxp)) {
+			Console::getInstance()->writeLog('Property name not found in meta tags (not in CNR and not in CNAME)', true);
+
+			return null;
+		}
 
 		$propertyNameDb = $this->findProperty($propertyNameZrxp, $metaData);
 		//Find the db-symbol of property
@@ -272,7 +283,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	 * @return array
 	 */
 	protected function checkRequiredMetadataKeys(array $metaData): array {
-		$requiredKeys = ['ZRXPVERSION', 'SANR', 'CNR', 'TZ', 'LAYOUT'];
+		$requiredKeys = ['ZRXPVERSION', 'SANR', 'TZ', 'LAYOUT'];
 		$missingKeys = [];
 		foreach ($requiredKeys as $requiredKey) {
 			if (!array_key_exists($requiredKey, $metaData)) {
@@ -324,7 +335,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		do {
 			$propertyConfig = [];
 			$propertyConfig[] = $propDb = $console->ask("Property's symbol as it is defined on distribution node:");
-			$propertyConfig[] = $propZrxp = $console->ask("Property's name in ZRXP file (value if CNR property, the characters after 'CNR' and before separator):");
+			$propertyConfig[] = $propZrxp = $console->ask("Property's name in ZRXP file (value if CNR/CNAME property, the characters after 'CNR/CNAME' and before separator):");
 			if ($console->askYesNo("Do you want to find match under other metadata to identify the property (e.g. interval in TSPATH)", false)) {
 				$propertyConfig[] = $propAdditionalMetadataKey = $console->ask("Identifier of metadata (e.g. TSPATH):");
 				$propertyConfig[] = $propAdditionalMetadataValue = $console->ask("Match string in the value of " . $propAdditionalMetadataKey . " (e.g. Precip/MDay.Total):");
