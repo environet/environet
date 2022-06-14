@@ -30,6 +30,11 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	private int $zrxpVersion;
 
 	/**
+	 * @var mixed Cut leading zeros from mpoint id
+	 */
+	private bool $cutMpointLeadingZeros;
+
+	/**
 	 * @var array
 	 */
 	private array $propertyMap = [];
@@ -85,6 +90,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	 */
 	public function __construct(array $config) {
 		$this->zrxpVersion = $config['zrxpVersion'];
+		$this->cutMpointLeadingZeros = $config['cutMpointLeadingZeros'] == 1;
 
 		//Create a map of properties, keys are the symbol in db, values are the symbols on zrxp files
 		if (!empty($config['properties'])) {
@@ -216,6 +222,9 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 
 		//Define mpoint id, and property name (based on CNR or CNAME)
 		$mPointId = $metaData['SANR'];
+		if ($this->cutMpointLeadingZeros) {
+			$mPointId = preg_replace('/^0+(.*)$/', '$1', $mPointId);
+		}
 		$propertyNameZrxp = null;
 		if (isset($metaData['CNR'])) {
 			$propertyNameZrxp = strtoupper($metaData['CNR']);
@@ -355,6 +364,9 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 			$zrxpVersion = $console->ask('ZRXP version:');
 		} while (!in_array($zrxpVersion, self::$supportedVersions));
 
+		//Cut leading zeros
+		$cutMpointLeadingZeros = $console->askYesNo('Do you want to cut leading zeros from monitoring point ids?', false);
+
 		//Properties
 		$console->writeLine('Configuration of properties', Console::COLOR_YELLOW);
 		$console->writeLine('Name of observed properties in ZRXP files can be different as in the distribution node, so you have to create a map of properties.');
@@ -373,6 +385,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 
 		$config = [
 			'zrxpVersion' => $zrxpVersion,
+			'cutMpointLeadingZeros' => $cutMpointLeadingZeros,
 			'properties'  => $properties
 		];
 
@@ -387,6 +400,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	public function serializeConfiguration(): string {
 		$config = '';
 		$config .= 'zrxpVersion = ' . $this->zrxpVersion . "\n";
+		$config .= 'cutMpointLeadingZeros = ' . ($this->cutMpointLeadingZeros ? 1 : 0) . "\n";
 
 		foreach ($this->propertyMap as $dbProp => $propertyConfig) {
 			//Replace ; to ____ in values
