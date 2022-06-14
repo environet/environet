@@ -212,6 +212,7 @@ For files which are in CSV format
 
 For files which are in ZRXP format
 * _zrxpVersion_ (required): Main version of the ZRXP file. Possible values are 2 and 3
+* _cutMpointLeadingZeros_: 1 if it is necessary to cut leading zeros from monitoring point id, 0 otherwise
 * _properties[]_ (required): One property configuration can has 2 or 4 parts, parts are separated with `;`. Example: `h;H;TSPATH;/Daily`
   * The sign (abbreviation) of the observed property as it is defined on the distibution node. In example it is the `h` property
   * The CNR property's value in ZRXP file. In case of the example the ZRXP file has a CNRH metadata.
