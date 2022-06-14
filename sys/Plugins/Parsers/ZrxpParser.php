@@ -303,6 +303,33 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	 * @return DateTimeZone
 	 */
 	protected function parseTimezone(string $timezone): DateTimeZone {
+		$tzMap = [
+			'BST'  => 'UTC+1',
+			'CEST' => 'UTC+2',
+			'MESZ' => 'UTC+2',
+			'CET'  => 'UTC+1',
+			'MEZ'  => 'UTC+1',
+			'EEST' => 'UTC+3',
+			'OESZ' => 'UTC+3',
+			'EET'  => 'UTC+2',
+			'OEZ'  => 'UTC+2',
+			'FET'  => 'UTC+3',
+			'GET'  => 'UTC+4',
+			'GMT'  => 'UTC+0',
+			'IST'  => 'UTC+1',
+			'KUYT' => 'UTC+4',
+			'MSD'  => 'UTC+4',
+			'MSK'  => 'UTC+3',
+			'SAMT' => 'UTC+4',
+			'TRT'  => 'UTC+3',
+			'WEST' => 'UTC+1',
+			'WESZ' => 'UTC+1',
+			'WET'  => 'UTC+0',
+			'WEZ'  => 'UTC+0'
+		];
+		if (array_key_exists(strtoupper($timezone), $tzMap)) {
+			$timezone = $tzMap[$timezone];
+		}
 		if (preg_match('/^UTC([+\-]\d+)$/', $timezone, $m)) {
 			return (new DateTimeZone('GMT' . $m[1]));
 		}
