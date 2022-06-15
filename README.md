@@ -61,10 +61,10 @@ This guide assumes you are installing Environet in a Linux environment.
 
 
 ### Docker Engine
-The docker documentation has lots of helpful information, along with distribution specific installation instructions. If you are new to Docker, we recommend reading the [overview](https://docs.docker.com/install/) first.  
-To see distribution specific installation instructions, navigate to Docker Engine > Linux > Your distribution in the [documentation](https://docs.docker.com/install/).
+The docker documentation has lots of helpful information, along with distribution specific installation instructions. If you are new to Docker, we recommend reading the [overview](https://docs.docker.com/get-started/) first.
+To see distribution specific installation instructions, navigate to Docker Engine > Install > Server > Your platform in the [documentation](https://docs.docker.com/engine/install/).
 
-Be sure to follow the [post installation steps](https://docs.docker.com/install/linux/linux-postinstall/) to allow using docker as a non-root user.
+Be sure to follow the [post installation steps](https://docs.docker.com/engine/install/linux-postinstall/) to allow using docker as a non-root user.
 
 You can verify that Docker is installed correctly by running:  
 `$ docker run hello-world`  
@@ -1172,7 +1172,7 @@ Private keys should be placed in the `conf/plugins/credentials` directory, which
 ## Uploader plugin configuration files (conversion filters)
 
 The purpose of the conversion filters is to provide a translation from the data format of the data pro-vider to the common data format of HyMeDES EnviroNet platform.
-In general, there are the following ways to provide the data: via an FTP-server, via a web API, via HTTP or via a local file stored on the data node. The data is encoded in ZRXP-file, CSV-file or XML-file.
+In general, there are the following ways to provide the data: via an FTP-server, via a web API, via HTTP or via a local file stored on the data node. The data is encoded in CSV-file or XML-file.
 The country-specific settings for data conversion (conversion filters) are done via a basic configuration text file with keyword value pairs and optionally two JSON files. The JSON files are referred to in the basic configuration file. In most cases, the JSON configuration files are not needed.
 
 There are two options to provide the data: Pushing the data (option A) or pulling the data (option B). In the case of option A, a data node is running on a server of the data provider. It regularly accesses the data files and sends them to HyMeDES EnviroNet. In option B, HyMeDES EnviroNet accesses a server of the data provider and pulls data files from it.
@@ -1184,14 +1184,13 @@ Required files for different use cases are depicted in the following table:
 || Basic configuration file | FORMATS json file | CONVERSION json file |
 | :---: | :---: | :---: | :---: |
 | CSV data file format | yes | | |
-| ZRXP data file format | yes | | |
 | XML data file format | yes | yes | yes |
 | Static URL / file names | yes | | yes |
 | Dynamic URL / file names | yes | | yes |
 | Data files in ZIP | yes | | yes |
 
 ### Basic configuration file
-The basic configuration text files are located where the Data Node was installed to in sub-folder conf/plugins/configuration. In the basic configuration file, the way of the transport (called transport layer) is specified (FTP, HTTP, or a local file) and the format (called parser layer) of data file (ZRXP, CSV or XML).
+The basic configuration text files are located where the Data Node was installed to in sub-folder conf/plugins/configuration. In the basic configuration file, the way of the transport (called transport layer) is specified (FTP, HTTP, or a local file) and the format (called parser layer) of data file (CSV or XML).
 
 The configuration files have always three sections which configure the properties of the three layers:
 * Transport layer: Gets the data from local / remote file, or web API, etc.

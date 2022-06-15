@@ -1061,9 +1061,8 @@
 <p>This guide assumes you are installing Environet in a Linux environment.</p>
 <h2 id="install-the-docker-engine-and-docker-compose">Install the Docker Engine and Docker Compose</h2>
 <h3 id="docker-engine">Docker Engine</h3>
-<p>The docker documentation has lots of helpful information, along with distribution specific installation instructions. If you are new to Docker, we recommend reading the <a href="https://docs.docker.com/install/">overview</a> first.<br />
-To see distribution specific installation instructions, navigate to Docker Engine &gt; Linux &gt; Your distribution in the <a href="https://docs.docker.com/install/">documentation</a>.</p>
-<p>Be sure to follow the <a href="https://docs.docker.com/install/linux/linux-postinstall/">post installation steps</a> to allow using docker as a non-root user.</p>
+<p>The docker documentation has lots of helpful information, along with distribution specific installation instructions. If you are new to Docker, we recommend reading the <a href="https://docs.docker.com/get-started/">overview</a> first. To see distribution specific installation instructions, navigate to Docker Engine &gt; Install &gt; Server &gt; Your platform in the <a href="https://docs.docker.com/engine/install/">documentation</a>.</p>
+<p>Be sure to follow the <a href="https://docs.docker.com/engine/install/linux-postinstall/">post installation steps</a> to allow using docker as a non-root user.</p>
 <p>You can verify that Docker is installed correctly by running:<br />
 <code>$ docker run hello-world</code><br />
 If should output a friendly message to the terminal.</p>
@@ -1090,11 +1089,11 @@ To stop and start them manually, you may run <code>./environet data up</code> or
 <p>Depending on the git version it can be possible to run the following command to update the submodule (src folder) too: <code>git submodule update --init --recursive --remote</code></p>
 <p>If a Dockerfile of a container has been changed in the new version, after <code>./environet dist/data down</code> but before <code>./environet dist/data up</code> it’s necessary to run <code>./environet dist/data build</code>.</p>
 <h2 id="linux-with-ufw-security-settings">Linux with UFW security settings</h2>
-<p>If the nodes are hosted on a linux system, which using UFW firewall, there are some additional steps to make it secure, and do not open unneccessary ports. The recommended solution is to make some modification on UFW rules. The description of the compatibility problem, and the solution can be found here: <a href="https://github.com/chaifeng/ufw-docker" class="uri">https://github.com/chaifeng/ufw-docker</a></p>
+<p>If the nodes are hosted on a linux system, which using UFW firewall, there are some additional steps to make it secure, and do not open unneccessary ports. The recommended solution is to make some modification on UFW rules. The description of the compatibility problem, and the solution can be found here: <a href="https://github.com/chaifeng/ufw-docker">https://github.com/chaifeng/ufw-docker</a></p>
 <p><a name="20_distribution_node"></a></p>
 <h1 id="distribution-node">Distribution node</h1>
 <h2 id="overview">Overview</h2>
-<p>A Distribution node, in it’s minimal form, is a service aspect that’s able to maintain the central database and service API requests. In the first phase the domain of the distribution node is: <a href="https://environet.environ.hu" class="uri">https://environet.environ.hu</a></p>
+<p>A Distribution node, in it’s minimal form, is a service aspect that’s able to maintain the central database and service API requests. In the first phase the domain of the distribution node is: <a href="https://environet.environ.hu">https://environet.environ.hu</a></p>
 <h2 id="central-database">Central database</h2>
 <p>The distribution node has a database backend. It contains: * Data and configuration of hydro and meteo points * Measurement data tables of these monitoring points * User and access (ACL) tables (users, groups, permissions) * System runtime data</p>
 <p>Schema of the database can be found here: <a href="#21_database_structure">Database structure</a></p>
@@ -1162,7 +1161,7 @@ The detailed documentation of this endpoint can found here: <a href="#23_api_dow
 </tbody>
 </table>
 <h3 id="signature-header">Signature header:</h3>
-<p>The pattern of the header: <code>Signature keyId=&quot;[username]&quot;,algorithm=&quot;rsa-sha256&quot;,signature=&quot;[signature]&quot;</code></p>
+<p>The pattern of the header: <code>Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"</code></p>
 <p>The <code>keyId</code> is the username of the uploader user. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the from the body of the response, which is the XML data.</p>
 <hr />
 <h2 id="body">Body</h2>
@@ -1282,7 +1281,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </tbody>
 </table>
 <h3 id="signature-header-1">Signature header:</h3>
-<p>The pattern of the header: <code>Signature keyId=&quot;[username]&quot;,algorithm=&quot;rsa-sha256&quot;,signature=&quot;[signature]&quot;</code></p>
+<p>The pattern of the header: <code>Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"</code></p>
 <p>The <code>keyId</code> is the username of the user who wants to query data. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the token in the query parameters.</p>
 <h2 id="repsonses-1">Repsonses</h2>
 <h3 id="success-1">Success</h3>
@@ -1367,7 +1366,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </tbody>
 </table>
 <h3 id="signature-header-2">Signature header:</h3>
-<p>The pattern of the header: <code>Signature keyId=&quot;[username]&quot;,algorithm=&quot;rsa-sha256&quot;,signature=&quot;[signature]&quot;</code></p>
+<p>The pattern of the header: <code>Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"</code></p>
 <p>The <code>keyId</code> is the username of the user who wants to query data. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the token in the query parameters.</p>
 <h2 id="repsonses-2">Repsonses</h2>
 <h3 id="success-2">Success</h3>
@@ -1808,7 +1807,7 @@ Private keys should be placed in the <code>conf/plugins/credentials</code> direc
 <h3 id="basic-configuration-file">Basic configuration file</h3>
 <p>The basic configuration text files are located where the Data Node was installed to in sub-folder conf/plugins/configuration. In the basic configuration file, the way of the transport (called transport layer) is specified (FTP, HTTP, or a local file) and the format (called parser layer) of data file (CSV or XML).</p>
 <p>The configuration files have always three sections which configure the properties of the three layers: * Transport layer: Gets the data from local / remote file, or web API, etc. * Parser layer: Processes the received data to the format which will be compatible with the API endpoint of the distribution node. * API client layer: Sends the data to the distribution node.</p>
-<p>The format of the configuration file follows the standards of ini-files as documented here: <a href="https://en.wikipedia.org/wiki/INI_file" class="uri">https://en.wikipedia.org/wiki/INI_file</a> It must contain three sections, for transport, parser, and API client layers. So, the basic structure is like this:</p>
+<p>The format of the configuration file follows the standards of ini-files as documented here: <a href="https://en.wikipedia.org/wiki/INI_file">https://en.wikipedia.org/wiki/INI_file</a> It must contain three sections, for transport, parser, and API client layers. So, the basic structure is like this:</p>
 <pre><code>[transport]
 property = value
 
@@ -1873,7 +1872,7 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <h5 id="ftptransport">FtpTransport</h5>
 <p>Takes the data from a remote FTP server * <em>host</em> (required): Host of the FTP server * <em>secure</em> (required): 1, if the connection can be secured by SSL, otherwise 0 * <em>port</em> (optional): Port of the FTP server, if non-standard * <em>username</em> (required): FTP authentication username * <em>password</em> (required): FTP authentication password * <em>path</em> (required): The path of the directory which contains the data files, relative to the root of the FTP connection. * <em>filenamePattern</em> (required): Pattern of the filenames which should be processed by the transport. Asterisk (<code>*</code>) characters can be used for variable parts of the filename * <em>newestFileOnly</em> (required): If 1, only the newest file (by date) will be transported * <em>conversionsFilename</em> (required): If the layer has a conversion specification file, this is the file name of the CONVERSIONS json file, relative to the path of the configuration folder. * <em>lastNDaysOnly</em> (optional): Use only files with modification time newer than or equal N days from current day.</p>
 <h4 id="parser-layer-properties">Parser layer properties</h4>
-<p>Common properties: * <em>timeZone</em> (required): A valid timezone, in which the data is stored in the source. The times will be converted to UTC before the API client layer. Possible values: <a href="https://www.php.net/manual/en/timezones.php" class="uri">https://www.php.net/manual/en/timezones.php</a></p>
+<p>Common properties: * <em>timeZone</em> (required): A valid timezone, in which the data is stored in the source. The times will be converted to UTC before the API client layer. Possible values: <a href="https://www.php.net/manual/en/timezones.php">https://www.php.net/manual/en/timezones.php</a></p>
 <h5 id="csvparser">CsvParser</h5>
 <p>For files which are in CSV format * <em>csvDelimiter</em> (required): The character which separates values from each other * <em>nHeaderSkip</em> (optional): Number of lines which will be skipped before data * <em>mPointIdCol</em> (required): Number of column (zero based) which contains the ID of moni-toring point * <em>timeCol</em> (required, if time is in a column): Number of column (zero based) which contains the time * <em>skipValue</em> (optional): A specific value which should be parsed as a non-existent value * <em>timeFormat</em> (required, if time is in a column): Format of time if in a column * <em>timeInFilenameFormat</em> (required, if time is in filename): If defined, the time should be parsed from the filename, and not from a column * <em>properties[]</em> (required): The sign (abbreviation) of the observed property, and the col-umn number (zero based) in which the property value can be found. The name and the value must be separated by “;”. Example: “h;6”. This property can be defined multiple times, one per property * <em>propertyLevel</em> (required): In case of “column” the values of an observed property have their own column in the files. In case of “row” the rows have a column containing observed property symbols that specify which symbol the value belongs to. * <em>conversionsFilename</em> (optional): If the layer has a conversion specification file, this contains the path to the CONVERSIONS json file * <em>propertySymbolColumn</em> (required, if propertyLevel is row): Number of column which contains the symbol of the property * <em>propertyValueColumn</em> (required, if propertyLevel is row): Number of column which contains the value of the property</p>
 <h5 id="zrxpparser">ZrxpParser</h5>
@@ -2171,10 +2170,10 @@ stundenwerte_RR_00164_akt.zip|produkt_rr_stunde_*_00164.txt</code></pre>
 <code>rsa -in private.pem -out public.pem -outform PEM -pubout</code></p>
 <h2 id="linux">Linux</h2>
 <p>You have to download one from the following link:</p>
-<p><a href="https://www.openssl.org/source/" class="uri">https://www.openssl.org/source/</a></p>
+<p><a href="https://www.openssl.org/source/">https://www.openssl.org/source/</a></p>
 <p>After that you have to extract and install it.</p>
 <p>Here you can find a detailed description about the installation:</p>
-<p><a href="https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/" class="uri">https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/</a></p>
+<p><a href="https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/">https://www.tecmint.com/install-openssl-from-source-in-centos-ubuntu/</a></p>
 <p>After the installation you have to run these commands:</p>
 <p><strong>1.</strong> Private key generation:<br />
 <code>openssl genrsa -out private.pem 2048</code></p>
