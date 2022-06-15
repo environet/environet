@@ -64,9 +64,15 @@ class Plugin {
 
 					$successfulDownloads++;
 
+					$payloadStorage = SRC_PATH . '/data/data_node_payloads';
+					if (!is_dir($payloadStorage)) {
+						mkdir($payloadStorage, 0755, true);
+					}
 					foreach ($xmls as $xmlPayload) {
 						$ns = $xmlPayload->getNamespaces(true);
 						$child = $xmlPayload->children($ns['environet']);
+						$filename = $payloadStorage . '/' . date('YmdHis') . '_' . $child->MonitoringPointId . '.xml';
+						file_put_contents($filename, $xmlPayload->asXML());
 
 						// remove current monitoring point id from list
 						if (($key = array_search($child->MonitoringPointId, $MonitoringPointNCDs)) !== false) {
@@ -83,8 +89,7 @@ class Plugin {
 							$console->writeLine('failed');
 							$console->writeLog('Upload for station NCD ' . $child->MonitoringPointId . ' failed, response: ', true);
 							$console->writeLog($e->getMessage(), true);
-							$console->writeLog('Payload was ', true);
-							$console->writeLog($xmlPayload->asXML(), true);
+							$console->writeLog('Payload stored: ' . $filename, true);
 							$console->writeLog('---', true);
 							$failed ++;
 						}
