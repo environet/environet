@@ -61,10 +61,10 @@ This guide assumes you are installing Environet in a Linux environment.
 
 
 ### Docker Engine
-The docker documentation has lots of helpful information, along with distribution specific installation instructions. If you are new to Docker, we recommend reading the [overview](https://docs.docker.com/install/) first.  
-To see distribution specific installation instructions, navigate to Docker Engine > Linux > Your distribution in the [documentation](https://docs.docker.com/install/).
+The docker documentation has lots of helpful information, along with distribution specific installation instructions. If you are new to Docker, we recommend reading the [overview](https://docs.docker.com/get-started/) first.
+To see distribution specific installation instructions, navigate to Docker Engine > Install > Server > Your platform in the [documentation](https://docs.docker.com/engine/install/).
 
-Be sure to follow the [post installation steps](https://docs.docker.com/install/linux/linux-postinstall/) to allow using docker as a non-root user.
+Be sure to follow the [post installation steps](https://docs.docker.com/engine/install/linux-postinstall/) to allow using docker as a non-root user.
 
 You can verify that Docker is installed correctly by running:  
 `$ docker run hello-world`  
