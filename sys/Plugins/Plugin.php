@@ -71,8 +71,6 @@ class Plugin {
 					foreach ($xmls as $xmlPayload) {
 						$ns = $xmlPayload->getNamespaces(true);
 						$child = $xmlPayload->children($ns['environet']);
-						$filename = $payloadStorage . '/' . date('YmdHis') . '_' . $child->MonitoringPointId . '.xml';
-						file_put_contents($filename, $xmlPayload->asXML());
 
 						// remove current monitoring point id from list
 						if (($key = array_search($child->MonitoringPointId, $MonitoringPointNCDs)) !== false) {
@@ -86,10 +84,13 @@ class Plugin {
 							$console->writeLine('success');
 							$successful ++;
 						} catch (\Exception $e) {
+							$filename = $payloadStorage . '/' . date('YmdHis') . '_' . $child->MonitoringPointId . '.xml';
+							file_put_contents($filename, $xmlPayload->asXML());
+
 							$console->writeLine('failed');
 							$console->writeLog('Upload for station NCD ' . $child->MonitoringPointId . ' failed, response: ', true);
 							$console->writeLog($e->getMessage(), true);
-							$console->writeLog('Payload stored: ' . $filename, true);
+							$console->writeLog('Payload stored: ' . ltrim(str_replace(SRC_PATH, '', $filename), '/'), true);
 							$console->writeLog('---', true);
 							$failed ++;
 						}
