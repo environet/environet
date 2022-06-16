@@ -1095,10 +1095,22 @@ To stop and start them manually, you may run <code>./environet data up</code> or
 <h2 id="overview">Overview</h2>
 <p>A Distribution node, in it’s minimal form, is a service aspect that’s able to maintain the central database and service API requests. In the first phase the domain of the distribution node is: <a href="https://environet.environ.hu" class="uri">https://environet.environ.hu</a></p>
 <h2 id="central-database">Central database</h2>
-<p>The distribution node has a database backend. It contains: * Data and configuration of hydro and meteo points * Measurement data tables of these monitoring points * User and access (ACL) tables (users, groups, permissions) * System runtime data</p>
+<p>The distribution node has a database backend. It contains:</p>
+<ul>
+<li>Data and configuration of hydro and meteo points</li>
+<li>Measurement data tables of these monitoring points</li>
+<li>User and access (ACL) tables (users, groups, permissions)</li>
+<li>System runtime data</li>
+</ul>
 <p>Schema of the database can be found here: <a href="#21_database_structure">Database structure</a></p>
 <h2 id="administration-area">Administration area</h2>
-<p>On the administration area, administrators can maintain: * The data and configuration of monitoring points and observed properties * Operators * Users, groups, and their permissions (ACL) * Public keys of operator-users</p>
+<p>On the administration area, administrators can maintain:</p>
+<ul>
+<li>The data and configuration of monitoring points and observed properties</li>
+<li>Operators</li>
+<li>Users, groups, and their permissions (ACL)</li>
+<li>Public keys of operator-users</li>
+</ul>
 <p>The url of the administration area: https://distribution-node.com/admin</p>
 <h2 id="api-endpoints">API endpoints</h2>
 <h3 id="upload">Upload</h3>
@@ -1705,8 +1717,20 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <h2 id="measurement-access-rules">Measurement access rules</h2>
 <h3 id="concept-of-the-rules-1">Concept of the rules</h3>
 <p>The access rules controls the time interval in which the data will be available for a user under the <a href="#24_api_download">download API</a> request.</p>
-<p>The rules have three required dimensions: * <strong>Monitoring point</strong> - the rule is for all data of the given monitoring point * <strong>Observed property</strong> - the rule is for all data of the observed property of the monitoring point * <strong>User groups</strong> - the rule will be applied if the requesting user is under these groups * <strong>Operator</strong> - If an operator creates the rule, these property will be set automatically. An administrator can set it manually. This property controls which rule will be visible under operator’s access rule list, and important in case of wildcard (- ALL -) rules. If the operator parameter is set, the “ALL” option will be applied only for points/properties under the given operator.</p>
-<p>A rule matches, and will be checked during a download, if <strong>all</strong> of the conditions are met: * The group of user (who do the request) is in one of the groups of the rule * The result is related to the selected operator * The result is related to the selected operator’s selected monitoring points (in case of “ALL” all monitoring points will be selected) * The result is related to the selected observed properties (in case of “ALL” all properties will be selected)</p>
+<p>The rules have three required dimensions:</p>
+<ul>
+<li><strong>Monitoring point</strong> - the rule is for all data of the given monitoring point</li>
+<li><strong>Observed property</strong> - the rule is for all data of the observed property of the monitoring point</li>
+<li><strong>User groups</strong> - the rule will be applied if the requesting user is under these groups</li>
+<li><strong>Operator</strong> - If an operator creates the rule, these property will be set automatically. An administrator can set it manually. This property controls which rule will be visible under operator’s access rule list, and important in case of wildcard (- ALL -) rules. If the operator parameter is set, the “ALL” option will be applied only for points/properties under the given operator.</li>
+</ul>
+<p>A rule matches, and will be checked during a download, if <strong>all</strong> of the conditions are met:</p>
+<ul>
+<li>The group of user (who do the request) is in one of the groups of the rule</li>
+<li>The result is related to the selected operator</li>
+<li>The result is related to the selected operator’s selected monitoring points (in case of “ALL” all monitoring points will be selected)</li>
+<li>The result is related to the selected observed properties (in case of “ALL” all properties will be selected)</li>
+</ul>
 <p>If the rule matches for a <a href="#24_api_download">download API</a> request (so the <strong>user</strong> getting data for the <strong>monitoring point</strong> and the <strong>observed property</strong>), the user can retrieve data only in the given time period. If multiple rules match, only those results will be return which fit in all of the intervals. This period’s end is the current date, and the start is controlled by the <code>years</code>, <code>months</code> and <code>days</code> paramter of the access rule.</p>
 <p>The rules will be “merged” before checking user’s access level.</p>
 <h4 id="rule-list">Rule list</h4>
@@ -1759,7 +1783,7 @@ If the data node is going to access the measurements over a network connection, 
 <p>To generate an ssl key pair, you can run the command <code>./environet data tool keygen</code>.<br />
 Private keys should be placed in the <code>conf/plugins/credentials</code> directory, which is where the keygen tool will place them, by default.</p>
 <h2 id="uploader-plugin-configuration-files-conversion-filters">Uploader plugin configuration files (conversion filters)</h2>
-<p>The purpose of the conversion filters is to provide a translation from the data format of the data pro-vider to the common data format of HyMeDES EnviroNet platform. In general, there are the following ways to provide the data: via an FTP-server, via a web API, via HTTP or via a local file stored on the data node. The data is encoded in CSV-file or XML-file. The country-specific settings for data conversion (conversion filters) are done via a basic configuration text file with keyword value pairs and optionally two JSON files. The JSON files are referred to in the basic configuration file. In most cases, the JSON configuration files are not needed.</p>
+<p>The purpose of the conversion filters is to provide a translation from the data format of the data pro-vider to the common data format of HyMeDES EnviroNet platform. In general, there are the following ways to provide the data: via an FTP-server, via a web API, via HTTP or via a local file stored on the data node. The data is encoded in ZRXP-file, CSV-file or XML-file. The country-specific settings for data conversion (conversion filters) are done via a basic configuration text file with keyword value pairs and optionally two JSON files. The JSON files are referred to in the basic configuration file. In most cases, the JSON configuration files are not needed.</p>
 <p>There are two options to provide the data: Pushing the data (option A) or pulling the data (option B). In the case of option A, a data node is running on a server of the data provider. It regularly accesses the data files and sends them to HyMeDES EnviroNet. In option B, HyMeDES EnviroNet accesses a server of the data provider and pulls data files from it.</p>
 <p>In both cases, filter configuration files are identical. The only difference is that the configuration file for option A resides on a server of the data provider and can be edited locally, while in option B, the configuration is hosted by HyMeDES EnviroNet. In the latter case, updates of configuration files have to be sent to the host of the HyMeDES EnviroNet to get in effect. The central server of the HyMeDES EnviroNet is called distribution node. For most configurations, only the basic configuration file is needed. If data file format is XML, the FORMATS json configuration file is used to describe tag names and hierarchy of the XML file. If moni-toring point or observed property is specified in the URL or in data file name, or if data is provided within a ZIP archive, a CONVERSIONS json configuration file is needed. Both files are referred to from within the basic configuration file. Required files for different use cases are depicted in the following table:</p>
 <table>
@@ -1779,24 +1803,30 @@ Private keys should be placed in the <code>conf/plugins/credentials</code> direc
 <td style="text-align: center;"></td>
 </tr>
 <tr class="even">
+<td style="text-align: center;">ZRXP data file format</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
 <td style="text-align: center;">XML data file format</td>
 <td style="text-align: center;">yes</td>
 <td style="text-align: center;">yes</td>
 <td style="text-align: center;">yes</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">Static URL / file names</td>
 <td style="text-align: center;">yes</td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;">yes</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">Dynamic URL / file names</td>
 <td style="text-align: center;">yes</td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;">yes</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">Data files in ZIP</td>
 <td style="text-align: center;">yes</td>
 <td style="text-align: center;"></td>
@@ -1805,8 +1835,13 @@ Private keys should be placed in the <code>conf/plugins/credentials</code> direc
 </tbody>
 </table>
 <h3 id="basic-configuration-file">Basic configuration file</h3>
-<p>The basic configuration text files are located where the Data Node was installed to in sub-folder conf/plugins/configuration. In the basic configuration file, the way of the transport (called transport layer) is specified (FTP, HTTP, or a local file) and the format (called parser layer) of data file (CSV or XML).</p>
-<p>The configuration files have always three sections which configure the properties of the three layers: * Transport layer: Gets the data from local / remote file, or web API, etc. * Parser layer: Processes the received data to the format which will be compatible with the API endpoint of the distribution node. * API client layer: Sends the data to the distribution node.</p>
+<p>The basic configuration text files are located where the Data Node was installed to in sub-folder conf/plugins/configuration. In the basic configuration file, the way of the transport (called transport layer) is specified (FTP, HTTP, or a local file) and the format (called parser layer) of data file (ZRXP, CSV or XML).</p>
+<p>The configuration files have always three sections which configure the properties of the three layers:</p>
+<ul>
+<li>Transport layer: Gets the data from local / remote file, or web API, etc.</li>
+<li>Parser layer: Processes the received data to the format which will be compatible with the API endpoint of the distribution node.</li>
+<li>API client layer: Sends the data to the distribution node.</li>
+</ul>
 <p>The format of the configuration file follows the standards of ini-files as documented here: <a href="https://en.wikipedia.org/wiki/INI_file" class="uri">https://en.wikipedia.org/wiki/INI_file</a> It must contain three sections, for transport, parser, and API client layers. So, the basic structure is like this:</p>
 <pre><code>[transport]
 property = value
@@ -1862,33 +1897,113 @@ apiUsername = username2
 privateKeyPath = username2_private_key.pem</code></pre>
 <p>In this case, additional JSON configuration files are needed and referred to for accessing the web API and to specify the XML format. In the following sections the properties of the three sections of the basic configuration files are de-scribed in detail.</p>
 <h4 id="transport-layer-properties">Transport layer properties</h4>
-<p>Common properties: * <em>className</em> (required): The FQCN (fully qualified class name) of the PHP class which repre-sents the layer. For example: Environet</p>
+<p>Common properties:</p>
+<ul>
+<li><em>className</em> (required): The FQCN (fully qualified class name) of the PHP class which repre-sents the layer. For example: Environet</li>
+</ul>
 <h5 id="httptransport">HttpTransport</h5>
-<p>Takes the data from an HTTP source. It has two modes. In manual mode the transporter works based on a fixed URL, and in conversion mode the URL is built based on the CONVERSIONS json configuration file. * <em>url</em> (required in “manual” mode): The URL of source, if not defined in JSON configuration file * <em>isIndex</em> (optional): 1, if the source is only an index page which contains links to the files. 0, if the source is the file itself * <em>indexRegexPattern</em> (optional): If isIndex is 1, this is the regular expression pattern which finds the links to the data files * <em>conversionsFilename</em> (required in “conversion” mode): The file name of the CONVERSIONS json file, relative to the path of the configuration folder. * <em>username</em> (optional): Authorization username to access the source * <em>password</em> (optional): Authorization password to access to source</p>
+<p>Takes the data from an HTTP source. It has two modes. In manual mode the transporter works based on a fixed URL, and in conversion mode the URL is built based on the CONVERSIONS json configuration file.</p>
+<ul>
+<li><em>url</em> (required in “manual” mode): The URL of source, if not defined in JSON configuration file</li>
+<li><em>isIndex</em> (optional): 1, if the source is only an index page which contains links to the files. 0, if the source is the file itself</li>
+<li><em>indexRegexPattern</em> (optional): If isIndex is 1, this is the regular expression pattern which finds the links to the data files</li>
+<li><em>conversionsFilename</em> (required in “conversion” mode): The file name of the CONVERSIONS json file, relative to the path of the configuration folder.</li>
+<li><em>username</em> (optional): Authorization username to access the source</li>
+<li><em>password</em> (optional): Authorization password to access to source</li>
+</ul>
 <h5 id="localfiletransport">LocalFileTransport</h5>
-<p>Takes the data from a file which is on the same file system as the data node * <em>path</em> (required): The absolute path to the data file</p>
+<p>Takes the data from a file which is on the same file system as the data node</p>
+<ul>
+<li><em>path</em> (required): The absolute path to the data file</li>
+</ul>
 <h5 id="localdirectorytransport">LocalDirectoryTransport</h5>
-<p>Takes the data from files under a directory, which is on the same file system as the data node * <em>path</em> (required): The absolute path to the directory</p>
+<p>Takes the data from files under a directory, which is on the same file system as the data node</p>
+<ul>
+<li><em>path</em> (required): The absolute path to the directory</li>
+</ul>
 <h5 id="ftptransport">FtpTransport</h5>
-<p>Takes the data from a remote FTP server * <em>host</em> (required): Host of the FTP server * <em>secure</em> (required): 1, if the connection can be secured by SSL, otherwise 0 * <em>port</em> (optional): Port of the FTP server, if non-standard * <em>username</em> (required): FTP authentication username * <em>password</em> (required): FTP authentication password * <em>path</em> (required): The path of the directory which contains the data files, relative to the root of the FTP connection. * <em>filenamePattern</em> (required): Pattern of the filenames which should be processed by the transport. Asterisk (<code>*</code>) characters can be used for variable parts of the filename * <em>newestFileOnly</em> (required): If 1, only the newest file (by date) will be transported * <em>conversionsFilename</em> (required): If the layer has a conversion specification file, this is the file name of the CONVERSIONS json file, relative to the path of the configuration folder. * <em>lastNDaysOnly</em> (optional): Use only files with modification time newer than or equal N days from current day.</p>
+<p>Takes the data from a remote FTP server</p>
+<ul>
+<li><em>host</em> (required): Host of the FTP server</li>
+<li><em>secure</em> (required): 1, if the connection can be secured by SSL, otherwise 0</li>
+<li><em>port</em> (optional): Port of the FTP server, if non-standard</li>
+<li><em>username</em> (required): FTP authentication username</li>
+<li><em>password</em> (required): FTP authentication password</li>
+<li><em>path</em> (required): The path of the directory which contains the data files, relative to the root of the FTP connection.</li>
+<li><em>filenamePattern</em> (required): Pattern of the filenames which should be processed by the transport. Asterisk (<code>*</code>) characters can be used for variable parts of the filename</li>
+<li><em>newestFileOnly</em> (required): If 1, only the newest file (by date) will be transported</li>
+<li><em>conversionsFilename</em> (required): If the layer has a conversion specification file, this is the file name of the CONVERSIONS json file, relative to the path of the configuration folder.</li>
+<li><em>lastNDaysOnly</em> (optional): Use only files with modification time newer than or equal N days from current day.</li>
+</ul>
 <h4 id="parser-layer-properties">Parser layer properties</h4>
-<p>Common properties: * <em>timeZone</em> (required): A valid timezone, in which the data is stored in the source. The times will be converted to UTC before the API client layer. Possible values: <a href="https://www.php.net/manual/en/timezones.php" class="uri">https://www.php.net/manual/en/timezones.php</a></p>
+<p>Common properties:</p>
+<ul>
+<li><em>timeZone</em> (required): A valid timezone, in which the data is stored in the source. The times will be converted to UTC before the API client layer. Possible values: <a href="https://www.php.net/manual/en/timezones.php" class="uri">https://www.php.net/manual/en/timezones.php</a></li>
+</ul>
 <h5 id="csvparser">CsvParser</h5>
-<p>For files which are in CSV format * <em>csvDelimiter</em> (required): The character which separates values from each other * <em>nHeaderSkip</em> (optional): Number of lines which will be skipped before data * <em>mPointIdCol</em> (required): Number of column (zero based) which contains the ID of moni-toring point * <em>timeCol</em> (required, if time is in a column): Number of column (zero based) which contains the time * <em>skipValue</em> (optional): A specific value which should be parsed as a non-existent value * <em>timeFormat</em> (required, if time is in a column): Format of time if in a column * <em>timeInFilenameFormat</em> (required, if time is in filename): If defined, the time should be parsed from the filename, and not from a column * <em>properties[]</em> (required): The sign (abbreviation) of the observed property, and the col-umn number (zero based) in which the property value can be found. The name and the value must be separated by “;”. Example: “h;6”. This property can be defined multiple times, one per property * <em>propertyLevel</em> (required): In case of “column” the values of an observed property have their own column in the files. In case of “row” the rows have a column containing observed property symbols that specify which symbol the value belongs to. * <em>conversionsFilename</em> (optional): If the layer has a conversion specification file, this contains the path to the CONVERSIONS json file * <em>propertySymbolColumn</em> (required, if propertyLevel is row): Number of column which contains the symbol of the property * <em>propertyValueColumn</em> (required, if propertyLevel is row): Number of column which contains the value of the property</p>
+<p>For files which are in CSV format</p>
+<ul>
+<li><em>csvDelimiter</em> (required): The character which separates values from each other</li>
+<li><em>nHeaderSkip</em> (optional): Number of lines which will be skipped before data</li>
+<li><em>mPointIdCol</em> (required): Number of column (zero based) which contains the ID of moni-toring point</li>
+<li><em>timeCol</em> (required, if time is in a column): Number of column (zero based) which contains the time</li>
+<li><em>skipValue</em> (optional): A specific value which should be parsed as a non-existent value</li>
+<li><em>timeFormat</em> (required, if time is in a column): Format of time if in a column</li>
+<li><em>timeInFilenameFormat</em> (required, if time is in filename): If defined, the time should be parsed from the filename, and not from a column</li>
+<li><em>properties[]</em> (required): The sign (abbreviation) of the observed property, and the col-umn number (zero based) in which the property value can be found. The name and the value must be separated by “;”. Example: “h;6”. This property can be defined multiple times, one per property</li>
+<li><em>propertyLevel</em> (required): In case of “column” the values of an observed property have their own column in the files. In case of “row” the rows have a column containing observed property symbols that specify which symbol the value belongs to.</li>
+<li><em>conversionsFilename</em> (optional): If the layer has a conversion specification file, this contains the path to the CONVERSIONS json file</li>
+<li><em>propertySymbolColumn</em> (required, if propertyLevel is row): Number of column which contains the symbol of the property</li>
+<li><em>propertyValueColumn</em> (required, if propertyLevel is row): Number of column which contains the value of the property</li>
+</ul>
 <h5 id="zrxpparser">ZrxpParser</h5>
-<p>For files which are in ZRXP format * <em>zrxpVersion</em> (required): Main version of the ZRXP file. Possible values are 2 and 3 * <em>cutMpointLeadingZeros</em>: 1 if it is necessary to cut leading zeros from monitoring point id, 0 otherwise * <em>properties[]</em> (required): One property configuration can has 2 or 4 parts, parts are separated with <code>;</code>. Example: <code>h;H;TSPATH;/Daily</code> * The sign (abbreviation) of the observed property as it is defined on the distibution node. In example it is the <code>h</code> property * The CNR property’s value in ZRXP file. In case of the example the ZRXP file has a CNRH metadata. * (optional): A ZRXP-property, which should contain a value (defined in the next part), and the property will match only if this condition is true. In the example the value will be searched in TSPATH property. * (optional): The value which must in the value of the additional match property, which is defined in the previous part. In the example the property will match only if TSPATH metadata property contains the <code>/Daily</code> subtext.</p>
+<p>For files which are in ZRXP format</p>
+<ul>
+<li><em>zrxpVersion</em> (required): Main version of the ZRXP file. Possible values are 2 and 3</li>
+<li><em>cutMpointLeadingZeros</em>: 1 if it is necessary to cut leading zeros from monitoring point id, 0 otherwise</li>
+<li><em>properties[]</em> (required): One property configuration can has 2 or 4 parts, parts are separated with <code>;</code>. Example: <code>h;H;TSPATH;/Daily</code>
+<ul>
+<li>The sign (abbreviation) of the observed property as it is defined on the distibution node. In example it is the <code>h</code> property</li>
+<li>The CNR property’s value in ZRXP file. In case of the example the ZRXP file has a CNRH metadata.</li>
+<li>(optional): A ZRXP-property, which should contain a value (defined in the next part), and the property will match only if this condition is true. In the example the value will be searched in TSPATH property.</li>
+<li>(optional): The value which must in the value of the additional match property, which is defined in the previous part. In the example the property will match only if TSPATH metadata property contains the <code>/Daily</code> subtext.</li>
+</ul></li>
+</ul>
 <h5 id="xmlparser">XmlParser</h5>
-<p>For files which are in XML format * <em>separatorThousands</em> (optional): The thousands separator of values in XML file * <em>separatorDecimals</em> (optional): The decimal separator of values in XML file * <em>formatsFilename</em> (required): The filename which contains the format specification of XML file. * <em>skipEmptyValueTag</em> (optional): If 1, the empty value tags will be skipped. If 0, these empty value tag will be processed as a zero value</p>
+<p>For files which are in XML format</p>
+<ul>
+<li><em>separatorThousands</em> (optional): The thousands separator of values in XML file</li>
+<li><em>separatorDecimals</em> (optional): The decimal separator of values in XML file</li>
+<li><em>formatsFilename</em> (required): The filename which contains the format specification of XML file.</li>
+<li><em>skipEmptyValueTag</em> (optional): If 1, the empty value tags will be skipped. If 0, these empty value tag will be processed as a zero value</li>
+</ul>
 <h5 id="jsonparser">JsonParser</h5>
-<p>For files which are in json format * <em>monitoringPointId</em> (required): Id of monitoring point of the data in json file * <em>propertySymbol</em> (required): Observed property symbol of the data in json file</p>
+<p>For files which are in json format</p>
+<ul>
+<li><em>monitoringPointId</em> (required): Id of monitoring point of the data in json file</li>
+<li><em>propertySymbol</em> (required): Observed property symbol of the data in json file</li>
+</ul>
 <h4 id="api-client-layer-properties">API client layer properties</h4>
 <h5 id="apiclient">ApiClient</h5>
-<p>Data of target distribution node * <em>apiAddress</em> (required): Host of distribution node * <em>apiUsername</em> (required): Username for upload to distribution node * <em>privateKeyPath</em> (required): Path to private key</p>
+<p>Data of target distribution node</p>
+<ul>
+<li><em>apiAddress</em> (required): Host of distribution node</li>
+<li><em>apiUsername</em> (required): Username for upload to distribution node</li>
+<li><em>privateKeyPath</em> (required): Path to private key</li>
+</ul>
 <h3 id="json-configuration-files">JSON configuration files</h3>
 <p>In the FORMATS json file the format specifications for XML data files are defined. The observed prop-erty names used in it refer to the variable definitions specified in the CONVERSIONS json file. The CONVERSIONS json file defines the variables for monitoring point, observed property or time intervals for use in the URL, file names and/or in the data file itself. The CONVERSIONS json file is required if there is a complex structure of the URL to access data files, filenames containing variable parts, or zipped data. For example, if the identifier of the monitoring point is coded within the filename or the URL, a CONVERSIONS json file is required.</p>
 <p>JSON is a simple standardized format to easily define structured data. Arrays (lists of entries) are de-fined with brackets like [ “a”, “b”, “c” ] and objects with curly braces. Objects have properties, and the properties have values. For example, the following defines an object with the property “Property1”, which has value “Example” and a property named “Property2” which has value “a value”: { “Prop-erty1”: “Example”, “Property2”: “a value” } In the following the format of the FORMATS file and the CONVERSIONS file are described in detail.</p>
 <h4 id="formats-file-format-specification-for-xml-data-files">FORMATS-file: Format Specification for XML data files</h4>
-<p>The Format Specifications mainly defines the tag hierarchy in the XML data file for the entities moni-toring point, observed properties and date specifications. The json is an array of objects. Each object has the following properties: * Parameter * Value * Unit * Attribute * optional * Tag Hierarchy</p>
+<p>The Format Specifications mainly defines the tag hierarchy in the XML data file for the entities moni-toring point, observed properties and date specifications. The json is an array of objects. Each object has the following properties:</p>
+<ul>
+<li>Parameter</li>
+<li>Value</li>
+<li>Unit</li>
+<li>Attribute</li>
+<li>optional</li>
+<li>Tag Hierarchy</li>
+</ul>
 <p>There may be as many entries in the array as needed. The property “Parameter” determines the entity the information in the object is about. It may be one of the strings “MonitoringPoint”, “ObservedProp-ertyValue”, “ObservedPropertySymbol” and the date specific entities “Year”, “Month”, “Day”, “Hour”, “Minute”, “Date”, “Time” and “DateTime”, depending in which way the date is given in the XML file (in a single XML tag or in multiple separate tags)</p>
 <p>The property “Tag Hierarchy” is the path to the information specified by “Parameter”. It is an array of strings containing the tags names that need to be traversed in the specified order to get to the desired information.</p>
 <p>The following is an example of part of a data file of the German hydrological service, LfU. The monitor-ing point id is available by the tag hierarchy “hnd-daten”, “messstelle”, “nummer”. Tag hierarchy strings are given without angle brackets. In this example, date is given separately in the tags “jahr” (year), “monat” (month), “tag” (day), “stunde” (hour) and “minute” (minute).</p>
@@ -2085,7 +2200,20 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <h5 id="observed-property-symbol-specifications">Observed property symbol specifications</h5>
 <p>In case the observed property symbol for a measurement section in the XML file is not fixed, but given dynamically in an own tag, it may be specified with an entry in which the property “Parameter” is “ObservedPropertySymbol”. The property “Value” in this case refers to the observed property conver-sion in CONVERSIONS json file by specifying a variable name.</p>
 <h4 id="conversions-file-conversions-specification">CONVERSIONS-file: Conversions Specification</h4>
-<p>The basic idea is to generalize the URL pattern (whether it is an FTP server or a Web-API) by inserting variables. For example, if the measuring station is directly anchored in the URL, it is replaced by the variable [station]. With this method, data conversion from national data formats to the common data format HyMeDEM can be covered in all countries. The CONVERSIONS json file may be specified in one of the following cases: * More complex data access, for example a Web API where variables are needed to be filled in * Access to data in zip files * Need for Observable property symbol conversion (between data provider notation and Hy-MeDES EnviroNet notation) * Need for Monitoring Point id conversions Data access is specified by URL patterns with parameters and variable values which are filled in dy-namically depending on what to query. The conversions are specified by translation tables and connected with a variable name to be used in an URL pattern or in an XML file if needed. The CONVERSIONS json file contains an object with three properties: * generalInformation * monitoringPointConversions * observedPropertyConversions An example of a CONVERSIONS json file for XYZ is shown here:</p>
+<p>The basic idea is to generalize the URL pattern (whether it is an FTP server or a Web-API) by inserting variables. For example, if the measuring station is directly anchored in the URL, it is replaced by the variable [station]. With this method, data conversion from national data formats to the common data format HyMeDEM can be covered in all countries. The CONVERSIONS json file may be specified in one of the following cases:</p>
+<ul>
+<li>More complex data access, for example a Web API where variables are needed to be filled in</li>
+<li>Access to data in zip files</li>
+<li>Need for Observable property symbol conversion (between data provider notation and Hy-MeDES EnviroNet notation)</li>
+<li>Need for Monitoring Point id conversions</li>
+</ul>
+<p>Data access is specified by URL patterns with parameters and variable values which are filled in dy-namically depending on what to query. The conversions are specified by translation tables and connected with a variable name to be used in an URL pattern or in an XML file if needed. The CONVERSIONS json file contains an object with three properties:</p>
+<ul>
+<li>generalInformation</li>
+<li>monitoringPointConversions</li>
+<li>observedPropertyConversions</li>
+<li>An example of a CONVERSIONS json file for XYZ is shown here:</li>
+</ul>
 <div class="sourceCode" id="cb14"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb14-1" title="1"><span class="fu">{</span> </a>
 <a class="sourceLine" id="cb14-2" title="2">    <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
 <a class="sourceLine" id="cb14-3" title="3">        <span class="dt">&quot;URLPattern&quot;</span><span class="fu">:</span> <span class="st">&quot;https://xyz.de/webservices/export.php?user=[USERNAME]&amp;pw=[PASSWORD] &amp;pgnr=[MPID]&amp;werte=[OBS]&amp;tage=1&amp;modus=xml&quot;</span> </a>
@@ -2187,11 +2315,21 @@ stundenwerte_RR_00164_akt.zip|produkt_rr_stunde_*_00164.txt</code></pre>
 <p>Description: Cleanup data node, delete unnecessary, old files.</p>
 <h3 id="generating-keypair">Generating keypair</h3>
 <p>Command: <code>./environet dist|data tool keygen</code></p>
-<p>Description: With this command you gen generate a openssl keypair with an interactive process. The command will ask for: * Destination folder of the key files * Prefix for the key file names</p>
+<p>Description: With this command you gen generate a openssl keypair with an interactive process. The command will ask for:</p>
+<ul>
+<li>Destination folder of the key files</li>
+<li>Prefix for the key file names</li>
+</ul>
 <p>Based on these data a keypair will be generated, and stored in the destination folder.</p>
 <h3 id="sign-content">Sign content</h3>
 <p>Command: <code>./environet dist|data tool sign</code></p>
-<p>Description: With this command you gen sign a content (a string, or a file) with a private key. The command will ask for: * Relative path of private key file * How do you want to enter the content (file, or pasted string) * The file path (in case of ‘file’ mode) or the raw string (in case of ‘pasted string’ mode) * Generate md5 hash before sigining, or not</p>
+<p>Description: With this command you gen sign a content (a string, or a file) with a private key. The command will ask for:</p>
+<ul>
+<li>Relative path of private key file</li>
+<li>How do you want to enter the content (file, or pasted string)</li>
+<li>The file path (in case of ‘file’ mode) or the raw string (in case of ‘pasted string’ mode)</li>
+<li>Generate md5 hash before sigining, or not</li>
+</ul>
 <p>Based on the input data a base64 encoded signature will be generated, which can be used in the Authorization header of any api request.</p>
 <h3 id="exporting-database">Exporting database</h3>
 <p>Command: <code>./environet dist database export</code></p>

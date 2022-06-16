@@ -61,7 +61,7 @@ Private keys should be placed in the `conf/plugins/credentials` directory, which
 ## Uploader plugin configuration files (conversion filters)
 
 The purpose of the conversion filters is to provide a translation from the data format of the data pro-vider to the common data format of HyMeDES EnviroNet platform.
-In general, there are the following ways to provide the data: via an FTP-server, via a web API, via HTTP or via a local file stored on the data node. The data is encoded in CSV-file or XML-file.
+In general, there are the following ways to provide the data: via an FTP-server, via a web API, via HTTP or via a local file stored on the data node. The data is encoded in ZRXP-file, CSV-file or XML-file.
 The country-specific settings for data conversion (conversion filters) are done via a basic configuration text file with keyword value pairs and optionally two JSON files. The JSON files are referred to in the basic configuration file. In most cases, the JSON configuration files are not needed.
 
 There are two options to provide the data: Pushing the data (option A) or pulling the data (option B). In the case of option A, a data node is running on a server of the data provider. It regularly accesses the data files and sends them to HyMeDES EnviroNet. In option B, HyMeDES EnviroNet accesses a server of the data provider and pulls data files from it.
@@ -73,15 +73,17 @@ Required files for different use cases are depicted in the following table:
 || Basic configuration file | FORMATS json file | CONVERSION json file |
 | :---: | :---: | :---: | :---: |
 | CSV data file format | yes | | |
+| ZRXP data file format | yes | | |
 | XML data file format | yes | yes | yes |
 | Static URL / file names | yes | | yes |
 | Dynamic URL / file names | yes | | yes |
 | Data files in ZIP | yes | | yes |
 
 ### Basic configuration file
-The basic configuration text files are located where the Data Node was installed to in sub-folder conf/plugins/configuration. In the basic configuration file, the way of the transport (called transport layer) is specified (FTP, HTTP, or a local file) and the format (called parser layer) of data file (CSV or XML).
+The basic configuration text files are located where the Data Node was installed to in sub-folder conf/plugins/configuration. In the basic configuration file, the way of the transport (called transport layer) is specified (FTP, HTTP, or a local file) and the format (called parser layer) of data file (ZRXP, CSV or XML).
 
 The configuration files have always three sections which configure the properties of the three layers:
+
 * Transport layer: Gets the data from local / remote file, or web API, etc.
 * Parser layer: Processes the received data to the format which will be compatible with the API endpoint of the distribution node.
 * API client layer: Sends the data to the distribution node.
@@ -151,11 +153,13 @@ In the following sections the properties of the three sections of the basic conf
 
 #### Transport layer properties
 Common properties:
+
 * _className_ (required): The FQCN (fully qualified class name) of the PHP class which repre-sents the layer. For example: Environet\Sys\Plugins\Transports\FtpTransport
 
 ##### HttpTransport
 
 Takes the data from an HTTP source. It has two modes. In manual mode the transporter works based on a fixed URL, and in conversion mode the URL is built based on the CONVERSIONS json configuration file.
+
 * _url_ (required in “manual” mode): The URL of source, if not defined in JSON configuration file
 * _isIndex_ (optional): 1, if the source is only an index page which contains links to the files. 0, if the source is the file itself
 * _indexRegexPattern_ (optional): If isIndex is 1, this is the regular expression pattern which finds the links to the data files
@@ -166,16 +170,19 @@ Takes the data from an HTTP source. It has two modes. In manual mode the transpo
 ##### LocalFileTransport
 
 Takes the data from a file which is on the same file system as the data node
+
 * _path_ (required): The absolute path to the data file
 
 ##### LocalDirectoryTransport
 
 Takes the data from files under a directory, which is on the same file system as the data node
+
 * _path_ (required): The absolute path to the directory
 
 ##### FtpTransport
 
 Takes the data from a remote FTP server
+
 * _host_ (required): Host of the FTP server
 * _secure_ (required): 1, if the connection can be secured by SSL, otherwise 0
 * _port_ (optional): Port of the FTP server, if non-standard
@@ -190,11 +197,13 @@ Takes the data from a remote FTP server
 #### Parser layer properties
 
 Common properties:
+
 * _timeZone_ (required): A valid timezone, in which the data is stored in the source. The times will be converted to UTC before the API client layer. Possible values: [https://www.php.net/manual/en/timezones.php](https://www.php.net/manual/en/timezones.php)
 
 ##### CsvParser
 
 For files which are in CSV format
+
 * _csvDelimiter_ (required): The character which separates values from each other
 * _nHeaderSkip_ (optional): Number of lines which will be skipped before data
 * _mPointIdCol_ (required): Number of column (zero based) which contains the ID of moni-toring point
@@ -211,6 +220,7 @@ For files which are in CSV format
 ##### ZrxpParser
 
 For files which are in ZRXP format
+
 * _zrxpVersion_ (required): Main version of the ZRXP file. Possible values are 2 and 3
 * _cutMpointLeadingZeros_: 1 if it is necessary to cut leading zeros from monitoring point id, 0 otherwise
 * _properties[]_ (required): One property configuration can has 2 or 4 parts, parts are separated with `;`. Example: `h;H;TSPATH;/Daily`
@@ -225,6 +235,7 @@ For files which are in ZRXP format
 ##### XmlParser
 
 For files which are in XML format
+
 * _separatorThousands_ (optional): The thousands separator of values in XML file
 * _separatorDecimals_ (optional): The decimal separator of values in XML file
 * _formatsFilename_ (required): The filename which contains the format specification of XML file.
@@ -232,6 +243,7 @@ For files which are in XML format
 
 ##### JsonParser
 For files which are in json format
+
 * _monitoringPointId_ (required): Id of monitoring point of the data in json file
 * _propertySymbol_ (required): Observed property symbol of the data in json file
 
@@ -240,6 +252,7 @@ For files which are in json format
 ##### ApiClient
 
 Data of target distribution node
+
 * _apiAddress_ (required): Host of distribution node
 * _apiUsername_ (required): Username for upload to distribution node
 * _privateKeyPath_ (required): Path to private key
@@ -255,6 +268,7 @@ In the following the format of the FORMATS file and the CONVERSIONS file are des
 
 The Format Specifications mainly defines the tag hierarchy in the XML data file for the entities moni-toring point, observed properties and date specifications.
 The json is an array of objects. Each object has the following properties:
+
 * Parameter
 * Value
 * Unit
@@ -399,16 +413,20 @@ In case the observed property symbol for a measurement section in the XML file i
 
 The basic idea is to generalize the URL pattern (whether it is an FTP server or a Web-API) by inserting variables. For example, if the measuring station is directly anchored in the URL, it is replaced by the variable [station]. With this method, data conversion from national data formats to the common data format HyMeDEM can be covered in all countries.
 The CONVERSIONS json file may be specified in one of the following cases:
+
 * More complex data access, for example a Web API where variables are needed to be filled in
 * Access to data in zip files
 * Need for Observable property symbol conversion (between data provider notation and Hy-MeDES EnviroNet notation)
 * Need for Monitoring Point id conversions
+
 Data access is specified by URL patterns with parameters and variable values which are filled in dy-namically depending on what to query.
 The conversions are specified by translation tables and connected with a variable name to be used in an URL pattern or in an XML file if needed.
 The CONVERSIONS json file contains an object with three properties:
+
 * generalInformation
 * monitoringPointConversions
 * observedPropertyConversions
+* 
 An example of a CONVERSIONS json file for XYZ is shown here:
 ```json
 { 
