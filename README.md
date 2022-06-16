@@ -127,6 +127,7 @@ In the first phase the domain of the distribution node is: [https://environet.en
 ## Central database
 
 The distribution node has a database backend. It contains:
+
 * Data and configuration of hydro and meteo points
 * Measurement data tables of these monitoring points
 * User and access (ACL) tables (users, groups, permissions)
@@ -137,6 +138,7 @@ Schema of the database can be found here: [Database structure](#21_database_stru
 ## Administration area
 
 On the administration area, administrators can maintain:
+
 * The data and configuration of monitoring points and observed properties
 * Operators
 * Users, groups, and their permissions (ACL)
@@ -266,12 +268,14 @@ Sample input XML:
 ## Repsonses
 
 ### Success
+
 * **Status code**: 200
 * **Content-type**: application/xml
 * **Body**: `empty`
 * **Description**: Upload was successful, the data has been successfully processed.
 
 ### Invalid request
+
 * **Status code**: 400
 * **Content-type**: application/xml
 * **Body**: XML: `environet:ErrorResponse`
@@ -306,6 +310,7 @@ Sample input XML:
 	
 	
 ### Server error
+
 * **Status code**: 500
 * **Content-type**: application/xml
 * **Body**: XML: `environet:ErrorResponse`
@@ -445,6 +450,7 @@ The `signature` part is the base64 encoded openssl signature which was created w
 ## Repsonses
 
 ### Success
+
 * **Status code**: 200
 * **Content-type**: application/json
 * **Body**: `JSON`
@@ -1045,6 +1051,7 @@ Path: `/admin/meteo/results`
 
 Searchable: name, symbol
 
+
 <a name="25_9_measurement_access_rules"></a>
 
 ## Measurement access rules
@@ -1052,9 +1059,10 @@ Searchable: name, symbol
 
 ### Concept of the rules
 
-The access rules controls the time interval in which the data will be available for a user under the [download API](#24_api_download) request. 
+The access rules controls the time interval in which the data will be available for a user under the [download API](#24_api_download) request.
 
 The rules have three required dimensions: 
+
 * **Monitoring point** - the rule is for all data of the given monitoring point 
 * **Observed property** - the rule is for all data of the observed property of the monitoring point
 * **User groups** - the rule will be applied if the requesting user is under these groups
@@ -1063,6 +1071,7 @@ This property controls which rule will be visible under operator's access rule l
 If the operator parameter is set, the "ALL" option will be applied only for points/properties under the given operator.
 
 A rule matches, and will be checked during a download, if **all** of the conditions are met:
+
 * The group of user (who do the request) is in one of the groups of the rule
 * The result is related to the selected operator 
 * The result is related to the selected operator's selected monitoring points (in case of "ALL" all monitoring points will be selected)
@@ -1194,6 +1203,7 @@ Required files for different use cases are depicted in the following table:
 The basic configuration text files are located where the Data Node was installed to in sub-folder conf/plugins/configuration. In the basic configuration file, the way of the transport (called transport layer) is specified (FTP, HTTP, or a local file) and the format (called parser layer) of data file (ZRXP, CSV or XML).
 
 The configuration files have always three sections which configure the properties of the three layers:
+
 * Transport layer: Gets the data from local / remote file, or web API, etc.
 * Parser layer: Processes the received data to the format which will be compatible with the API endpoint of the distribution node.
 * API client layer: Sends the data to the distribution node.
@@ -1263,11 +1273,13 @@ In the following sections the properties of the three sections of the basic conf
 
 #### Transport layer properties
 Common properties:
+
 * _className_ (required): The FQCN (fully qualified class name) of the PHP class which repre-sents the layer. For example: Environet\Sys\Plugins\Transports\FtpTransport
 
 ##### HttpTransport
 
 Takes the data from an HTTP source. It has two modes. In manual mode the transporter works based on a fixed URL, and in conversion mode the URL is built based on the CONVERSIONS json configuration file.
+
 * _url_ (required in “manual” mode): The URL of source, if not defined in JSON configuration file
 * _isIndex_ (optional): 1, if the source is only an index page which contains links to the files. 0, if the source is the file itself
 * _indexRegexPattern_ (optional): If isIndex is 1, this is the regular expression pattern which finds the links to the data files
@@ -1278,16 +1290,19 @@ Takes the data from an HTTP source. It has two modes. In manual mode the transpo
 ##### LocalFileTransport
 
 Takes the data from a file which is on the same file system as the data node
+
 * _path_ (required): The absolute path to the data file
 
 ##### LocalDirectoryTransport
 
 Takes the data from files under a directory, which is on the same file system as the data node
+
 * _path_ (required): The absolute path to the directory
 
 ##### FtpTransport
 
 Takes the data from a remote FTP server
+
 * _host_ (required): Host of the FTP server
 * _secure_ (required): 1, if the connection can be secured by SSL, otherwise 0
 * _port_ (optional): Port of the FTP server, if non-standard
@@ -1302,11 +1317,13 @@ Takes the data from a remote FTP server
 #### Parser layer properties
 
 Common properties:
+
 * _timeZone_ (required): A valid timezone, in which the data is stored in the source. The times will be converted to UTC before the API client layer. Possible values: [https://www.php.net/manual/en/timezones.php](https://www.php.net/manual/en/timezones.php)
 
 ##### CsvParser
 
 For files which are in CSV format
+
 * _csvDelimiter_ (required): The character which separates values from each other
 * _nHeaderSkip_ (optional): Number of lines which will be skipped before data
 * _mPointIdCol_ (required): Number of column (zero based) which contains the ID of moni-toring point
@@ -1323,6 +1340,7 @@ For files which are in CSV format
 ##### ZrxpParser
 
 For files which are in ZRXP format
+
 * _zrxpVersion_ (required): Main version of the ZRXP file. Possible values are 2 and 3
 * _cutMpointLeadingZeros_: 1 if it is necessary to cut leading zeros from monitoring point id, 0 otherwise
 * _properties[]_ (required): One property configuration can has 2 or 4 parts, parts are separated with `;`. Example: `h;H;TSPATH;/Daily`
@@ -1337,6 +1355,7 @@ For files which are in ZRXP format
 ##### XmlParser
 
 For files which are in XML format
+
 * _separatorThousands_ (optional): The thousands separator of values in XML file
 * _separatorDecimals_ (optional): The decimal separator of values in XML file
 * _formatsFilename_ (required): The filename which contains the format specification of XML file.
@@ -1344,6 +1363,7 @@ For files which are in XML format
 
 ##### JsonParser
 For files which are in json format
+
 * _monitoringPointId_ (required): Id of monitoring point of the data in json file
 * _propertySymbol_ (required): Observed property symbol of the data in json file
 
@@ -1352,6 +1372,7 @@ For files which are in json format
 ##### ApiClient
 
 Data of target distribution node
+
 * _apiAddress_ (required): Host of distribution node
 * _apiUsername_ (required): Username for upload to distribution node
 * _privateKeyPath_ (required): Path to private key
@@ -1367,6 +1388,7 @@ In the following the format of the FORMATS file and the CONVERSIONS file are des
 
 The Format Specifications mainly defines the tag hierarchy in the XML data file for the entities moni-toring point, observed properties and date specifications.
 The json is an array of objects. Each object has the following properties:
+
 * Parameter
 * Value
 * Unit
@@ -1511,16 +1533,20 @@ In case the observed property symbol for a measurement section in the XML file i
 
 The basic idea is to generalize the URL pattern (whether it is an FTP server or a Web-API) by inserting variables. For example, if the measuring station is directly anchored in the URL, it is replaced by the variable [station]. With this method, data conversion from national data formats to the common data format HyMeDEM can be covered in all countries.
 The CONVERSIONS json file may be specified in one of the following cases:
+
 * More complex data access, for example a Web API where variables are needed to be filled in
 * Access to data in zip files
 * Need for Observable property symbol conversion (between data provider notation and Hy-MeDES EnviroNet notation)
 * Need for Monitoring Point id conversions
+
 Data access is specified by URL patterns with parameters and variable values which are filled in dy-namically depending on what to query.
 The conversions are specified by translation tables and connected with a variable name to be used in an URL pattern or in an XML file if needed.
 The CONVERSIONS json file contains an object with three properties:
+
 * generalInformation
 * monitoringPointConversions
 * observedPropertyConversions
+* 
 An example of a CONVERSIONS json file for XYZ is shown here:
 ```json
 { 
@@ -1685,6 +1711,7 @@ Command: `./environet dist|data tool keygen`
 
 Description:
 With this command you gen generate a openssl keypair with an interactive process. The command will ask for:
+
 * Destination folder of the key files
 * Prefix for the key file names
 
@@ -1696,6 +1723,7 @@ Command: `./environet dist|data tool sign`
 
 Description:
 With this command you gen sign a content (a string, or a file) with a private key. The command will ask for:
+
 * Relative path of private key file
 * How do you want to enter the content (file, or pasted string)
 * The file path (in case of 'file' mode) or the raw string (in case of 'pasted string' mode)

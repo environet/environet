@@ -61,12 +61,14 @@ Sample input XML:
 ## Repsonses
 
 ### Success
+
 * **Status code**: 200
 * **Content-type**: application/xml
 * **Body**: `empty`
 * **Description**: Upload was successful, the data has been successfully processed.
 
 ### Invalid request
+
 * **Status code**: 400
 * **Content-type**: application/xml
 * **Body**: XML: `environet:ErrorResponse`
@@ -101,6 +103,7 @@ Sample input XML:
 	
 	
 ### Server error
+
 * **Status code**: 500
 * **Content-type**: application/xml
 * **Body**: XML: `environet:ErrorResponse`

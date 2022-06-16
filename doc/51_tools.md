@@ -15,6 +15,7 @@ Command: `./environet dist|data tool keygen`
 
 Description:
 With this command you gen generate a openssl keypair with an interactive process. The command will ask for:
+
 * Destination folder of the key files
 * Prefix for the key file names
 
@@ -26,6 +27,7 @@ Command: `./environet dist|data tool sign`
 
 Description:
 With this command you gen sign a content (a string, or a file) with a private key. The command will ask for:
+
 * Relative path of private key file
 * How do you want to enter the content (file, or pasted string)
 * The file path (in case of 'file' mode) or the raw string (in case of 'pasted string' mode)

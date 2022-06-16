@@ -3,9 +3,10 @@
 
 ### Concept of the rules
 
-The access rules controls the time interval in which the data will be available for a user under the [download API](24_api_download.md) request. 
+The access rules controls the time interval in which the data will be available for a user under the [download API](24_api_download.md) request.
 
 The rules have three required dimensions: 
+
 * **Monitoring point** - the rule is for all data of the given monitoring point 
 * **Observed property** - the rule is for all data of the observed property of the monitoring point
 * **User groups** - the rule will be applied if the requesting user is under these groups
@@ -14,6 +15,7 @@ This property controls which rule will be visible under operator's access rule l
 If the operator parameter is set, the "ALL" option will be applied only for points/properties under the given operator.
 
 A rule matches, and will be checked during a download, if **all** of the conditions are met:
+
 * The group of user (who do the request) is in one of the groups of the rule
 * The result is related to the selected operator 
 * The result is related to the selected operator's selected monitoring points (in case of "ALL" all monitoring points will be selected)

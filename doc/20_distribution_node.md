@@ -8,6 +8,7 @@ In the first phase the domain of the distribution node is: [https://environet.en
 ## Central database
 
 The distribution node has a database backend. It contains:
+
 * Data and configuration of hydro and meteo points
 * Measurement data tables of these monitoring points
 * User and access (ACL) tables (users, groups, permissions)
@@ -18,6 +19,7 @@ Schema of the database can be found here: [Database structure](21_database_struc
 ## Administration area
 
 On the administration area, administrators can maintain:
+
 * The data and configuration of monitoring points and observed properties
 * Operators
 * Users, groups, and their permissions (ACL)

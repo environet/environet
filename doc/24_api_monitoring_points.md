@@ -27,6 +27,7 @@ The `signature` part is the base64 encoded openssl signature which was created w
 ## Repsonses
 
 ### Success
+
 * **Status code**: 200
 * **Content-type**: application/json
 * **Body**: `JSON`
