@@ -8,6 +8,7 @@ use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Plugins\TransportInterface;
 use Environet\Sys\Plugins\WithConversionsConfigTrait;
 use Exception;
+use Throwable;
 
 /**
  * Class FtpTransport
@@ -121,15 +122,15 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		}
 
 		$config = [
-			'host'            => $host,
-			'port'            => $port ?: null,
-			'secure'          => $secure,
-			'username'        => $username,
-			'password'        => $password,
-			'path'            => $path,
-			'filenamePattern' => $filenamePattern,
-			'newestFileOnly'  => $newestFileOnly,
-			'lastNDaysOnly'   => $lastNDaysOnly,
+			'host'                => $host,
+			'port'                => $port ?: null,
+			'secure'              => $secure,
+			'username'            => $username,
+			'password'            => $password,
+			'path'                => $path,
+			'filenamePattern'     => $filenamePattern,
+			'newestFileOnly'      => $newestFileOnly,
+			'lastNDaysOnly'       => $lastNDaysOnly,
 			'conversionsFilename' => $conversionsFilename
 		];
 
@@ -142,15 +143,15 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 	 */
 	public function serializeConfiguration(): string {
 		return 'host = "' . $this->host . '"' . "\n"
-			   . 'port = ' . ($this->port ? (int) $this->port : '') . '' . "\n"
-			   . 'secure = "' . $this->secure . '"' . "\n"
-			   . 'username = "' . $this->username . '"' . "\n"
-			   . 'password = "' . $this->password . '"' . "\n"
-			   . 'path = "' . $this->path . '"' . "\n"
-			   . 'filenamePattern = "' . $this->filenamePattern . '"' . "\n"
-			   . 'newestFileOnly = "' . $this->newestFileOnly . '"' . "\n"
-			   . 'lastNDaysOnly = "' . $this->lastNDaysOnly . '"' . "\n"
-			   . 'conversionsFilename = "' . $this->conversionsFilename . '"' . "\n";
+			. 'port = ' . ($this->port ? (int) $this->port : '') . '' . "\n"
+			. 'secure = "' . $this->secure . '"' . "\n"
+			. 'username = "' . $this->username . '"' . "\n"
+			. 'password = "' . $this->password . '"' . "\n"
+			. 'path = "' . $this->path . '"' . "\n"
+			. 'filenamePattern = "' . $this->filenamePattern . '"' . "\n"
+			. 'newestFileOnly = "' . $this->newestFileOnly . '"' . "\n"
+			. 'lastNDaysOnly = "' . $this->lastNDaysOnly . '"' . "\n"
+			. 'conversionsFilename = "' . $this->conversionsFilename . '"' . "\n";
 	}
 
 
@@ -202,9 +203,10 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 			throw new Exception("Login to ftp server " . $this->host . " failed");
 		}
 		ftp_pasv($conn, true);
+		ftp_set_option($conn, FTP_USEPASVADDRESS, false);
 
 		//Get list of files under directory
-		$files = $this->getListOfFiles($conn, $this->path);
+		$files = $this->getListOfFiles($conn, $this->path, $console);
 
 		//Filter to filename pattern
 		if (!empty($files) && $this->filenamePattern) {
@@ -231,7 +233,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 			foreach ($files as $file) {
 				if (!empty($file['modify'])) {
 					$dateFile = new \DateTime();
-					$dateFile->setTimestamp($file['modify']); 
+					$dateFile->setTimestamp($file['modify']);
 					$dateNow = new \DateTime();
 					$interval = date_diff($dateFile, $dateNow);
 					$days = $interval->format('%a');
@@ -260,10 +262,10 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 			if ($this->conversionsFilename) {
 				//Add some meta information if a conversion filename is specified
 				$resource->meta = [
-					"MonitoringPointNCDs" => [],
-					"ObservedPropertySymbols" => [],
+					"MonitoringPointNCDs"         => [],
+					"ObservedPropertySymbols"     => [],
 					"observedPropertyConversions" => $this->getConversionsConfig()['observedPropertyConversions'] ?? [],
-					"keepExtraData" => true,
+					"keepExtraData"               => true,
 				];
 			}
 
@@ -277,31 +279,50 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 	/**
 	 * Get list of files with MLSD or NLIST
 	 *
-	 * @param        $connection
-	 * @param string $path
+	 * @param         $connection
+	 * @param string  $path
+	 * @param Console $console
 	 *
 	 * @return array|array[]
 	 */
-	protected function getListOfFiles($connection, string $path): array {
+	protected function getListOfFiles($connection, string $path, Console $console): array {
+		$wasErrorWarning = false;
+		set_error_handler(function (int $errNo, string $errStr) use (&$wasErrorWarning) {
+			$wasErrorWarning = $errStr;
+		});
+
 		//Try with MLSD
 		$files = ftp_mlsd($connection, $path);
 
 		if ($files === false) {
 			//FTP server is not compatible with MLSD, try with NLIST, and create a "compatible" array for each item
 			$files = ftp_nlist($connection, $path);
-			$files = array_map(function ($filename) use ($connection, $path) {
-				return [
-					'name'   => basename($filename),
-					'type'   => 'file',
-					'modify' => ftp_mdtm($connection, $filename)
-				];
-			}, $files);
+
+			if ($files !== false) {
+				$files = array_map(function ($filename) use ($connection, $path) {
+					return [
+						'name'   => basename($filename),
+						'type'   => 'file',
+						'modify' => ftp_mdtm($connection, $filename)
+					];
+				}, $files);
+			}
 		}
 
 		//Filter only files
-		$files = array_filter($files, function ($file) {
-			return isset($file['type']) && $file['type'] === 'file';
-		});
+		if (is_array($files)) {
+			$files = array_filter($files, function ($file) {
+				return isset($file['type']) && $file['type'] === 'file';
+			});
+		}
+
+		if ($files === false && $wasErrorWarning) {
+			$console->writeLine('No files were found, warning/error happened while getting files: ' . $wasErrorWarning, Console::COLOR_YELLOW);
+
+			return [];
+		}
+
+		restore_error_handler();
 
 		return $files;
 	}
