@@ -1161,8 +1161,10 @@ If the data node is going to access the measurements over a network connection, 
 
 - Create an `.env` file by copying `.env.example`
 - Uncomment the line containing LOCAL_DATA_DIR (by deleting the # character from the beginning of the line)
-- Enter the path to the data directory. For example:
-  On a system where the measurements are stored in csv files in the `/var/measurements` directory, the line would read:`LOCAL_DATA_DIR=/var/measurements`
+- Enter the path to the data directory. The value must be a relative or absolute path. It relative, it must be relative to the `docker` folder of the environet-docker root path. Always start the value with `./`, `../` or `/`. For example:
+  - Absolute path: If measuement files are stored under `/var/measurements` directory, the line would read:`LOCAL_DATA_DIR=/var/measurements`
+  - Relative path inside docker folder: If measurement files are stored under `[Environet docker directory]/docker/measurements` directory, the line would read:`LOCAL_DATA_DIR=./measurements`
+  - Relative path somewhere else: If measurement files are stored under `[Environet docker directory]/measurements` directory, the line would read:`LOCAL_DATA_DIR=../measurements`
 
 ## Creating configurations
     

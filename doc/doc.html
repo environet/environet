@@ -1772,7 +1772,12 @@ If the data node is going to access the measurements over a network connection, 
 <ul>
 <li>Create an <code>.env</code> file by copying <code>.env.example</code></li>
 <li>Uncomment the line containing LOCAL_DATA_DIR (by deleting the # character from the beginning of the line)</li>
-<li>Enter the path to the data directory. For example: On a system where the measurements are stored in csv files in the <code>/var/measurements</code> directory, the line would read:<code>LOCAL_DATA_DIR=/var/measurements</code></li>
+<li>Enter the path to the data directory. The value must be a relative or absolute path. It relative, it must be relative to the <code>docker</code> folder of the environet-docker root path. Always start the value with <code>./</code>, <code>../</code> or <code>/</code>. For example:
+<ul>
+<li>Absolute path: If measuement files are stored under <code>/var/measurements</code> directory, the line would read:<code>LOCAL_DATA_DIR=/var/measurements</code></li>
+<li>Relative path inside docker folder: If measurement files are stored under <code>[Environet docker directory]/docker/measurements</code> directory, the line would read:<code>LOCAL_DATA_DIR=./measurements</code></li>
+<li>Relative path somewhere else: If measurement files are stored under <code>[Environet docker directory]/measurements</code> directory, the line would read:<code>LOCAL_DATA_DIR=../measurements</code></li>
+</ul></li>
 </ul>
 <h2 id="creating-configurations">Creating configurations</h2>
 <p>Run <code>./environet data plugin create</code> to start an interactive script, that will guide you through creating an uploader plugin configuration.</p>
