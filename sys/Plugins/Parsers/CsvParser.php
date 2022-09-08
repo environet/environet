@@ -450,7 +450,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 
 		$console->writeLine('Configuring observed properties', Console::COLOR_YELLOW);
 
-		$console->writeLine('In what way are the values in the files mathed to the observed property symbols?');
+		$console->writeLine('In what way are the values in the files matched to the observed property symbols?');
 		$console->writeLine('Choose \'column\' if the values of an observed property have their own column in the files');
 		$console->writeLine('Choose \'row\' if the rows have a column containing observed property symbols that specify which symbol the value belongs to');
 		$propertyLevel = static::chooseObservedPropertyLevel(Console::getInstance());
