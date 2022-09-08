@@ -1066,12 +1066,16 @@
 <p>You can verify that Docker is installed correctly by running:<br />
 <code>$ docker run hello-world</code><br />
 If should output a friendly message to the terminal.</p>
-<h3 id="docker-compose">Docker Compose</h3>
-<p>Setting up Compose is a simpler process, which is described in detail on <a href="https://docs.docker.com/compose/install/#install-compose-on-linux-systems">this page</a>.<br />
-It involves downloading the docker-compose binary from github and setting executable permissions on it.</p>
-<p>You can verify that Docker Compose is installed correctly by running:<br />
+<h3 id="docker-compose-deprecated">Docker Compose [Deprecated]</h3>
+<p>In case of new installations (after June of 2021) Compose V2 is integrated in docker or docker-desktop. For this kind of installations it’s not necessary to install docker-compose separately. In case of Compose V2 every <code>docker-compose</code> command in this documentation must be understood as <code>docker compose</code> (without hyphen). The <code>environet</code> entrypoint script is compatible with both versions.</p>
+<p>If it is still necessary to install <code>docker-compose</code> separately:</p>
+<ul>
+<li><p><em>Setting up Compose is a simpler process, which is described in detail on <a href="https://docs.docker.com/compose/install/#install-compose-on-linux-systems">this page</a>.<br />
+It involves downloading the docker-compose binary from github and setting executable permissions on it.</em></p></li>
+<li><p><em>You can verify that Docker Compose is installed correctly by running:</em><br />
 <code>$ docker-compose --version</code><br />
-It should output the currently installed version number.</p>
+<em>It should output the currently installed version number.</em></p></li>
+</ul>
 <h2 id="get-the-source">Get the source</h2>
 <p>You will need to have Git installed to be able to download the project source, and to receive updates later. It is easiest to install Git on Linux using the preferred package manager of your Linux distribution. See the <a href="https://git-scm.com/download/linux">Git downloads page</a> for details.</p>
 <p>Checkout the Environet docker repository - Navigate to the directory where you would like to install environet<br />
