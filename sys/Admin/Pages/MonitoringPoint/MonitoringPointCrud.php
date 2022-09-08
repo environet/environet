@@ -248,6 +248,9 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 		} else {
 			$data['observedProperties'] = [];
 		}
+
+		$data['river_basin_id'] = $data['river_basin'];
+
 		unset($data[$this->observedPropertiesCsvColumn]);
 		return $data;
 	}
@@ -273,7 +276,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 			'start_time' => 'Start time [yyyy-mm-dd]',
 			'end_time' => 'End time [yyyy-mm-dd]',
 			'utc_offset' => 'UTC offset [number]',
-			'river_basin' => 'River basin [text]',
+			'river_basin' => ['title' => 'River basin id/code [number]', 'outField' => 'river_basin_id'],
 			$this->observedPropertiesCsvColumn => 'Observered properties [text]'
 		];
 	}

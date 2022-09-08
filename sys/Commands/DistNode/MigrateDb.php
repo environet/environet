@@ -65,6 +65,7 @@ class MigrateDb extends DbCommand {
 			'addOutOfOrderColumns',
 			'addObsoleteFlagForRecords',
 			'resultTimeNullable',
+			'riverBasins',
 		];
 		ini_set('memory_limit', - 1);
 
@@ -672,7 +673,7 @@ class MigrateDb extends DbCommand {
 	 * @throws QueryException
 	 */
 	private function resultTimeNullable(array &$output): int {
-		$return = -1;
+		$return = - 1;
 
 		foreach (['hydro', 'meteo'] as $type) {
 			$columnData = $this->getColumnData("{$type}_time_series", 'result_time');
@@ -680,6 +681,72 @@ class MigrateDb extends DbCommand {
 				$return = 0;
 				$this->connection->runQuery("ALTER TABLE {$type}_time_series ALTER COLUMN result_time DROP NOT NULL;", []);
 			}
+		}
+
+		return $return;
+	}
+
+
+	/**
+	 * River basins crud
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function riverBasins(array &$output): int {
+		$return = - 1;
+
+		if (!$this->checkTable('river_basin')) {
+			$return = 0;
+
+			$this->connection->runQuery("
+				CREATE TABLE river_basin (
+	                id integer NOT NULL,
+	                name varchar(255) NOT NULL,
+	                PRIMARY KEY (id)
+				);
+			", []);
+			$this->connection->runQuery("CREATE UNIQUE INDEX river_basin_id ON public.river_basin USING btree (id)", []);
+		}
+
+		if (!$this->checkColumn('hydropoint', 'river_basin_id')) {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE hydropoint ADD COLUMN river_basin_id integer DEFAULT NULL", []);
+			$this->connection->runQuery(
+				"ALTER TABLE public.hydropoint ADD CONSTRAINT hydropoint_river_basin_id_fkey FOREIGN KEY (river_basin_id) REFERENCES public.river_basin(id);",
+				[]
+			);
+
+			if ($this->checkColumn('hydropoint', 'river_basin')) {
+				$this->connection->runQuery("ALTER TABLE hydropoint DROP COLUMN river_basin", []);
+			}
+		}
+
+		if (!$this->checkColumn('meteopoint', 'river_basin_id')) {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE meteopoint ADD COLUMN river_basin_id integer DEFAULT NULL", []);
+			$this->connection->runQuery(
+				"ALTER TABLE public.meteopoint ADD CONSTRAINT meteopoint_river_basin_id_fkey FOREIGN KEY (river_basin_id) REFERENCES public.river_basin(id);",
+				[]
+			);
+
+			if ($this->checkColumn('meteopoint', 'river_basin')) {
+				$this->connection->runQuery("ALTER TABLE meteopoint DROP COLUMN river_basin", []);
+			}
+		}
+
+
+		$count = $this->connection->runQuery(
+			'SELECT COUNT(*) FROM public.permissions WHERE name = :riverbankPermission',
+			['riverbankPermission' => 'admin.hydro.riverbasins.read']
+		)->fetch(PDO::FETCH_COLUMN);
+		if (!$count) {
+			$return = 0;
+			$schemaPath = SRC_PATH . '/database/create_riverbasin_permissions.sql';
+
+			return $this->runSqlFile($schemaPath, $output);
 		}
 
 		return $return;

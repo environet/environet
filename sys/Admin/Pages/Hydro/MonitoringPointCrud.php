@@ -11,6 +11,7 @@ use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\Query\Update;
 use Environet\Sys\General\Db\RiverbankQueries;
+use Environet\Sys\General\Db\RiverBasinQueries;
 use Environet\Sys\General\Db\RiverQueries;
 use Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud as MonitoringPointCrudBase;
 use Environet\Sys\General\Db\WarningLevelQueries;
@@ -106,6 +107,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 			'operators'          => $this->getOperatorList(),
 			'riverbanks'         => RiverbankQueries::getOptionList('value'),
 			'rivers'             => RiverQueries::getOptionList('cname', 'eucd_riv'),
+			'riverBasins'        => RiverBasinQueries::getOptionList(),
 			'observedProperties' => HydroObservedPropertyQueries::getOptionList('symbol'),
 		];
 	}
@@ -176,7 +178,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 			'pageTitle' => $pageTitle,
 			'data'      => array_combine(array_keys($existingDataByKey), array_column($existingDataByKey, 'value'))
 		], $this->formContext(), [
-			'warningLevels' => WarningLevelQueries::getOptionListForOperator($record['operatorid']),
+			'warningLevels'      => WarningLevelQueries::getOptionListForOperator($record['operatorid']),
 			'observedProperties' => HydroObservedPropertyQueries::getRealTimeOptionList(),
 		]);
 
@@ -246,7 +248,8 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 		return [
 			['title' => 'Station classifications', 'options' => HydroStationClassificationQueries::getOptionList('value')],
 			['title' => 'Riverbanks', 'options' => RiverbankQueries::getOptionList('value')],
-			['title' => 'Rivers', 'options' => RiverQueries::getOptionList('cname', 'eucd_riv')]
+			['title' => 'Rivers', 'options' => RiverQueries::getOptionList('cname', 'eucd_riv')],
+			['title' => 'River basins', 'options' => RiverBasinQueries::getOptionList()]
 		];
 	}
 

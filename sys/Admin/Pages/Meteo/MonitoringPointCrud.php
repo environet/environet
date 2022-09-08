@@ -6,6 +6,7 @@ use Environet\Sys\General\Db\MeteoMonitoringPointQueries;
 use Environet\Sys\General\Db\MeteoObservedPropertyQueries;
 use Environet\Sys\General\Db\MeteoStationClassificationQueries;
 use Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud as MonitoringPointCrudBase;
+use Environet\Sys\General\Db\RiverBasinQueries;
 use Environet\Sys\General\Exceptions\QueryException;
 
 /**
@@ -85,6 +86,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 		return [
 			'classifications'    => MeteoStationClassificationQueries::getOptionList('value'),
 			'operators'          => $this->getOperatorList(),
+			'riverBasins'        => RiverBasinQueries::getOptionList(),
 			'observedProperties' => MeteoObservedPropertyQueries::getOptionList('symbol')
 		];
 	}
@@ -151,7 +153,8 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 */
 	protected function getCsvEnums(): array {
 		return [
-			['title' => 'Station classifications', 'options' => MeteoStationClassificationQueries::getOptionList('value')]
+			['title' => 'Station classifications', 'options' => MeteoStationClassificationQueries::getOptionList('value')],
+			['title' => 'River basins', 'options' => RiverBasinQueries::getOptionList()]
 		];
 	}
 

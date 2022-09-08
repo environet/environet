@@ -130,6 +130,7 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 				$monitoringPoint['eucd_riv'],
 				'eucd_riv'
 			);
+			$monitoringPoint['river_basin'] = RiverBasinQueries::getById($monitoringPoint['river_basin_id']);
 			$monitoringPoint['observedProperties'] = (new Select())
 				->select('observed_propertyid')
 				->from('hydropoint_observed_property')
@@ -158,7 +159,7 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 			'station_classificationid' => 'classification',
 			'operatorid'               => 'operator',
 			'bankid'                   => 'riverbank',
-			'eucd_riv'                 => 'river',
+			'eucd_riv'                 => 'river'
 		];
 		foreach ($mapKeys as $toKey => $fromKey) {
 			if (array_key_exists($fromKey, $data)) {
@@ -173,7 +174,7 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 			'eucd_wgst'                => $data['eucd_wgst'] ?? null,
 			'country'                  => $data['country'] ?? null,
 			'location'                 => $data['location'] ?? null,
-			'river_basin'              => $data['river_basin'] ?? null,
+			'river_basin_id'           => $data['river_basin_id'] ?: null,
 			'vertical_reference'       => $data['vertical_reference'] ?? null,
 
 			// numbers

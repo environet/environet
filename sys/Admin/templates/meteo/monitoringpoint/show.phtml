@@ -55,8 +55,12 @@
     		<dt class="col-sm-3">Location</dt>
     		<dd class="col-sm-9"><?=$record['location'] ?? '';?></dd>
 
-    		<dt class="col-sm-3">River basin</dt>
-    		<dd class="col-sm-9"><?=$record['river_basin'] ?? '';?></dd>
+		<dt class="col-sm-3">River basin</dt>
+		<dd class="col-sm-9">
+		    <?php if(!empty($record['river_basin_id'])): ?>
+				<a href="/admin/hydro/river-basins/show?id=<?= $record['river_basin']['id'] ;?>">#<?= $record['river_basin']['name'] ?></a>
+		    <?php endif; ?>
+		</dd>
 
         <dt class="col-sm-3">Start time</dt>
         <dd class="col-sm-9"><?=$record['start_time'] ?? '';?></dd>

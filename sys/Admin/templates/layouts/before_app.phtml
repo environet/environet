@@ -148,6 +148,11 @@
 					</ul>
 				</li>
 	        <?php endif; ?>
+	        <?php if($request->getIdentity()->hasPermissions(['admin.hydro.riverbasins.read'])): ?>
+				<li>
+			        <?= includeTemplatePart('menuitem.phtml', ['title' => 'River basins', 'route' => '/admin/hydro/river-basins', 'icon' => 'water', 'matchExtra' => 1]) ?>
+				</li>
+	        <?php endif; ?>
             <?php if($request->getIdentity()->hasPermissions(['admin.missingData.upload']) || $request->getIdentity()->hasPermissions(['admin.missingData.uploadown'])): ?>
                 <li>
                     <?=includeTemplatePart('menuitem.phtml', ['title' => 'Upload missing data', 'route' => '/admin/missing-data', 'icon' => 'upload', 'matchExtra' => 1]) ?>

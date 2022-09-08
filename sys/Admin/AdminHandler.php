@@ -4,6 +4,7 @@ namespace Environet\Sys\Admin;
 
 use Environet\Sys\Admin\Pages\BasePage;
 use Environet\Sys\Admin\Pages\Dashboard;
+use Environet\Sys\Admin\Pages\Hydro\River\RiverBasinCrud;
 use Environet\Sys\Admin\Pages\WarningLevel\WarningLevelCrud;
 use Environet\Sys\Admin\Pages\WarningLevel\WarningLevelGroupCrud;
 use Environet\Sys\Admin\Pages\Operator\OperatorCrud;
@@ -219,6 +220,12 @@ class AdminHandler extends BaseHandler {
 		'^hydro\/rivers\/add$'   => [RiverCrud::class, 'add', ['admin.hydro.rivers.create']],
 		'^hydro\/rivers\/edit$'  => [RiverCrud::class, 'edit', ['admin.hydro.rivers.update']],
 		'^hydro\/rivers\/delete' => [RiverCrud::class, 'delete', ['admin.hydro.rivers.delete']],
+
+		'^hydro\/river-basins$'        => [RiverBasinCrud::class, 'list', ['admin.hydro.riverbasins.read']],
+		'^hydro\/river-basins\/show$'  => [RiverBasinCrud::class, 'show', ['admin.hydro.riverbasins.read']],
+		'^hydro\/river-basins\/add$'   => [RiverBasinCrud::class, 'add', ['admin.hydro.riverbasins.create']],
+		'^hydro\/river-basins\/edit$'  => [RiverBasinCrud::class, 'edit', ['admin.hydro.riverbasins.update']],
+		'^hydro\/river-basins\/delete' => [RiverBasinCrud::class, 'delete', ['admin.hydro.riverbasins.delete']],
 
 		'^hydro\/riverbanks$'        => [RiverbankCrud::class, 'list', ['admin.hydro.riverbanks.read']],
 		'^hydro\/riverbanks\/show$'  => [RiverbankCrud::class, 'show', ['admin.hydro.riverbanks.read']],

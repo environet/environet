@@ -50,6 +50,10 @@ class EventLogger {
 	const EVENT_TYPE_RIVER_UPDATE = 'river_update';
 	const EVENT_TYPE_RIVER_DELETE = 'river_delete';
 
+	const EVENT_TYPE_RIVER_BASIN_ADD    = 'river_basin_add';
+	const EVENT_TYPE_RIVER_BASIN_UPDATE = 'river_basin_update';
+	const EVENT_TYPE_RIVER_BASIN_DELETE = 'river_basin_delete';
+
 	const EVENT_TYPE_METEO_MP_ADD    = 'meteo_monitoring_point_add';
 	const EVENT_TYPE_METEO_MP_UPDATE = 'meteo_monitoring_point_update';
 	const EVENT_TYPE_METEO_MP_DELETE = 'meteo_monitoring_point_delete';

@@ -93,6 +93,7 @@ class MeteoMonitoringPointQueries extends AbstractMonitoringPointQueries {
 		if ($monitoringPoint) {
 			$monitoringPoint['classification'] = $monitoringPoint['station_classificationid'] ? MeteoStationClassificationQueries::getById($monitoringPoint['station_classificationid']) : null;
 			$monitoringPoint['operator'] = $monitoringPoint['operatorid'] ? OperatorQueries::getById($monitoringPoint['operatorid']) : null;
+			$monitoringPoint['river_basin'] = RiverBasinQueries::getById($monitoringPoint['river_basin_id']);
 			$monitoringPoint['observedProperties'] = (new Select())
 				->select('observed_propertyid')
 				->from('meteopoint_observed_property')
@@ -187,7 +188,7 @@ class MeteoMonitoringPointQueries extends AbstractMonitoringPointQueries {
 			'eucd_pst'                      => $data['eucd_pst'] ?? null,
 			'country'                       => $data['country'] ?? null,
 			'location'                      => $data['location'] ?? null,
-			'river_basin'                   => $data['river_basin'] ?? null,
+			'river_basin_id'                => $data['river_basin_id'] ?: null,
 			'vertical_reference'            => $data['vertical_reference'] ?? null,
 
 			// numbers

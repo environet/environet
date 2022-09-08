@@ -1,0 +1,29 @@
+<?php include __DIR__ . '../../../layouts/before_app.phtml'; ?>
+<div class="card formPage">
+	<?=includeTemplatePart('crud_show_header.phtml', get_defined_vars());?>
+	<form action="" method="POST">
+		<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
+		<?php if ( is_null($record) ): ?>
+        <div class="form-group">
+            <label for="id">Id / code of the river basin</label>
+            <input type="text" name="id" id="id" class="form-control <?=isFieldInvalidClass('id', get_defined_vars());?>"  value="<?=formFieldValue('id', $record);?>" />
+			<div class="invalid-feedback">
+		        <?=getFieldInvalidMessage('id', get_defined_vars());?>
+			</div>
+        </div>
+		<?php endif; ?>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" class="form-control <?=isFieldInvalidClass('name', get_defined_vars());?>"  value="<?=formFieldValue('name', $record);?>" />
+			<div class="invalid-feedback">
+		        <?=getFieldInvalidMessage('name', get_defined_vars());?>
+			</div>
+        </div>
+
+        <div class="field">
+            <input type="submit" class="btn btn-primary" value="Save"/>
+        </div>
+    </form>
+</div>
+
+<?php include __DIR__ . '../../../layouts/after_app.phtml'; ?>
