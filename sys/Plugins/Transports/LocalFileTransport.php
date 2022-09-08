@@ -24,7 +24,13 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 
 
 	private static function getDataDirDisplay(): string {
-		return (substr(getenv('LOCAL_DATA_DIR'), 0, 1) == '/' ? '' : '[Environet docker directory]/') . getenv('LOCAL_DATA_DIR');
+		if (substr(getenv('LOCAL_DATA_DIR'), 0, 1) == '/') {
+			return getenv('LOCAL_DATA_DIR');
+		} elseif (substr(getenv('LOCAL_DATA_DIR'), 0, 3) == '../') {
+			return '[Environet docker directory]/' . preg_replace('/^\.\.\//', '', getenv('LOCAL_DATA_DIR'));
+		} else {
+			return '[Environet docker directory]/docker/' . getenv('LOCAL_DATA_DIR');
+		}
 	}
 
 
@@ -87,7 +93,8 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 		$resource->name = $this->path;
 
 		if (!file_exists('/meteringdata/' . $this->path)) {
-			Console::getInstance()->writeLine('The file at' . self::getDataDirDisplay() . '/' . $this->path . ' does not exist', Console::COLOR_RED);
+			Console::getInstance()->writeLine('The file at \'' . self::getDataDirDisplay() . '/' . $this->path . '\' does not exist', Console::COLOR_RED);
+
 			return [];
 		}
 
