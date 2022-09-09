@@ -119,6 +119,14 @@ If a Dockerfile of a container has been changed in the new version, after `./env
 If the nodes are hosted on a linux system, which using UFW firewall, there are some additional steps to make it secure, and do not open unneccessary ports.
 The recommended solution is to make some modification on UFW rules. The description of the compatibility problem, and the solution can be found here: [https://github.com/chaifeng/ufw-docker](https://github.com/chaifeng/ufw-docker)
 
+## Installation on Windows
+
+For windows you'll need "Docker Desktop on Windows". This will install docker engine and dashboard. 
+
+Before pulling the source it is necessary to turn of git's `autocrlf` feature, to keep files line endings in UNIX-style. You can do this with this command:
+`git config --global core.autocrlf false`
+
+If `bash` is not installed on your computer, you should use `environet.bat` instead of `environet` for all commands. The arguments and the parameters are the same.
 
 <a name="20_distribution_node"></a>
 

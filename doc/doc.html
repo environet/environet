@@ -1094,6 +1094,10 @@ To stop and start them manually, you may run <code>./environet data up</code> or
 <p>If a Dockerfile of a container has been changed in the new version, after <code>./environet dist/data down</code> but before <code>./environet dist/data up</code> it’s necessary to run <code>./environet dist/data build</code>.</p>
 <h2 id="linux-with-ufw-security-settings">Linux with UFW security settings</h2>
 <p>If the nodes are hosted on a linux system, which using UFW firewall, there are some additional steps to make it secure, and do not open unneccessary ports. The recommended solution is to make some modification on UFW rules. The description of the compatibility problem, and the solution can be found here: <a href="https://github.com/chaifeng/ufw-docker" class="uri">https://github.com/chaifeng/ufw-docker</a></p>
+<h2 id="installation-on-windows">Installation on Windows</h2>
+<p>For windows you’ll need “Docker Desktop on Windows”. This will install docker engine and dashboard.</p>
+<p>Before pulling the source it is necessary to turn of git’s <code>autocrlf</code> feature, to keep files line endings in UNIX-style. You can do this with this command: <code>git config --global core.autocrlf false</code></p>
+<p>If <code>bash</code> is not installed on your computer, you should use <code>environet.bat</code> instead of <code>environet</code> for all commands. The arguments and the parameters are the same.</p>
 <p><a name="20_distribution_node"></a></p>
 <h1 id="distribution-node">Distribution node</h1>
 <h2 id="overview">Overview</h2>
