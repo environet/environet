@@ -2,6 +2,7 @@
 
 namespace Environet\Sys\General\Db;
 
+use DateTime;
 use Environet\Sys\General\Db\Query\Delete;
 use Environet\Sys\General\Db\Query\Insert;
 use Environet\Sys\General\Db\Query\Query;
@@ -192,17 +193,21 @@ class BaseQueries {
 	 * @uses \Environet\Sys\General\EventLogger::log()
 	 * @see  Connection
 	 */
-	public static function save(array $data, $id = null, string $primaryKey = 'id') {
+	public static function save(array $data, &$id = null, string $primaryKey = 'id', array $record = null) {
 		$connection = Connection::getInstance();
 		$connection->pdo->beginTransaction();
 
 		$dataToSave = static::prepareData($data);
 
+		$changes = [];
 		if ($id) {
 			EventLogger::log(static::getUpdateEventType(), array_merge($dataToSave, [
 				$primaryKey => $id
 			]));
 
+			if ($record) {
+				$changes = self::calculateChanges($record, $dataToSave);
+			}
 			(new Update())
 				->table(static::$tableName)
 				->updateData($dataToSave)
@@ -210,7 +215,7 @@ class BaseQueries {
 				->addParameter(':id', $id)
 				->run(Query::RETURN_BOOL);
 		} else {
-			(new Insert())
+			$id = (new Insert())
 				->table(static::$tableName)
 				->addSingleData($dataToSave)
 				->run(Query::RETURN_BOOL);
@@ -219,6 +224,8 @@ class BaseQueries {
 		}
 
 		$connection->pdo->commit();
+
+		return [$id, $changes];
 	}
 
 
@@ -291,6 +298,37 @@ class BaseQueries {
 	 */
 	public static function prepareData(array $data): array {
 		return [];
+	}
+
+
+	/**
+	 * @param array $originalData
+	 * @param array $newData
+	 *
+	 * @return array
+	 */
+	public static function calculateChanges(array $originalData, array $newData): array {
+		$changes = [];
+		foreach (array_keys($newData) as $key) {
+			if (!array_key_exists($key, $originalData)) {
+				continue;
+			}
+
+			if (is_float($newData[$key]) || is_float($originalData[$key])) {
+				$changed = floatval($newData[$key]) !== floatval($originalData[$key]);
+			} elseif (is_int($newData[$key]) || is_int($originalData[$key])) {
+				$changed = intval($newData[$key]) !== intval($originalData[$key]);
+			} elseif (strtotime($newData[$key]) !== false || strtotime($originalData[$key]) !== false) {
+				$changed = strtotime($newData[$key]) !== strtotime($originalData[$key]);
+			} else {
+				$changed = $newData[$key] !== $originalData[$key];
+			}
+			if ($changed) {
+				$changes[$key] = [$originalData[$key], $newData[$key]];
+			}
+		}
+
+		return $changes;
 	}
 
 

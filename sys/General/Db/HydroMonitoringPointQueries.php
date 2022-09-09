@@ -221,24 +221,30 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 	 * Logs the transaction regardless of updating or inserting.
 	 * Once done, passes id and observed property data to {@see BaseQueries::saveConnections()}.
 	 *
-	 * @param array  $data
-	 * @param null   $id
-	 * @param string $primaryKey
+	 * @param array      $data
+	 * @param null       $id
+	 * @param string     $primaryKey
+	 * @param array|null $record
 	 *
+	 * @return array|array[]
 	 * @throws QueryException
 	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
 	 * @uses \Environet\Sys\General\Db\Query\Update::run()
 	 * @uses \Environet\Sys\General\EventLogger::log()
 	 * @uses \Environet\Sys\General\Db\BaseQueries::saveConnections()
 	 */
-	public static function save(array $data, $id = null, string $primaryKey = 'id') {
+	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
 		$dataToSave = static::prepareData($data);
 
+		$changes = [];
 		if ($id) {
 			EventLogger::log(EventLogger::EVENT_TYPE_HYDRO_MP_UPDATE, array_merge($dataToSave, [
 				'id' => $id
 			]));
 
+			if ($record) {
+				$changes = self::calculateChanges($record, $dataToSave);
+			}
 			(new Update())
 				->table(static::$tableName)
 				->updateData($dataToSave)
@@ -251,9 +257,17 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 				->addSingleData($dataToSave)
 				->run();
 
+			$changes = array_map(fn($data) => [null, $data], $dataToSave);
 			EventLogger::log(EventLogger::EVENT_TYPE_HYDRO_MP_ADD, array_merge($dataToSave, [
 				'id' => $id
 			]));
+		}
+
+		$oldObservedProperties = array_map(fn($property) => (int) $property, $record['observedProperties'] ?? []);
+		$newObservedProperties = array_map(fn($property) => (int) $property, $data['observedProperties'] ?? []);
+
+		if ($oldObservedProperties !== $newObservedProperties) {
+			$changes['observedProperties'] = [$oldObservedProperties, $newObservedProperties];
 		}
 
 		// Save observed properties
@@ -265,6 +279,8 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 			$id,
 			true
 		);
+
+		return [$id, $changes];
 	}
 
 

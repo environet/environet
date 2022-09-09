@@ -40,9 +40,10 @@ class UserQueries extends BaseQueries {
 	 * If id exists, update the record, otherwise insert new record.
 	 * Also saves the user's permissions and groups.
 	 *
-	 * @param array  $data
-	 * @param mixed  $id
-	 * @param string $primaryKey
+	 * @param array      $data
+	 * @param mixed      $id
+	 * @param string     $primaryKey
+	 * @param array|null $record
 	 *
 	 * @throws QueryException
 	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
@@ -51,7 +52,7 @@ class UserQueries extends BaseQueries {
 	 * @uses \Environet\Sys\General\Db\UserQueries::saveGroups()
 	 * @uses \Environet\Sys\General\Db\UserQueries::savePermissions()
 	 */
-	public static function save(array $data, $id = null, string $primaryKey = 'id') {
+	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
 		if ($id) {
 			// Update user
 			if ($data['public_key'] !== "") {
@@ -105,7 +106,7 @@ class UserQueries extends BaseQueries {
 			self::saveGroups($data['form_groups'], $id);
 		} else {
 			// Add new user
-			$insertId = (new Insert())
+			$id = (new Insert())
 				->table('users')
 				->addSingleData([
 					'name'     => $data['name'],
@@ -118,7 +119,7 @@ class UserQueries extends BaseQueries {
 			(new Insert())
 				->table('public_keys')
 				->addSingleData([
-					'usersId'    => $insertId,
+					'usersId'    => $id,
 					'public_key' => $data['public_key'],
 				])
 				->run();
@@ -128,12 +129,14 @@ class UserQueries extends BaseQueries {
 				'name'     => $data['name'],
 				'username' => $data['username'],
 				'email'    => $data['email'],
-				'id'       => $insertId
+				'id'       => $id
 			]);
 
-			self::savePermissions($data['form_permissions'], $insertId);
-			self::saveGroups($data['form_groups'], $insertId);
+			self::savePermissions($data['form_permissions'], $id);
+			self::saveGroups($data['form_groups'], $id);
 		}
+
+		return [$id, []];
 	}
 
 

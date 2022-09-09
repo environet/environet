@@ -236,8 +236,13 @@ abstract class CrudPage extends BasePage {
 		}
 
 		//Data is valid, save it, add success message, and redirect to index page
-		$this->queriesClass::save($postData, $id);
+		[$newId, $changes] = $this->queriesClass::save($postData, $id, 'id', $record);
 		$this->addMessage(is_null($id) ? $this->successAddMessage : $this->successEditMessage, self::MESSAGE_SUCCESS);
+
+		if (is_callable([$this->queriesClass, 'saveLastUpdated'])) {
+			$userId = $this->request->getIdentity() ? $this->request->getIdentity()->getId() : null;
+			$this->queriesClass::saveLastUpdated($userId, $newId, $changes);
+		}
 
 		return $this->redirect($this->getListPageLinkWithState());
 	}

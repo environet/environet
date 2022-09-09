@@ -36,21 +36,24 @@ class GroupQueries extends BaseQueries {
 	 * Save group's data.
 	 * If the id exists, update the record, otherwise insert new record.
 	 *
-	 * @param array  $data
-	 * @param mixed  $id
-	 * @param string $primaryKey
+	 * @param array      $data
+	 * @param mixed      $id
+	 * @param string     $primaryKey
+	 * @param array|null $record
 	 *
+	 * @return array
 	 * @throws QueryException
 	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
 	 * @uses \Environet\Sys\General\Db\Query\Update::run()
 	 * @uses \Environet\Sys\General\EventLogger::log()
 	 * @uses \Environet\Sys\General\Db\GroupQueries::savePermissions()
 	 */
-	public static function save(array $data, $id = null, string $primaryKey = 'id') {
+	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
 		$dataToRun = [
 			'name' => $data['name']
 		];
 
+		$changes = [];
 		if ($id) {
 			EventLogger::log(EventLogger::EVENT_TYPE_GROUP_UPDATE, array_merge($dataToRun, [
 				'id' => $id
@@ -67,18 +70,20 @@ class GroupQueries extends BaseQueries {
 			self::savePermissions($data['permissions'] ?? [], $id);
 		} else {
 			// insert new record
-			$insertId = (new Insert())
+			$id = (new Insert())
 				->table('groups')
 				->addSingleData($dataToRun)
 				->run();
 
 			EventLogger::log(EventLogger::EVENT_TYPE_GROUP_ADD, array_merge($dataToRun, [
-				'id' => $insertId
+				'id' => $id
 			]));
 
 			// add permission relation to group
 			self::savePermissions($data['permissions'] ?? [], $insertId);
 		}
+
+		return [$id, $changes];
 	}
 
 

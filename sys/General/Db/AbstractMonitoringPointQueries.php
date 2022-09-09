@@ -196,4 +196,26 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 	}
 
 
+	/**
+	 * @param int|null $userId
+	 * @param int      $recordId
+	 * @param array    $changes
+	 *
+	 * @return void
+	 * @throws QueryException
+	 */
+	public static function saveLastUpdated(?int $userId, int $recordId, array $changes = []) {
+		if (!empty($changes)) {
+			(new Update())
+				->table(static::$tableName)
+				->updateData([
+					'last_updated_at' => date('Y-m-d H:i:s'),
+					'last_updated_by' => $userId
+				])
+				->where(static::$tableName . ".id = :id")
+				->addParameter(':id', $recordId)
+				->run(Query::RETURN_BOOL);
+		}
+	}
+
 }

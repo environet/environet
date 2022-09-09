@@ -277,6 +277,8 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 			'end_time' => 'End time [yyyy-mm-dd]',
 			'utc_offset' => 'UTC offset [number]',
 			'river_basin' => ['title' => 'River basin id/code [number]', 'outField' => 'river_basin_id'],
+			'last_updated_at' => 'Last update at',
+			'last_updated_by' => 'Last updated by',
 			$this->observedPropertiesCsvColumn => 'Observered properties [text]'
 		];
 	}
@@ -318,7 +320,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 				$data = $this->dataFromCsvLine($line);
 
 				try {
-					$this->queriesClass::save($data, $recordId);
+					$this->queriesClass::save($data, $recordId, 'id', $record);
 					$this->csvUploadAfterSave($data, $recordId);
 					if ($recordId) {
 						$updated[] = $csvId;

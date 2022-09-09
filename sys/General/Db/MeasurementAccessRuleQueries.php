@@ -67,9 +67,10 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 	/**
 	 * @inheritDoc
 	 */
-	public static function save(array $data, $id = null, string $primaryKey = 'id') {
+	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
 		$dataToSave = static::prepareData($data);
 
+		$changes = [];
 		if ($id) {
 			EventLogger::log(static::getUpdateEventType(), array_merge($dataToSave, [
 				'id' => $id
@@ -109,6 +110,8 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 				['interval' => $interval]
 			);
 		}
+
+		return [$id, $changes];
 	}
 
 

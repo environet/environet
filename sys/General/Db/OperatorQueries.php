@@ -167,7 +167,7 @@ class OperatorQueries extends BaseQueries {
 	 * @uses \Environet\Sys\General\Db\OperatorQueries::saveGroups()
 	 * @uses \Environet\Sys\General\Db\OperatorQueries::saveUsers()
 	 */
-	public static function save(array $data, $id = null, string $primaryKey = 'id') {
+	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
 		$operatorData = [
 			'name'       => $data['name'] ?? null,
 			'address'    => $data['address'] ?? null,
@@ -177,6 +177,7 @@ class OperatorQueries extends BaseQueries {
 			'other_info' => $data['other_info'] ?? null
 		];
 
+		$changes = [];
 		if ($id) {
 			// Update existing record and save operator data
 			(new Update())
@@ -195,16 +196,18 @@ class OperatorQueries extends BaseQueries {
 			self::saveGroups($data['form_groups'], $id);
 		} else {
 			// Save operator data
-			$operatorId = (new Insert())->table('operator')->addSingleData($operatorData)->run();
+			$id = (new Insert())->table('operator')->addSingleData($operatorData)->run();
 
 			EventLogger::log(EventLogger::EVENT_TYPE_OPERATOR_ADD, array_merge($operatorData, [
-				'id' => $operatorId
+				'id' => $id
 			]));
 
 			// Connect user and groups with operator
-			self::saveUsers($data['form_users'], $operatorId);
-			self::saveGroups($data['form_groups'], $operatorId);
+			self::saveUsers($data['form_users'], $id);
+			self::saveGroups($data['form_groups'], $id);
 		}
+
+		return [$id, $changes];
 	}
 
 

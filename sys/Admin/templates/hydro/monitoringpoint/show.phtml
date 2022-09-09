@@ -86,6 +86,16 @@
         <dt class="col-sm-3">End time</dt>
         <dd class="col-sm-9"><?=$record['end_time'] ?? '';?></dd>
 
+		<dt class="col-sm-3">Last updated at</dt>
+		<dd class="col-sm-9"><?=$record['last_updated_at'] ?? '';?></dd>
+
+		<dt class="col-sm-3">Last updated by</dt>
+		<dd class="col-sm-9">
+			<?php if(!empty($record['last_updated_by'])): ?>
+				<a href="/admin/users/show?id=<?= $record['last_updated_by'] ;?>">#<?= $record['last_updated_by'] ?></a>
+			<?php endif; ?>
+		</dd>
+
         <dt class="col-sm-3">Station classification</dt>
         <dd class="col-sm-9">
             <?php if(!empty($record['classification'])): ?>
