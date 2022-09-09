@@ -66,6 +66,7 @@ class MigrateDb extends DbCommand {
 			'addObsoleteFlagForRecords',
 			'resultTimeNullable',
 			'riverBasins',
+			'pointLastUpdated',
 		];
 		ini_set('memory_limit', - 1);
 
@@ -748,6 +749,38 @@ class MigrateDb extends DbCommand {
 
 			return $this->runSqlFile($schemaPath, $output);
 		}
+
+		return $return;
+	}
+
+
+	/**
+	 * River basins crud
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function pointLastUpdated(array &$output): int {
+		$return = - 1;
+
+		if (!$this->checkColumn('hydropoint', 'last_updated_at')) {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE hydropoint 
+    			ADD COLUMN last_updated_at timestamp DEFAULT NULL,
+    			ADD COLUMN last_updated_by integer DEFAULT NULL
+            ", []);
+		}
+
+		if (!$this->checkColumn('meteopoint', 'last_updated_at')) {
+			$return = 0;
+			$this->connection->runQuery("ALTER TABLE meteopoint 
+    			ADD COLUMN last_updated_at timestamp DEFAULT NULL,
+    			ADD COLUMN last_updated_by integer DEFAULT NULL
+            ", []);
+		}
+
 
 		return $return;
 	}
