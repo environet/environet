@@ -710,6 +710,7 @@ class MigrateDb extends DbCommand {
 				);
 			", []);
 			$this->connection->runQuery("CREATE UNIQUE INDEX river_basin_id ON public.river_basin USING btree (id)", []);
+			$this->connection->runQuery("CREATE UNIQUE INDEX river_basin_name ON public.river_basin USING btree (name)", []);
 		}
 
 		if (!$this->checkColumn('hydropoint', 'river_basin_id')) {
