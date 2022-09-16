@@ -108,6 +108,9 @@ class MeteoMonitoringPointQueries extends AbstractMonitoringPointQueries {
 				->where('mpop.mpointid = :mpopId')
 				->addParameter(':mpopId', $id)
 				->run();
+			$monitoringPoint['last_updated_by_user'] = !empty($monitoringPoint['last_updated_by']) ?
+				UserQueries::getById($monitoringPoint['last_updated_by']) :
+				null;
 		}
 
 		return $monitoringPoint;

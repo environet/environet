@@ -144,6 +144,9 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 				->where('hpop.mpointid = :hpopId')
 				->addParameter(':hpopId', $id)
 				->run();
+			$monitoringPoint['last_updated_by_user'] = !empty($monitoringPoint['last_updated_by']) ?
+				UserQueries::getById($monitoringPoint['last_updated_by']) :
+				null;
 		}
 
 
