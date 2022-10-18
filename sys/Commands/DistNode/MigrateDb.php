@@ -66,6 +66,7 @@ class MigrateDb extends DbCommand {
 			'addObsoleteFlagForRecords',
 			'resultTimeNullable',
 			'riverBasins',
+			'riverBasinNameIndex',
 			'pointLastUpdated',
 		];
 		ini_set('memory_limit', - 1);
@@ -749,6 +750,27 @@ class MigrateDb extends DbCommand {
 			$schemaPath = SRC_PATH . '/database/create_riverbasin_permissions.sql';
 
 			return $this->runSqlFile($schemaPath, $output);
+		}
+
+		return $return;
+	}
+
+
+	/**
+	 * River basins crud
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function riverBasinNameIndex(array &$output): int {
+		$return = - 1;
+
+		if ($this->checkTable('river_basin') && !$this->checkIndex('river_basin', 'name')) {
+			$return = 0;
+
+			$this->connection->runQuery("CREATE UNIQUE INDEX river_basin_name ON public.river_basin USING btree (name)", []);
 		}
 
 		return $return;
