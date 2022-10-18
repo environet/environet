@@ -277,8 +277,8 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 			'end_time' => 'End time [yyyy-mm-dd]',
 			'utc_offset' => 'UTC offset [number]',
 			'river_basin' => ['title' => 'River basin id/code [number]', 'outField' => 'river_basin_id'],
-			'last_updated_at' => 'Last update at',
-			'last_updated_by' => 'Last updated by',
+			'last_updated_at' => 'Last update at [yyyy-mm-dd hh-mm-ss]',
+			'last_updated_by' => 'Last updated by - user id [ID]',
 			$this->observedPropertiesCsvColumn => 'Observered properties [text]'
 		];
 	}

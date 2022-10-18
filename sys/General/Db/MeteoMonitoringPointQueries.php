@@ -223,10 +223,12 @@ class MeteoMonitoringPointQueries extends AbstractMonitoringPointQueries {
 			// foreign keys
 			'station_classificationid'      => isset($data['station_classificationid']) ? $data['station_classificationid'] ?: null : null,
 			'operatorid'                    => isset($data['operatorid']) ? $data['operatorid'] ?: null : null,
+			'last_updated_by'               => isset($data['last_updated_by']) ? $data['last_updated_by'] ?: null : null,
 
 			// dates
 			'start_time'                    => !empty($data['start_time']) ? $data['start_time'] : null,
 			'end_time'                      => !empty($data['end_time']) ? $data['end_time'] : null,
+			'last_updated_at'               => !empty($data['last_updated_at']) ? $data['last_updated_at'] : null,
 
 			//boolean
 			'is_active'                    => isset($data['is_active']) && $data['is_active'] !== '' ? (bool) $data['is_active'] : null,
