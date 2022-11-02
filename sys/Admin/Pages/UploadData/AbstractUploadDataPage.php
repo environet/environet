@@ -104,7 +104,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 
 		//Create directory if not exists
 		if (!is_dir($dir)) {
-			mkdir($dir, 0755, true);
+			mkdir($dir, 0775, true);
 		}
 
 		//Move uploaded files to the permanent directory. Collect files to an array, with original file names as keys.
