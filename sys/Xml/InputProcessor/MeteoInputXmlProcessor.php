@@ -39,7 +39,7 @@ class MeteoInputXmlProcessor extends AbstractInputXmlProcessor {
 				->where('ncd_pst = :id')
 				->addParameter('id', $identifier);
 
-			if ($identity) {
+			if ($identity && $identity->getId() !== SYS_USERNAME) {
 				$mPointQuery->where('operatorid IN (' . implode(',', $this->getOperatorIdsOfIdentity($identity)) . ')');
 			}
 

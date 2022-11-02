@@ -39,7 +39,7 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 				->where('ncd_wgst = :id')
 				->addParameter('id', $identifier);
 
-			if ($identity) {
+			if ($identity && $identity->getId() !== SYS_USERNAME) {
 				$mPointQuery->where('operatorid IN (' . implode(',', $this->getOperatorIdsOfIdentity($identity)) . ')');
 			}
 

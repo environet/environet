@@ -60,7 +60,7 @@ class Identity {
 	/**
 	 * Get identity id.
 	 *
-	 * @return int
+	 * @return int|string
 	 */
 	public function getId() {
 		return $this->id;
