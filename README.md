@@ -124,7 +124,7 @@ The recommended solution is to make some modification on UFW rules. The descript
 For windows you'll need "Docker Desktop on Windows". This will install docker engine and dashboard. 
 
 Before pulling the source it is necessary to turn of git's `autocrlf` feature, to keep files line endings in UNIX-style. You can do this with this command:
-`git config --global core.autocrlf false`
+`git config --global core.autocrlf false`. On the other hands if any changes applied to any files, please note that must to keep the linux style (LF) line endings in the modified files.
 
 If `bash` is not installed on your computer, you should use `environet.bat` instead of `environet` for all commands. The arguments and the parameters are the same.
 
