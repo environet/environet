@@ -1,4 +1,2 @@
-* text=auto
-
-*.* text eol=lf
-/.idea/* text eol=crlf
+/bin/environet text eol=lf
+*.php text eol=lf
