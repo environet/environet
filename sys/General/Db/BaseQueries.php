@@ -201,9 +201,11 @@ class BaseQueries {
 
 		$changes = [];
 		if ($id) {
-			EventLogger::log(static::getUpdateEventType(), array_merge($dataToSave, [
-				$primaryKey => $id
-			]));
+			if (static::isEventsEnabled()) {
+				EventLogger::log(static::getUpdateEventType(), array_merge($dataToSave, [
+					$primaryKey => $id
+				]));
+			}
 
 			if ($record) {
 				$changes = self::calculateChanges($record, $dataToSave);
@@ -220,7 +222,9 @@ class BaseQueries {
 				->addSingleData($dataToSave)
 				->run(Query::RETURN_BOOL);
 
-			EventLogger::log(static::getInsertEventType(), $dataToSave);
+			if (static::isEventsEnabled()) {
+				EventLogger::log(static::getInsertEventType(), $dataToSave);
+			}
 		}
 
 		$connection->pdo->commit();
@@ -243,7 +247,9 @@ class BaseQueries {
 	 * @uses \Environet\Sys\General\Db\Query\Delete::run()
 	 */
 	public static function delete(int $id, bool $soft = false, string $primaryKey = 'id') {
-		EventLogger::log(static::getDeleteEventType(), ['id' => $id]);
+		if (static::isEventsEnabled()) {
+			EventLogger::log(static::getDeleteEventType(), ['id' => $id]);
+		}
 
 		if ($soft) {
 			(new Update())
@@ -329,6 +335,14 @@ class BaseQueries {
 		}
 
 		return $changes;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public static function isEventsEnabled(): bool {
+		return true;
 	}
 
 
