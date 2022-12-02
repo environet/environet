@@ -124,7 +124,7 @@ The recommended solution is to make some modification on UFW rules. The descript
 For windows you'll need "Docker Desktop on Windows". This will install docker engine and dashboard. 
 
 Before pulling the source it is necessary to turn of git's `autocrlf` feature, to keep files line endings in UNIX-style. You can do this with this command:
-`git config --global core.autocrlf false`. On the other hands if any changes applied to any files, please note that must to keep the linux style (LF) line endings in the modified files.
+`git config --global core.autocrlf false`
 
 If `bash` is not installed on your computer, you should use `environet.bat` instead of `environet` for all commands. The arguments and the parameters are the same.
 
@@ -363,9 +363,10 @@ Sample input XML:
 
 ## Headers
 
-| Header name | Content |
-| --- | --- |
-| Authorization | Signature (See below) |
+| Header name    | Content                              |
+|----------------|--------------------------------------|
+| Authorization  | Signature (See below)                |
+| X-Request-Attr | Request extra parameters (See below) |
 
 ### Signature header:
 
@@ -373,6 +374,24 @@ The pattern of the header: `Signature keyId="[username]",algorithm="rsa-sha256",
 
 The `keyId` is the username of the user who wants to query data.
 The `signature` part is the base64 encoded openssl signature which was created with the user's private key from the token in the query parameters.
+
+### Request attributes header
+
+`X-Request-Attr` header can contain some extra metadata related to the download request. The header value format is: 
+`key1 value1;key2 value2`
+keys and values (key1, key2, value1, value2 in the above example) are base64 encoded strings. Keys and values are separated by a ` ` (space), and each part is separated by `;`
+
+Example:
+Data in json format
+```json
+{"foo": "bar", "test": "1234"}
+```
+Data in header value:
+```text
+Zm9v YmFy;dGVzdA== MTIzNA==
+```
+
+
 
 ## Repsonses
 
