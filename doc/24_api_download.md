@@ -19,9 +19,10 @@
 
 ## Headers
 
-| Header name | Content |
-| --- | --- |
-| Authorization | Signature (See below) |
+| Header name    | Content                              |
+|----------------|--------------------------------------|
+| Authorization  | Signature (See below)                |
+| X-Request-Attr | Request extra parameters (See below) |
 
 ### Signature header:
 
@@ -29,6 +30,24 @@ The pattern of the header: `Signature keyId="[username]",algorithm="rsa-sha256",
 
 The `keyId` is the username of the user who wants to query data.
 The `signature` part is the base64 encoded openssl signature which was created with the user's private key from the token in the query parameters.
+
+### Request attributes header
+
+`X-Request-Attr` header can contain some extra metadata related to the download request. The header value format is: 
+`key1 value1;key2 value2`
+keys and values (key1, key2, value1, value2 in the above example) are base64 encoded strings. Keys and values are separated by a ` ` (space), and each part is separated by `;`
+
+Example:
+Data in json format
+```json
+{"foo": "bar", "test": "1234"}
+```
+Data in header value:
+```text
+Zm9v YmFy;dGVzdA== MTIzNA==
+```
+
+
 
 ## Repsonses
 
