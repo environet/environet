@@ -68,6 +68,7 @@ class MigrateDb extends DbCommand {
 			'riverBasins',
 			'riverBasinNameIndex',
 			'pointLastUpdated',
+			'downloadLogs',
 		];
 		ini_set('memory_limit', - 1);
 
@@ -767,7 +768,7 @@ class MigrateDb extends DbCommand {
 	private function riverBasinNameIndex(array &$output): int {
 		$return = - 1;
 
-		if ($this->checkTable('river_basin') && !$this->checkIndex('river_basin', 'name')) {
+		if ($this->checkTable('river_basin') && !$this->checkIndex('river_basin', 'river_basin_name')) {
 			$return = 0;
 
 			$this->connection->runQuery("CREATE UNIQUE INDEX river_basin_name ON public.river_basin USING btree (name)", []);
@@ -804,6 +805,51 @@ class MigrateDb extends DbCommand {
             ", []);
 		}
 
+
+		return $return;
+	}
+
+
+	/**
+	 * Create download logs table
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function downloadLogs(array &$output): int {
+		$return = - 1;
+
+		if (!$this->checkTable('download_logs')) {
+			$return = 0;
+			$this->connection->runQuery("CREATE SEQUENCE IF NOT EXISTS public.download_logs_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;", []);
+			$this->connection->runQuery("
+				CREATE TABLE public.download_logs (
+					id integer NOT NULL DEFAULT nextval('download_logs_id_seq'::regclass),
+					created_at timestamp NOT NULL,
+					user_id integer,
+					request_attributes json,
+					request_ip varchar(15),
+					response_status int4 NOT NULL,
+					response_size int4,
+					execution_time int4,
+					error_code int4,
+					param_type varchar,
+					param_start date,
+					param_end date,
+					param_country _varchar,
+					param_symbol _varchar,
+					param_point _varchar
+				);
+			", []);
+
+			$this->connection->runQuery("ALTER TABLE ONLY public.download_logs ADD CONSTRAINT download_log_pkey PRIMARY KEY (id);", []);
+			$this->connection->runQuery(
+				"ALTER TABLE ONLY public.download_logs ADD CONSTRAINT download_logs_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);",
+				[]
+			);
+		}
 
 		return $return;
 	}
