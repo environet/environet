@@ -24,7 +24,7 @@ class Request {
 	const PREFIX_ADMIN    = 'admin';
 	const PREFIX_UPLOAD   = 'upload';
 	const PREFIX_DOWNLOAD = 'download';
-	const PREFIX_JSONAPI = 'api';
+	const PREFIX_JSONAPI  = 'api';
 
 	/**
 	 * Request URI path
@@ -153,6 +153,41 @@ class Request {
 	 */
 	public function getQueryParams() {
 		return $this->parsedQuery;
+	}
+
+
+	/**
+	 * Get and parse extra parameters from header (x-request-attr)
+	 * @return array
+	 */
+	public function getExtraParams(): array {
+		$header = $_SERVER['HTTP_X_REQUEST_ATTR'] ?? null;
+		$extraParams = [];
+		if ($header) {
+			$parts = explode(';', $header);
+			foreach ($parts as $part) {
+				$partItems = preg_split('/\s+/', $part);
+				if (!(count($partItems) === 2 && base64_decode($partItems[0]) && base64_decode($partItems[1]))) {
+					continue;
+				}
+				$extraParams[base64_decode($partItems[0])] = base64_decode($partItems[1]);
+			}
+		}
+
+		return $extraParams;
+	}
+
+
+	/**
+	 * Get client IP address
+	 * @return string|null
+	 */
+	public function getClientIp(): ?string {
+		if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+			return $_SERVER['HTTP_X_FORWARDED_FOR'];
+		}
+
+		return $_SERVER['REMOTE_ADDR'] ?? null;
 	}
 
 

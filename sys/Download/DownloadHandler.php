@@ -6,12 +6,15 @@ namespace Environet\Sys\Download;
 use DateInterval;
 use DateTime;
 use Environet\Sys\Download\Exceptions\DownloadException;
+use Environet\Sys\General\Db\DownloadLogQueries;
 use Environet\Sys\General\Db\MonitoringPointQueries;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\Selectors\MonitoringPointSelector;
 use Environet\Sys\General\Db\Selectors\ObservedPropertySelector;
 use Environet\Sys\General\Exceptions\AccessRuleException;
 use Environet\Sys\General\Exceptions\ApiException;
+use Environet\Sys\General\Exceptions\InvalidConfigurationException;
+use Environet\Sys\General\Exceptions\MissingEventTypeException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\HttpClient\ApiHandler;
 use Environet\Sys\General\Identity;
@@ -36,6 +39,11 @@ class DownloadHandler extends ApiHandler {
 	 * @inheritDoc
 	 */
 	protected const HANDLER_PERMISSION = 'api.download';
+
+	/**
+	 * @var array
+	 */
+	protected array $downloadLog;
 
 
 	/**
@@ -180,6 +188,19 @@ class DownloadHandler extends ApiHandler {
 	 */
 	public function handleRequest() {
 		try {
+			//Set basic data of download log
+			$this->downloadLog = [
+				'created_at'         => date('Y-m-d H:i:s'),
+				'param_type'         => $this->request->getQueryParam('type'),
+				'param_start'        => $this->request->getQueryParam('start'),
+				'param_end'          => $this->request->getQueryParam('end'),
+				'param_country'      => $this->request->getQueryParam('country'),
+				'param_symbol'       => $this->request->getQueryParam('symbol'),
+				'param_point'        => $this->request->getQueryParam('point'),
+				'request_attributes' => ($extraParams = $this->request->getExtraParams()) ? json_encode($extraParams) : null,
+				'request_ip'         => $this->request->getClientIp()
+			];
+
 			$this->authorizeRequest();
 
 			// Observation point type check
@@ -245,22 +266,62 @@ class DownloadHandler extends ApiHandler {
 
 			$queryBuilder->setCountries($this->parseArrayParam('country'));
 
-			return (new Response((new CreateOutputXml())->generateXml($queryBuilder->getResults())->asXML()))->setHeaders(['Content-type: application/xml']);
+			$response = (new Response((new CreateOutputXml())->generateXml($queryBuilder->getResults())->asXML()))->setHeaders(['Content-type: application/xml']);
+
+			$this->saveDownloadLog($response);
+
+			return $response;
 		} catch (DownloadException $e) {
 			// Create ErrorResponse xml
 			http_response_code(400);
 
 			exception_logger($e);
 
-			return (new Response((new CreateErrorXml())->generateXml($e->getErrorXmlData())->asXML()))->setHeaders(['Content-type: application/xml']);
+			$response = (new Response((new CreateErrorXml())->generateXml($e->getErrorXmlData())->asXML()))
+				->setHeaders(['Content-type: application/xml'])
+				->setStatusCode(400);
+
+			$this->saveDownloadLog($response, $e->getCode());
+
+			return $response;
 		} catch (Throwable $e) {
 			// Create ErrorResponse xml
 			http_response_code(500);
 
 			exception_logger($e);
 
-			return (new Response((new CreateErrorXml())->generateXml([new ErrorXmlData(500, $e->getMessage())])->asXML()))
-				->setHeaders(['Content-type: application/xml']);
+			$response = (new Response((new CreateErrorXml())->generateXml([new ErrorXmlData(500, $e->getMessage())])->asXML()))
+				->setHeaders(['Content-type: application/xml'])
+				->setStatusCode(500);
+
+			$this->saveDownloadLog($response, $e->getCode());
+
+			return $response;
+		}
+	}
+
+
+	/**
+	 * Add some extra parameters to download log, and save it
+	 *
+	 * @param Response $response
+	 * @param int|null $errorCode
+	 *
+	 * @return void
+	 */
+	protected function saveDownloadLog(Response $response, ?int $errorCode = null) {
+		if ($this->downloadLog) {
+			$this->downloadLog['user_id'] = $this->identity ? $this->identity->getId() : null;
+			$this->downloadLog['response_status'] = $response->getStatusCode();
+			$this->downloadLog['error_code'] = $errorCode;
+			$this->downloadLog['response_size'] = $response->getSize();
+			$this->downloadLog['execution_time'] = round((microtime(true) - REQUEST_START_TIME) * 1000);
+
+			try {
+				DownloadLogQueries::save($this->downloadLog);
+			} catch (MissingEventTypeException|InvalidConfigurationException|QueryException $e) {
+				//Muted exception of saving download query
+			}
 		}
 	}
 

@@ -129,6 +129,15 @@ class Response {
 
 
 	/**
+	 * Get size of response
+	 * @return int
+	 */
+	public function getSize(): int {
+		return mb_strlen($this->getContent());
+	}
+
+
+	/**
 	 * Return the body content, and set all headers + status code
 	 */
 	public function __toString() {

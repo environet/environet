@@ -14,6 +14,7 @@ use Environet\Sys\Config;
 
 //The root path of the source code. Every include and other file links should be relative to this.
 define('SRC_PATH', realpath(__DIR__.'/..'));
+define('REQUEST_START_TIME', microtime(true));
 
 require_once SRC_PATH.'/sys/init_autoloader.inc.php';
 
