@@ -152,10 +152,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 					}
 
 					if ($item['Type'] === 'ObservedPropertyValue' && $item['Value'] === '') {
-						if ($this->skipEmptyValueTag) {
-							//Skip empty values, jump to next group
-							continue;
-						} else {
+						if (!$this->skipEmptyValueTag) {
 							//Convert empty values to 0
 							$item['Value'] = '0';
 						}
