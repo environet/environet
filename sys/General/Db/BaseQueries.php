@@ -193,7 +193,7 @@ class BaseQueries {
 	 * @uses \Environet\Sys\General\EventLogger::log()
 	 * @see  Connection
 	 */
-	public static function save(array $data, &$id = null, string $primaryKey = 'id', array $record = null) {
+	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
 		$connection = Connection::getInstance();
 		$connection->pdo->beginTransaction();
 
