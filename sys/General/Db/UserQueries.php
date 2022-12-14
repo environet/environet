@@ -146,13 +146,12 @@ class UserQueries extends BaseQueries {
 	 * A new static key will be attached to operator's data, it's the 'connection_type', which can be 'direct', 'group', and 'both'.
 	 *
 	 * @param int   $userId   Id of the user
-	 * @param array $groupIds Array of the user's group ids
 	 *
 	 * @return array Array of merged operators
 	 * @throws QueryException
 	 * @uses \Environet\Sys\General\Db\Query\Select::run()
 	 */
-	public static function getMergedOperatorsOfUser(int $userId, array $groupIds = []) {
+	public static function getMergedOperatorsOfUser(int $userId) {
 		// Get direct operators, with ids as array keys
 		$operators = (new Select())
 			->select(['operator.*', '\'direct\' as connection_type'])
@@ -161,25 +160,6 @@ class UserQueries extends BaseQueries {
 			->where('operator_users.usersid = :userId')
 			->addParameter(':userId', $userId)
 			->run(Query::KEY_BY_ID);
-
-		if ($groupIds) {
-			// Get inherited group operators with ids as array keys
-			$groupOperators = (new Select())
-				->from('operator')
-				->select(['operator.*', '\'group\' as connection_type'])
-				->join('operator_groups', 'operator_groups.operatorid = operator.id', Query::JOIN_LEFT)
-				->whereIn('operator_groups.groupsid', $groupIds, 'groupId')
-				->run(Query::KEY_BY_ID);
-
-			// Add inherited-only operators to the $operators array and change connection type for operators which either direct and group
-			foreach ($groupOperators as $id => $groupOperator) {
-				if (isset($operators[$id])) {
-					$operators[$id]['connection_type'] = 'both';
-				} else {
-					$operators[$id] = $groupOperator;
-				}
-			}
-		}
 
 		// Return the array of operators
 		return array_values($operators);
@@ -267,9 +247,7 @@ class UserQueries extends BaseQueries {
 	 * @throws QueryException
 	 */
 	public static function getOperatorsOfUser(int $userId) {
-		$groups = static::getUserGroups($userId);
-
-		return static::getMergedOperatorsOfUser($userId, array_column($groups, 'id'));
+		return static::getMergedOperatorsOfUser($userId);
 	}
 
 
@@ -362,7 +340,7 @@ class UserQueries extends BaseQueries {
 		$record['show_groups'] = UserQueries::getUserGroups($record['id']);
 
 		// Get direct and inherited operators
-		$record['show_operators'] = UserQueries::getMergedOperatorsOfUser($record['id'], array_column($record['show_groups'], 'id'));
+		$record['show_operators'] = UserQueries::getMergedOperatorsOfUser($record['id']);
 
 		// Get a list of public keys
 		$record['show_publicKeys'] = (new Select())
@@ -385,6 +363,15 @@ class UserQueries extends BaseQueries {
 			->where('usersid = :userId')
 			->addParameter(':userId', $record['id'])
 			->run(Query::FETCH_COLUMN);
+
+		$record['form_operators'] = (new Select())
+			->select('operatorid')
+			->from('operator_users')
+			->where('usersid = :userId')
+			->addParameter(':userId', $record['id'])
+			->run(Query::FETCH_COLUMN);
+
+		$record['operatorid'] = reset($record['form_operators']) ?: null;
 
 		return $record;
 	}

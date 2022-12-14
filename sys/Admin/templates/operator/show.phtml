@@ -17,18 +17,6 @@
         <dd class="col-sm-9"><?=$record['phone'] ?? '';?></dd>
         <dt class="col-sm-3">URL</dt>
         <dd class="col-sm-9"><?=$record['url'] ?? '';?></dd>
-        <dt class="col-sm-3">Groups</dt>
-        <dd class="col-sm-9">
-            <ul>
-            <?php foreach ($record['merged_groups'] ?: [] as $group) { ?>
-                <li>
-                    <a href="/admin/groups/show?id=<?=$group['id'];?>">#<?=$group['id'] ?? null;?></a>
-                    -
-                    <span><?=$group['name'] ?? null;?></span>
-                </li>
-            <?php } ?>
-            </ul>
-        </dd>
         <dt class="col-sm-3">Users</dt>
         <dd class="col-sm-9">
             <ul>

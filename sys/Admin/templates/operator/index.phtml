@@ -10,7 +10,6 @@
             <tr>
                 <th><?=sortableColumn('Operator name', 'name');?></th>
                 <th><?=sortableColumn('Users of operator', 'user_count');?></th>
-                <th><?=sortableColumn('Groups of operator', 'group_count');?></th>
                 <th class="actions">Actions</th>
             </tr>
         </thead>
@@ -22,7 +21,6 @@
                 <tr>
                     <td><?=$operator['name'] ?? null;?></td>
                     <td><?=$operator['user_count'] ?? null;?></td>
-                    <td><?=$operator['group_count'] ?? null;?></td>
                     <td class="actions">
                         <a href="/admin/operators/show?id=<?=$operator['id'];?>"><i class="fas fa-eye text-muted"></i></a>
                         <a href="/admin/operators/edit?id=<?=$operator['id'];?>"><i class="fas fa-edit"></i></a>

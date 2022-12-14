@@ -126,16 +126,9 @@ class GroupCrud extends CrudPage {
 			->addParameter(':groupId', $groupId)
 			->run(Query::FETCH_COUNT);
 
-		$operatorGroupCount = (new Select())
-			->select('COUNT(*)')
-			->from('operator_groups')
-			->where('groupsid = :groupId')
-			->addParameter(':groupId', $groupId)
-			->run(Query::FETCH_COUNT);
-
 		// if it has active "upper" relation, we don't delete it
-		if ($userGroupCount > 0 || $operatorGroupCount > 0) {
-			$this->addMessage('The requested group isn\'t deletable because it has active relation with operators or/and users!');
+		if ($userGroupCount > 0) {
+			$this->addMessage('The requested group isn\'t deletable because it has active relation with users!');
 		} else {
 			// otherwise delete the groups and the relations under the group
 			(new Delete())->table('group_permissions')->where('groupsid = :groupId')->addParameter(':groupId', $groupId)->run();

@@ -286,9 +286,7 @@ abstract class AbstractInputXmlProcessor {
 	 * @throws QueryException
 	 */
 	protected function getOperatorIdsOfIdentity(Identity $identity): array {
-		$groups = array_column(UserQueries::getUserGroups($identity->getId()), 'id');
-
-		return array_column(UserQueries::getMergedOperatorsOfUser($identity->getId(), $groups ?: []), 'id');
+		return array_column(UserQueries::getMergedOperatorsOfUser($identity->getId()), 'id');
 	}
 
 

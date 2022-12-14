@@ -122,14 +122,6 @@ class GroupQueries extends BaseQueries {
 				->where('groupsid = :groupId')
 				->addParameter(':groupId', $id)
 				->run();
-
-			$record['operators'] = (new Select())
-				->select('operator.*')
-				->from('operator')
-				->join('operator_groups', 'operator_groups.operatorid = operator.id', Query::JOIN_INNER)
-				->where('groupsid = :groupId')
-				->addParameter(':groupId', $id)
-				->run();
 		}
 
 		return $record;
