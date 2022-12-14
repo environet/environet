@@ -51,7 +51,7 @@
 			<?php $selectedUsers = array_filter(formFieldValue('form_users', $record) ?: []); ?>
 			<?php for ($i = 0; $i <= count($selectedUsers); $i ++) { ?>
 				<div class="field">
-					<select name="form_users[]">
+					<select name="form_users[]" class="form-control">
 						<?=selectOptions($users, $selectedUsers[$i] ?? null, ' - ' . __('No user') . ' - ');?>
 					</select>
 				</div>

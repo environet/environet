@@ -85,7 +85,7 @@
 			<legend><?=__('River basin');?></legend>
 			<?php $selectedRiverBasin = formFieldValue('river_basin_id', $record); ?>
 			<div class="field">
-				<select name="river_basin_id">
+				<select name="river_basin_id" class="form-control">
 					<?=selectOptions($riverBasins, $selectedRiverBasin ?? null, ' - '.__('No river basin').' - ');?>
 				</select>
 			</div>
@@ -105,7 +105,7 @@
             <legend><?=__('Station classification');?></legend>
             <?php $selectedClassification = formFieldValue('classification', $record); ?>
             <div class="field">
-                <select name="classification">
+                <select name="classification" class="form-control">
                     <?=selectOptions($classifications, $selectedClassification ?? null, ' - '.__('No classification').' - ');?>
                 </select>
             </div>
@@ -115,7 +115,7 @@
             <legend><?=__('Operator');?></legend>
 			<?php $selectedOperator = formFieldValue('operator', $record); ?>
             <div class="field">
-                <select name="operator" class="<?=isFieldInvalidClass('operator', get_defined_vars());?>">
+                <select name="operator" class="form-control <?=isFieldInvalidClass('operator', get_defined_vars());?>">
 					<?=selectOptions($operators, $selectedOperator ?? null, ' - '.__('No operator').' - ');?>
                 </select>
 				<div class="invalid-feedback">

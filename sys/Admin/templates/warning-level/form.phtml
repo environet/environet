@@ -8,7 +8,7 @@
             <fieldset class="form-group">
                 <div class="field">
                     <legend><?=__('Operator');?></legend>
-                    <select name="operatorid">
+                    <select name="operatorid" class="form-control">
 	                    <?=selectOptions($operators, formFieldValue('operatorid', $record));?>
                     </select>
 					<div class="invalid-feedback">
@@ -20,7 +20,7 @@
             <fieldset class="form-group">
                 <div class="field">
                     <legend><?=__('Warning level group');?></legend>
-                    <select name="warning_level_groupid">
+                    <select name="warning_level_groupid" class="form-control">
 						<?=selectOptions($groups, formFieldValue('warning_level_groupid', $record));?>
                     </select>
 					<div class="invalid-feedback">
