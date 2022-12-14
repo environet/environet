@@ -102,6 +102,9 @@ class UserQueries extends BaseQueries {
 				->addParameter(':userId', $id)
 				->run();
 
+			if (isset($data['operatorid'])) {
+				self::saveConnections($data['operatorid'] ? [$data['operatorid']] : [], 'operator_users', 'operatorid', 'usersid', $id, true);
+			}
 			self::savePermissions($data['form_permissions'], $id);
 			self::saveGroups($data['form_groups'], $id);
 		} else {
@@ -382,6 +385,41 @@ class UserQueries extends BaseQueries {
 	 */
 	public static function getDeleteEventType(): string {
 		return EventLogger::EVENT_TYPE_USER_DELETE;
+	}
+
+
+	/**
+	 * Get list of users which doesn't have any operators assigned
+	 *
+	 * @param array  $additionalIds
+	 * @param string $labelField The name field of the table.
+	 * @param string $primaryKey The primary key of the specified table.
+	 *
+	 * @return array|null
+	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses \exception_logger()
+	 */
+	public static function getOptionsListWithoutOperators(array $additionalIds = [], string $labelField = 'name', string $primaryKey = 'id'): ?array {
+		try {
+			$query = (new Select())
+				->from(static::$tableName)
+				->select([static::$tableName . '.' . $primaryKey, static::$tableName . '.' . $labelField])
+				->orderBy(static::$tableName . '.' . $primaryKey, 'ASC')
+				->join('operator_users', 'operator_users.usersid = users.id', Query::JOIN_LEFT);
+			if (!empty($additionalIds)) {
+				$query->where('(operator_users.operatorid IS NULL) OR users.id IN (' . implode(',', $additionalIds) . ')');
+			} else {
+				$query->where('(operator_users.operatorid IS NULL)');
+			}
+			$records = $query->run();
+			$records = array_combine(array_column($records, $primaryKey), array_column($records, $labelField));
+
+			return $records ?: [];
+		} catch (QueryException $e) {
+			exception_logger($e);
+
+			return [];
+		}
 	}
 
 

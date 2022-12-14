@@ -74,6 +74,18 @@
 			<?php } ?>
 		</fieldset>
 
+		<fieldset class="form-group <?=isFieldInvalidClass('operatorid', get_defined_vars());?>">
+			<legend><?=__('Operator');?></legend>
+			<div class="field">
+				<select name="operatorid" id="operatorid" class="form-control <?=isFieldInvalidClass('operatorid', get_defined_vars());?>">
+					<?=selectOptions($operators, formFieldValue('operatorid', $record), ' - ' . __('No operator') . ' - ');?>
+				</select>
+				<div class="invalid-feedback">
+					<?=getFieldInvalidMessage('operatorid', get_defined_vars());?>
+				</div>
+			</div>
+		</fieldset>
+
 		<div class="field">
 			<input type="submit" class="btn btn-primary" value="<?=__('Save');?>"/>
 		</div>

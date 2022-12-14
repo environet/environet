@@ -4,6 +4,7 @@ namespace Environet\Sys\Admin\Pages\User;
 
 use Environet\Sys\Admin\Pages\CrudPage;
 use Environet\Sys\General\Db\GroupQueries;
+use Environet\Sys\General\Db\OperatorQueries;
 use Environet\Sys\General\Db\PermissionQueries;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
@@ -131,6 +132,7 @@ class UserCrud extends CrudPage {
 		return [
 			'permissions' => PermissionQueries::getOptionList(),
 			'groups'      => GroupQueries::getOptionList(),
+			'operators'   => OperatorQueries::getOptionList(),
 		];
 	}
 
