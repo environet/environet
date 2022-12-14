@@ -32,7 +32,7 @@ You can select a operator to update if you click the "Pencil" icon at the end of
 
 Path: `/admin/operators/edit?id=[operator identifier]`
 
-Here you can change all of operator's data and you can assign  more users or groups to the specific operator.
+Here you can change all of operator's data and you can assign more users to the specific operator.
 
 #### Operator show page
 
@@ -40,7 +40,7 @@ You can select a operator to show if you click the "Eye" icon at the end of the 
 
 Path: `/admin/operators/show?id=[operator identifier]`
 
-Here you can see the stored data of the operators and its relations to direction of users and groups.
+Here you can see the stored data of the operators and its relations to direction of users.
 
 #### Operator deleting
 
