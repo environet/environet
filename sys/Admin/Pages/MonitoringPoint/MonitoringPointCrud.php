@@ -131,10 +131,10 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 			$query->where('is_active = :isActive')->addParameter('isActive', $value);
 		}
 
-        if ($this->request->getQueryParam('is_out_of_order') !== null) {
-            $value = $this->request->getQueryParam('is_out_of_order') === '_0' ? false : true;
-            $query->where('is_out_of_order = :isOutOfOrder')->addParameter('isOutOfOrder', $value);
-        }
+		if ($this->request->getQueryParam('is_out_of_order') !== null) {
+			$value = $this->request->getQueryParam('is_out_of_order') === '_0' ? false : true;
+			$query->where('is_out_of_order = :isOutOfOrder')->addParameter('isOutOfOrder', $value);
+		}
 
 		$query->join('operator', "operator.id = {$this->queriesClass::$tableName}.operatorid");
 		$query->select('operator.name as operator');
@@ -261,24 +261,24 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 */
 	public function getCsvColumns(): array {
 		return [
-			'name' => 'Station name [text]',
-			'location' => 'Location [text]',
-			'country' => '2-char country code [text]',
-			'operator' => ['title' => 'Operator ID [ID]', 'outField' => 'operatorid'],
-			'riverbank' => ['title' => 'Riverbank ID [ID]', 'outField' => 'bankid'],
-			'river' => ['title' => 'River ID [ID]', 'outField' => 'eucd_riv'],
-			'vertical_reference' => 'Vertical reference [text]',
-			'long' => 'Longitude coordinate [number]',
-			'lat' => 'Latitude coordinate [number]',
-			'z' => 'Z oordinate [number]',
-			'maplong' => 'Map longitude coordinate [number]',
-			'maplat' => 'Map longitude coordinate [number]',
-			'start_time' => 'Start time [yyyy-mm-dd]',
-			'end_time' => 'End time [yyyy-mm-dd]',
-			'utc_offset' => 'UTC offset [number]',
-			'river_basin' => ['title' => 'River basin id/code [number]', 'outField' => 'river_basin_id'],
-			'last_updated_at' => 'Last update at [yyyy-mm-dd hh-mm-ss]',
-			'last_updated_by' => 'Last updated by - user id [ID]',
+			'name'                             => 'Station name [text]',
+			'location'                         => 'Location [text]',
+			'country'                          => '2-char country code [text]',
+			'operator'                         => ['title' => 'Operator ID [ID]', 'outField' => 'operatorid'],
+			'riverbank'                        => ['title' => 'Riverbank ID [ID]', 'outField' => 'bankid'],
+			'river'                            => ['title' => 'River ID [ID]', 'outField' => 'eucd_riv'],
+			'vertical_reference'               => 'Vertical reference [text]',
+			'long'                             => 'Longitude coordinate [number]',
+			'lat'                              => 'Latitude coordinate [number]',
+			'z'                                => 'Z oordinate [number]',
+			'maplong'                          => 'Map longitude coordinate [number]',
+			'maplat'                           => 'Map longitude coordinate [number]',
+			'start_time'                       => 'Start time [yyyy-mm-dd]',
+			'end_time'                         => 'End time [yyyy-mm-dd]',
+			'utc_offset'                       => 'UTC offset [number]',
+			'river_basin'                      => ['title' => 'River basin id/code [number]', 'outField' => 'river_basin_id'],
+			'last_updated_at'                  => 'Last update at [yyyy-mm-dd hh-mm-ss]',
+			'last_updated_by'                  => 'Last updated by - user id [ID]',
 			$this->observedPropertiesCsvColumn => 'Observered properties [text]'
 		];
 	}
@@ -305,19 +305,36 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 			$added = [];
 			$errorLines = [];
 			$allowedOperatorIds = $this->getAllowedOperatorIds();
+			$fixedOperator = null;
+			if (!is_null($allowedOperatorIds) && count($allowedOperatorIds) === 1) {
+				$fixedOperator = reset($allowedOperatorIds);
+			}
 			foreach ($csvLines as $lineNumber => $line) {
 				$csvId = $line[array_search($this->getGlobalIdName(), $this->headingLine)];
-				$operatorId = $line[array_search('operator', $this->headingLine)];
-				$record = $this->queriesClass::getByNcdAndOperator($this->getGlobalIdName(), $csvId, $operatorId);
-				$recordId = $record ? $record['id'] : null;
-
-				//Allow operator only if user is allowed to edit the point
-				if ($recordId && !is_null($allowedOperatorIds) && !in_array($record['operatorid'], $allowedOperatorIds)) {
-					$errorLines[] = $csvId;
+				$operatorId = null;
+				if (array_search('operator', $this->headingLine)) {
+					$operatorId = $line[array_search('operator', $this->headingLine)];
+				}
+				if (empty($operatorId) && $fixedOperator) {
+					$operatorId = $fixedOperator;
+				}
+				if (empty($operatorId)) {
+					$errorLines[] = [$csvId, 'Missing required operator ID'];
 					continue;
 				}
 
+				//Allow operator only if user is allowed to edit the point
+				if (!in_array($operatorId, $allowedOperatorIds)) {
+					$errorLines[] = [$csvId, 'Operator not allowed'];
+					continue;
+				}
+
+				$record = $this->queriesClass::getByNcdAndOperator($this->getGlobalIdName(), $csvId, $operatorId);
+				$recordId = $record ? $record['id'] : null;
+
 				$data = $this->dataFromCsvLine($line);
+
+				$data['operator'] = $operatorId;
 
 				try {
 					$this->queriesClass::save($data, $recordId, 'id', $record);
@@ -328,7 +345,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 						$added[] = $csvId;
 					}
 				} catch (\Exception $e) {
-					$errorLines[] = $csvId;
+					$errorLines[] = [$csvId, 'Error during save: ' . $e->getMessage()];
 				}
 			}
 
@@ -339,13 +356,16 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 				$this->addMessage('Updated points: ' . count($updated), self::MESSAGE_SUCCESS);
 			}
 			if (!empty($errorLines)) {
-				$this->addMessage('Error with points: ' . implode(',', $errorLines), self::MESSAGE_ERROR);
+				foreach ($errorLines as $errorLine) {
+					[$csvId, $errorMessage] = $errorLine;
+					$this->addMessage(sprintf('Error with point #%d: %s', $csvId, $errorMessage), self::MESSAGE_ERROR);
+				}
 			}
 
 			return $this->redirect($this->getListPageLinkWithState());
 		}
 
-		$pageTitle = 'CSV upload '.$this->getEntityName(true);
+		$pageTitle = 'CSV upload ' . $this->getEntityName(true);
 
 		//Find some enums for upload
 		$query = (new Select())
@@ -400,6 +420,11 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 		//Generate CSV
 		$csv = fopen('php://temp', 'r+');
 		$csvColumns = $this->getCsvColumns();
+
+		if (!$this->request->getIdentity()->isSuperAdmin()) {
+			unset($csvColumns['operator']);
+		}
+
 		fputcsv($csv, array_keys($csvColumns));
 		foreach ($records as $record) {
 			$line = [];
@@ -426,7 +451,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 
 		$response->addHeader('Content-Type: text/csv');
 		$fileName = str_replace(' ', '_', $this->getEntityName(true));
-		$response->addHeader('Content-Disposition: attachment; filename="'.$fileName.'.csv"');
+		$response->addHeader('Content-Disposition: attachment; filename="' . $fileName . '.csv"');
 
 		return $response;
 	}
@@ -444,17 +469,17 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 			->run(Query::FETCH_COLUMN));
 
 		return [
-			'is_active' => [
+			'is_active'       => [
 				'label'    => 'Is active',
 				'options'  => ['_0' => 'Inactive', '_1' => 'Active'],
 				'selected' => $this->request->getQueryParam('is_active') ?? null
 			],
-            'is_out_of_order' => [
-                'label'    => 'Is Ouf of Order',
-                'options'  => ['_0' => 'No', '_1' => 'Yes'],
-                'selected' => $this->request->getQueryParam('is_out_of_order') ?? null
-            ],
-			'country' => [
+			'is_out_of_order' => [
+				'label'    => 'Is Ouf of Order',
+				'options'  => ['_0' => 'No', '_1' => 'Yes'],
+				'selected' => $this->request->getQueryParam('is_out_of_order') ?? null
+			],
+			'country'         => [
 				'label'    => 'Country',
 				'options'  => array_combine($countries, $countries),
 				'selected' => $this->request->getQueryParam('country') ?? null

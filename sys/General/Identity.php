@@ -98,6 +98,7 @@ class Identity {
 
 			$identity = new static($userId, $user);
 			$identity->data['is_super_admin'] = $identity->isSuperAdmin();
+
 			return $identity;
 		} catch (Exceptions\QueryException $e) {
 			// Error during sql query
@@ -149,7 +150,7 @@ class Identity {
 	 * @return bool
 	 * @throws Exceptions\QueryException
 	 */
-	protected function isSuperAdmin(): bool {
+	public function isSuperAdmin(): bool {
 		return in_array(self::ADMIN_PERMISSION, $this->getPermissions());
 	}
 
