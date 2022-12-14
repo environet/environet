@@ -124,7 +124,7 @@ class MeasurementAccessRuleCrud extends CrudPage {
 	 * @inheritDoc
 	 * @throws QueryException
 	 */
-	protected function formContext(): array {
+	protected function formContext(array $record = null): array {
 
 		$options = [
 			'operators' => OperatorQueries::getOptionList(),

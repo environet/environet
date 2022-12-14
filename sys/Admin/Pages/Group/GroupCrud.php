@@ -73,7 +73,7 @@ class GroupCrud extends CrudPage {
 	/**
 	 * @inheritDoc
 	 */
-	protected function formContext(): array {
+	protected function formContext(array $record = null): array {
 		return [
 			'permissions' => PermissionQueries::getOptionList(),
 		];

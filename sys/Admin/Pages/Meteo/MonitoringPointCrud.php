@@ -82,7 +82,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 * @return array
 	 * @throws QueryException
 	 */
-	protected function formContext(): array {
+	protected function formContext(array $record = null): array {
 		return [
 			'classifications'    => MeteoStationClassificationQueries::getOptionList('value'),
 			'operators'          => $this->getOperatorList(),
