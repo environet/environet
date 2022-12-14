@@ -260,11 +260,15 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 * @return string[]
 	 */
 	public function getCsvColumns(): array {
+		$operatorNotAdmin = 'Operator ID [ID] - Column is optional!';
 		return [
 			'name'                             => 'Station name [text]',
 			'location'                         => 'Location [text]',
 			'country'                          => '2-char country code [text]',
-			'operator'                         => ['title' => 'Operator ID [ID]', 'outField' => 'operatorid'],
+			'operator'                         => [
+				'title' => 'Operator ID [ID]' . (!$this->request->getIdentity()->isSuperAdmin() ? '  - Column is optional!' : ''),
+				'outField' => 'operatorid'
+			],
 			'riverbank'                        => ['title' => 'Riverbank ID [ID]', 'outField' => 'bankid'],
 			'river'                            => ['title' => 'River ID [ID]', 'outField' => 'eucd_riv'],
 			'vertical_reference'               => 'Vertical reference [text]',
