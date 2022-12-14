@@ -121,7 +121,7 @@ abstract class AbstractInputXmlProcessor {
 			$monitoringPointId = (string) $this->xml->xpath('/environet:UploadData/environet:MonitoringPointId[1]')[0] ?? null;
 
 			// Find monitoring point in database
-			return !!($mPoint = $this->findMonitoringPoint($monitoringPointId, $identity, true));
+			return !!($mPoint = $this->findMonitoringPoint($monitoringPointId, $identity));
 		} catch (Exception $e) {
 			return false;
 		}
@@ -164,6 +164,11 @@ abstract class AbstractInputXmlProcessor {
 					'Monitoring point NCD: ' .  $monitoringPointId,
 					'Username: ' . $identityData['username']
 				];
+				if ($this->findMonitoringPoint($monitoringPointId, $identity)) {
+					//Found if inactive, add different error message
+					throw new UploadException(405, $messages);
+				}
+
 				throw new UploadException(402, $messages);
 			}
 
