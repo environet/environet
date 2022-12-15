@@ -9,6 +9,18 @@
         <dd class="col-sm-9">#<?=$record['id'] ?? '';?></dd>
         <dt class="col-sm-3">Name</dt>
         <dd class="col-sm-9"><?=$record['name'] ?? '';?></dd>
+        <dt class="col-sm-3">Operators</dt>
+        <dd class="col-sm-9">
+            <ul>
+            <?php foreach ($record['operators'] ?: [] as $operator) { ?>
+                <li>
+                    <a href="/admin/operators/show?id=<?=$operator['id'];?>">#<?=$operator['id'] ?? null;?></a>
+                    -
+                    <span><?=$operator['name'] ?? null;?></span>
+                </li>
+            <?php } ?>
+            </ul>
+        </dd>
         <dt class="col-sm-3">Users</dt>
         <dd class="col-sm-9">
             <ul>

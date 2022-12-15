@@ -3,6 +3,7 @@
 namespace Environet\Sys\Admin\Pages\Operator;
 
 use Environet\Sys\Admin\Pages\CrudPage;
+use Environet\Sys\General\Db\GroupQueries;
 use Environet\Sys\General\Db\OperatorQueries;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\UserQueries;
@@ -79,11 +80,19 @@ class OperatorCrud extends CrudPage {
 
 			$directUserCountQuery = (new Select())->select('COUNT(*)')->from('operator_users')
 												  ->where('operator_users.operatorid = operator.id')->buildQuery();
+			$groupUserCountQuery = (new Select())->select('COUNT(*)')->from('operator_groups')
+												 ->join('users_groups', 'users_groups.groupsid = operator_groups.groupsid')
+												 ->where('operator_groups.operatorid = operator.id')->buildQuery();
+			$groupCountQuery = (new Select())->select('COUNT(*)')->from('operator_groups')
+											 ->where('operator_groups.operatorid = operator.id')->buildQuery();
+
+
 
 			//Base query with joins and conditions
 			$query = (new Select())
 				->select('operator.*')
-				->select('(' . $directUserCountQuery . ') as user_count')
+				->select('(' . $directUserCountQuery . ') + (' . $groupUserCountQuery . ') as user_count')
+				->select('(' . $groupCountQuery . ') as group_count')
 				->from('operator');
 
 			$this->modifyListQuery($query);
@@ -156,7 +165,8 @@ class OperatorCrud extends CrudPage {
 	 */
 	protected function formContext(): array {
 		return [
-			'users'  => UserQueries::getOptionsListWithoutOperators($record['form_users'] ?? [])
+			'users'  => UserQueries::getOptionList(),
+			'groups' => GroupQueries::getOptionList(),
 		];
 	}
 
