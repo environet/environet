@@ -11,6 +11,7 @@ use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\EventLogger;
 use Environet\Sys\General\Exceptions\HttpNotFoundException;
 use Environet\Sys\General\Exceptions\QueryException;
+use Environet\Sys\General\Exceptions\RenderException;
 use Environet\Sys\General\Response;
 
 /**
