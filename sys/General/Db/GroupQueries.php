@@ -80,7 +80,7 @@ class GroupQueries extends BaseQueries {
 			]));
 
 			// add permission relation to group
-			self::savePermissions($data['permissions'] ?? [], $id);
+			self::savePermissions($data['permissions'] ?? [], $insertId);
 		}
 
 		return [$id, $changes];
