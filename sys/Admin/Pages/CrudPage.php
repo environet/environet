@@ -374,7 +374,7 @@ abstract class CrudPage extends BasePage {
 			'record'    => $record,
 			'listPage'  => $this->getListPageLinkWithState(),
 			'pageTitle' => $pageTitle
-		], $this->formContext($record));
+		], $this->formContext());
 
 		return $this->render($this->formTemplate, $context);
 	}
@@ -439,7 +439,7 @@ abstract class CrudPage extends BasePage {
 	 *
 	 * @return array
 	 */
-	protected function formContext(array $record = null): array {
+	protected function formContext(): array {
 		return [];
 	}
 

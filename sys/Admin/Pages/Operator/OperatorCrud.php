@@ -154,7 +154,7 @@ class OperatorCrud extends CrudPage {
 	/**
 	 * @inheritDoc
 	 */
-	protected function formContext(array $record = null): array {
+	protected function formContext(): array {
 		return [
 			'users'  => UserQueries::getOptionsListWithoutOperators($record['form_users'] ?? [])
 		];

@@ -101,7 +101,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 * @return array
 	 * @throws QueryException
 	 */
-	protected function formContext(array $record = null): array {
+	protected function formContext(): array {
 		return [
 			'classifications'    => HydroStationClassificationQueries::getOptionList('value'),
 			'operators'          => $this->getOperatorList(),
@@ -177,7 +177,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 			'listPage'  => $this->getListPageLinkWithState(),
 			'pageTitle' => $pageTitle,
 			'data'      => array_combine(array_keys($existingDataByKey), array_column($existingDataByKey, 'value'))
-		], $this->formContext($record), [
+		], $this->formContext(), [
 			'warningLevels'      => WarningLevelQueries::getOptionListForOperator($record['operatorid']),
 			'observedProperties' => HydroObservedPropertyQueries::getRealTimeOptionList(),
 		]);
