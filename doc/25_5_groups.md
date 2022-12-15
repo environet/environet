@@ -23,7 +23,7 @@ Here you can change the name of the group and you can assign more permission to 
 
 #### Group deleting
 
-You can delete a group if you click the "Trash" icon at the end of the specific row. If you clicked, it shows a confirm window, where you have to approve the deleting. **If any user have already assigned to the specified group, the delete operation cannot be performed.**
+You can delete a group if you click the "Trash" icon at the end of the specific row. If you clicked, it shows a confirm window, where you have to approve the deleting. **If any user or operator have already assigned to the specified group, the delete operation cannot be performed.**
 First time you have to detach these relations and after that you can delete the group.
 
 Path: `/admin/groups/delete?id=[group identifier]`
