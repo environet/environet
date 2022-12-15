@@ -69,8 +69,6 @@ class MigrateDb extends DbCommand {
 			'riverBasinNameIndex',
 			'pointLastUpdated',
 			'downloadLogs',
-			'userOperatorSingle',
-			'deleteOperatorGroups',
 		];
 		ini_set('memory_limit', - 1);
 
@@ -851,57 +849,6 @@ class MigrateDb extends DbCommand {
 				"ALTER TABLE ONLY public.download_logs ADD CONSTRAINT download_logs_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);",
 				[]
 			);
-		}
-
-		return $return;
-	}
-
-
-	/**
-	 * Create download logs table
-	 *
-	 * @param array $output
-	 *
-	 * @return int
-	 * @throws QueryException
-	 */
-	private function userOperatorSingle(array &$output): int {
-		$return = - 1;
-
-		$usersOperators = $this->connection->runQuery('SELECT * FROM operator_users', [])->fetchAll();
-		$users = [];
-		foreach ($usersOperators as $usersOperatorsItem) {
-			$users[$usersOperatorsItem['usersid']][] = $usersOperatorsItem['operatorid'];
-		}
-
-		$users = array_filter($users, function ($item) {
-			return count($item) > 1;
-		});
-
-		if (!empty($users)) {
-			$return = 0;
-			$userIds = implode(',', array_keys($users));
-			$this->console->writeLine("Please update users: $userIds, because these users are assigned to more than one operators", Console::COLOR_RED);
-		}
-
-		return $return;
-	}
-
-
-	/**
-	 * Create download logs table
-	 *
-	 * @param array $output
-	 *
-	 * @return int
-	 * @throws QueryException
-	 */
-	private function deleteOperatorGroups(array &$output): int {
-		$return = - 1;
-
-		if ($this->checkTable('operator_groups')) {
-			$return = 0;
-			$this->connection->runQuery("DROP TABLE IF EXISTS operator_groups;", []);
 		}
 
 		return $return;
