@@ -55,7 +55,7 @@
 			<?php $selectedPermissions = array_filter(formFieldValue('form_permissions', $record) ?: []); ?>
 			<?php for($i = 0; $i <= count($selectedPermissions); $i++) { ?>
 				<div class="field">
-					<select name="form_permissions[]" class="form-control">
+					<select name="form_permissions[]">
 						<?=selectOptions($permissions, $selectedPermissions[$i] ?? null, ' - '.__('No permission').' - ');?>
 					</select>
 				</div>
@@ -67,7 +67,7 @@
 			<?php $selectedGroups = array_filter(formFieldValue('form_groups', $record) ?: []); ?>
 			<?php for($i = 0; $i <= count($selectedGroups); $i++) { ?>
 				<div class="field">
-					<select name="form_groups[]" class="form-control">
+					<select name="form_groups[]">
 						<?=selectOptions($groups, $selectedGroups[$i] ?? null, ' - '.__('No groups').' - ');?>
 					</select>
 				</div>

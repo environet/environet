@@ -85,7 +85,7 @@
             <legend><?=__('River');?></legend>
     			<?php $selectedRiver = formFieldValue('river', $record); ?>
             <div class="field">
-                <select name="river" class="form-control">
+                <select name="river">
 					<?=selectOptions($rivers, $selectedRiver ?? null, ' - '.__('No river').' - ');?>
                 </select>
             </div>
@@ -95,7 +95,7 @@
             <legend><?=__('Riverbank');?></legend>
 			<?php $selectedRiverbank = formFieldValue('riverbank', $record); ?>
             <div class="field">
-                <select name="riverbank" class="form-control">
+                <select name="riverbank">
 					<?=selectOptions($riverbanks, $selectedRiverbank ?? null, ' - '.__('No riverbank').' - ');?>
                 </select>
             </div>
@@ -117,7 +117,7 @@
 			<legend><?=__('River basin');?></legend>
 			<?php $selectedRiverBasin = formFieldValue('river_basin_id', $record); ?>
 			<div class="field">
-				<select name="river_basin_id" class="form-control">
+				<select name="river_basin_id">
 					<?=selectOptions($riverBasins, $selectedRiverBasin ?? null, ' - '.__('No river basin').' - ');?>
 				</select>
 			</div>
@@ -137,7 +137,7 @@
             <legend><?=__('Station classification');?></legend>
             <?php $selectedClassification = formFieldValue('classification', $record); ?>
             <div class="field">
-                <select name="classification" class="form-control">
+                <select name="classification">
                     <?=selectOptions($classifications, $selectedClassification ?? null, ' - '.__('No classification').' - ');?>
                 </select>
             </div>
@@ -147,7 +147,7 @@
             <legend><?=__('Operator');?></legend>
 			<?php $selectedOperator = formFieldValue('operator', $record); ?>
             <div class="field">
-                <select name="operator" class="form-control <?=isFieldInvalidClass('operator', get_defined_vars());?>">
+                <select name="operator" class="<?=isFieldInvalidClass('operator', get_defined_vars());?>">
 					<?=selectOptions($operators, $selectedOperator ?? null, ' - '.__('No operator').' - ');?>
                 </select>
 				<div class="invalid-feedback">

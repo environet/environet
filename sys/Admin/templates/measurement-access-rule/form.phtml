@@ -8,7 +8,7 @@
             <fieldset class="form-group">
                 <div class="field">
                     <legend><?=__('Operator');?></legend>
-                    <select name="operator" id="accessRuleOperatorSelect" class="form-control">
+                    <select name="operator" id="accessRuleOperatorSelect">
 						<?=selectOptions($operators, $record['operator_id'] ?? null);?>
                     </select>
                 </div>
