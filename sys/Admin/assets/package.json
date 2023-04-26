@@ -23,7 +23,7 @@
     "postcss-loader": "^6.2.1",
     "sass": "^1.56.2",
     "sass-loader": "^13.2.0",
-    "slim-select": "^2.0",
+    "slim-select": "~1.27.0",
     "style-loader": "^3.3.1",
     "webpack": "^5.75.0",
     "webpack-dev-server": "^4.11.1"

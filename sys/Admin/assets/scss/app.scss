@@ -25,6 +25,8 @@ $fa-font-path: '~@fortawesome/fontawesome-free/webfonts';
 @import '~@fortawesome/fontawesome-free/scss/fontawesome';
 @import '~@fortawesome/fontawesome-free/scss/solid';
 
+@import 'slimselect';
+
 @import 'mixins';
 @import 'layout';
 @import 'login';
@@ -193,3 +195,4 @@ section#main-content {
 .ss-main .ss-multi-selected .ss-values .ss-value {
 	animation: none !important;
 }
+
