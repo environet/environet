@@ -609,6 +609,8 @@ A file contains data for a single monitoring point with multiple properties and 
 A user can upload data only for allowed monitoring point, if the user is not a super administrator. 
 This uploader in the background will call the standard [upload api](#23_api_upload), so all validation of this endpoint will work on this uploader too.
 
+The dates in csv files must be in UTC timezone.
+
 The error/success messages will be separated per file, so if a file is invalid, you have to fix and upload only that file.
 
 

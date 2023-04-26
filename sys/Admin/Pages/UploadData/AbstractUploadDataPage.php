@@ -3,6 +3,7 @@
 
 namespace Environet\Sys\Admin\Pages\UploadData;
 
+use DateTimeZone;
 use Environet\Sys\Admin\Pages\BasePage;
 use Environet\Sys\Config;
 use Environet\Sys\General\Db\HydroMonitoringPointQueries;
@@ -321,7 +322,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 			if ($rowIndex > 2) {
 				//Data rows with dates and values for each property
 				foreach ($properties as $propertyKey => $property) {
-					if (!(!empty($row[0]) && ($dateTime = date_create($row[0])))) {
+					if (!(!empty($row[0]) && ($dateTime = date_create($row[0], new DateTimeZone('UTC'))))) {
 						continue;
 					}
 					$propertiesData[$property][] = [
