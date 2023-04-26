@@ -171,7 +171,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 		$existingDataByKey = $this->getExistingWarningLevelData($mpointId);
 
 		//Build form context
-		$pageTitle = sprintf('Edit warning levels for monitoring point: %s', $record['name']);
+		$pageTitle = sprintf('Edit threshold levels for monitoring point: %s', $record['name']);
 		$context = array_merge([
 			'record'    => $record,
 			'listPage'  => $this->getListPageLinkWithState(),
@@ -198,7 +198,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 				$this->saveWarningLevels($mpointId, $postData, $existingDataByKey);
 
 				$connection->runQuery("COMMIT TRANSACTION;", []);
-				$this->addMessage('Warning levels have been successfully saved', self::MESSAGE_SUCCESS);
+				$this->addMessage('Threshold levels have been successfully saved', self::MESSAGE_SUCCESS);
 
 				return $this->redirect($this->getListPageLinkWithState());
 			} catch (Throwable $e) {
@@ -222,7 +222,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 		$observedProperties = HydroObservedPropertyQueries::getOptionList('symbol');
 		$propertyWarningLevelCols = [];
 		foreach ($observedProperties as $symbol) {
-			$propertyWarningLevelCols['warning_level_' . $symbol] = "Warning level [$symbol] - Threshold of warning levels, separated with comma";
+			$propertyWarningLevelCols['warning_level_' . $symbol] = "Threshold levels [$symbol] - separated with comma";
 		}
 
 		return array_merge(
@@ -249,7 +249,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 			['title' => 'Station classifications', 'options' => HydroStationClassificationQueries::getOptionList('value')],
 			['title' => 'Riverbanks', 'options' => RiverbankQueries::getOptionList('value')],
 			['title' => 'Rivers', 'options' => RiverQueries::getOptionList('cname', 'eucd_riv')],
-			['title' => 'River basins', 'options' => RiverBasinQueries::getOptionList()]
+			['title' => 'Sub-basins', 'options' => RiverBasinQueries::getOptionList()]
 		];
 	}
 

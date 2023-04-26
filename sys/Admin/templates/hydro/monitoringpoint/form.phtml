@@ -114,11 +114,11 @@
 
 
 		<fieldset class="form-group">
-			<legend><?=__('River basin');?></legend>
+			<legend><?=__('Sub-basin');?></legend>
 			<?php $selectedRiverBasin = formFieldValue('river_basin_id', $record); ?>
 			<div class="field">
 				<select name="river_basin_id">
-					<?=selectOptions($riverBasins, $selectedRiverBasin ?? null, ' - '.__('No river basin').' - ');?>
+					<?=selectOptions($riverBasins, $selectedRiverBasin ?? null, ' - '.__('No sub-basin').' - ');?>
 				</select>
 			</div>
 		</fieldset>

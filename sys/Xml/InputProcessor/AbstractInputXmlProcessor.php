@@ -161,9 +161,11 @@ abstract class AbstractInputXmlProcessor {
 			if (!($mPoint = $this->findMonitoringPoint($monitoringPointId, $identity, true))) {
 				$identityData = $identity->getData();
 				$messages = [
-					'Monitoring point NCD: ' .  $monitoringPointId,
-					'Username: ' . $identityData['username']
+					'NCD: ' .  $monitoringPointId,
 				];
+        if (!empty($identityData['username'])) {
+          $messages[] = 'Username: ' . $identityData['username'];
+        }
 				if ($this->findMonitoringPoint($monitoringPointId, $identity)) {
 					//Found if inactive, add different error message
 					throw new UploadException(405, $messages);
@@ -185,8 +187,10 @@ abstract class AbstractInputXmlProcessor {
 					$identityData = $identity->getData();
 					$messages = [
 						'Monitoring point NCD: ' . $monitoringPointId . ", Property symbol: " . $propertySymbol,
-						'Username: ' . $identityData['username']
 					];
+          if (!empty($identityData['username'])) {
+            $messages[] = 'Username: ' . $identityData['username'];
+          }
 					throw new UploadException(403, $messages);
 				}
 
@@ -195,8 +199,10 @@ abstract class AbstractInputXmlProcessor {
 					$identityData = $identity->getData();
 					$messages = [
 						'Monitoring point NCD: ' . $monitoringPointId . ', Property symbol: ' . $propertySymbol,
-						'Username: ' . $identityData['username']
 					];
+          if (!empty($identityData['username'])) {
+            $messages[] = 'Username: ' . $identityData['username'];
+          }
 					throw new UploadException(404, $messages);
 				}
 

@@ -19,7 +19,7 @@
 
             <fieldset class="form-group">
                 <div class="field">
-                    <legend><?=__('Warning level group');?></legend>
+                    <legend><?=__('Threshold level group');?></legend>
                     <select name="warning_level_groupid">
 						<?=selectOptions($groups, formFieldValue('warning_level_groupid', $record));?>
                     </select>
@@ -58,7 +58,7 @@
 			<div class="form-check">
 				<input type="hidden" name="is_inclusive" value="0"/>
 				<input type="checkbox" name="is_inclusive" id="is_inclusive" value="1" class="form-check-input" <?=formFieldValue('is_inclusive', $record) ? 'checked' : '';?>/>
-				<label for="is_inclusive">Is inclusive <small class="help-block text-muted">(ON, if comparison should be "greater or equal than", OFF if "greater than")</small></label>
+				<label for="is_inclusive">Is inclusive <small class="help-block text-muted">(ON, if the related interval includes the exact threshold level value)</small></label>
 
 			</div>
 

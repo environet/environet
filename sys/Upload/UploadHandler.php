@@ -148,8 +148,8 @@ class UploadHandler extends ApiHandler {
 
 		$monitoringPointId = (string) $xml->xpath('/environet:UploadData/environet:MonitoringPointId[1]')[0] ?? null;
 		$identityData = $this->identity->getData();
-		$messages = [ 'Monitoring point NCD: ' . $monitoringPointId,
-			'Username: ' . $identityData['username'] 
+		$messages = [ 'NCD: ' . $monitoringPointId,
+			'Usernamex: ' . $identityData['username']
 		];
 		throw new UploadException(402, $messages);
 	}

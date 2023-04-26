@@ -6,7 +6,7 @@
 			<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
 
 			<div class="form-group">
-				<label for="groupName">Warning level group name</label>
+				<label for="groupName">Threshold level group name</label>
 				<input type="text" name="name" id="groupName" class="form-control <?=isFieldInvalidClass('name', get_defined_vars());?>"  value="<?=formFieldValue('name', $record);?>" />
 				<div class="invalid-feedback">
 					<?=getFieldInvalidMessage('name', get_defined_vars());?>
