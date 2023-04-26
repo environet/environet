@@ -154,7 +154,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	protected function getCsvEnums(): array {
 		return [
 			['title' => 'Station classifications', 'options' => MeteoStationClassificationQueries::getOptionList('value')],
-			['title' => 'River basins', 'options' => RiverBasinQueries::getOptionList()]
+			['title' => 'Sub-basins', 'options' => RiverBasinQueries::getOptionList()]
 		];
 	}
 

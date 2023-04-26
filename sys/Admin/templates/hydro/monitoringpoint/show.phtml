@@ -73,7 +73,7 @@
         <dt class="col-sm-3">Catchment area</dt>
         <dd class="col-sm-9"><?=$record['catchment_area'] ?? '';?></dd>
 
-		<dt class="col-sm-3">River basin</dt>
+		<dt class="col-sm-3">Sub-basin</dt>
 		<dd class="col-sm-9">
 		    <?php if(!empty($record['river_basin_id'])): ?>
 				<a href="/admin/hydro/river-basins/show?id=<?= $record['river_basin']['id'] ;?>">#<?= $record['river_basin']['name'] ?></a>

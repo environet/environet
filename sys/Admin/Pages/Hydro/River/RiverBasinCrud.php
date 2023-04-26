@@ -46,12 +46,12 @@ class RiverBasinCrud extends CrudPage {
 	/**
 	 * @inheritdoc
 	 */
-	protected $successAddMessage = 'River basin successfully added';
+	protected $successAddMessage = 'Sub-basin successfully added';
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $successEditMessage = 'River basin successfully saved';
+	protected $successEditMessage = 'Sub-basin successfully saved';
 
 
 	/**
@@ -60,7 +60,7 @@ class RiverBasinCrud extends CrudPage {
 	 * @return string
 	 */
 	protected function getEntityName(bool $plural = false): string {
-		return $plural ? 'river basins' : 'river basin';
+		return $plural ? 'sub-basins' : 'sub-basin';
 	}
 
 
@@ -187,7 +187,7 @@ class RiverBasinCrud extends CrudPage {
 		}
 
 		if (!validate($data, 'name', '', true)) {
-			$this->addFieldMessage('name', 'River basin name is empty, or format is invalid', self::MESSAGE_ERROR);
+			$this->addFieldMessage('name', 'Sub-basin name is empty, or format is invalid', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 

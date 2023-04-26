@@ -50,12 +50,12 @@ class WarningLevelCrud extends CrudPage {
 	/**
 	 * @inheritdoc
 	 */
-	protected $successAddMessage = 'Warning level successfully added';
+	protected $successAddMessage = 'Threshold level successfully added';
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $successEditMessage = 'Warning level successfully saved';
+	protected $successEditMessage = 'Threshold level successfully saved';
 
 	/**
 	 * @var string
@@ -79,7 +79,7 @@ class WarningLevelCrud extends CrudPage {
 	 * @return string
 	 */
 	protected function getEntityName(bool $plural = false): string {
-		return $plural ? 'warning levels' : 'warning level';
+		return $plural ? 'threshold levels' : 'threshold level';
 	}
 
 
