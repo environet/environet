@@ -50,12 +50,12 @@ class WarningLevelGroupCrud extends CrudPage {
 	/**
 	 * @inheritdoc
 	 */
-	protected $successAddMessage = 'Warning level group successfully added';
+	protected $successAddMessage = 'Threshold level group successfully added';
 
 	/**
 	 * @inheritdoc
 	 */
-	protected $successEditMessage = 'Warning level group successfully saved';
+	protected $successEditMessage = 'Threshold level group successfully saved';
 
 
 	/**
@@ -64,7 +64,7 @@ class WarningLevelGroupCrud extends CrudPage {
 	 * @return string
 	 */
 	protected function getEntityName(bool $plural = false): string {
-		return $plural ? 'warning level groups' : 'warning level group';
+		return $plural ? 'threshold level groups' : 'threshold level group';
 	}
 
 
@@ -116,7 +116,7 @@ class WarningLevelGroupCrud extends CrudPage {
 
 		// if it has active "upper" relation, we don't delete it
 		if ($warningLevelCount > 0) {
-			$this->addMessage('The requested group isn\'t deletable because it has active relation with warning levels!');
+			$this->addMessage('The requested group isn\'t deletable because it has active relation with threshold levels!');
 		} else {
 			(new Delete())->table('warning_level_groups')->where('id = :groupId')->addParameter(':groupId', $groupId)->run();
 

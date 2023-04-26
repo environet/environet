@@ -56,7 +56,7 @@
                     <ul class="sub">
 	                    <?php if($request->getIdentity()->hasPermissions(['admin.hydro.monitoringpoints.read']) || $request->getIdentity()->hasPermissions(['admin.hydro.monitoringpoints.readown'])): ?>
                             <li>
-                                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Monitoring points', 'route' => '/admin/hydro/monitoring-points', 'icon' => 'tachometer-alt', 'matchExtra' => 1]) ?>
+                                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Monitoring points', 'route' => '/admin/hydro/monitoring-points', 'icon' => 'map-marker-alt', 'matchExtra' => 1]) ?>
                             </li>
 						<?php endif; ?>
 	                    <?php if($request->getIdentity()->hasPermissions(['admin.hydro.observedproperties.read'])): ?>
@@ -81,7 +81,7 @@
 						<?php endif; ?>
 	                    <?php if($request->getIdentity()->hasPermissions(['admin.hydro.results.read'])): ?>
                             <li>
-                                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Results', 'route' => '/admin/hydro/results', 'icon' => 'chart-pie', 'matchExtra' => 1]) ?>
+                                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Results', 'route' => '/admin/hydro/results', 'icon' => 'table', 'matchExtra' => 1]) ?>
                             </li>
 						<?php endif; ?>
                     </ul>
@@ -100,7 +100,7 @@
                     <ul class="sub">
 	                    <?php if($request->getIdentity()->hasPermissions(['admin.meteo.monitoringpoints.read']) || $request->getIdentity()->hasPermissions(['admin.meteo.monitoringpoints.readown'])): ?>
                             <li>
-                                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Monitoring points', 'route' => '/admin/meteo/monitoring-points', 'icon' => 'tachometer-alt', 'matchExtra' => 1]) ?>
+                                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Monitoring points', 'route' => '/admin/meteo/monitoring-points', 'icon' => 'map-marker-alt', 'matchExtra' => 1]) ?>
                             </li>
 						<?php endif; ?>
 	                    <?php if($request->getIdentity()->hasPermissions(['admin.meteo.observedproperties.read'])): ?>
@@ -115,7 +115,7 @@
 						<?php endif; ?>
 	                    <?php if($request->getIdentity()->hasPermissions(['admin.meteo.results.read'])): ?>
                             <li>
-                                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Results', 'route' => '/admin/meteo/results', 'icon' => 'chart-pie', 'matchExtra' => 1]) ?>
+                                <?= includeTemplatePart('menuitem.phtml', ['title' => 'Results', 'route' => '/admin/meteo/results', 'icon' => 'table', 'matchExtra' => 1]) ?>
                             </li>
 						<?php endif; ?>
                     </ul>
@@ -133,16 +133,16 @@
 		        'admin.warninglevels.readown',
 	        ])): ?>
 				<li class="sub-menu" data-id="meteoSubmenu" >
-			        <?= includeTemplatePart('menuitem.phtml', ['title' => 'Warning levels', 'route' => null, 'icon' => 'cloud', 'matchExtra' => 1]) ?>
+			        <?= includeTemplatePart('menuitem.phtml', ['title' => 'Thresholds', 'route' => null, 'icon' => 'digital-tachograph', 'matchExtra' => 1]) ?>
 					<ul class="sub">
 						<?php if($request->getIdentity()->hasPermissions(['admin.warninglevels.read']) || $request->getIdentity()->hasPermissions(['admin.warninglevels.readown'])): ?>
 							<li>
-								<?= includeTemplatePart('menuitem.phtml', ['title' => 'Warning levels', 'route' => '/admin/warning-levels', 'icon' => 'database', 'matchExtra' => 1]) ?>
+								<?= includeTemplatePart('menuitem.phtml', ['title' => 'Threshold levels', 'route' => '/admin/warning-levels', 'icon' => 'ruler-vertical', 'matchExtra' => 1]) ?>
 							</li>
 						<?php endif; ?>
 						<?php if($request->getIdentity()->hasPermissions(['admin.warninglevelgroups.read'])): ?>
 							<li>
-								<?= includeTemplatePart('menuitem.phtml', ['title' => 'Warning level groups', 'route' => '/admin/warning-level-groups', 'icon' => 'database', 'matchExtra' => 1]) ?>
+								<?= includeTemplatePart('menuitem.phtml', ['title' => 'Threshold level groups', 'route' => '/admin/warning-level-groups', 'icon' => 'bars', 'matchExtra' => 1]) ?>
 							</li>
 						<?php endif; ?>
 					</ul>
@@ -150,7 +150,7 @@
 	        <?php endif; ?>
 	        <?php if($request->getIdentity()->hasPermissions(['admin.hydro.riverbasins.read'])): ?>
 				<li>
-			        <?= includeTemplatePart('menuitem.phtml', ['title' => 'River basins', 'route' => '/admin/hydro/river-basins', 'icon' => 'water', 'matchExtra' => 1]) ?>
+			        <?= includeTemplatePart('menuitem.phtml', ['title' => 'Sub-basins', 'route' => '/admin/hydro/river-basins', 'icon' => 'water', 'matchExtra' => 1]) ?>
 				</li>
 	        <?php endif; ?>
             <?php if($request->getIdentity()->hasPermissions(['admin.missingData.upload']) || $request->getIdentity()->hasPermissions(['admin.missingData.uploadown'])): ?>
