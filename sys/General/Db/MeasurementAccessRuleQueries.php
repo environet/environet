@@ -135,7 +135,7 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 	 * @inheritDoc
 	 */
 	public static function getUpdateEventType(): string {
-		return 'measurement_access_rule_delete';
+		return 'measurement_access_rule_update';
 	}
 
 
