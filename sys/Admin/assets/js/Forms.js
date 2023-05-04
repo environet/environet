@@ -65,12 +65,13 @@ if (accessRuleForm) {
 		Array.prototype.filter.call(document.querySelectorAll(selector), (select) => {
 			const url = select.dataset.ajaxdefault;
 			const concatChar = url.includes('?') ? '&' : '?';
+			const loadedOperator = select.dataset.operator || '';
 
 			const operator = operatorSelector.value;
 
 			let hasMeteo, hasHydro, hasAll;
 			hasMeteo = hasHydro = hasAll = false;
-			slimSelects.get(pointSelector).selected().forEach(function(value) {
+			tomSelects.get(pointSelector).getValue().forEach(function(value) {
 				if (value === '*') hasAll = true;
 				if (value.startsWith('hydro_')) hasHydro = true;
 				if (value.startsWith('meteo_')) hasMeteo = true;
@@ -79,6 +80,10 @@ if (accessRuleForm) {
 
 			select.setAttribute('data-ajax', url + concatChar + 'operator=' + operator + '&type=' + type);
 
+			if (loadedOperator !== operator) {
+				select.dispatchEvent(new CustomEvent('clear'));
+			}
+			select.dataset.operator = operator;
 			select.dispatchEvent(new CustomEvent('doSearch'));
 
 			docReady(function () {
