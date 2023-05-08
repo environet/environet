@@ -202,4 +202,33 @@ class Config {
 	}
 
 
+	/**
+	 * @return string
+	 */
+	public function getUploadMaxSize(): string {
+		return $this->config['environet']['upload_max_size'] ?? '2M';
+	}
+
+
+	/**
+	 * @return int
+	 */
+	public function getUploadMaxSizeInBytes(): int {
+		$maxSize = $this->getUploadMaxSize();
+		if (preg_match('/^(\d+)([kMG])$/', $maxSize, $match)) {
+			switch ($match[2]) {
+				case 'k':
+					return $match[1] * 1024;
+				case 'M':
+					return $match[1] * 1024 * 1024;
+				case 'G':
+					return $match[1] * 1024 * 1024 * 1024;
+				default:
+					return $match[1];
+			}
+		}
+		return $maxSize;
+	}
+
+
 }

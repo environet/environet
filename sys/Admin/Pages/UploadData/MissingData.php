@@ -3,6 +3,7 @@
 
 namespace Environet\Sys\Admin\Pages\UploadData;
 
+use Environet\Sys\Config;
 use Environet\Sys\General\Exceptions\HttpBadRequestException;
 use Environet\Sys\General\Exceptions\RenderException;
 use Environet\Sys\General\Response;
@@ -35,7 +36,7 @@ class MissingData extends AbstractUploadDataPage {
 
 		//Display limits on upload page
 		$maxFiles = ini_get('max_file_uploads');
-		$maxSize = ini_get('post_max_size');
+		$maxSize = Config::getInstance()->getUploadMaxSize();
 
 		// Render the form
 		return $this->render('/missing_data.phtml', compact('maxFiles', 'maxSize'));

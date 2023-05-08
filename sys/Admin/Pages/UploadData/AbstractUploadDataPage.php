@@ -111,10 +111,16 @@ abstract class AbstractUploadDataPage extends BasePage {
 		//Move uploaded files to the permanent directory. Collect files to an array, with original file names as keys.
 		//These original file names will be used in error and success messages to show which file was problematic
 		$files = [];
+		$size = 0;
 		foreach ($_FILES[$fileInputName]['name'] as $fileKey => $originalName) {
 			$storedFile = $dir . '/' . time() . '_' . uniqid() . '_' . $fileKey . '.csv';
 			move_uploaded_file($_FILES[$fileInputName]['tmp_name'][$fileKey], $storedFile);
+			$size += filesize($storedFile);
 			$files[$originalName] = $storedFile;
+		}
+
+		if ($size > Config::getInstance()->getUploadMaxSizeInBytes()) {
+			throw new Exception('Uploaded files are too big');
 		}
 
 		//Iterate over files, and try to process it.
@@ -308,6 +314,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 		$properties = [];
 		$propertiesData = [];
 		$rowIndex = 0;
+        $timeZone = new DateTimeZone('UTC');
 		while (($row = fgetcsv($fileHandle, 10000)) !== false) {
 			$rowIndex ++;
 			if ($rowIndex === 1 && !empty($row[1])) {
@@ -322,13 +329,14 @@ abstract class AbstractUploadDataPage extends BasePage {
 			if ($rowIndex > 2) {
 				//Data rows with dates and values for each property
 				foreach ($properties as $propertyKey => $property) {
-					if (!(!empty($row[0]) && ($dateTime = date_create($row[0], new DateTimeZone('UTC'))))) {
+					if (!(!empty($row[0]) && ($dateTime = date_create($row[0], $timeZone)))) {
 						continue;
 					}
 					$propertiesData[$property][] = [
 						'time'  => $dateTime->format('c'),
 						'value' => $row[$propertyKey] ? floatval($row[$propertyKey]) : null
 					];
+                    unset($dateTime);
 				}
 			}
 		}
