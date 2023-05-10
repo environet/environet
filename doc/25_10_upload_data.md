@@ -14,10 +14,11 @@ This uploader in the background will call the standard [upload api](23_api_uploa
 In step 1, the uploaded CSV files are pre-processed, validated, and converted to XML format. These files are sent to the upload statistics endpoint, 
 which returns statistics of the uploaded files, but without any operation on the distribution node.
 
+With the timezone selector is it possible to define the timezone of the uploaded data. Every date in the csv will be converted to UTC before uploading it to the upload api endpoint.
+Available timezones are UTC, CET, EET (without summer time).
+
 ### Step2: Confirm upload
 With the confirmation of the statistics, all files will be uploaded to the distribution node, and the distribution node will process the files and save the data to the database.
 The error/success messages will be separated per file, so if a file is invalid, you have to fix and upload only that file. 
 The files with errors won't be uploaded to the distribution node after confirmation.
-
-The dates in CSV files must be in UTC timezone.
 

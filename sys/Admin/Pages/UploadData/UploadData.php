@@ -33,20 +33,27 @@ class UploadData extends AbstractUploadDataPage {
 		//Get limits from config
 		$maxFiles = ini_get('max_file_uploads');
 		$maxSize = Config::getInstance()->getUploadMaxSize();
+		$timezoneOptions = array_filter(array_unique(array_map(function ($option) {
+			return trim($option);
+		}, explode(',', Config::getInstance()->getUploadAvailableTimezones()))));
+		$selectedTimezoneOption = null;
 
 		if ($this->request->isPost()) {
 			if (array_key_exists('xml_file', $this->request->getCleanData())) {
 				//Step 2 - do upload
 				$this->handleSend($this->request->getCleanData()['xml_file']);
 			} else {
+				$selectedTimezoneOption = $this->request->getCleanData()['timezone_selector'] ?? null;
+
 				//Step 1 - statistics
 				$fileResponses = $this->handleStatistics();
-				return $this->render('upload_data_statistics.phtml', compact('fileResponses', 'maxFiles', 'maxSize'));
+
+				return $this->render('upload_data_statistics.phtml', compact('fileResponses', 'maxFiles', 'maxSize', 'timezoneOptions', 'selectedTimezoneOption'));
 			}
 		}
 
 		// Render the form
-		return $this->render('/upload_data.phtml', compact('maxFiles', 'maxSize'));
+		return $this->render('/upload_data.phtml', compact('maxFiles', 'maxSize', 'timezoneOptions', 'selectedTimezoneOption'));
 	}
 
 

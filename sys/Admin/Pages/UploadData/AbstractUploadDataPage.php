@@ -94,6 +94,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 			// Store error response of the request in $error var
 			$this->addMessage($e->getMessage(), self::MESSAGE_ERROR);
 		}
+
 		return [];
 	}
 
@@ -106,11 +107,13 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 * @throws Exception
 	 */
 	protected function preProcessData(): array {
+		$selectedTimezoneOption = $this->request->getCleanData()['timezone_selector'] ?? null;
+
 		//Store uploaded csv files
 		$csvFiles = $this->storeFiles();
 
 		//Convert uploaded csv files to xml, and store it
-		$xmlFiles = $this->convertFilesToXml($csvFiles);
+		$xmlFiles = $this->convertFilesToXml($csvFiles, $selectedTimezoneOption);
 
 		//Process each xml files
 		$fileResponses = [];
@@ -229,16 +232,17 @@ abstract class AbstractUploadDataPage extends BasePage {
 	/**
 	 * Convert uploaded csv files to XMLs
 	 *
-	 * @param array $files
+	 * @param array  $files
+	 * @param string $selectedTimezoneOption
 	 *
 	 * @return array
 	 */
-	protected function convertFilesToXml(array $files): array {
+	protected function convertFilesToXml(array $files, string $selectedTimezoneOption): array {
 		//Iterate over files, and convert each to xml
 		$xmlFiles = [];
 		foreach ($files as $originalFileName => $file) {
 			try {
-				$xmlFiles[$originalFileName] = $this->csvToXml($file);
+				$xmlFiles[$originalFileName] = $this->csvToXml($file, $selectedTimezoneOption);
 			} catch (Exception $exception) {
 				$xmlFiles[$originalFileName] = [
 					sprintf("Error during converting file %s: %s", $originalFileName, $exception->getMessage())
@@ -259,14 +263,14 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 * @throws CreateInputXmlException
 	 * @throws QueryException
 	 */
-	protected function csvToXml(string $file): string {
+	protected function csvToXml(string $file, string $selectedTimezoneOption): string {
 		//Try to open file
 		if (!(file_exists($file) && ($fileHandle = fopen($file, 'r')) !== false)) {
 			throw new Exception('An error occured: File doesn\'t exist, or can\'t open: ' . $file);
 		}
 
 		//Map CSV file
-		[$mpointId, $propertiesData] = $this->mapCsv($fileHandle);
+		[$mpointId, $propertiesData] = $this->mapCsv($fileHandle, $selectedTimezoneOption);
 
 		if (!$mpointId) {
 			//Mpoint not found
@@ -318,6 +322,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 		file_put_contents($xmlFilePath, $xml);
 
 		unset($xml);
+
 		return $xmlFilePath;
 	}
 
@@ -404,15 +409,18 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 * Map the CSV file, parse monitoring point id, and values for multiple properties.
 	 *
 	 * @param resource $fileHandle File handle of csv file
+	 * @param string   $selectedTimezoneOption
 	 *
 	 * @return array Array of processed data. First item must be the monitoring point id, second is the property data, grouped by property symbol
+	 * @throws Exception
 	 */
-	protected function mapCsv($fileHandle): array {
+	protected function mapCsv($fileHandle, string $selectedTimezoneOption): array {
 		$mpointId = null;
 		$properties = [];
 		$propertiesData = [];
 		$rowIndex = 0;
-		$timeZone = new DateTimeZone('UTC');
+		$inputTimezone = new DateTimeZone($selectedTimezoneOption);
+		$toTimezone = new DateTimeZone('UTC');
 		while (($row = fgetcsv($fileHandle, 10000)) !== false) {
 			$rowIndex ++;
 			if ($rowIndex === 1 && !empty($row[1])) {
@@ -427,9 +435,10 @@ abstract class AbstractUploadDataPage extends BasePage {
 			if ($rowIndex > 2) {
 				//Data rows with dates and values for each property
 				foreach ($properties as $propertyKey => $property) {
-					if (!(!empty($row[0]) && ($dateTime = date_create($row[0], $timeZone)))) {
+					if (!(!empty($row[0]) && ($dateTime = date_create($row[0], $inputTimezone)))) {
 						continue;
 					}
+					$dateTime->setTimezone($toTimezone);
 					$propertiesData[$property][] = [
 						'time'  => $dateTime->format('c'),
 						'value' => $row[$propertyKey] ? floatval($row[$propertyKey]) : null
