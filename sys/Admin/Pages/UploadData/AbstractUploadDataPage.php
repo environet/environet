@@ -214,8 +214,12 @@ abstract class AbstractUploadDataPage extends BasePage {
 		//These original file names will be used in error and success messages to show which file was problematic
 		$files = [];
 		$size = 0;
+		$filenames = [];
+		$i = 0;
 		foreach ($_FILES[$fileInputName]['name'] as $fileKey => $originalName) {
-			$storedFile = $dir . '/' . time() . '_' . uniqid() . '_' . $fileKey . '.csv';
+			$storedFileName = $this->generateFilename($originalName, $filenames, ++ $i);
+			$storedFile = $dir . '/' . $storedFileName;
+
 			move_uploaded_file($_FILES[$fileInputName]['tmp_name'][$fileKey], $storedFile);
 			$size += filesize($storedFile);
 			$files[$originalName] = $storedFile;
@@ -477,6 +481,36 @@ abstract class AbstractUploadDataPage extends BasePage {
 		$client = new HttpClient();
 
 		return $client->sendRequest($request);
+	}
+
+
+	/**
+	 * Generate filename for uploaded files
+	 *
+	 * @param string $originalName
+	 * @param array  $filenames
+	 * @param int    $i
+	 *
+	 * @return string
+	 */
+	protected function generateFilename(string $originalName, array &$filenames, int $i): string {
+		//Remove extension
+		$originalNameBase = preg_replace('/^(.*)\.[^\.]+$/', '$1', $originalName);
+
+		//Generate filename
+		$storedFile = implode('_', [
+			date('Ymd-His'),
+			($this->request->getIdentity()->getId() ?? 0),
+			preg_replace('/[^a-zA-Z0-9-]/', '', $originalNameBase)
+		]);
+
+		//If uploaded filenames are the same, add a suffix to it.
+		if (in_array($storedFile, $filenames)) {
+			$storedFile .= '_' . $i;
+		}
+		$filenames[] = $storedFile;
+
+		return $storedFile . '.csv';
 	}
 
 
