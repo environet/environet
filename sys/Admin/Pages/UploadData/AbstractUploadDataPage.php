@@ -17,8 +17,10 @@ use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\HttpClient\Exceptions\HttpClientException;
 use Environet\Sys\General\HttpClient\HttpClient;
 use Environet\Sys\General\HttpClient\Request;
+use Environet\Sys\General\HttpClient\Response;
 use Environet\Sys\General\PKI;
 use Environet\Sys\General\SysIdentity;
+use Environet\Sys\Upload\Statistics;
 use Environet\Sys\Xml\CreateInputXml;
 use Environet\Sys\Xml\Exceptions\CreateInputXmlException;
 use Environet\Sys\Xml\Model\InputXmlData;
@@ -43,7 +45,15 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 *
 	 * @return string
 	 */
-	abstract protected function getFileDir(): string;
+	abstract protected function getCsvFileDir(): string;
+
+
+	/**
+	 * Get directory path where xml files will be stored before sending
+	 *
+	 * @return string
+	 */
+	abstract protected function getXmlFileDir(): string;
 
 
 	/**
@@ -63,11 +73,12 @@ abstract class AbstractUploadDataPage extends BasePage {
 
 
 	/**
-	 * Handle post upload request. Check CSRF token, call processData function, and store flash messages
+	 * Handle post upload request with dry-run, to get statistics.
+	 * Check CSRF token, call preProcessData function, and store flash messages
 	 *
 	 * @throws HttpBadRequestException
 	 */
-	protected function handlePost() {
+	protected function handleStatistics(): array {
 		// Posted form, check data, and send it to the API
 		if (!$this->checkCsrf()) {
 			// CSRF error
@@ -75,32 +86,120 @@ abstract class AbstractUploadDataPage extends BasePage {
 		}
 		try {
 			// Send the data with a http client, and store the response body in a variable
-			$this->processData();
-		} catch (HttpClientException | CreateInputXmlException $e) {
+			return $this->preProcessData();
+		} catch (HttpClientException|CreateInputXmlException $e) {
 			// Store error response of the request in $error var
 			$this->addMessage($e->getMessage(), self::MESSAGE_ERROR);
 		} catch (Exception $e) {
 			// Store error response of the request in $error var
 			$this->addMessage($e->getMessage(), self::MESSAGE_ERROR);
 		}
+		return [];
 	}
 
 
 	/**
-	 * Create an input-XML based on the form's data, and send it to the API with the HTTP client
+	 * Pre-process data with sending the conbverted xml files to the statistics endpoint of distribution node.
+	 * After getting statistic responses for each file, this statistics or errors can be displayed on the confirmation page
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	protected function preProcessData(): array {
+		//Store uploaded csv files
+		$csvFiles = $this->storeFiles();
+
+		//Convert uploaded csv files to xml, and store it
+		$xmlFiles = $this->convertFilesToXml($csvFiles);
+
+		//Process each xml files
+		$fileResponses = [];
+		foreach ($xmlFiles as $originalFileName => $xmlFile) {
+			if (is_array($xmlFile)) {
+				//Xml file is already an array of error messages, not an xml path
+				$fileResponses[$originalFileName] = $xmlFile;
+				continue;
+			}
+
+			//Do upload with statistics
+			$response = $this->makeRequest('/upload/statistics', $xmlFile);
+
+			if ($response->getStatusCode() === 200) {
+				//Successful request, build statistics from XML response
+				$fileResponses[$originalFileName] = Statistics::fromXml(new SimpleXMLElement($response->getBody()))->setInputXmlFile($xmlFile);
+			} else {
+				//Some error returned from upload API
+				if (($xml = simplexml_load_string($response->getBody())) !== false &&
+					($messages = $xml->xpath('/environet:ErrorResponse/environet:Error/environet:ErrorMessage'))
+				) {
+					//Valid XML error, parse error messages from error XML
+					$messages = array_map(function (SimpleXMLElement $element) {
+						return (string) $element;
+					}, $messages);
+					$fileResponses[$originalFileName] = $messages;
+				} else {
+					//Not a valid XML error, unknown
+					throw new Exception("Unknown error while sending data to upload api endpoint");
+				}
+			}
+		}
+
+		return $fileResponses;
+	}
+
+
+	/**
+	 * Send the pre-processed and stored XMLs to the upload endpoint
+	 *
+	 * @param array $xmlFiles
 	 *
 	 * @return void
-	 * @throws Exception
+	 * @throws HttpClientException
+	 * @throws PKIException
 	 * @see  CreateInputXml
 	 */
-	protected function processData() {
-		//Check if $_FILES array is valud
+	protected function handleSend(array $xmlFiles) {
+		//Iterate over files, and send it
+		foreach ($xmlFiles['xml'] ?? [] as $key => $xmlFile) {
+			$originalFileName = $xmlFiles['original'][$key] ?? basename($xmlFile);
+			$response = $this->makeRequest('/upload', $xmlFile);
+
+			if ($response->getStatusCode() === 200) {
+				$this->addMessage(sprintf("File processed and has been sent successfully: %s", $originalFileName), self::MESSAGE_SUCCESS);
+			} else {
+				//Some error returned from upload API
+				if (($xml = simplexml_load_string($response->getBody())) !== false &&
+					($messages = $xml->xpath('/environet:ErrorResponse/environet:Error/environet:ErrorMessage'))
+				) {
+					//Valid XML error, parse error messages from error XML
+					$messages = array_map(function (SimpleXMLElement $element) {
+						return (string) $element;
+					}, $messages);
+					$message = 'Error when sending data to upload api endpoint: ' . implode(', ', $messages);
+				} else {
+					//Not a valid XML error, unknown
+					$message = 'Unknown error while sending data to upload api endpoint';
+				}
+				$this->addMessage(sprintf("Error during processing file %s: %s", $originalFileName, $message), self::MESSAGE_ERROR);
+			}
+		}
+	}
+
+
+	/**
+	 * Store uploaded csv files in data folder, and validate the sizer of it
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	protected function storeFiles(): array {
+		//Check if $_FILES array is valid
 		if (empty($_FILES) || empty($_FILES['csv']) || !is_array($_FILES['csv']['name']) || empty(array_filter($_FILES['csv']['name']))) {
 			throw new Exception('No file was uploaded');
 		}
 
 		//Get instance specific properties
-		$dir = $this->getFileDir();
+		$dir = $this->getCsvFileDir();
 		$fileInputName = $this->getFileInputName();
 
 		//Create directory if not exists
@@ -123,27 +222,44 @@ abstract class AbstractUploadDataPage extends BasePage {
 			throw new Exception('Uploaded files are too big');
 		}
 
-		//Iterate over files, and try to process it.
-		foreach ($files as $originalFileName => $file) {
-			try {
-				$this->processFile($file);
-				$this->addMessage(sprintf("File processed and has been sent successfully: %s", $originalFileName), self::MESSAGE_SUCCESS);
-			} catch (Exception $exception) {
-				$this->addMessage(sprintf("Error during processing file %s: %s", $originalFileName, $exception->getMessage()), self::MESSAGE_ERROR);
-			}
-		}
+		return $files;
 	}
 
 
 	/**
-	 * Process a single csv file, map with child instance, and send it to API endpoint
+	 * Convert uploaded csv files to XMLs
 	 *
-	 * @param string $file File path
+	 * @param array $files
 	 *
-	 * @return void
-	 * @throws Exception
+	 * @return array
 	 */
-	protected function processFile(string $file) {
+	protected function convertFilesToXml(array $files): array {
+		//Iterate over files, and convert each to xml
+		$xmlFiles = [];
+		foreach ($files as $originalFileName => $file) {
+			try {
+				$xmlFiles[$originalFileName] = $this->csvToXml($file);
+			} catch (Exception $exception) {
+				$xmlFiles[$originalFileName] = [
+					sprintf("Error during converting file %s: %s", $originalFileName, $exception->getMessage())
+				];
+			}
+		}
+
+		return $xmlFiles;
+	}
+
+
+	/**
+	 * Convert a csv file to xml
+	 *
+	 * @param string $file
+	 *
+	 * @return string
+	 * @throws CreateInputXmlException
+	 * @throws QueryException
+	 */
+	protected function csvToXml(string $file): string {
 		//Try to open file
 		if (!(file_exists($file) && ($fileHandle = fopen($file, 'r')) !== false)) {
 			throw new Exception('An error occured: File doesn\'t exist, or can\'t open: ' . $file);
@@ -193,34 +309,16 @@ abstract class AbstractUploadDataPage extends BasePage {
 		//Generate whole xml content
 		$xml = $creator->generateXml(new InputXmlData($mpointId, $propertyXmls))->asXML();
 
-		// Create a request
-		$apiHost = Config::getInstance()->getDatanodeDistHost();
-		$apiHost = preg_match('/^https?:\/\//', $apiHost) ? $apiHost : 'https://' . $apiHost;
-		$request = new Request(rtrim($apiHost, '/') . '/upload');
-		$request->setMethod('POST')->setBody($xml);
-
-		// Add generated auth header with signature
-		$request->addHeader('Authorization', $this->generateSignatureHeader($xml, SYS_USERNAME));
-
-		// Send request
-		$client = new HttpClient();
-		$response = $client->sendRequest($request);
-
-		if ($response->getStatusCode() !== 200) {
-			//Some error returned from upload API
-			if (($xml = simplexml_load_string($response->getBody())) !== false &&
-				($messages = $xml->xpath('/environet:ErrorResponse/environet:Error/environet:ErrorMessage'))
-			) {
-				//Valid XML error, parse error messages from error XML
-				$messages = array_map(function (SimpleXMLElement $element) {
-					return (string) $element;
-				}, $messages);
-				throw new Exception("Error when sending data to upload api endpoint: " . (implode(', ', $messages) . ""));
-			} else {
-				//Not a valid XML error, unknown
-				throw new Exception("Unknown error while sending data to upload api endpoint");
-			}
+		//Create directory if not exists
+		if (!is_dir($this->getXmlFileDir())) {
+			mkdir($this->getXmlFileDir(), 0775, true);
 		}
+
+		$xmlFilePath = $this->getXmlFileDir() . '/' . basename($file, '.csv') . '.xml';
+		file_put_contents($xmlFilePath, $xml);
+
+		unset($xml);
+		return $xmlFilePath;
 	}
 
 
@@ -314,7 +412,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 		$properties = [];
 		$propertiesData = [];
 		$rowIndex = 0;
-        $timeZone = new DateTimeZone('UTC');
+		$timeZone = new DateTimeZone('UTC');
 		while (($row = fgetcsv($fileHandle, 10000)) !== false) {
 			$rowIndex ++;
 			if ($rowIndex === 1 && !empty($row[1])) {
@@ -336,12 +434,40 @@ abstract class AbstractUploadDataPage extends BasePage {
 						'time'  => $dateTime->format('c'),
 						'value' => $row[$propertyKey] ? floatval($row[$propertyKey]) : null
 					];
-                    unset($dateTime);
+					unset($dateTime);
 				}
 			}
 		}
 
 		return [$mpointId, $propertiesData];
+	}
+
+
+	/**
+	 * Make an upload, or statistic request
+	 *
+	 * @param string $path
+	 * @param string $bodyFile
+	 *
+	 * @return Response
+	 * @throws HttpClientException
+	 * @throws PKIException
+	 */
+	protected function makeRequest(string $path, string $bodyFile): Response {
+		// Create a request
+		$apiHost = Config::getInstance()->getDatanodeDistHost();
+		$apiHost = preg_match('/^https?:\/\//', $apiHost) ? $apiHost : 'https://' . $apiHost;
+		$request = new Request(rtrim($apiHost, '/') . $path);
+		$request->setBody(file_get_contents($bodyFile));
+		$request->setMethod('POST');
+
+		// Add generated auth header with signature
+		$request->addHeader('Authorization', $this->generateSignatureHeader($request->getBody(), SYS_USERNAME));
+
+		// Send request
+		$client = new HttpClient();
+
+		return $client->sendRequest($request);
 	}
 
 

@@ -1,0 +1,13 @@
+<form id="uploadDataForm" action="" method="POST" enctype="multipart/form-data">
+	<div class="form-group">
+		<label for="mpoint"><?=sprintf(__('CSV files'));?></label>
+		<input type="file" name="csv[]" multiple />
+		<br />
+		<small id="passwordHelpBlock" class="form-text text-muted">
+			You can upload maximum <?=$maxFiles;?> files. <br />
+			Maximal cumulate size of uploaded files: <?=$maxSize;?>
+		</small>
+	</div>
+	<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
+	<input type="submit" class="btn btn-primary" value="Send">
+</form>

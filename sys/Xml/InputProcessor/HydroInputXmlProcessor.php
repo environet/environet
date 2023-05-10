@@ -114,6 +114,10 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 			// Get id from result
 			$timeSeriesId = $timeSeriesId ? $timeSeriesId['id'] : null;
 			if (!$timeSeriesId) {
+				if (isUploadDryRun()) {
+					//Do not create new time series if under dry run
+					return 0;
+				}
 				// Time series for property and monitoring point not found, create a new one
 				$now = new DateTime('now', (new DateTimeZone('UTC')));
 				$timeSeriesId = (new Insert())
@@ -145,23 +149,35 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 	}
 
 
-    /**
-     * @inheritDoc
-     */
-    protected function createResultUpdate(): Query
-    {
-        $table = 'hydro_result';
-        $obsoleteUpdateQuery = "
+	/**
+	 * @inheritDoc
+	 */
+	protected function createResultUpdate(): Query {
+		$table = 'hydro_result';
+		$obsoleteUpdateQuery = "
             UPDATE $table
             SET is_obsolete = CASE WHEN value != :value THEN true ELSE false END
             WHERE (time_seriesid = :tsid AND time = :time AND is_forecast = :isForecast)
         ";
 
-        return (new Query())->table($table)->setRawQuery($obsoleteUpdateQuery);
-    }
+		return (new Query())->table($table)->setRawQuery($obsoleteUpdateQuery);
+	}
 
 
-    /**
+	/**
+	 * @return Query
+	 */
+	protected function createResultStatisticsSelect(): Query {
+		return (new Select())->select('*')
+			->from('hydro_result')
+			->where('time_seriesid = :tsid')
+			->where('time = :time')
+			->where('is_forecast = :isForecast')
+			->orderBy('created_at', 'DESC');
+	}
+
+
+	/**
 	 * @return string
 	 */
 	protected function getPointQueriesClass(): string {

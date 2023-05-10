@@ -27,8 +27,7 @@ use Environet\Sys\Admin\Pages\Meteo\MonitoringPointCrud as MeteoMonitoringPointC
 
 use Environet\Sys\Admin\Pages\Login;
 use Environet\Sys\Admin\Pages\Logout;
-use Environet\Sys\Admin\Pages\UploadData\MissingData;
-use Environet\Sys\Admin\Pages\UploadData\ProcessedData;
+use Environet\Sys\Admin\Pages\UploadData\UploadData;
 use Environet\Sys\Admin\Pages\UploadTest;
 use Environet\Sys\Admin\Pages\User\UserCrud;
 
@@ -271,8 +270,7 @@ class AdminHandler extends BaseHandler {
 		'^hydro\/results$' => [HydroResultsCrud::class, 'list', ['admin.hydro.results.read']],
 		'^meteo\/results$' => [MeteoResultsCrud::class, 'list', ['admin.meteo.results.read']],
 
-		'^missing-data$'   => [MissingData::class, 'handle', ['admin.missingData.upload'], ['admin.missingData.uploadown']],
-		'^processed-data$' => [ProcessedData::class, 'handle', ['admin.processedData.upload'], ['admin.processedData.uploadown']],
+		'^upload-data$' => [UploadData::class, 'handle', ['admin.uploadData.upload'], ['admin.uploadData.uploadown']],
 
 		'^upload-test$'   => [UploadTest::class, 'handle', ['api.upload']],
 		'^download-test$' => [DownloadTest::class, 'handle', ['api.download']],

@@ -153,14 +153,9 @@
 			        <?= includeTemplatePart('menuitem.phtml', ['title' => 'Sub-basins', 'route' => '/admin/hydro/river-basins', 'icon' => 'water', 'matchExtra' => 1]) ?>
 				</li>
 	        <?php endif; ?>
-            <?php if($request->getIdentity()->hasPermissions(['admin.missingData.upload']) || $request->getIdentity()->hasPermissions(['admin.missingData.uploadown'])): ?>
+            <?php if($request->getIdentity()->hasPermissions(['admin.uploadData.upload']) || $request->getIdentity()->hasPermissions(['admin.uploadData.uploadown'])): ?>
                 <li>
-                    <?=includeTemplatePart('menuitem.phtml', ['title' => 'Upload missing data', 'route' => '/admin/missing-data', 'icon' => 'upload', 'matchExtra' => 1]) ?>
-                </li>
-			<?php endif; ?>
-            <?php if($request->getIdentity()->hasPermissions(['admin.processedData.upload']) || $request->getIdentity()->hasPermissions(['admin.processedData.uploadown'])): ?>
-                <li>
-                    <?=includeTemplatePart('menuitem.phtml', ['title' => 'Upload processed data', 'route' => '/admin/processed-data', 'icon' => 'upload', 'matchExtra' => 1]) ?>
+                    <?=includeTemplatePart('menuitem.phtml', ['title' => 'Upload data', 'route' => '/admin/upload-data', 'icon' => 'upload', 'matchExtra' => 1]) ?>
                 </li>
 			<?php endif; ?>
         </ul>

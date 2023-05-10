@@ -9,14 +9,14 @@ use Environet\Sys\General\Exceptions\RenderException;
 use Environet\Sys\General\Response;
 
 /**
- * Class ProcessedData
+ * Class UploadData
  *
- * Admin page for uploading processed data. It accepts multiple csv files, process it, and send the the upload api endpoint.
+ * Admin page for uploading processed and missing data. It accepts multiple csv files, process it, and send the the upload api endpoint.
  *
  * @package Environet\Sys\Admin\Pages\UploadData
  * @author  SRG Group <dev@srg.hu>
  */
-class ProcessedData extends AbstractUploadDataPage {
+class UploadData extends AbstractUploadDataPage {
 
 
 	/**
@@ -30,24 +30,39 @@ class ProcessedData extends AbstractUploadDataPage {
 	 * @throws RenderException
 	 */
 	public function handle(): ?Response {
-		if ($this->request->isPost()) {
-			$this->handlePost();
-		}
-
-		//Display limits on upload page
+		//Get limits from config
 		$maxFiles = ini_get('max_file_uploads');
 		$maxSize = Config::getInstance()->getUploadMaxSize();
 
+		if ($this->request->isPost()) {
+			if (array_key_exists('xml_file', $this->request->getCleanData())) {
+				//Step 2 - do upload
+				$this->handleSend($this->request->getCleanData()['xml_file']);
+			} else {
+				//Step 1 - statistics
+				$fileResponses = $this->handleStatistics();
+				return $this->render('upload_data_statistics.phtml', compact('fileResponses', 'maxFiles', 'maxSize'));
+			}
+		}
+
 		// Render the form
-		return $this->render('/processed_data.phtml', compact('maxFiles', 'maxSize'));
+		return $this->render('/upload_data.phtml', compact('maxFiles', 'maxSize'));
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	protected function getFileDir(): string {
-		return SRC_PATH . '/data/processed_data_csv';
+	protected function getCsvFileDir(): string {
+		return SRC_PATH . '/data/upload_data_csv';
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function getXmlFileDir(): string {
+		return SRC_PATH . '/data/upload_data_xml';
 	}
 
 
@@ -63,7 +78,7 @@ class ProcessedData extends AbstractUploadDataPage {
 	 * @inheritDoc
 	 */
 	protected function getUploadAllPermission(): string {
-		return 'admin.processedData.upload';
+		return 'admin.uploadData.upload';
 	}
 
 

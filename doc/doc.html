@@ -1010,6 +1010,7 @@
 <li><a href="#21_setup">Setup</a></li>
 <li><a href="#22_database_structure">Database structure</a></li>
 <li><a href="#23_api_upload">Upload API</a></li>
+<li><a href="#23_api_upload_statistics">Upload statistics API</a></li>
 <li><a href="#24_api_download">Download API</a></li>
 <li><a href="#24_api_monitoring_points">Monitoring point API</a></li>
 <li><a href="#25_0_admin_user_manual">Administration area</a>
@@ -1216,15 +1217,15 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <ul>
 <li><strong>Status code</strong>: 200</li>
 <li><strong>Content-type</strong>: application/xml</li>
-<li><strong>Body</strong>: <code>empty</code></li>
-<li><strong>Description</strong>: Upload was successful, the data has been successfully processed.</li>
+<li><strong>Body</strong>: XML: <code>environet:UploadStatistics</code></li>
+<li><strong>Description</strong>: Upload was successful, the data has been successfully processed. Response is the statistics output of the upload process.</li>
 </ul>
 <h3 id="invalid-request">Invalid request</h3>
 <ul>
 <li><strong>Status code</strong>: 400</li>
 <li><strong>Content-type</strong>: application/xml</li>
 <li><strong>Body</strong>: XML: <code>environet:ErrorResponse</code></li>
-<li><strong>Description</strong>: Input or processing error during the upload process. The reponse in an error xml which is valid agains environet’ upload api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
+<li><strong>Description</strong>: Input or processing error during the upload process. The response in an error xml which is valid against environet’s upload api schema: <a href="resources/environet.xsd">environet.xsd</a></li>
 <li><p><strong>Body example</strong>:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">&lt;?xml</span> version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;<span class="kw">?&gt;</span></a>
 <a class="sourceLine" id="cb2-2" title="2"><span class="kw">&lt;environet:ErrorResponse</span><span class="ot"> xmlns:environet=</span><span class="st">&quot;environet&quot;</span><span class="kw">&gt;</span></a>
@@ -1267,9 +1268,37 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <a class="sourceLine" id="cb3-6" title="6">    <span class="kw">&lt;/environet:Error&gt;</span></a>
 <a class="sourceLine" id="cb3-7" title="7"><span class="kw">&lt;/environet:ErrorResponse&gt;</span></a></code></pre></div></li>
 </ul>
+<p><a name="23_api_upload_statistics"></a></p>
+<h1 id="upload-statistics-api-documentation">Upload Statistics API documentation</h1>
+<h2 id="url-method-1">URL &amp; METHOD</h2>
+<ul>
+<li><strong>Method</strong>: <code>POST</code></li>
+<li><strong>URL</strong>: <code>https://domain.com/upload/statistics</code></li>
+</ul>
+<hr />
+<h2 id="headers-1">Headers</h2>
+<p>Same as in <a href="#23_api_upload">Upload API</a></p>
+<h3 id="signature-header-1">Signature header:</h3>
+<p>Same as in <a href="#23_api_upload">Upload API</a></p>
+<hr />
+<h2 id="body-1">Body</h2>
+<p>Same as in <a href="#23_api_upload">Upload API</a></p>
+<hr />
+<h2 id="responses">Responses</h2>
+<h3 id="success-1">Success</h3>
+<ul>
+<li><strong>Status code</strong>: 200</li>
+<li><strong>Content-type</strong>: application/xml</li>
+<li><strong>Body</strong>: XML: <code>environet:UploadStatistics</code></li>
+<li><strong>Description</strong>: Statistics of the upload, but with dry-run. Data is not saved on the upload endpoint, only the statistics are returned.</li>
+</ul>
+<h3 id="invalid-request-1">Invalid request</h3>
+<p>Same as in <a href="#23_api_upload">Upload API</a></p>
+<h3 id="server-error-1">Server error</h3>
+<p>Same as in <a href="#23_api_upload">Upload API</a></p>
 <p><a name="24_api_download"></a></p>
 <h1 id="download-api-documentation">Download API documentation</h1>
-<h2 id="url-method-1">URL &amp; METHOD</h2>
+<h2 id="url-method-2">URL &amp; METHOD</h2>
 <ul>
 <li><strong>Method</strong>: <code>GET</code></li>
 <li><strong>URL</strong>: <code>https://domain.com/download</code></li>
@@ -1285,7 +1314,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <li><strong>symbol[]</strong>: Query time series only of the given observed properties.</li>
 <li><strong>point[]</strong>: Query time series only of the given points.</li>
 </ul>
-<h2 id="headers-1">Headers</h2>
+<h2 id="headers-2">Headers</h2>
 <table>
 <thead>
 <tr class="header">
@@ -1304,7 +1333,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </tr>
 </tbody>
 </table>
-<h3 id="signature-header-1">Signature header:</h3>
+<h3 id="signature-header-2">Signature header:</h3>
 <p>The pattern of the header: <code>Signature keyId=&quot;[username]&quot;,algorithm=&quot;rsa-sha256&quot;,signature=&quot;[signature]&quot;</code></p>
 <p>The <code>keyId</code> is the username of the user who wants to query data. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the token in the query parameters.</p>
 <h3 id="request-attributes-header">Request attributes header</h3>
@@ -1314,14 +1343,14 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>Data in header value:</p>
 <pre class="text"><code>Zm9v YmFy;dGVzdA== MTIzNA==</code></pre>
 <h2 id="repsonses-1">Repsonses</h2>
-<h3 id="success-1">Success</h3>
+<h3 id="success-2">Success</h3>
 <ul>
 <li><strong>Status code</strong>: 200</li>
 <li><strong>Content-type</strong>: application/xml</li>
 <li><strong>Body</strong>: XML: <code>wml2:Collection</code></li>
 <li><strong>Description</strong>: Measurement data in WaterML2.0 comaptible XML format: http://www.opengis.net/waterml/2.0</li>
 </ul>
-<h3 id="invalid-request-1">Invalid request</h3>
+<h3 id="invalid-request-2">Invalid request</h3>
 <ul>
 <li><strong>Status code</strong>: 400</li>
 <li><strong>Content-type</strong>: application/xml</li>
@@ -1353,7 +1382,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <li><code>305</code>: End time filter value is invalid</li>
 </ul></li>
 </ul>
-<h3 id="server-error-1">Server error</h3>
+<h3 id="server-error-2">Server error</h3>
 <ul>
 <li><strong>Status code</strong>: 500</li>
 <li><strong>Content-type</strong>: application/xml</li>
@@ -1370,7 +1399,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </ul>
 <p><a name="24_api_monitoring_points"></a></p>
 <h1 id="monitoring-points-api-documentation">Monitoring points API documentation</h1>
-<h2 id="url-method-2">URL &amp; METHOD</h2>
+<h2 id="url-method-3">URL &amp; METHOD</h2>
 <ul>
 <li><strong>Method</strong>: <code>GET</code></li>
 <li><strong>URL</strong>: <code>https://domain.com/api/monitoring-points</code></li>
@@ -1380,7 +1409,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <ul>
 <li><strong>token</strong>: <code>required</code> A random string from which the signature is generated. This is required for authentication, the server verifies the signature in the <code>Authorization</code> header based on this token.</li>
 </ul>
-<h2 id="headers-2">Headers</h2>
+<h2 id="headers-3">Headers</h2>
 <table>
 <thead>
 <tr class="header">
@@ -1395,11 +1424,11 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 </tr>
 </tbody>
 </table>
-<h3 id="signature-header-2">Signature header:</h3>
+<h3 id="signature-header-3">Signature header:</h3>
 <p>The pattern of the header: <code>Signature keyId=&quot;[username]&quot;,algorithm=&quot;rsa-sha256&quot;,signature=&quot;[signature]&quot;</code></p>
 <p>The <code>keyId</code> is the username of the user who wants to query data. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the token in the query parameters.</p>
 <h2 id="repsonses-2">Repsonses</h2>
-<h3 id="success-2">Success</h3>
+<h3 id="success-3">Success</h3>
 <ul>
 <li><strong>Status code</strong>: 200</li>
 <li><strong>Content-type</strong>: application/json</li>
@@ -1465,7 +1494,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <a class="sourceLine" id="cb8-57" title="57">    <span class="ot">]</span></a>
 <a class="sourceLine" id="cb8-58" title="58"><span class="fu">}</span></a></code></pre></div></li>
 </ul>
-<h3 id="invalid-request-2">Invalid request</h3>
+<h3 id="invalid-request-3">Invalid request</h3>
 <ul>
 <li><strong>Status code</strong>: 400</li>
 <li><strong>Content-type</strong>: application/json</li>
@@ -1476,7 +1505,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <a class="sourceLine" id="cb9-2" title="2"> <span class="dt">&quot;error&quot;</span><span class="fu">:</span> <span class="st">&quot;Error message&quot;</span></a>
 <a class="sourceLine" id="cb9-3" title="3"><span class="fu">}</span></a></code></pre></div></li>
 </ul>
-<h3 id="server-error-2">Server error</h3>
+<h3 id="server-error-3">Server error</h3>
 <ul>
 <li><strong>Status code</strong>: 500</li>
 <li><strong>Content-type</strong>: application/json</li>
@@ -1492,13 +1521,15 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <p>This document’s goals to represents the different parts of the administration area to help to understand how it works. Help you to see through how works the specified relationships and how you can handle them.</p>
 <p><a name="25_10_upload_data"></a></p>
 <h2 id="upload-missing-and-processed-data">Upload missing and processed data</h2>
-<p>Upload missing data: <code>/admin/missing-data</code></p>
-<p>Upload processed data: <code>/admin/processed-data</code></p>
+<p>Upload data: <code>/admin/upload-data</code></p>
 <h3 id="concept-of-the-rules">Concept of the rules</h3>
-<p>The two pages “Upload missing data” and “Upload processed data” are similar in functionality.</p>
-<p>On both pages you can upload multiple CSV files in a pre-defined format to upload missing or processed data for a monitoring point. A file contains data for a single monitoring point with multiple properties and data. The sample csv format is downloadable on the pages. A user can upload data only for allowed monitoring point, if the user is not a super administrator. This uploader in the background will call the standard <a href="#23_api_upload">upload api</a>, so all validation of this endpoint will work on this uploader too.</p>
-<p>The dates in csv files must be in UTC timezone.</p>
-<p>The error/success messages will be separated per file, so if a file is invalid, you have to fix and upload only that file.</p>
+<p>On the upload data page, you can upload multiple CSV files in a pre-defined format to upload missing or processed data for a monitoring point. A file contains data for a single monitoring point with multiple properties and data. The sample CSV format is downloadable on the page. A user can upload data only for allowed monitoring points if the user is not a super administrator.</p>
+<p>This uploader in the background will call the standard <a href="#23_api_upload">upload api</a>, so all validations of this endpoint will work on this uploader too.</p>
+<h3 id="step-1-upload-csv-files">Step 1: Upload CSV files</h3>
+<p>In step 1, the uploaded CSV files are pre-processed, validated, and converted to XML format. These files are sent to the upload statistics endpoint, which returns statistics of the uploaded files, but without any operation on the distribution node.</p>
+<h3 id="step2-confirm-upload">Step2: Confirm upload</h3>
+<p>With the confirmation of the statistics, all files will be uploaded to the distribution node, and the distribution node will process the files and save the data to the database. The error/success messages will be separated per file, so if a file is invalid, you have to fix and upload only that file. The files with errors won’t be uploaded to the distribution node after confirmation.</p>
+<p>The dates in CSV files must be in UTC timezone.</p>
 <p><a name="25_1_admin_general"></a></p>
 <h2 id="general-information">General information</h2>
 <p>Good to know, that on each list page, there are on the top right a search field. In the following each sections you can see a “searchable” part, where you can find in what kind of fields can the system search on the specified page.</p>

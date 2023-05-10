@@ -8,6 +8,7 @@ use Environet\Sys\General\HttpClient\ApiHandler;
 use Environet\Sys\General\Response;
 use Environet\Sys\Upload\Exceptions\UploadException;
 use Environet\Sys\Xml\CreateErrorXml;
+use Environet\Sys\Xml\CreateUploadStatisticsXml;
 use Environet\Sys\Xml\Exceptions\InputXmlProcessException;
 use Environet\Sys\Xml\Exceptions\SchemaInvalidException;
 use Environet\Sys\Xml\InputProcessor\AbstractInputXmlProcessor;
@@ -81,9 +82,17 @@ class UploadHandler extends ApiHandler {
 				throw UploadException::serverError();
 			}
 
+			$statistics = ($this->request->getPathParts()[1] ?? null) === 'statistics';
+			define('UPLOAD_DRY_RUN', $statistics);
+
 			try {
 				// Input is valid syntactically and semantically valid, process it
-				$this->createInputProcessor($parsedXml)->process($this->getIdentity());
+				$processor = $this->createInputProcessor($parsedXml);
+				$processor->process($this->getIdentity());
+
+				return (new Response($processor->getStatistics()->toXml()->asXML()))
+					->setStatusCode(200)
+					->setHeaders(['Content-type: application/xml']);
 			} catch (InputXmlProcessException $e) {
 				// There are some invalid values in XML
 				$identityData = $this->identity->getData();
