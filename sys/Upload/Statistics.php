@@ -28,6 +28,16 @@ class Statistics {
 	 */
 	protected ?string $inputXmlFile = null;
 
+	/**
+	 * @var string|null
+	 */
+	protected ?string $userId = null;
+
+	/**
+	 * @var string|null
+	 */
+	protected ?string $monitoringPointId = null;
+
 
 	/**
 	 * Get count of input properties
@@ -250,6 +260,54 @@ class Statistics {
 
 
 	/**
+	 * Get monitoring point ID
+	 *
+	 * @return string|null
+	 */
+	public function getMonitoringPointId(): ?string {
+		return $this->monitoringPointId;
+	}
+
+
+	/**
+	 * Set monitoring point ID
+	 *
+	 * @param string|null $monitoringPointId
+	 *
+	 * @return Statistics
+	 */
+	public function setMonitoringPointId(?string $monitoringPointId): Statistics {
+		$this->monitoringPointId = $monitoringPointId;
+
+		return $this;
+	}
+
+
+	/**
+	 * Get user id
+	 *
+	 * @return string|null
+	 */
+	public function getUserId(): ?string {
+		return $this->userId;
+	}
+
+
+	/**
+	 * Set user id
+	 *
+	 * @param string|null $userId
+	 *
+	 * @return Statistics
+	 */
+	public function setUserId(?string $userId): Statistics {
+		$this->userId = $userId;
+
+		return $this;
+	}
+
+
+	/**
 	 * Convert statistics to XML response
 	 *
 	 * @return SimpleXMLElement
@@ -303,6 +361,32 @@ class Statistics {
 		}
 
 		return $statistics;
+	}
+
+
+	/**
+	 * Get data for event logger
+	 * @return array
+	 */
+	public function getLogData(): array {
+		$data = [];
+
+		$data['input_properties_count'] = $this->getInputPropertiesCount();
+		$data['monitoring_point_id'] = $this->getMonitoringPointId();
+		$data['user_id'] = $this->getUserId();
+		$data['property_statistics'] = [];
+
+		foreach ($this->getProperties() as $property) {
+			$data['property_statistics'][] = [
+				'symbol'       => $property,
+				'values_count' => $this->getPropertyValuesCount($property),
+				'inserts'      => $this->getPropertyInserts($property),
+				'updates'      => $this->getPropertyUpdates($property),
+				'no_changes'   => $this->getPropertyNoChanges($property),
+			];
+		}
+
+		return $data;
 	}
 
 

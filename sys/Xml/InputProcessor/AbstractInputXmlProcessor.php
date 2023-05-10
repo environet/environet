@@ -158,6 +158,7 @@ abstract class AbstractInputXmlProcessor {
 	 * 4. Inserts the results in the database. {@see AbstractInputXmlProcessor::insertResults()}
 	 *
 	 * @param Identity $identity
+	 * @param DateTime $now
 	 *
 	 * @throws ApiException
 	 * @throws InvalidConfigurationException
@@ -168,15 +169,15 @@ abstract class AbstractInputXmlProcessor {
 	 * @uses AbstractInputXmlProcessor::getOrCreateTimeSeries
 	 * @uses AbstractInputXmlProcessor::insertResults
 	 */
-	public function process(Identity $identity) {
-		// Create an UTC-time
-		$now = new DateTime('now', (new DateTimeZone('UTC')));
+	public function process(Identity $identity, DateTime $now) {
+		$this->stats->setUserId($identity->getId());
 
 		try {
 			Connection::getInstance()->pdo->beginTransaction();
 
 			// Find monitoring point id in xml
 			$monitoringPointId = (string) $this->xml->xpath('/environet:UploadData/environet:MonitoringPointId[1]')[0] ?? null;
+			$this->stats->setMonitoringPointId($monitoringPointId);
 
 			// Find monitoring point in database
 			if (!($mPoint = $this->findMonitoringPoint($monitoringPointId, $identity, true))) {
@@ -237,7 +238,7 @@ abstract class AbstractInputXmlProcessor {
 				}
 
 				// Insert results
-				$this->insertResults($timeSeriesPoints, $timeSeriesId, $propertySymbol);
+				$this->insertResults($timeSeriesPoints, $timeSeriesId, $propertySymbol, $now);
 				if (!isUploadDryRun()) {
 					$this->getPointQueriesClass()::updatePropertyLastUpdate($mPoint['id'], $propertyId, $now);
 				}
@@ -262,6 +263,7 @@ abstract class AbstractInputXmlProcessor {
 	 * @param array|SimpleXMLElement[] $timeSeriesPoints array of environet:Point xml elements
 	 * @param int                      $timeSeriesId     Id of time series record
 	 * @param string                   $propertySymbol
+	 * @param DateTime                 $now
 	 *
 	 * @throws ApiException
 	 * @uses AbstractInputXmlProcessor::createResultInsert
@@ -270,14 +272,13 @@ abstract class AbstractInputXmlProcessor {
 	 * @uses \DateTimeInterface
 	 * @uses \DateTimeZone
 	 */
-	protected function insertResults(array $timeSeriesPoints, int $timeSeriesId, string $propertySymbol) {
+	protected function insertResults(array $timeSeriesPoints, int $timeSeriesId, string $propertySymbol, DateTime $now) {
 		try {
 			$timeSeriesPointsBatches = array_chunk($timeSeriesPoints, 3000, true);
 
 			foreach ($timeSeriesPointsBatches as $batch) {
 				// Create empty insert query
 				$insert = $this->createResultInsert();
-				$now = new DateTime('now', new DateTimeZone('UTC'));
 
 				foreach ($batch as $key => $point) {
 					// Convert time to UTC

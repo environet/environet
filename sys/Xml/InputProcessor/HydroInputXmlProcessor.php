@@ -119,7 +119,6 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 					return 0;
 				}
 				// Time series for property and monitoring point not found, create a new one
-				$now = new DateTime('now', (new DateTimeZone('UTC')));
 				$timeSeriesId = (new Insert())
 					->table('hydro_time_series')
 					->columns(['observed_propertyid', 'mpointid'])

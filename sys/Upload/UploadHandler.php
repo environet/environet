@@ -2,7 +2,10 @@
 
 namespace Environet\Sys\Upload;
 
+use DateTime;
+use DateTimeZone;
 use Environet\Sys\Config;
+use Environet\Sys\General\EventLogger;
 use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\HttpClient\ApiHandler;
 use Environet\Sys\General\Response;
@@ -62,7 +65,7 @@ class UploadHandler extends ApiHandler {
 
 				// Syntax error
 				$identityData = $this->identity->getData();
-				$messages = [ 'Username: ' . $identityData['username'] ];
+				$messages = ['Username: ' . $identityData['username']];
 				throw new UploadException(302, $messages);
 			}
 
@@ -72,7 +75,7 @@ class UploadHandler extends ApiHandler {
 			} catch (SchemaInvalidException $e) {
 				// XML is invalid
 				$identityData = $this->identity->getData();
-				$messages = [ 'Username: ' . $identityData['username'] ];
+				$messages = ['Username: ' . $identityData['username']];
 				$messages = array_merge($e->getErrorMessages(), $messages);
 				throw UploadException::schemaErrors($messages);
 			} catch (Exception $e) {
@@ -82,13 +85,26 @@ class UploadHandler extends ApiHandler {
 				throw UploadException::serverError();
 			}
 
-			$statistics = ($this->request->getPathParts()[1] ?? null) === 'statistics';
-			define('UPLOAD_DRY_RUN', $statistics);
+			$isStatisticsRequest = ($this->request->getPathParts()[1] ?? null) === 'statistics';
+			define('UPLOAD_DRY_RUN', $isStatisticsRequest);
+
+			//Define a common 'now' date, which will be used in the upload process everywhere
+			$nowDate = new DateTime('now', (new DateTimeZone('UTC')));
 
 			try {
 				// Input is valid syntactically and semantically valid, process it
 				$processor = $this->createInputProcessor($parsedXml);
-				$processor->process($this->getIdentity());
+				$processor->process($this->getIdentity(), $nowDate);
+
+				if (!$isStatisticsRequest) {
+					//Log in event logger only for not dry-run requests
+					EventLogger::log(
+						EventLogger::EVENT_TYPE_UPLOAD_DATA,
+						$processor->getStatistics()->getLogData(),
+						null,
+						$nowDate->format('Y-m-d H:i:s')
+					);
+				}
 
 				return (new Response($processor->getStatistics()->toXml()->asXML()))
 					->setStatusCode(200)
@@ -96,11 +112,19 @@ class UploadHandler extends ApiHandler {
 			} catch (InputXmlProcessException $e) {
 				// There are some invalid values in XML
 				$identityData = $this->identity->getData();
-				$messages = [ 'Username: ' . $identityData['username'] ];
+				$messages = ['Username: ' . $identityData['username']];
 				throw new UploadException(401, $messages);
 			}
 		} catch (UploadException $e) {
 			exception_logger($e);
+
+			if (!$isStatisticsRequest) {
+				//Log errors
+				EventLogger::log(EventLogger::EVENT_TYPE_UPLOAD_DATA_ERROR, [
+					'user_id'        => $this->getIdentity()->getId(),
+					'error_messages' => $e->getErrorMessages()
+				]);
+			}
 
 			return (new Response((new CreateErrorXml())->generateXml($e->getErrorXmlData())->asXML()))
 				->setStatusCode(400)
@@ -131,7 +155,7 @@ class UploadHandler extends ApiHandler {
 		if (!$signatureValid) {
 			// Signature is not valid
 			$identityData = $this->identity->getData();
-			$messages = [ 'Username: ' . $identityData['username'] ];
+			$messages = ['Username: ' . $identityData['username']];
 			throw new ApiException(208, $messages);
 		}
 	}
@@ -157,8 +181,9 @@ class UploadHandler extends ApiHandler {
 
 		$monitoringPointId = (string) $xml->xpath('/environet:UploadData/environet:MonitoringPointId[1]')[0] ?? null;
 		$identityData = $this->identity->getData();
-		$messages = [ 'NCD: ' . $monitoringPointId,
-			'Usernamex: ' . $identityData['username']
+		$messages = [
+			'NCD: ' . $monitoringPointId,
+			'Username: ' . $identityData['username']
 		];
 		throw new UploadException(402, $messages);
 	}

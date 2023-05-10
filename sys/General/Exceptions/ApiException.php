@@ -52,6 +52,7 @@ class ApiException extends \Exception {
 		'HTTP_X_FORWARDED_FOR'
 	];
 
+
 	/**
 	 * UploadException constructor.
 	 * Populates {@see ApiException::$errorMessages} with the message that belongs to the current error code and additional error messages (if there are any).
@@ -89,6 +90,14 @@ class ApiException extends \Exception {
 
 
 	/**
+	 * @return array
+	 */
+	public function getErrorMessages(): array {
+		return $this->errorMessages;
+	}
+
+
+	/**
 	 * Shortcut function for server errors
 	 * @return self
 	 */
@@ -114,5 +123,7 @@ class ApiException extends \Exception {
 			return $serverKey . ': ' . ($_SERVER[$serverKey] ?? 'N/A');
 		}, $this->loggedServerKeys);
 		array_push($this->errorMessages, implode(', ', $vars));
-	}	
+	}
+
+
 }
