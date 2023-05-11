@@ -171,6 +171,7 @@ abstract class AbstractInputXmlProcessor {
 	 */
 	public function process(Identity $identity, DateTime $now) {
 		$this->stats->setUserId($identity->getId());
+		$this->stats->setDate($now);
 
 		try {
 			Connection::getInstance()->pdo->beginTransaction();

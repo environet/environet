@@ -2,6 +2,7 @@
 
 namespace Environet\Sys\Upload;
 
+use DateTime;
 use Exception;
 use SimpleXMLElement;
 
@@ -37,6 +38,11 @@ class Statistics {
 	 * @var string|null
 	 */
 	protected ?string $monitoringPointId = null;
+
+	/**
+	 * @var DateTime|null
+	 */
+	protected ?DateTime $date = null;
 
 
 	/**
@@ -308,6 +314,26 @@ class Statistics {
 
 
 	/**
+	 * @return DateTime|null
+	 */
+	public function getDate(): ?DateTime {
+		return $this->date;
+	}
+
+
+	/**
+	 * @param DateTime|null $date
+	 *
+	 * @return Statistics
+	 */
+	public function setDate(?DateTime $date): Statistics {
+		$this->date = $date;
+
+		return $this;
+	}
+
+
+	/**
 	 * Convert statistics to XML response
 	 *
 	 * @return SimpleXMLElement
@@ -321,6 +347,8 @@ class Statistics {
 
 
 		$xml->addChild('InputPropertiesCount', $this->getInputPropertiesCount());
+		$xml->addChild('Date', $this->getDate()->format('c'));
+		$xml->addChild('MonitoringPointId', $this->getMonitoringPointId());
 
 		foreach ($this->getProperties() as $property) {
 			$xmlProperty = $xml->addChild('PropertyStatistics');
@@ -347,6 +375,8 @@ class Statistics {
 		$properties = $xml->xpath('/environet:UploadStatistics/environet:PropertyStatistics');
 
 		$statistics->setInputPropertiesCount((int) ($xml->xpath('/environet:UploadStatistics/environet:InputPropertiesCount')[0] ?? null));
+		$statistics->setDate(new DateTime((string) $xml->xpath('/environet:UploadStatistics/environet:Date')[0] ?? null));
+		$statistics->setMonitoringPointId((string) $xml->xpath('/environet:UploadStatistics/environet:MonitoringPointId')[0] ?? null);
 
 		foreach ($properties as $property) {
 			$symbol = (string) $property->xpath('environet:Symbol')[0] ?? null;

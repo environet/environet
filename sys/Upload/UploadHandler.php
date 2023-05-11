@@ -7,7 +7,6 @@ use DateTimeZone;
 use Environet\Sys\Config;
 use Environet\Sys\General\Db\HydroObservedPropertyQueries;
 use Environet\Sys\General\Db\MeteoObservedPropertyQueries;
-use Environet\Sys\General\EventLogger;
 use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\HttpClient\ApiHandler;
 use Environet\Sys\General\Response;
@@ -97,16 +96,6 @@ class UploadHandler extends ApiHandler {
 				// Input is valid syntactically and semantically valid, process it
 				$processor = $this->createInputProcessor($parsedXml);
 				$processor->process($this->getIdentity(), $nowDate);
-
-				if (!$isStatisticsRequest) {
-					//Log in event logger only for not dry-run requests
-					EventLogger::log(
-						EventLogger::EVENT_TYPE_UPLOAD_DATA,
-						$processor->getStatistics()->getLogData(),
-						null,
-						$nowDate->format('Y-m-d H:i:s')
-					);
-				}
 
 				return (new Response($processor->getStatistics()->toXml()->asXML()))
 					->setStatusCode(200)

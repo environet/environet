@@ -11,6 +11,7 @@ use Environet\Sys\General\Db\MeteoMonitoringPointQueries;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\UserQueries;
+use Environet\Sys\General\EventLogger;
 use Environet\Sys\General\Exceptions\HttpBadRequestException;
 use Environet\Sys\General\Exceptions\PKIException;
 use Environet\Sys\General\Exceptions\QueryException;
@@ -168,6 +169,15 @@ abstract class AbstractUploadDataPage extends BasePage {
 			$response = $this->makeRequest('/upload', $xmlFile);
 
 			if ($response->getStatusCode() === 200) {
+				//Log in event logger
+				$statistic = Statistics::fromXml(new SimpleXMLElement($response->getBody()));
+				$statistic->setUserId($this->request->getIdentity() ? (int) $this->request->getIdentity()->getId() : null);
+				EventLogger::log(
+					EventLogger::EVENT_TYPE_UPLOAD_DATA,
+					$statistic->getLogData(),
+					null,
+					$statistic->getDate()->format('Y-m-d H:i:s')
+				);
 				$this->addMessage(sprintf("File processed and has been sent successfully: %s", $originalFileName), self::MESSAGE_SUCCESS);
 			} else {
 				//Some error returned from upload API
