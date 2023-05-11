@@ -81,14 +81,15 @@ class OutputXmlData implements XmlRenderable {
 	 * @uses \Environet\Sys\Xml\Model\OutputXmlData::renderObservationMembers()
 	 */
 	public function render(SimpleXMLElement &$xml): void {
-		$docMeta = $xml->addChild('wml2:metadata')->addChild('wml2:DocumentMetadata');
-		$docMeta->addChild('wml2:generationDate', self::dateToISO('now'));
+		$docMeta = $xml->addChild('wml2:metadata', null, 'wml2')
+			->addChild('wml2:DocumentMetadata', null, 'wml2');
+		$docMeta->addChild('wml2:generationDate', self::dateToISO('now'), 'wml2');
 
-		$version = $docMeta->addChild('wml2:version');
-		$version->addAttribute('xlink:href', 'http://www.opengis.net/waterml/2.0');
-		$version->addAttribute('xlink:title', 'WaterML 2.0');
+		$version = $docMeta->addChild('wml2:version', null, 'wml2');
+		$version->addAttribute('xlink:href', 'http://www.opengis.net/waterml/2.0', 'xlink');
+		$version->addAttribute('xlink:title', 'WaterML 2.0', 'xlink');
 
-		$docMeta->addChild('wml2:generationSystem', 'HyMeDES EnviroNet');
+		$docMeta->addChild('wml2:generationSystem', 'HyMeDES EnviroNet', 'wml2');
 
 		$this->renderObservationMembers($xml);
 	}

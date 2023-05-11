@@ -44,7 +44,7 @@ class CreateOutputXml {
 	 * @see OutputXmlData
 	 * @see OutputXmlObservationMember
 	 */
-	public function generateXml($data): SimpleXMLElement {
+	public function generateXml($data): string {
 		$result = new OutputXmlData();
 		$members = [];
 
@@ -64,7 +64,21 @@ class CreateOutputXml {
 
 		$result->render($this->outputXml);
 
-		return $this->outputXml;
+		return preg_replace_callback('/<([^\s>]+)([^>]*)>/uim', function ($tagMatch) {
+			if ($tagMatch[1] === 'wml2:Collection') {
+				return $tagMatch[0];
+			}
+
+			$attributes = preg_replace_callback('/\w+:\w+="[^"]+"/uim', function ($attributeMatch) {
+				if (strpos($attributeMatch[0], 'xmlns:') === 0) {
+					return '';
+				}
+
+				return $attributeMatch[0];
+			}, $tagMatch[2]);
+
+			return '<' . $tagMatch[1] . $attributes . '>';
+		}, $this->outputXml->asXML());
 	}
 
 
