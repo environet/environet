@@ -118,14 +118,6 @@ class UploadHandler extends ApiHandler {
 		} catch (UploadException $e) {
 			exception_logger($e);
 
-			if (!$isStatisticsRequest) {
-				//Log errors
-				EventLogger::log(EventLogger::EVENT_TYPE_UPLOAD_DATA_ERROR, [
-					'user_id'        => $this->getIdentity()->getId(),
-					'error_messages' => $e->getErrorMessages()
-				]);
-			}
-
 			return (new Response((new CreateErrorXml())->generateXml($e->getErrorXmlData())->asXML()))
 				->setStatusCode(400)
 				->setHeaders(['Content-type: application/xml']);
