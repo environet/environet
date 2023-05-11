@@ -5,6 +5,8 @@ namespace Environet\Sys\Upload;
 use DateTime;
 use DateTimeZone;
 use Environet\Sys\Config;
+use Environet\Sys\General\Db\HydroObservedPropertyQueries;
+use Environet\Sys\General\Db\MeteoObservedPropertyQueries;
 use Environet\Sys\General\EventLogger;
 use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\HttpClient\ApiHandler;
@@ -164,19 +166,58 @@ class UploadHandler extends ApiHandler {
 	 * @see HydroInputXmlProcessor
 	 */
 	protected function createInputProcessor(SimpleXMLElement $xml): AbstractInputXmlProcessor {
-		if (($hydroProcessor = new HydroInputXmlProcessor($xml))->isValidType($this->getIdentity())) {
-			return $hydroProcessor;
-		}
-		if (($meteoProcessor = new MeteoInputXmlProcessor($xml))->isValidType($this->getIdentity())) {
-			return $meteoProcessor;
-		}
-
 		$monitoringPointId = (string) $xml->xpath('/environet:UploadData/environet:MonitoringPointId[1]')[0] ?? null;
 		$identityData = $this->identity->getData();
 		$messages = [
 			'NCD: ' . $monitoringPointId,
 			'Username: ' . $identityData['username']
 		];
+
+		//Get all properties from the XML
+		$inputProperties = $xml->xpath('/environet:UploadData/environet:Property/environet:PropertyId') ?? [];
+		$inputProperties = array_map(fn(SimpleXMLElement $property) => strtolower((string) $property), $inputProperties);
+
+		//Collect all observed properties from the database
+		$properties = [];
+		foreach (HydroObservedPropertyQueries::getOptionList('symbol') as $symbol) {
+			$properties[strtolower($symbol)] = 'hydro';
+		}
+		foreach (MeteoObservedPropertyQueries::getOptionList('symbol') as $symbol) {
+			$properties[strtolower($symbol)] = 'meteo';
+		}
+
+		//Detect type based on the input properties
+		$detectedType = null;
+		foreach ($inputProperties as $inputProperty) {
+			if (!array_key_exists($inputProperty, $properties)) {
+				//Not a valid property, will be validated later
+				continue;
+			}
+
+			//Property is valid, get the type of property
+			$type = $properties[$inputProperty];
+
+			//If xml already has a detected type, and the current property's type is different, throw an error
+			if (!is_null($detectedType) && $type !== $detectedType) {
+				throw new UploadException(406, $messages);
+			}
+
+			//Set the detected type
+			$detectedType = $type;
+		}
+
+		if (!$detectedType) {
+			//No dected type, empty or invalid properites
+			throw new UploadException(407, $messages);
+		}
+
+		if (($hydroProcessor = new HydroInputXmlProcessor($xml))->isValidType($this->getIdentity()) && $detectedType === 'hydro') {
+			return $hydroProcessor;
+		}
+		if (($meteoProcessor = new MeteoInputXmlProcessor($xml))->isValidType($this->getIdentity()) && $detectedType === 'meteo') {
+			return $meteoProcessor;
+		}
+
 		throw new UploadException(402, $messages);
 	}
 

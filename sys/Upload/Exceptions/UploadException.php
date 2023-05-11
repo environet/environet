@@ -35,7 +35,9 @@ class UploadException extends ApiException {
 			402 => 'Monitoring point not found with the given identifier',
 			403 => 'Property for the selected monitoring point not found, or not allowed',
 			404 => 'Could not initialize time series for monitoring point and property',
-			405 => 'Monitoring point is inactive'
+			405 => 'Monitoring point is inactive',
+			406 => 'Can\'t detect type of monitoring point based on observed properties. There are mixed type of properties',
+			407 => 'Can\'t detect type of monitoring point based on observed properties. There aren\'t any valid property',
 		];
 		parent::__construct($code, $errorMessages);
 	}
