@@ -182,19 +182,15 @@ abstract class AbstractInputXmlProcessor {
 
 			// Find monitoring point in database
 			if (!($mPoint = $this->findMonitoringPoint($monitoringPointId, $identity, true))) {
-				$identityData = $identity->getData();
 				$messages = [
 					'NCD: ' . $monitoringPointId,
 				];
-				if (!empty($identityData['username'])) {
-					$messages[] = 'Username: ' . $identityData['username'];
-				}
 				if ($this->findMonitoringPoint($monitoringPointId, $identity)) {
 					//Found if inactive, add different error message
-					throw new UploadException(405, $messages);
+					throw new UploadException(405, $messages, $identity->getData());
 				}
 
-				throw new UploadException(402, $messages);
+				throw new UploadException(402, $messages, $identity->getData());
 			}
 
 			// Find properties in xml, and update time series for all property
@@ -216,26 +212,18 @@ abstract class AbstractInputXmlProcessor {
 
 				// Get the id of the property which will be returned only if the point can measure the property
 				if (!($propertyId = $this->getPropertyIdIfAllowed($mPoint['id'], $propertySymbol))) {
-					$identityData = $identity->getData();
 					$messages = [
 						'Monitoring point NCD: ' . $monitoringPointId . ", Property symbol: " . $propertySymbol,
 					];
-					if (!empty($identityData['username'])) {
-						$messages[] = 'Username: ' . $identityData['username'];
-					}
-					throw new UploadException(403, $messages);
+					throw new UploadException(403, $messages, $identity->getData());
 				}
 
 				// Get the time series id, or create a new one
 				if (is_null($timeSeriesId = $this->getOrCreateTimeSeries($mPoint['id'], $propertyId, $now))) {
-					$identityData = $identity->getData();
 					$messages = [
 						'Monitoring point NCD: ' . $monitoringPointId . ', Property symbol: ' . $propertySymbol,
 					];
-					if (!empty($identityData['username'])) {
-						$messages[] = 'Username: ' . $identityData['username'];
-					}
-					throw new UploadException(404, $messages);
+					throw new UploadException(404, $messages, $identity->getData());
 				}
 
 				// Insert results

@@ -21,10 +21,11 @@ class UploadException extends ApiException {
 	 *
 	 * Merges error codes and messages unique for this exception with {@see ApiException::$errors}.
 	 *
-	 * @param int   $code
-	 * @param array $errorMessages
+	 * @param int        $code
+	 * @param array      $errorMessages
+	 * @param array|null $identityData
 	 */
-	public function __construct(int $code = 101, array $errorMessages = []) {
+	public function __construct(int $code = 101, array $errorMessages = [], ?array $identityData = null) {
 		$this->errors += [
 			//Input error
 			302 => 'Xml syntax is invalid',
@@ -39,19 +40,20 @@ class UploadException extends ApiException {
 			406 => 'Can\'t detect type of monitoring point based on observed properties. There are mixed type of properties',
 			407 => 'Can\'t detect type of monitoring point based on observed properties. There aren\'t any valid property',
 		];
-		parent::__construct($code, $errorMessages);
+		parent::__construct($code, $errorMessages, $identityData);
 	}
 
 
 	/**
 	 * Shortcut function for schema errors. Validation messages added as custom error messages
 	 *
-	 * @param array $errors
+	 * @param array      $errors
+	 * @param array|null $identityData
 	 *
 	 * @return self
 	 */
-	public static function schemaErrors(array $errors): self {
-		return new static(303, $errors);
+	public static function schemaErrors(array $errors, ?array $identityData = null): self {
+		return new static(303, $errors, $identityData);
 	}
 
 
