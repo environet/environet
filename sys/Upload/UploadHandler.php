@@ -65,9 +65,7 @@ class UploadHandler extends ApiHandler {
 				exception_logger($exception);
 
 				// Syntax error
-				$identityData = $this->identity->getData();
-				$messages = ['Username: ' . $identityData['username']];
-				throw new UploadException(302, $messages);
+				throw new UploadException(302, [], $this->identity->getData());
 			}
 
 			try {
@@ -75,10 +73,7 @@ class UploadHandler extends ApiHandler {
 				(new SchemaValidator($parsedXml, SRC_PATH . '/public/schemas/environet.xsd'))->validate();
 			} catch (SchemaInvalidException $e) {
 				// XML is invalid
-				$identityData = $this->identity->getData();
-				$messages = ['Username: ' . $identityData['username']];
-				$messages = array_merge($e->getErrorMessages(), $messages);
-				throw UploadException::schemaErrors($messages);
+				throw UploadException::schemaErrors($e->getErrorMessages(), $this->identity->getData());
 			} catch (Exception $e) {
 				exception_logger($e);
 
@@ -102,9 +97,7 @@ class UploadHandler extends ApiHandler {
 					->setHeaders(['Content-type: application/xml']);
 			} catch (InputXmlProcessException $e) {
 				// There are some invalid values in XML
-				$identityData = $this->identity->getData();
-				$messages = ['Username: ' . $identityData['username']];
-				throw new UploadException(401, $messages);
+				throw new UploadException(401, [], $this->identity->getData());
 			}
 		} catch (UploadException $e) {
 			exception_logger($e);
@@ -137,9 +130,7 @@ class UploadHandler extends ApiHandler {
 
 		if (!$signatureValid) {
 			// Signature is not valid
-			$identityData = $this->identity->getData();
-			$messages = ['Username: ' . $identityData['username']];
-			throw new ApiException(208, $messages);
+			throw new ApiException(208, [], $this->identity->getData());
 		}
 	}
 
@@ -156,10 +147,8 @@ class UploadHandler extends ApiHandler {
 	 */
 	protected function createInputProcessor(SimpleXMLElement $xml): AbstractInputXmlProcessor {
 		$monitoringPointId = (string) $xml->xpath('/environet:UploadData/environet:MonitoringPointId[1]')[0] ?? null;
-		$identityData = $this->identity->getData();
 		$messages = [
 			'NCD: ' . $monitoringPointId,
-			'Username: ' . $identityData['username']
 		];
 
 		//Get all properties from the XML
@@ -188,7 +177,7 @@ class UploadHandler extends ApiHandler {
 
 			//If xml already has a detected type, and the current property's type is different, throw an error
 			if (!is_null($detectedType) && $type !== $detectedType) {
-				throw new UploadException(406, $messages);
+				throw new UploadException(406, $messages, $this->identity->getData());
 			}
 
 			//Set the detected type
@@ -197,7 +186,7 @@ class UploadHandler extends ApiHandler {
 
 		if (!$detectedType) {
 			//No dected type, empty or invalid properites
-			throw new UploadException(407, $messages);
+			throw new UploadException(407, $messages, $this->identity->getData());
 		}
 
 		if (($hydroProcessor = new HydroInputXmlProcessor($xml))->isValidType($this->getIdentity()) && $detectedType === 'hydro') {
