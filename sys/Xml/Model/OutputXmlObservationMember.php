@@ -17,6 +17,8 @@ use SimpleXMLElement;
  */
 class OutputXmlObservationMember implements XmlRenderable {
 
+	protected array $queryMeta;
+
 	/**
 	 * @var array
 	 */
@@ -34,9 +36,10 @@ class OutputXmlObservationMember implements XmlRenderable {
 	 * @param array $propertyData
 	 * @param array $valueRows
 	 */
-	public function __construct(array $propertyData, array $valueRows) {
+	public function __construct(array $propertyData, array $valueRows, array $queryMeta) {
 		$this->propertyData = $propertyData;
 		$this->valueRows = $valueRows;
+		$this->queryMeta = $queryMeta;
 	}
 
 
@@ -50,10 +53,19 @@ class OutputXmlObservationMember implements XmlRenderable {
 	 */
 	protected function renderMeta(SimpleXMLElement &$container) {
 		$timePeriod = $container->addChild('om:phenomenonTime', null, 'om')->addChild('gml:TimePeriod', null, 'gml');
-		$timePeriod->addChild('gml:beginPosition', OutputXmlData::dateToISO($this->propertyData['phenomenon_time_begin']), 'gml');
-		$timePeriod->addChild('gml:endPosition', OutputXmlData::dateToISO($this->propertyData['phenomenon_time_end']), 'gml');
 
-		$resultTime = !empty($this->propertyData['time_series_result_time']) ? OutputXmlData::dateToISO($this->propertyData['time_series_result_time']) : '';
+		$startTimeRequest = $this->queryMeta['startTime'] ?? null;
+		$endTimeRequest = $this->queryMeta['endTime'] ?? null;
+		$startTimeSeries = $this->propertyData['phenomenon_time_begin'] ?? null;
+		$endTimeSeries = $this->propertyData['phenomenon_time_end'] ?? null;
+
+		$startTime = $startTimeRequest && strtotime($startTimeRequest) > strtotime($startTimeSeries) ? $startTimeRequest : $startTimeSeries;
+		$endTime = $endTimeRequest && strtotime($endTimeRequest) < strtotime($endTimeSeries) ? $endTimeRequest : $endTimeSeries;
+
+		$timePeriod->addChild('gml:beginPosition', $startTime ? OutputXmlData::dateToISO($startTime) : '', 'gml');
+		$timePeriod->addChild('gml:endPosition', $endTime ? OutputXmlData::dateToISO($endTime) : '', 'gml');
+
+		$resultTime = $endTime ? OutputXmlData::dateToISO($endTime) : '';
 		$container
 			->addChild('om:resultTime', null, 'om')
 			->addChild('gml:TimeInstant', null, 'gml')
@@ -74,7 +86,7 @@ class OutputXmlObservationMember implements XmlRenderable {
 		$monitoringPoint->addChild('gml:description', $this->propertyData['mpoint_location'] ?? '', 'gml');
 		$monitoringPoint
 			->addChild('gml:identifier', $this->propertyData['eucd_wgst'] ?? $this->propertyData['eucd_pst'] ?? '', 'gml')
-			->addAttribute('codeSpace', 'https://www.icpdf.org/DanubeHIS/monitoringPoint');
+			->addAttribute('codeSpace', 'https://www.icpdr.org/DanubeHIS/monitoringPoint');
 		$monitoringPoint->addChild('gml:name', $this->propertyData['mpoint_name'] ?? '', 'gml');
 		$monitoringPoint->addChild('sa:sampledFeature', null, 'sa')
 			->addAttribute('xlink:title', $this->propertyData['mpoint_name'] ?? '', 'xlink');

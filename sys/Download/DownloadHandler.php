@@ -266,7 +266,11 @@ class DownloadHandler extends ApiHandler {
 
 			$queryBuilder->setCountries($this->parseArrayParam('country'));
 
-			$response = (new Response((new CreateOutputXml())->generateXml($queryBuilder->getResults())))->setHeaders(['Content-type: application/xml']);
+			$queryMeta = [
+				'startTime' => $startTime,
+				'endTime' => $endTime,
+			];
+			$response = (new Response((new CreateOutputXml())->generateXml($queryBuilder->getResults(), $queryMeta)))->setHeaders(['Content-type: application/xml']);
 
 			$this->saveDownloadLog($response);
 

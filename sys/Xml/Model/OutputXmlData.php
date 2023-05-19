@@ -19,6 +19,8 @@ use SimpleXMLElement;
  */
 class OutputXmlData implements XmlRenderable {
 
+	protected array $queryMeta;
+
 	/**
 	 * @var XmlRenderable[]
 	 */
@@ -29,9 +31,11 @@ class OutputXmlData implements XmlRenderable {
 	 * OutputXmlData constructor.
 	 *
 	 * @param array $observationMembers
+	 * @param array $queryMeta
 	 */
-	public function __construct(array $observationMembers = []) {
+	public function __construct(array $observationMembers = [], array $queryMeta = []) {
 		$this->observationMembers = $observationMembers;
+		$this->queryMeta = $queryMeta;
 	}
 
 

@@ -37,15 +37,16 @@ class CreateOutputXml {
 	 * Creates an instance of {@see OutputXmlData}, maps the input data to monitoring point - observation property combination values
 	 * and creates {@see OutputXmlObservationMember} instances based on them. Finally it attaches the members to the result xml and renders the whole tree.
 	 *
-	 * @param $data
+	 * @param       $data
+	 * @param array $queryMeta
 	 *
 	 * @return SimpleXMLElement
 	 * @throws Exception
 	 * @see OutputXmlData
 	 * @see OutputXmlObservationMember
 	 */
-	public function generateXml($data): string {
-		$result = new OutputXmlData();
+	public function generateXml($data, array $queryMeta): string {
+		$result = new OutputXmlData([], $queryMeta);
 		$members = [];
 
 		// Group value rows by mpoint and property - these will be rendered as observation members
@@ -59,7 +60,7 @@ class CreateOutputXml {
 
 		foreach ($members as $valueRows) {
 			// Create observation member, use the first valueRow for member data. All other rows will differ only in values and dates.
-			$result->addObservationMember(new OutputXmlObservationMember(reset($valueRows), $valueRows));
+			$result->addObservationMember(new OutputXmlObservationMember(reset($valueRows), $valueRows, $queryMeta));
 		}
 
 		$result->render($this->outputXml);
