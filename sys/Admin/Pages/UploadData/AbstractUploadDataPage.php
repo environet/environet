@@ -109,6 +109,10 @@ abstract class AbstractUploadDataPage extends BasePage {
 	protected function preProcessData(): array {
 		$selectedTimezoneOption = $this->request->getCleanData()['timezone_selector'] ?? null;
 
+		if (empty($selectedTimezoneOption)) {
+			throw new Exception('Timezone selection is required');
+		}
+
 		//Store uploaded csv files
 		$csvFiles = $this->storeFiles();
 

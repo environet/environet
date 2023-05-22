@@ -11,7 +11,8 @@
 	<div class="form-group">
 		<div class="field">
 			<label for="uploadTimezoneSelector">Timezone of dates in uploaded files</label>
-			<select name="timezone_selector" id="uploadTimezoneSelector">
+			<select name="timezone_selector" id="uploadTimezoneSelector" required>
+				<option value=""><?=__(' - Please select - ');?></option>
 				<?php foreach($timezoneOptions as $timezoneOption) { ?>
 					<option value="<?=$timezoneOption;?>" <?=($selectedTimezoneOption === $timezoneOption) ? 'selected' : '';?>>
 						<?=$timezoneOption;?>
