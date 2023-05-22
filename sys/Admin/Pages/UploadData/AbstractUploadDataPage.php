@@ -162,11 +162,15 @@ abstract class AbstractUploadDataPage extends BasePage {
 
 			if (!$fileResponse->hasErrors()) {
 				$fileResponse->addSuccessMessage(sprintf('File imported successfully: %s', $fileResponse->getOriginalFileName()));
+				$logDate = $fileResponse->getStatistics()->getDate();
+				if ($logDate) {
+					$logDate->setTimezone(new DateTimeZone(Config::getInstance()->getTimezone()));
+				}
 				EventLogger::log(
 					EventLogger::EVENT_TYPE_UPLOAD_DATA,
 					$fileResponse->getStatistics()->getLogData(),
 					null,
-					$fileResponse->getStatistics()->getDate()->format('Y-m-d H:i:s')
+					$logDate->format('Y-m-d H:i:s')
 				);
 			}
 		}
