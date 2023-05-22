@@ -3,6 +3,7 @@
 namespace Environet\Sys\Upload;
 
 use DateTime;
+use DateTimeInterface;
 use Exception;
 use SimpleXMLElement;
 
@@ -110,7 +111,9 @@ class Statistics {
 				'count'      => 0,
 				'inserts'    => 0,
 				'updates'    => 0,
-				'no_changes' => 0
+				'no_changes' => 0,
+				'min_time'   => null,
+				'max_time'   => null
 			];
 		}
 
@@ -242,6 +245,86 @@ class Statistics {
 
 
 	/**
+	 * Get min time of a property
+	 *
+	 * @param string $symbol
+	 *
+	 * @return DateTime|null
+	 */
+	public function getPropertyMinTime(string $symbol): ?DateTime {
+		return $this->properties[$symbol]['min_time'] ?? null;
+	}
+
+
+	/**
+	 * Get min time of a property
+	 *
+	 * @param string $symbol
+	 *
+	 * @return DateTime|null
+	 */
+	public function getPropertyMinTimeFormatted(string $symbol): ?string {
+		return $this->getPropertyMinTime($symbol) ? $this->getPropertyMinTime($symbol)->format('c') : null;
+	}
+
+
+	/**
+	 * Set min time of a property
+	 *
+	 * @param string        $symbol
+	 * @param DateTime|null $time
+	 *
+	 * @return Statistics
+	 */
+	public function setPropertyMinTime(string $symbol, ?DateTime $time): Statistics {
+		$this->addProperty($symbol);
+		$this->properties[$symbol]['min_time'] = $time;
+
+		return $this;
+	}
+
+
+	/**
+	 * Get max time of a property
+	 *
+	 * @param string $symbol
+	 *
+	 * @return DateTime|null
+	 */
+	public function getPropertyMaxTime(string $symbol): ?DateTime {
+		return $this->properties[$symbol]['max_time'] ?? null;
+	}
+
+
+	/**
+	 * Get min time of a property
+	 *
+	 * @param string $symbol
+	 *
+	 * @return DateTime|null
+	 */
+	public function getPropertyMaxTimeFormatted(string $symbol): ?string {
+		return $this->getPropertyMaxTime($symbol) ? $this->getPropertyMaxTime($symbol)->format('c') : null;
+	}
+
+
+	/**
+	 * Set max time of a property
+	 *
+	 * @param string        $symbol
+	 * @param DateTime|null $time
+	 *
+	 * @return Statistics
+	 */
+	public function setPropertyMaxTime(string $symbol, ?DateTime $time): Statistics {
+		$this->addProperty($symbol);
+		$this->properties[$symbol]['max_time'] = $time;
+
+		return $this;
+	}
+
+
+	/**
 	 * Get input xml file
 	 *
 	 * @return string|null
@@ -357,6 +440,8 @@ class Statistics {
 			$xmlProperty->addChild('Inserts', $this->getPropertyInserts($property));
 			$xmlProperty->addChild('Updates', $this->getPropertyUpdates($property));
 			$xmlProperty->addChild('NoChanges', $this->getPropertyNoChanges($property));
+			$xmlProperty->addChild('MinTime', $this->getPropertyMinTimeFormatted($property));
+			$xmlProperty->addChild('MaxTime', $this->getPropertyMaxTimeFormatted($property));
 		}
 
 		return $xml;
@@ -383,11 +468,16 @@ class Statistics {
 			if (!$symbol) {
 				continue;
 			}
+
+			$minTime = $property->xpath('environet:MinTime')[0] ?? null;
+			$maxTime = $property->xpath('environet:MaxTime')[0] ?? null;
 			$statistics->addProperty($symbol);
 			$statistics->setPropertyValuesCount($symbol, (int) $property->xpath('environet:ValuesCount')[0] ?? 0);
 			$statistics->setPropertyInserts($symbol, (int) $property->xpath('environet:Inserts')[0] ?? 0);
 			$statistics->setPropertyUpdates($symbol, (int) $property->xpath('environet:Updates')[0] ?? 0);
 			$statistics->setPropertyNoChanges($symbol, (int) $property->xpath('environet:NoChanges')[0] ?? 0);
+			$statistics->setPropertyMinTime($symbol, $minTime ? DateTime::createFromFormat(DateTimeInterface::ISO8601, $minTime) : null);
+			$statistics->setPropertyMaxTime($symbol, $maxTime ? DateTime::createFromFormat(DateTimeInterface::ISO8601, $maxTime) : null);
 		}
 
 		return $statistics;
@@ -413,6 +503,8 @@ class Statistics {
 				'inserts'      => $this->getPropertyInserts($property),
 				'updates'      => $this->getPropertyUpdates($property),
 				'no_changes'   => $this->getPropertyNoChanges($property),
+				'min_time'     => $this->getPropertyMinTimeFormatted($property),
+				'max_time'     => $this->getPropertyMaxTimeFormatted($property),
 			];
 		}
 

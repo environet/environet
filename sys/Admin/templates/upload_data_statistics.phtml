@@ -1,49 +1,71 @@
-<?php use Environet\Sys\Upload\Statistics;
+<?php
+/**
+ * @var UploadFileResponse $fileResponse
+ */
+use Environet\Sys\Upload\Statistics;
+use Environet\Sys\Upload\UploadFileResponse;
 
 include 'layouts/before_app.phtml'; ?>
 
 	<div class="card">
 		<h1>Upload processed or missing data - Step 2</h1>
-		<p>The uploaded files have been preprocessed, but not yet updated. Please confirm the changes, and press "Confirm" button.</p>
+		<?php if ($hasErrors) {?>
+			<p>The uploaded files have been preprocessed, but validation failed. Please check the errors, and try again!</p>
+		<?php } else { ?>
+			<p>The uploaded files have been validated, but not yet imported. Please review the changes listed below and press the "Confirm" button to import the data.</p>
+		<?php } ?>
 		<form id="uploadDataForm" action="" method="POST" enctype="multipart/form-data">
 			<div class="uploadStatistics">
-				<?php foreach ($fileResponses as $originalFileName => $fileResponse) { ?>
+				<?php foreach ($fileResponses as $fileResponse) { ?>
 					<ul class="list-group">
 						<li class="list-group-item">
-							<h3><?=$originalFileName;?></h3>
-							<?php if ($fileResponse instanceof Statistics) { ?>
-								<input type="hidden" name="xml_file[xml][]" value="<?=$fileResponse->getInputXmlFile();?>" />
-								<input type="hidden" name="xml_file[original][]" value="<?=$originalFileName;?>" />
-								<ul>
-									<li><strong>Count of uploaded properties</strong>: <?=$fileResponse->getInputPropertiesCount();?></li>
-									<?php foreach ($fileResponse->getProperties() as $propertySymbol) { ?>
-										<li><strong>Property</strong>: <?=$propertySymbol;?></li>
-										<ul>
-											<li><strong>Inserts </strong>: <?=$fileResponse->getPropertyInserts($propertySymbol);?></li>
-											<li><strong>Updates </strong>: <?=$fileResponse->getPropertyUpdates($propertySymbol);?></li>
-											<li><strong>No changes </strong>: <?=$fileResponse->getPropertyNoChanges($propertySymbol);?></li>
-										</ul>
-									<?php } ?>
-								</ul>
-							<?php } elseif (is_array($fileResponse)) { ?>
-								<?php foreach ($fileResponse as $message) { ?>
+							<h3><?=$fileResponse->getOriginalFileName();?></h3>
+							<?php if ($fileResponse->hasErrors()) {?>
+								<?php foreach ($fileResponse->getErrorMessages() as $message) { ?>
 									<div class="alert alert-danger" role="alert">
 										<?=$message;?>
 									</div>
 								<?php } ?>
+							<?php } else { ?>
+								<?php foreach ($fileResponse->getSuccessMessages() as $message) { ?>
+									<div class="alert alert-success" role="alert">
+										<?=$message;?>
+									</div>
+								<?php } ?>
+								<input type="hidden" name="xml_file[xml][]" value="<?=$fileResponse->getStatistics()->getInputXmlFile();?>" />
+								<input type="hidden" name="xml_file[original][]" value="<?=$fileResponse->getOriginalFileName();?>" />
+								<ul>
+									<li><strong>Monitoring point</strong>: <?=$fileResponse->getStatistics()->getMonitoringPointId();?></li>
+									<li><strong>Count of uploaded properties</strong>: <?=$fileResponse->getStatistics()->getInputPropertiesCount();?></li>
+									<?php foreach ($fileResponse->getStatistics()->getProperties() as $propertySymbol) { ?>
+										<li><strong>Property</strong>: <?=$propertySymbol;?></li>
+										<ul>
+											<li><strong>Inserts </strong>: <?=$fileResponse->getStatistics()->getPropertyInserts($propertySymbol);?></li>
+											<li><strong>Updates </strong>: <?=$fileResponse->getStatistics()->getPropertyUpdates($propertySymbol);?></li>
+											<li><strong>No changes </strong>: <?=$fileResponse->getStatistics()->getPropertyNoChanges($propertySymbol);?></li>
+											<li><strong>Minimum result time </strong>: <?=$fileResponse->getStatistics()->getPropertyMinTimeFormatted($propertySymbol);?></li>
+											<li><strong>Maximum result time </strong>: <?=$fileResponse->getStatistics()->getPropertyMaxTimeFormatted($propertySymbol);?></li>
+										</ul>
+									<?php } ?>
+								</ul>
 							<?php } ?>
 						</li>
 					</ul>
 				<?php } ?>
 			</div>
 			<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
-			<input type="submit" class="btn btn-primary" value="Confirm">
+
+			<?php if (!$hasErrors) {?>
+				<input type="submit" class="btn btn-primary oneClickSubmit" data-processingvalue="Upload is in progress..." value="Confirm">
+			<?php } ?>
 		</form>
 
 	</div>
+
 	<div class="card mt-3">
-		<h2>Upload other files</h2>
+		<h2>Upload files again</h2>
 		<?php include 'upload_data_form.phtml'; ?>
 	</div>
+
 
 <?php include 'layouts/after_app.phtml'; ?>

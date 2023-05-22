@@ -21,14 +21,13 @@ use Environet\Sys\General\HttpClient\Request;
 use Environet\Sys\General\HttpClient\Response;
 use Environet\Sys\General\PKI;
 use Environet\Sys\General\SysIdentity;
-use Environet\Sys\Upload\Statistics;
+use Environet\Sys\Upload\UploadFileResponse;
 use Environet\Sys\Xml\CreateInputXml;
 use Environet\Sys\Xml\Exceptions\CreateInputXmlException;
 use Environet\Sys\Xml\Model\InputXmlData;
 use Environet\Sys\Xml\Model\InputXmlPropertyData;
 use Exception;
 use InvalidArgumentException;
-use SimpleXMLElement;
 
 /**
  * Class AbstractUploadDataPage
@@ -119,33 +118,19 @@ abstract class AbstractUploadDataPage extends BasePage {
 		//Process each xml files
 		$fileResponses = [];
 		foreach ($xmlFiles as $originalFileName => $xmlFile) {
+			$fileResponse = new UploadFileResponse($originalFileName);
 			if (is_array($xmlFile)) {
 				//Xml file is already an array of error messages, not an xml path
-				$fileResponses[$originalFileName] = $xmlFile;
-				continue;
-			}
-
-			//Do upload with statistics
-			$response = $this->makeRequest('/upload/statistics', $xmlFile);
-
-			if ($response->getStatusCode() === 200) {
-				//Successful request, build statistics from XML response
-				$fileResponses[$originalFileName] = Statistics::fromXml(new SimpleXMLElement($response->getBody()))->setInputXmlFile($xmlFile);
+				$fileResponse->setFromErrors($xmlFile);
 			} else {
-				//Some error returned from upload API
-				if (($xml = simplexml_load_string($response->getBody())) !== false &&
-					($messages = $xml->xpath('/environet:ErrorResponse/environet:Error/environet:ErrorMessage'))
-				) {
-					//Valid XML error, parse error messages from error XML
-					$messages = array_map(function (SimpleXMLElement $element) {
-						return (string) $element;
-					}, $messages);
-					$fileResponses[$originalFileName] = $messages;
-				} else {
-					//Not a valid XML error, unknown
-					throw new Exception("Unknown error while sending data to upload api endpoint");
-				}
+				//Do upload with statistics
+				$response = $this->makeRequest('/upload/statistics', $xmlFile);
+
+				$fileResponse->setFromResponse($response, $this->request);
+				$fileResponse->getStatistics()->setInputXmlFile($xmlFile);
 			}
+
+			$fileResponses[] = $fileResponse;
 		}
 
 		return $fileResponses;
@@ -157,45 +142,36 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 *
 	 * @param array $xmlFiles
 	 *
-	 * @return void
+	 * @return array
 	 * @throws HttpClientException
 	 * @throws PKIException
+	 * @throws Exception
 	 * @see  CreateInputXml
 	 */
-	protected function handleSend(array $xmlFiles) {
+	protected function handleSend(array $xmlFiles): array {
 		//Iterate over files, and send it
+		$fileResponses = [];
 		foreach ($xmlFiles['xml'] ?? [] as $key => $xmlFile) {
 			$originalFileName = $xmlFiles['original'][$key] ?? basename($xmlFile);
 			$response = $this->makeRequest('/upload', $xmlFile);
 
-			if ($response->getStatusCode() === 200) {
-				//Log in event logger
-				$statistic = Statistics::fromXml(new SimpleXMLElement($response->getBody()));
-				$statistic->setUserId($this->request->getIdentity() ? (int) $this->request->getIdentity()->getId() : null);
+			$fileResponse = new UploadFileResponse($originalFileName);
+			$fileResponse->setFromResponse($response, $this->request);
+
+			$fileResponses[] = $fileResponse;
+
+			if (!$fileResponse->hasErrors()) {
+				$fileResponse->addSuccessMessage(sprintf('File imported successfully: %s', $fileResponse->getOriginalFileName()));
 				EventLogger::log(
 					EventLogger::EVENT_TYPE_UPLOAD_DATA,
-					$statistic->getLogData(),
+					$fileResponse->getStatistics()->getLogData(),
 					null,
-					$statistic->getDate()->format('Y-m-d H:i:s')
+					$fileResponse->getStatistics()->getDate()->format('Y-m-d H:i:s')
 				);
-				$this->addMessage(sprintf("File processed and has been sent successfully: %s", $originalFileName), self::MESSAGE_SUCCESS);
-			} else {
-				//Some error returned from upload API
-				if (($xml = simplexml_load_string($response->getBody())) !== false &&
-					($messages = $xml->xpath('/environet:ErrorResponse/environet:Error/environet:ErrorMessage'))
-				) {
-					//Valid XML error, parse error messages from error XML
-					$messages = array_map(function (SimpleXMLElement $element) {
-						return (string) $element;
-					}, $messages);
-					$message = 'Error when sending data to upload api endpoint: ' . implode(', ', $messages);
-				} else {
-					//Not a valid XML error, unknown
-					$message = 'Unknown error while sending data to upload api endpoint';
-				}
-				$this->addMessage(sprintf("Error during processing file %s: %s", $originalFileName, $message), self::MESSAGE_ERROR);
 			}
 		}
+
+		return $fileResponses;
 	}
 
 

@@ -41,14 +41,38 @@ class UploadData extends AbstractUploadDataPage {
 		if ($this->request->isPost()) {
 			if (array_key_exists('xml_file', $this->request->getCleanData())) {
 				//Step 2 - do upload
-				$this->handleSend($this->request->getCleanData()['xml_file']);
+				$fileResponses = $this->handleSend($this->request->getCleanData()['xml_file']);
+
+				return $this->render('upload_data_success.phtml', compact(
+					'fileResponses',
+					'maxFiles',
+					'maxSize',
+					'timezoneOptions',
+					'selectedTimezoneOption'
+				));
 			} else {
 				$selectedTimezoneOption = $this->request->getCleanData()['timezone_selector'] ?? null;
 
 				//Step 1 - statistics
 				$fileResponses = $this->handleStatistics();
 
-				return $this->render('upload_data_statistics.phtml', compact('fileResponses', 'maxFiles', 'maxSize', 'timezoneOptions', 'selectedTimezoneOption'));
+				if (!empty($fileResponses)) {
+					$hasErrors = false;
+					foreach ($fileResponses as $fileResponse) {
+						if ($fileResponse->hasErrors()) {
+							$hasErrors = true;
+						}
+					}
+
+					return $this->render('upload_data_statistics.phtml', compact(
+						'hasErrors',
+						'fileResponses',
+						'maxFiles',
+						'maxSize',
+						'timezoneOptions',
+						'selectedTimezoneOption'
+					));
+				}
 			}
 		}
 

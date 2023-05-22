@@ -265,6 +265,7 @@ abstract class AbstractInputXmlProcessor {
 		try {
 			$timeSeriesPointsBatches = array_chunk($timeSeriesPoints, 3000, true);
 
+			$minTime = $maxTime = null;
 			foreach ($timeSeriesPointsBatches as $batch) {
 				// Create empty insert query
 				$insert = $this->createResultInsert();
@@ -272,6 +273,13 @@ abstract class AbstractInputXmlProcessor {
 				foreach ($batch as $key => $point) {
 					// Convert time to UTC
 					$time = DateTime::createFromFormat(DateTimeInterface::ISO8601, (string) $point->xpath('environet:PointTime')[0] ?? null);
+					if (is_null($minTime) || $time->getTimestamp() < $minTime->getTimestamp()) {
+						$minTime = $time;
+					}
+					if (is_null($maxTime) || $time->getTimestamp() > $maxTime->getTimestamp()) {
+						$maxTime = $time;
+					}
+					$this->stats->setPropertyMinTime($propertySymbol, $minTime)->setPropertyMaxTime($propertySymbol, $maxTime);
 					$time->setTimezone(new DateTimeZone('UTC'));
 
 					$value = (string) $point->xpath('environet:PointValue')[0] ?? null;

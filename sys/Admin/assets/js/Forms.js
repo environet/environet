@@ -52,6 +52,18 @@ docReady(function () {
 			disableEmptyFilters(filterForm);
 		});
 	}
+
+	const oneClickSubmits = document.querySelectorAll('input.oneClickSubmit');
+	if (oneClickSubmits.length) {
+		oneClickSubmits.forEach((oneClickSubmit) => {
+			oneClickSubmit.closest('form').addEventListener('submit', function(event) {
+				oneClickSubmit.setAttribute('disabled', 'disabled');
+				if (oneClickSubmit.dataset.processingvalue) {
+					oneClickSubmit.value = oneClickSubmit.dataset.processingvalue;
+				}
+			});
+		});
+	}
 });
 
 
