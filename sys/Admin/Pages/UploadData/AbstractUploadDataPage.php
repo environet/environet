@@ -131,7 +131,9 @@ abstract class AbstractUploadDataPage extends BasePage {
 				$response = $this->makeRequest('/upload/statistics', $xmlFile);
 
 				$fileResponse->setFromResponse($response, $this->request);
-				$fileResponse->getStatistics()->setInputXmlFile($xmlFile);
+				if (!$fileResponse->hasErrors()) {
+					$fileResponse->getStatistics()->setInputXmlFile($xmlFile);
+				}
 			}
 
 			$fileResponses[] = $fileResponse;
