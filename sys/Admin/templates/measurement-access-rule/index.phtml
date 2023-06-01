@@ -9,9 +9,11 @@
 	<table class="table table-striped table-bordered">
 		<thead>
 		<tr>
-			<th><?=sortableColumn('Operator', 'id');?></th>
+			<th><?=sortableColumn('Operator', 'operator_name');?></th>
             <th><?=sortableColumn('Monitoring points', 'monitoringpoint_selector');?></th>
             <th><?=sortableColumn('Observed properties', 'observed_property_selector');?></th>
+            <th><?='Groups';?></th>
+            <th><?='Interval';?></th>
 			<th class="actions">Actions</th>
 		</tr>
 		</thead>
@@ -24,6 +26,8 @@
 						<td><?=$record['operator_name'] ?? null;?></td>
                         <td><?=isset($record['monitoringpoint_selector']) ? (trim($record['monitoringpoint_selector']) === '*' ? 'All' : $record['monitoringpoint_selector']) : null;?></td>
                         <td><?=isset($record['observed_property_selector']) ? (trim($record['observed_property_selector']) === '*' ? 'All' : $record['observed_property_selector']) : null;?></td>
+                        <td><?=$record['groups'] ?? null;?></td>
+                        <td><?=$record['interval'] ?? null;?></td>
 						<td class="actions">
 							<a href="/admin/measurement-access-rules/edit?id=<?=$record['id'];?>"><i class="fas fa-edit"></i></a>
 							<a href="/admin/measurement-access-rules/delete?id=<?=$record['id'];?>" onclick="return confirm('Are you sure to delete?')"><i class="fas fa-trash text-danger"></i></a>

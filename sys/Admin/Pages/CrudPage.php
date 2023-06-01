@@ -149,10 +149,12 @@ abstract class CrudPage extends BasePage {
 			);
 
 			//Add order by query condition
-			$query->sort(
-				$this->request->getQueryParam('order_by'),
-				$this->request->getQueryParam('order_dir', 'ASC')
-			);
+			if (!$query->isSorted()) {
+				$query->sort(
+					$this->request->getQueryParam('order_by'),
+					$this->request->getQueryParam('order_dir', 'ASC')
+				);
+			}
 
 			//Run query
 			$records = $query->run();

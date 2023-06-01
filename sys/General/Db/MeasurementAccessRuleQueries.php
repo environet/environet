@@ -21,6 +21,13 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 	 */
 	public static $tableName = 'measurement_access_rules';
 
+	/**
+	 * @var string[]
+	 */
+	public static $searchableFields = [
+		'operator.name',
+	];
+
 
 	/**
 	 * @inheritDoc
