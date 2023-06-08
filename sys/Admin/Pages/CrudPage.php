@@ -135,7 +135,8 @@ abstract class CrudPage extends BasePage {
 			if (!is_null($searchString)) {
 				$query->search(
 					explode(' ', urldecode($searchString)),
-					$this->queriesClass::$searchableFields
+					$this->queriesClass::$searchableFields,
+					$this->queriesClass::$searchableFieldSubSelects
 				);
 			}
 

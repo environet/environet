@@ -33,6 +33,11 @@ class BaseQueries {
 	 */
 	public static $searchableFields = [];
 
+	/**
+	 * List of searchable fields subselects
+	 */
+	public static $searchableFieldSubSelects = [];
+
 
 	/**
 	 * Save values in a connection table.
