@@ -364,7 +364,7 @@ class MeasurementAccessRuleCrud extends CrudPage {
 				} catch (Exception $e) {
 					$record['interval'] = '';
 				}
-				$record['interval'] = preg_replace('/\D0 \S+/', '', $dateInterval->format('%y years, %m months, %d days'));
+				$record['interval'] = trim(preg_replace('/\D0 \S+/', '', $dateInterval->format('%y years, %m months, %d days')), ',');
 			}
 		}
 	}
