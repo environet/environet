@@ -320,7 +320,12 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 				$data = $this->dataFromCsvLine($line);
 
 				try {
-					$this->queriesClass::save($data, $recordId, 'id', $record);
+					[$newId, $changes] = $this->queriesClass::save($data, $recordId, 'id', $record);
+					if (is_callable([$this->queriesClass, 'saveLastUpdated'])) {
+						$userId = $this->request->getIdentity() ? $this->request->getIdentity()->getId() : null;
+						$this->queriesClass::saveLastUpdated($userId, $newId, $changes);
+					}
+
 					$this->csvUploadAfterSave($data, $recordId);
 					if ($recordId) {
 						$updated[] = $csvId;
