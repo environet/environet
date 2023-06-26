@@ -193,12 +193,13 @@ trait WhereTrait {
 	 *
 	 * @param array $needle
 	 * @param array $searchableFields
+	 * @param array $searchableFieldSubSelects
 	 *
 	 * @return WhereTrait|Select|Update|Delete
 	 * @uses \makeAccentInsensitiveRegex()
 	 * @uses \Environet\Sys\General\Db\Query\Traits\WhereTrait::where()
 	 */
-	public function search(array $needle, array $searchableFields) {
+	public function search(array $needle, array $searchableFields, array $searchableFieldSubSelects) {
 		$index = 0;
 
 		// Expected structure of query: ((word1 = field1 OR word1 = field2) AND (word2 = field1 OR word2 = field2))
@@ -210,7 +211,11 @@ trait WhereTrait {
 				$param = ':' . $index;
 				$this->addParameter($param, makeAccentInsensitiveRegex($searchWord));
 				// Add the field=word condition as an OR-part
-				$or[] = $field . ' ~* ' . $param;
+				if (array_key_exists($field, $searchableFieldSubSelects)) {
+					$or[] = '(' . $searchableFieldSubSelects[$field] . ') ~* ' . $param;
+				} else {
+					$or[] = $field . ' ~* ' . $param;
+				}
 			}
 
 			// Add the ORs of the word as an AND condition

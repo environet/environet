@@ -311,4 +311,12 @@ class Select extends Query {
 			$this->orderBy($orderBy, $orderDir);
 		}
 	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isSorted(): bool {
+		return count($this->orders) > 0;
+	}
 }

@@ -64,15 +64,15 @@ Sample input XML:
 
 * **Status code**: 200
 * **Content-type**: application/xml
-* **Body**: `empty`
-* **Description**: Upload was successful, the data has been successfully processed.
+* **Body**: XML: `environet:UploadStatistics`
+* **Description**: Upload was successful, the data has been successfully processed. Response is the statistics output of the upload process.
 
 ### Invalid request
 
 * **Status code**: 400
 * **Content-type**: application/xml
 * **Body**: XML: `environet:ErrorResponse`
-* **Description**: Input or processing error during the upload process. The reponse in an error xml which is valid agains environet' upload api schema: [environet.xsd](resources/environet.xsd)
+* **Description**: Input or processing error during the upload process. The response in an error xml which is valid against environet's upload api schema: [environet.xsd](resources/environet.xsd)
 * **Body example**:
 	 
 	```xml

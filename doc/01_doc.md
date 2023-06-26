@@ -9,6 +9,7 @@ This document is the documentation of the Environet system.
     * [Setup](21_setup.md)
     * [Database structure](22_database_structure.md)
     * [Upload API](23_api_upload.md)
+    * [Upload statistics API](23_api_upload_statistics.md)
     * [Download API](24_api_download.md)
     * [Monitoring point API](24_api_monitoring_points.md)
     * [Administration area](25_0_admin_user_manual.md)

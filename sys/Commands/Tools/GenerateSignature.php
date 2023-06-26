@@ -36,10 +36,20 @@ class GenerateSignature extends BaseCommand {
 	 */
 	public function run($arguments): int {
 
+		$arguments = array_values(array_diff($arguments, ['dist', 'tool', 'sign']));
+		$inputContent = null;
+		if (count($arguments) === 1) {
+			$inputContent = base64_decode($arguments[0]);
+		}
+
 		// Get path of private key
 		while (true) {
 			$keyDefaultLocation = '/conf/plugins/credentials/private.pem';
-			$keyLocation = $this->console->askWithDefault('Enter the path of private key (relative to ' . SRC_PATH . '):', $keyDefaultLocation, 200);
+			if ($inputContent) {
+				$keyLocation = $keyDefaultLocation;
+			} else {
+				$keyLocation = $this->console->askWithDefault('Enter the path of private key (relative to ' . SRC_PATH . '):', $keyDefaultLocation, 200);
+			}
 			if (!file_exists(SRC_PATH . '/' . ltrim($keyLocation, '/'))) {
 				$this->console->writeLine("File $keyLocation does not exist");
 				continue;
@@ -49,16 +59,21 @@ class GenerateSignature extends BaseCommand {
 			break;
 		}
 
-		// Get content from file or from input
-		$mode = $this->console->askOptions('How do you want to enter the content?', [
-			1 => 'Paste / write here (max 500 characters)',
-			2 => 'From file'
-		]);
+		if ($inputContent) {
+			$mode = 1;
+		} else {
+			// Get content from file or from input
+			$mode = $this->console->askOptions('How do you want to enter the content?', [
+				1 => 'Paste / write here (max 500 characters)',
+				2 => 'From file'
+			]);
+		}
+
 
 		switch ($mode) {
 			case 1:
 				// Get from input
-				$content = $this->console->ask('Enter the content from which you want the generate the signature:');
+				$content = $inputContent ?: $this->console->ask('Enter the content from which you want the generate the signature:');
 				break;
 			case 2:
 				// Get from file if exists
@@ -74,7 +89,7 @@ class GenerateSignature extends BaseCommand {
 		}
 
 		// Get content from file or from input
-		if ($this->console->askYesNo('Do you want to generate signature from md5 hash?', false)) {
+		if ($inputContent || $this->console->askYesNo('Do you want to generate signature from md5 hash?', false)) {
 			$content = md5($content);
 		}
 
@@ -82,9 +97,14 @@ class GenerateSignature extends BaseCommand {
 		$pki = new PKI();
 		$signature = $pki->generateSignature($content, file_get_contents($keyLocation));
 
-		$this->console->writeLine('Signature:');
-		$this->console->writeLineBreak();
-		$this->console->writeLine($signature);
+		if ($inputContent) {
+			echo $signature;
+		} else {
+			$this->console->writeLine('Signature:');
+			$this->console->writeLineBreak();
+			$this->console->writeLine($signature);
+		}
+
 
 		return 0;
 	}

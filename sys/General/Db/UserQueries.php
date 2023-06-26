@@ -236,8 +236,7 @@ class UserQueries extends BaseQueries {
 				'admin.warninglevels.createown',
 				'admin.warninglevels.updateown',
 				'admin.warninglevels.deleteown',
-				'admin.missingData.uploadown',
-				'admin.processedData.uploadown',
+				'admin.uploadData.uploadown',
 
 			]);
 		}

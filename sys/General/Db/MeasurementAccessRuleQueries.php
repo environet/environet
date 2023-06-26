@@ -21,6 +21,22 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 	 */
 	public static $tableName = 'measurement_access_rules';
 
+	/**
+	 * @var string[]
+	 */
+	public static $searchableFields = [
+		'operator.name',
+		'group_id',
+	];
+
+	/**
+	 * @var string[]
+	 */
+	public static $searchableFieldSubSelects = [
+		'group_id' => 'SELECT string_agg(name::character varying, \', \') FROM group_measurement_access_rules g INNER JOIN groups ON groups.id = g.group_id
+					WHERE g.measurement_access_rule_id = measurement_access_rules.id'
+	];
+
 
 	/**
 	 * @inheritDoc
@@ -56,9 +72,10 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 		if (is_array(($observedPropertySelector = $data['observed_property_selector'] ?? null))) {
 			$observedPropertySelector = array_search('*', $observedPropertySelector) !== false ? '*' : implode(',', array_unique(array_filter($observedPropertySelector)));
 		}
+
 		return [
-			'operator_id' => $data['operator'] ?? null,
-			'monitoringpoint_selector' => $monitoringPointSelector,
+			'operator_id'                => $data['operator'] ?? null,
+			'monitoringpoint_selector'   => $monitoringPointSelector,
 			'observed_property_selector' => $observedPropertySelector,
 		];
 	}

@@ -384,3 +384,11 @@ function rrmdir($dir) {
 		rmdir($dir);
 	}
 }
+
+
+/**
+ * @return bool
+ */
+function isUploadDryRun(): bool {
+	return defined('UPLOAD_DRY_RUN') && UPLOAD_DRY_RUN === true;
+}

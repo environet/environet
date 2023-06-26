@@ -15,6 +15,7 @@ use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\Exceptions\UniqueConstraintQueryException;
 use Environet\Sys\General\Identity;
 use Environet\Sys\Upload\Exceptions\UploadException;
+use Environet\Sys\Upload\Statistics;
 use Exception;
 use SimpleXMLElement;
 
@@ -33,6 +34,11 @@ abstract class AbstractInputXmlProcessor {
 	 */
 	private $xml;
 
+	/**
+	 * @var Statistics
+	 */
+	protected $stats;
+
 
 	/**
 	 * InputXmlProcessor constructor.
@@ -42,6 +48,7 @@ abstract class AbstractInputXmlProcessor {
 	 */
 	public function __construct(SimpleXMLElement $xml) {
 		$this->xml = $xml;
+		$this->stats = new Statistics();
 	}
 
 
@@ -92,12 +99,18 @@ abstract class AbstractInputXmlProcessor {
 	abstract protected function createResultInsert(): Insert;
 
 
-    /**
-     * Crate a base update request for results table
-     *
-     * @return Query
-     */
+	/**
+	 * Crate a base update request for results table
+	 *
+	 * @return Query
+	 */
 	abstract protected function createResultUpdate(): Query;
+
+
+	/**
+	 * @return Query
+	 */
+	abstract protected function createResultStatisticsSelect(): Query;
 
 
 	/**
@@ -129,6 +142,14 @@ abstract class AbstractInputXmlProcessor {
 
 
 	/**
+	 * @return Statistics
+	 */
+	public function getStatistics(): Statistics {
+		return $this->stats;
+	}
+
+
+	/**
 	 * Process the validated xml, and save the time series data in database
 	 * Does the following steps:
 	 * 1. Creates an UTC-time from the current timestamp.
@@ -137,78 +158,79 @@ abstract class AbstractInputXmlProcessor {
 	 * 4. Inserts the results in the database. {@see AbstractInputXmlProcessor::insertResults()}
 	 *
 	 * @param Identity $identity
+	 * @param DateTime $now
 	 *
 	 * @throws ApiException
 	 * @throws InvalidConfigurationException
 	 * @throws UploadException
 	 * @see  Connection
-	 * @uses \Environet\Sys\Xml\InputProcessor\AbstractInputXmlProcessor::findMonitoringPoint()
-	 * @uses \Environet\Sys\Xml\InputProcessor\AbstractInputXmlProcessor::getPropertyIdIfAllowed()
-	 * @uses \Environet\Sys\Xml\InputProcessor\AbstractInputXmlProcessor::getOrCreateTimeSeries()
-	 * @uses \Environet\Sys\Xml\InputProcessor\AbstractInputXmlProcessor::insertResults()
+	 * @uses AbstractInputXmlProcessor::findMonitoringPoint
+	 * @uses AbstractInputXmlProcessor::getPropertyIdIfAllowed
+	 * @uses AbstractInputXmlProcessor::getOrCreateTimeSeries
+	 * @uses AbstractInputXmlProcessor::insertResults
 	 */
-	public function process(Identity $identity) {
-		// Create an UTC-time
-		$now = new DateTime('now', (new DateTimeZone('UTC')));
+	public function process(Identity $identity, DateTime $now) {
+		$this->stats->setUserId($identity->getId());
+		$this->stats->setDate($now);
 
 		try {
 			Connection::getInstance()->pdo->beginTransaction();
 
 			// Find monitoring point id in xml
 			$monitoringPointId = (string) $this->xml->xpath('/environet:UploadData/environet:MonitoringPointId[1]')[0] ?? null;
+			$this->stats->setMonitoringPointId($monitoringPointId);
 
 			// Find monitoring point in database
 			if (!($mPoint = $this->findMonitoringPoint($monitoringPointId, $identity, true))) {
-				$identityData = $identity->getData();
 				$messages = [
-					'NCD: ' .  $monitoringPointId,
+					'NCD: ' . $monitoringPointId,
 				];
-				if (!empty($identityData['username'])) {
-					$messages[] = 'Username: ' . $identityData['username'];
-				}
 				if ($this->findMonitoringPoint($monitoringPointId, $identity)) {
 					//Found if inactive, add different error message
-					throw new UploadException(405, $messages);
+					throw new UploadException(405, $messages, $identity->getData());
 				}
 
-				throw new UploadException(402, $messages);
+				throw new UploadException(402, $messages, $identity->getData());
 			}
 
 			// Find properties in xml, and update time series for all property
 			$properties = $this->xml->xpath('environet:Property');
+
+			//Set count of properties in stats
+			$this->stats->setInputPropertiesCount(count($properties));
 			foreach ($properties as $property) {
 				// Get property's symbol
 				$propertySymbol = (string) $property->xpath('environet:PropertyId[1]')[0] ?? null;
 
+				//Add property to stats
+				$this->stats->addProperty($propertySymbol);
+
 				$timeSeriesPoints = $property->xpath('environet:TimeSeries/environet:Point');
+
+				//Add count of property values to stats
+				$this->stats->setPropertyValuesCount($propertySymbol, count($timeSeriesPoints));
 
 				// Get the id of the property which will be returned only if the point can measure the property
 				if (!($propertyId = $this->getPropertyIdIfAllowed($mPoint['id'], $propertySymbol))) {
-					$identityData = $identity->getData();
 					$messages = [
 						'Monitoring point NCD: ' . $monitoringPointId . ", Property symbol: " . $propertySymbol,
 					];
-					if (!empty($identityData['username'])) {
-						$messages[] = 'Username: ' . $identityData['username'];
-					}
-					throw new UploadException(403, $messages);
+					throw new UploadException(403, $messages, $identity->getData());
 				}
 
 				// Get the time series id, or create a new one
-				if (!($timeSeriesId = $this->getOrCreateTimeSeries($mPoint['id'], $propertyId, $now))) {
-					$identityData = $identity->getData();
+				if (is_null($timeSeriesId = $this->getOrCreateTimeSeries($mPoint['id'], $propertyId, $now))) {
 					$messages = [
 						'Monitoring point NCD: ' . $monitoringPointId . ', Property symbol: ' . $propertySymbol,
 					];
-					if (!empty($identityData['username'])) {
-						$messages[] = 'Username: ' . $identityData['username'];
-					}
-					throw new UploadException(404, $messages);
+					throw new UploadException(404, $messages, $identity->getData());
 				}
 
 				// Insert results
-				$this->insertResults($timeSeriesPoints, $timeSeriesId);
-				$this->getPointQueriesClass()::updatePropertyLastUpdate($mPoint['id'], $propertyId, $now);
+				$this->insertResults($timeSeriesPoints, $timeSeriesId, $propertySymbol, $now);
+				if (!isUploadDryRun()) {
+					$this->getPointQueriesClass()::updatePropertyLastUpdate($mPoint['id'], $propertyId, $now);
+				}
 			}
 			Connection::getInstance()->pdo->commit();
 		} catch (UploadException $exception) {
@@ -229,30 +251,53 @@ abstract class AbstractInputXmlProcessor {
 	 *
 	 * @param array|SimpleXMLElement[] $timeSeriesPoints array of environet:Point xml elements
 	 * @param int                      $timeSeriesId     Id of time series record
+	 * @param string                   $propertySymbol
+	 * @param DateTime                 $now
 	 *
-	 * @throws Exception
-	 * @uses \Environet\Sys\Xml\InputProcessor\AbstractInputXmlProcessor::createResultInsert()
-	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
+	 * @throws ApiException
+	 * @uses AbstractInputXmlProcessor::createResultInsert
+	 * @uses Insert::run
 	 * @uses \DateTime
-     * @uses \DateTimeInterface
+	 * @uses \DateTimeInterface
 	 * @uses \DateTimeZone
 	 */
-	protected function insertResults(array $timeSeriesPoints, int $timeSeriesId) {
+	protected function insertResults(array $timeSeriesPoints, int $timeSeriesId, string $propertySymbol, DateTime $now) {
 		try {
 			$timeSeriesPointsBatches = array_chunk($timeSeriesPoints, 3000, true);
 
+			$minTime = $maxTime = null;
 			foreach ($timeSeriesPointsBatches as $batch) {
 				// Create empty insert query
 				$insert = $this->createResultInsert();
-				$now = new DateTime('now', new DateTimeZone('UTC'));
 
 				foreach ($batch as $key => $point) {
 					// Convert time to UTC
 					$time = DateTime::createFromFormat(DateTimeInterface::ISO8601, (string) $point->xpath('environet:PointTime')[0] ?? null);
+					if (is_null($minTime) || $time->getTimestamp() < $minTime->getTimestamp()) {
+						$minTime = $time;
+					}
+					if (is_null($maxTime) || $time->getTimestamp() > $maxTime->getTimestamp()) {
+						$maxTime = $time;
+					}
+					$this->stats->setPropertyMinTime($propertySymbol, $minTime)->setPropertyMaxTime($propertySymbol, $maxTime);
 					$time->setTimezone(new DateTimeZone('UTC'));
 
-					// Add 'values' row to insert query
 					$value = (string) $point->xpath('environet:PointValue')[0] ?? null;
+
+					//Add result to stats
+					$statisticsSelect = $this->createResultStatisticsSelect();
+					$this->stats->addResult($propertySymbol, $value, $statisticsSelect->addParameters([
+						"tsid"       => $timeSeriesId,
+						"time"       => $time->format('c'),
+						"isForecast" => $now < $time
+					])->run());
+
+					if (isUploadDryRun()) {
+						//No update if dry run
+						continue;
+					}
+
+					// Add 'values' row to insert query
 					$insert->addValueRow([":tsid$key", ":time$key", ":value$key", ":isForecast$key", ":createdAt$key"]);
 					$insert->addParameters([
 						"tsid$key"       => $timeSeriesId,
@@ -262,18 +307,20 @@ abstract class AbstractInputXmlProcessor {
 						"createdAt$key"  => $now->format('c'),
 					]);
 
-                    $update = $this->createResultUpdate();
-                    $update->addParameters([
-                        "tsid" => $timeSeriesId,
-                        "time" => $time->format('c'),
-                        "isForecast" => $now < $time,
-                        "value" => $value,
-                    ]);
-                    $update->run();
+					$update = $this->createResultUpdate();
+					$update->addParameters([
+						"tsid"       => $timeSeriesId,
+						"time"       => $time->format('c'),
+						"isForecast" => $now < $time,
+						"value"      => $value,
+					]);
+					$update->run();
 				}
 
 				try {
-					$insert->run();
+					if (!isUploadDryRun()) {
+						$insert->run();
+					}
 				} catch (UniqueConstraintQueryException $exception) {
 					//Do not add the same results
 					continue;
@@ -281,9 +328,11 @@ abstract class AbstractInputXmlProcessor {
 			}
 
 			//Update min-max values of time series
-			$this->getPointQueriesClass()::updateTimeSeriesPropertyMinMax($timeSeriesId);
-			$this->getPointQueriesClass()::updateTimeSeriesPropertyPhenomenon($timeSeriesId);
-			$this->getPointQueriesClass()::updateTimeSeriesResultTime($timeSeriesId);
+			if (!isUploadDryRun()) {
+				$this->getPointQueriesClass()::updateTimeSeriesPropertyMinMax($timeSeriesId);
+				$this->getPointQueriesClass()::updateTimeSeriesPropertyPhenomenon($timeSeriesId);
+				$this->getPointQueriesClass()::updateTimeSeriesResultTime($timeSeriesId);
+			}
 		} catch (QueryException $e) {
 			throw UploadException::serverError();
 		}

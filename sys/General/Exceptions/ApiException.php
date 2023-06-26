@@ -52,15 +52,20 @@ class ApiException extends \Exception {
 		'HTTP_X_FORWARDED_FOR'
 	];
 
+
 	/**
 	 * UploadException constructor.
 	 * Populates {@see ApiException::$errorMessages} with the message that belongs to the current error code and additional error messages (if there are any).
 	 *
-	 * @param int   $code          The error code
-	 * @param array $errorMessages Optional additional error messages
+	 * @param int        $code          The error code
+	 * @param array      $errorMessages Optional additional error messages
+	 * @param array|null $identityData
 	 */
-	public function __construct(int $code = 101, array $errorMessages = []) {
+	public function __construct(int $code = 101, array $errorMessages = [], ?array $identityData = null) {
 		// Add the default error message of code first
+		if ($identityData && !empty($identityData['username'])) {
+			$errorMessages[] = 'Username: ' . $identityData['username'];
+		}
 		$this->errorMessages[] = $this->errors[$code] ?? $this->errors[101];
 
 		// Optionally add other error messages
@@ -89,6 +94,14 @@ class ApiException extends \Exception {
 
 
 	/**
+	 * @return array
+	 */
+	public function getErrorMessages(): array {
+		return $this->errorMessages;
+	}
+
+
+	/**
 	 * Shortcut function for server errors
 	 * @return self
 	 */
@@ -110,9 +123,11 @@ class ApiException extends \Exception {
 	 * Add server variable values to error message
 	 */
 	protected function addVarsToMessage(): void {
-		$vars = array_map(function ($serverKey) {
-			return $serverKey . ': ' . ($_SERVER[$serverKey] ?? 'N/A');
-		}, $this->loggedServerKeys);
+		$vars = array_values(array_filter(array_map(function ($serverKey) {
+			return !empty($_SERVER[$serverKey]) ? $serverKey . ': ' . $_SERVER[$serverKey] : null;
+		}, $this->loggedServerKeys)));
 		array_push($this->errorMessages, implode(', ', $vars));
-	}	
+	}
+
+
 }

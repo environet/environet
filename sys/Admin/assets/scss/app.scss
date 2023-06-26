@@ -25,8 +25,6 @@ $fa-font-path: '~@fortawesome/fontawesome-free/webfonts';
 @import '~@fortawesome/fontawesome-free/scss/fontawesome';
 @import '~@fortawesome/fontawesome-free/scss/solid';
 
-@import 'slimselect';
-
 @import 'mixins';
 @import 'layout';
 @import 'login';
@@ -196,3 +194,12 @@ section#main-content {
 	animation: none !important;
 }
 
+
+.uploadStatistics {
+	.list-group-item ul li {
+		list-style-type: disc;
+	}
+	.list-group {
+		margin-bottom: 1em
+	}
+}

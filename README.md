@@ -11,6 +11,7 @@ This document is the documentation of the Environet system.
     * [Setup](#21_setup)
     * [Database structure](#22_database_structure)
     * [Upload API](#23_api_upload)
+    * [Upload statistics API](#23_api_upload_statistics)
     * [Download API](#24_api_download)
     * [Monitoring point API](#24_api_monitoring_points)
     * [Administration area](#25_0_admin_user_manual)
@@ -284,15 +285,15 @@ Sample input XML:
 
 * **Status code**: 200
 * **Content-type**: application/xml
-* **Body**: `empty`
-* **Description**: Upload was successful, the data has been successfully processed.
+* **Body**: XML: `environet:UploadStatistics`
+* **Description**: Upload was successful, the data has been successfully processed. Response is the statistics output of the upload process.
 
 ### Invalid request
 
 * **Status code**: 400
 * **Content-type**: application/xml
 * **Body**: XML: `environet:ErrorResponse`
-* **Description**: Input or processing error during the upload process. The reponse in an error xml which is valid agains environet' upload api schema: [environet.xsd](resources/environet.xsd)
+* **Description**: Input or processing error during the upload process. The response in an error xml which is valid against environet's upload api schema: [environet.xsd](resources/environet.xsd)
 * **Body example**:
 	 
 	```xml
@@ -339,6 +340,51 @@ Sample input XML:
 		</environet:Error>
 	</environet:ErrorResponse>
 	```
+
+<a name="23_api_upload_statistics"></a>
+
+# Upload Statistics API documentation
+
+## URL & METHOD
+
+* **Method**: `POST`
+* **URL**: `https://domain.com/upload/statistics`
+
+---
+
+## Headers
+
+Same as in [Upload API](#23_api_upload)
+
+### Signature header:
+
+Same as in [Upload API](#23_api_upload)
+
+---
+
+## Body
+
+Same as in [Upload API](#23_api_upload)
+
+--- 
+
+## Responses
+
+### Success
+
+* **Status code**: 200
+* **Content-type**: application/xml
+* **Body**: XML: `environet:UploadStatistics`
+* **Description**: Statistics of the upload, but with dry-run. Data is not saved on the upload endpoint, only the statistics are returned.
+
+### Invalid request
+
+Same as in [Upload API](#23_api_upload)
+	
+### Server error
+
+Same as in [Upload API](#23_api_upload)
+
 
 <a name="24_api_download"></a>
 
@@ -596,20 +642,27 @@ This document's goals to represents the different parts of the administration ar
 
 ## Upload missing and processed data
 
-Upload missing data: `/admin/missing-data`
-
-Upload processed data: `/admin/processed-data`
+Upload data: `/admin/upload-data`
 
 ### Concept of the rules
 
-The two pages "Upload missing data" and "Upload processed data" are similar in functionality.
+On the upload data page, you can upload multiple CSV files in a pre-defined format to upload missing or processed data for a monitoring point.
+A file contains data for a single monitoring point with multiple properties and data. The sample CSV format is downloadable on the page. 
+A user can upload data only for allowed monitoring points if the user is not a super administrator. 
 
-On both pages you can upload multiple CSV files in a pre-defined format to upload missing or processed data for a monitoring point.
-A file contains data for a single monitoring point with multiple properties and data. The sample csv format is downloadable on the pages. 
-A user can upload data only for allowed monitoring point, if the user is not a super administrator. 
-This uploader in the background will call the standard [upload api](#23_api_upload), so all validation of this endpoint will work on this uploader too.
+This uploader in the background will call the standard [upload api](#23_api_upload), so all validations of this endpoint will work on this uploader too.
 
-The error/success messages will be separated per file, so if a file is invalid, you have to fix and upload only that file.
+### Step 1: Upload CSV files
+In step 1, the uploaded CSV files are pre-processed, validated, and converted to XML format. These files are sent to the upload statistics endpoint, 
+which returns statistics of the uploaded files, but without any operation on the distribution node.
+
+### Step2: Confirm upload
+With the confirmation of the statistics, all files will be uploaded to the distribution node, and the distribution node will process the files and save the data to the database.
+The error/success messages will be separated per file, so if a file is invalid, you have to fix and upload only that file. 
+The files with errors won't be uploaded to the distribution node after confirmation.
+
+The dates in CSV files must be in UTC timezone.
+
 
 
 <a name="25_1_admin_general"></a>

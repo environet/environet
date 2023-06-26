@@ -98,6 +98,9 @@ class MeteoInputXmlProcessor extends AbstractInputXmlProcessor {
 	 * @uses \Environet\Sys\General\Db\Query\Update::run()
 	 */
 	protected function getOrCreateTimeSeries(int $mPointId, int $propertyId, DateTime $now): ?int {
+		if (isUploadDryRun()) {
+			return 0;
+		}
 		try {
 			// Find time series by id
 			$timeSeriesId = (new Select())
@@ -115,7 +118,6 @@ class MeteoInputXmlProcessor extends AbstractInputXmlProcessor {
 			$timeSeriesId = $timeSeriesId ? $timeSeriesId['id'] : null;
 			if (!$timeSeriesId) {
 				// Time series for property and monitoring point not found, create a new one
-				$now = new DateTime('now', (new DateTimeZone('UTC')));
 				$timeSeriesId = (new Insert())
 					->table('meteo_time_series')
 					->columns(['observed_propertyid', 'mpointid'])
@@ -145,20 +147,32 @@ class MeteoInputXmlProcessor extends AbstractInputXmlProcessor {
 	}
 
 
-    /**
-     * @inheritDoc
-     */
-    protected function createResultUpdate(): Query
-    {
-        $table = 'meteo_result';
-        $obsoleteUpdateQuery = "
+	/**
+	 * @inheritDoc
+	 */
+	protected function createResultUpdate(): Query {
+		$table = 'meteo_result';
+		$obsoleteUpdateQuery = "
             UPDATE $table
             SET is_obsolete = CASE WHEN value != :value THEN true ELSE false END
             WHERE (time_seriesid = :tsid AND time = :time AND is_forecast = :isForecast)
         ";
 
-        return (new Query())->table($table)->setRawQuery($obsoleteUpdateQuery);
-    }
+		return (new Query())->table($table)->setRawQuery($obsoleteUpdateQuery);
+	}
+
+
+	/**
+	 * @return Query
+	 */
+	protected function createResultStatisticsSelect(): Query {
+		return (new Select())->select('*')
+			->from('meteo_result')
+			->where('time_seriesid = :tsid')
+			->where('time = :time')
+			->where('is_forecast = :isForecast')
+			->orderBy('created_at', 'DESC');
+	}
 
 
 	/**

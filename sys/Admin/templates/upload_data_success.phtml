@@ -1,0 +1,56 @@
+<?php
+/**
+ * @var UploadFileResponse $fileResponse
+ */
+
+use Environet\Sys\Upload\UploadFileResponse;
+
+include 'layouts/before_app.phtml'; ?>
+
+	<div class="card">
+		<h1>Upload processed or missing data - Step 3</h1>
+		<div class="uploadStatistics">
+			<?php foreach ($fileResponses as $fileResponse) { ?>
+				<ul class="list-group">
+					<li class="list-group-item">
+						<h3><?=$fileResponse->getOriginalFileName();?></h3>
+						<?php if ($fileResponse->hasErrors()) { ?>
+							<?php foreach ($fileResponse->getErrorMessages() as $message) { ?>
+								<div class="alert alert-danger" role="alert">
+									<?=$message;?>
+								</div>
+							<?php } ?>
+						<?php } else { ?>
+							<?php foreach ($fileResponse->getSuccessMessages() as $message) { ?>
+								<div class="alert alert-success" role="alert">
+									<?=$message;?>
+								</div>
+							<?php } ?>
+							<ul>
+								<li><strong>Monitoring point</strong>: <?=$fileResponse->getStatistics()->getMonitoringPointId();?></li>
+								<li><strong>Count of uploaded properties</strong>: <?=$fileResponse->getStatistics()->getInputPropertiesCount();?></li>
+								<?php foreach ($fileResponse->getStatistics()->getProperties() as $propertySymbol) { ?>
+									<li><strong>Property</strong>: <?=$propertySymbol;?></li>
+									<ul>
+										<li><strong>Inserts </strong>: <?=$fileResponse->getStatistics()->getPropertyInserts($propertySymbol);?></li>
+										<li><strong>Updates </strong>: <?=$fileResponse->getStatistics()->getPropertyUpdates($propertySymbol);?></li>
+										<li><strong>No changes </strong>: <?=$fileResponse->getStatistics()->getPropertyNoChanges($propertySymbol);?></li>
+										<li><strong>Minimum result time </strong>: <?=$fileResponse->getStatistics()->getPropertyMinTimeFormatted($propertySymbol);?></li>
+										<li><strong>Maximum result time </strong>: <?=$fileResponse->getStatistics()->getPropertyMaxTimeFormatted($propertySymbol);?></li>
+									</ul>
+								<?php } ?>
+							</ul>
+						<?php } ?>
+					</li>
+				</ul>
+			<?php } ?>
+		</div>
+
+	</div>
+
+	<div class="card mt-3">
+		<h2>Upload more files</h2>
+		<?php include 'upload_data_form.phtml'; ?>
+	</div>
+
+<?php include 'layouts/after_app.phtml'; ?>

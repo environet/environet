@@ -29,6 +29,18 @@
 	</xs:element>
 
 
+	<xs:element name="UploadStatistics">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="InputPropertiesCount" minOccurs="1" maxOccurs="1" type="xs:int"/>
+				<xs:element name="Date" minOccurs="1" maxOccurs="1" type="xs:string"/>
+				<xs:element name="MonitoringPointId" minOccurs="1" maxOccurs="1" type="xs:string"/>
+				<xs:element ref="environet:PropertyStatistics" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+
 	<xs:element name="MonitoringPointId" type="xs:string"/>
 	<xs:element name="Property">
 		<xs:complexType>
@@ -59,6 +71,17 @@
 			<xs:all>
 				<xs:element name="ErrorCode" minOccurs="1" maxOccurs="1" type="xs:int"/>
 				<xs:element name="ErrorMessage" minOccurs="1" maxOccurs="1" type="xs:string"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PropertyStatistics">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Symbol" minOccurs="1" maxOccurs="1" type="xs:string"/>
+				<xs:element name="ValuesCount" minOccurs="1" maxOccurs="1" type="xs:int"/>
+				<xs:element name="Inserts" minOccurs="1" maxOccurs="1" type="xs:int"/>
+				<xs:element name="Updates" minOccurs="1" maxOccurs="1" type="xs:int"/>
+				<xs:element name="NoChanges" minOccurs="1" maxOccurs="1" type="xs:int"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>

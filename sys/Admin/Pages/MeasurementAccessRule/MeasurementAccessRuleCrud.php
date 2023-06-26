@@ -2,6 +2,7 @@
 
 namespace Environet\Sys\Admin\Pages\MeasurementAccessRule;
 
+use DateInterval;
 use Environet\Sys\Admin\Pages\CrudPage;
 use Environet\Sys\General\Db\GroupQueries;
 use Environet\Sys\General\Db\HydroMonitoringPointQueries;
@@ -14,7 +15,9 @@ use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\UserQueries;
 use Environet\Sys\General\Exceptions\QueryException;
+use Environet\Sys\General\Exceptions\RenderException;
 use Environet\Sys\General\Response;
+use Exception;
 
 /**
  * Class DataAccessRuleCrud
@@ -100,8 +103,15 @@ class MeasurementAccessRuleCrud extends CrudPage {
 			$query->whereIn('operator_id', array_column($operators, 'id'), 'operatorId');
 		}
 
+		if ($this->request->getQueryParam('order_by') === 'operator_name') {
+			$query->sort('operator.name', $this->request->getQueryParam('order_dir', 'ASC'));
+		}
+
 		$query->join('operator', 'operator.id = measurement_access_rules.operator_id', Query::JOIN_INNER);
 		$query->select('operator.name as operator_name');
+
+		$query->select("(SELECT string_agg(group_id::character varying, ',') FROM group_measurement_access_rules g WHERE g.measurement_access_rule_id = measurement_access_rules.id) as group_id");
+		$query->select("(SELECT interval FROM group_measurement_access_rules g WHERE g.measurement_access_rule_id = measurement_access_rules.id LIMIT 1) as interval");
 	}
 
 
@@ -117,6 +127,24 @@ class MeasurementAccessRuleCrud extends CrudPage {
 		}
 
 		return true;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 *
+	 * @param array|null $record
+	 *
+	 * @return Response
+	 * @throws RenderException
+	 */
+	protected function renderForm(array $record = null): Response {
+		if ($this->request->isPost()) {
+			$_POST['monitoringpoint_selector'] = implode(',', $_POST['monitoringpoint_selector']);
+			$_POST['observed_property_selector'] = implode(',', $_POST['observed_property_selector']);
+		}
+
+		return parent::renderForm($record);
 	}
 
 
@@ -147,6 +175,52 @@ class MeasurementAccessRuleCrud extends CrudPage {
 		}
 
 		return $options;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function validateData(array $data, ?array $editedRecord = null): bool {
+		$valid = true;
+
+		if (!validate($data, 'operator', null, true)) {
+			$this->addFieldMessage('operator', 'Operator is required', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+		if (!(is_array($data['monitoringpoint_selector']) && !empty($data['monitoringpoint_selector']))) {
+			$this->addFieldMessage('monitoringpoint_selector', 'One or more monitoring point must be selected', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+		if (!(is_array($data['observed_property_selector']) && !empty($data['observed_property_selector']))) {
+			$this->addFieldMessage('observed_property_selector', 'One or more observed property must be selected', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+		if (!(is_array($data['groups']) && !empty($data['groups']))) {
+			$this->addFieldMessage('groups', 'One or more group must be selected', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+
+		if (!is_numeric($data['interval_years'])) {
+			$this->addFieldMessage('interval_years', 'Years must be a number', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+		if (!is_numeric($data['interval_months'])) {
+			$this->addFieldMessage('interval_months', 'Months must be a number', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+		if (!is_numeric($data['interval_days'])) {
+			$this->addFieldMessage('interval_days', 'Days must be a number', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+
+		if ((isset($data['interval_days']) && isset($data['interval_months']) && isset($data['interval_years'])) &&
+			($data['interval_days'] + $data['interval_months'] + $data['interval_years']) === 0) {
+			$this->addFieldMessage('intervals', 'One of intervals must be greater than zero', self::MESSAGE_ERROR);
+			$valid = false;
+		}
+
+		return $valid;
 	}
 
 
@@ -257,6 +331,7 @@ class MeasurementAccessRuleCrud extends CrudPage {
 		$meteoPoints = MeteoMonitoringPointQueries::getOptionList();
 		$hydroProperties = HydroObservedPropertyQueries::getOptionList('symbol');
 		$meteoProperties = MeteoObservedPropertyQueries::getOptionList('symbol');
+		$groups = GroupQueries::getOptionList();
 
 		foreach ($records as &$record) {
 			if (!empty($record['monitoringpoint_selector']) && $record['monitoringpoint_selector'] !== '*') {
@@ -276,6 +351,20 @@ class MeasurementAccessRuleCrud extends CrudPage {
 						return $hydroPoints[$item] ?? $item;
 					}
 				}, explode(',', $record['observed_property_selector'])));
+			}
+			$record['groups'] = '';
+			if (!empty($record['group_id'])) {
+				$record['groups'] = implode(', ', array_filter(array_map(function ($item) use ($groups) {
+					return $groups[$item] ?? null;
+				}, explode(',', $record['group_id']))));
+			}
+			if (!empty($record['interval'])) {
+				try {
+					$dateInterval = new DateInterval($record['interval']);
+				} catch (Exception $e) {
+					$record['interval'] = '';
+				}
+				$record['interval'] = trim(preg_replace('/\D0 \S+/', '', $dateInterval->format('%y years, %m months, %d days')), ',');
 			}
 		}
 	}

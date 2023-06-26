@@ -135,7 +135,8 @@ abstract class CrudPage extends BasePage {
 			if (!is_null($searchString)) {
 				$query->search(
 					explode(' ', urldecode($searchString)),
-					$this->queriesClass::$searchableFields
+					$this->queriesClass::$searchableFields,
+					$this->queriesClass::$searchableFieldSubSelects
 				);
 			}
 
@@ -149,10 +150,12 @@ abstract class CrudPage extends BasePage {
 			);
 
 			//Add order by query condition
-			$query->sort(
-				$this->request->getQueryParam('order_by'),
-				$this->request->getQueryParam('order_dir', 'ASC')
-			);
+			if (!$query->isSorted()) {
+				$query->sort(
+					$this->request->getQueryParam('order_by'),
+					$this->request->getQueryParam('order_dir', 'ASC')
+				);
+			}
 
 			//Run query
 			$records = $query->run();

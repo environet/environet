@@ -2,12 +2,17 @@
 
 namespace Environet\Sys\Upload;
 
+use DateTime;
+use DateTimeZone;
 use Environet\Sys\Config;
+use Environet\Sys\General\Db\HydroObservedPropertyQueries;
+use Environet\Sys\General\Db\MeteoObservedPropertyQueries;
 use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\HttpClient\ApiHandler;
 use Environet\Sys\General\Response;
 use Environet\Sys\Upload\Exceptions\UploadException;
 use Environet\Sys\Xml\CreateErrorXml;
+use Environet\Sys\Xml\CreateUploadStatisticsXml;
 use Environet\Sys\Xml\Exceptions\InputXmlProcessException;
 use Environet\Sys\Xml\Exceptions\SchemaInvalidException;
 use Environet\Sys\Xml\InputProcessor\AbstractInputXmlProcessor;
@@ -60,9 +65,7 @@ class UploadHandler extends ApiHandler {
 				exception_logger($exception);
 
 				// Syntax error
-				$identityData = $this->identity->getData();
-				$messages = [ 'Username: ' . $identityData['username'] ];
-				throw new UploadException(302, $messages);
+				throw new UploadException(302, [], $this->identity->getData());
 			}
 
 			try {
@@ -70,10 +73,7 @@ class UploadHandler extends ApiHandler {
 				(new SchemaValidator($parsedXml, SRC_PATH . '/public/schemas/environet.xsd'))->validate();
 			} catch (SchemaInvalidException $e) {
 				// XML is invalid
-				$identityData = $this->identity->getData();
-				$messages = [ 'Username: ' . $identityData['username'] ];
-				$messages = array_merge($e->getErrorMessages(), $messages);
-				throw UploadException::schemaErrors($messages);
+				throw UploadException::schemaErrors($e->getErrorMessages(), $this->identity->getData());
 			} catch (Exception $e) {
 				exception_logger($e);
 
@@ -81,14 +81,23 @@ class UploadHandler extends ApiHandler {
 				throw UploadException::serverError();
 			}
 
+			$isStatisticsRequest = ($this->request->getPathParts()[1] ?? null) === 'statistics';
+			define('UPLOAD_DRY_RUN', $isStatisticsRequest);
+
+			//Define a common 'now' date, which will be used in the upload process everywhere
+			$nowDate = new DateTime('now', (new DateTimeZone('UTC')));
+
 			try {
 				// Input is valid syntactically and semantically valid, process it
-				$this->createInputProcessor($parsedXml)->process($this->getIdentity());
+				$processor = $this->createInputProcessor($parsedXml);
+				$processor->process($this->getIdentity(), $nowDate);
+
+				return (new Response($processor->getStatistics()->toXml()->asXML()))
+					->setStatusCode(200)
+					->setHeaders(['Content-type: application/xml']);
 			} catch (InputXmlProcessException $e) {
 				// There are some invalid values in XML
-				$identityData = $this->identity->getData();
-				$messages = [ 'Username: ' . $identityData['username'] ];
-				throw new UploadException(401, $messages);
+				throw new UploadException(401, [], $this->identity->getData());
 			}
 		} catch (UploadException $e) {
 			exception_logger($e);
@@ -121,9 +130,7 @@ class UploadHandler extends ApiHandler {
 
 		if (!$signatureValid) {
 			// Signature is not valid
-			$identityData = $this->identity->getData();
-			$messages = [ 'Username: ' . $identityData['username'] ];
-			throw new ApiException(208, $messages);
+			throw new ApiException(208, [], $this->identity->getData());
 		}
 	}
 
@@ -139,18 +146,56 @@ class UploadHandler extends ApiHandler {
 	 * @see HydroInputXmlProcessor
 	 */
 	protected function createInputProcessor(SimpleXMLElement $xml): AbstractInputXmlProcessor {
-		if (($hydroProcessor = new HydroInputXmlProcessor($xml))->isValidType($this->getIdentity())) {
+		$monitoringPointId = (string) $xml->xpath('/environet:UploadData/environet:MonitoringPointId[1]')[0] ?? null;
+		$messages = [
+			'NCD: ' . $monitoringPointId,
+		];
+
+		//Get all properties from the XML
+		$inputProperties = $xml->xpath('/environet:UploadData/environet:Property/environet:PropertyId') ?? [];
+		$inputProperties = array_map(fn(SimpleXMLElement $property) => strtolower((string) $property), $inputProperties);
+
+		//Collect all observed properties from the database
+		$properties = [];
+		foreach (HydroObservedPropertyQueries::getOptionList('symbol') as $symbol) {
+			$properties[strtolower($symbol)] = 'hydro';
+		}
+		foreach (MeteoObservedPropertyQueries::getOptionList('symbol') as $symbol) {
+			$properties[strtolower($symbol)] = 'meteo';
+		}
+
+		//Detect type based on the input properties
+		$detectedType = null;
+		foreach ($inputProperties as $inputProperty) {
+			if (!array_key_exists($inputProperty, $properties)) {
+				//Not a valid property, will be validated later
+				continue;
+			}
+
+			//Property is valid, get the type of property
+			$type = $properties[$inputProperty];
+
+			//If xml already has a detected type, and the current property's type is different, throw an error
+			if (!is_null($detectedType) && $type !== $detectedType) {
+				throw new UploadException(406, $messages, $this->identity->getData());
+			}
+
+			//Set the detected type
+			$detectedType = $type;
+		}
+
+		if (!$detectedType) {
+			//No dected type, empty or invalid properites
+			throw new UploadException(407, $messages, $this->identity->getData());
+		}
+
+		if (($hydroProcessor = new HydroInputXmlProcessor($xml))->isValidType($this->getIdentity()) && $detectedType === 'hydro') {
 			return $hydroProcessor;
 		}
-		if (($meteoProcessor = new MeteoInputXmlProcessor($xml))->isValidType($this->getIdentity())) {
+		if (($meteoProcessor = new MeteoInputXmlProcessor($xml))->isValidType($this->getIdentity()) && $detectedType === 'meteo') {
 			return $meteoProcessor;
 		}
 
-		$monitoringPointId = (string) $xml->xpath('/environet:UploadData/environet:MonitoringPointId[1]')[0] ?? null;
-		$identityData = $this->identity->getData();
-		$messages = [ 'NCD: ' . $monitoringPointId,
-			'Usernamex: ' . $identityData['username']
-		];
 		throw new UploadException(402, $messages);
 	}
 

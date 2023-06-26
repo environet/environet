@@ -2,8 +2,8 @@
 
 namespace Environet\Sys\General;
 
-use Environet\Sys\Admin\AdminHandler;
 use Environet\Sys\General\Db\Query\Insert;
+use Environet\Sys\General\Exceptions\QueryException;
 
 /**
  * Class EventLogger
@@ -66,6 +66,9 @@ class EventLogger {
 	const EVENT_TYPE_METEO_SC_UPDATE = 'meteo_station_classification_update';
 	const EVENT_TYPE_METEO_SC_DELETE = 'meteo_station_classification_delete';
 
+	const EVENT_TYPE_UPLOAD_DATA       = 'upload_data';
+	const EVENT_TYPE_UPLOAD_DATA_ERROR = 'upload_data_error';
+
 
 	/**
 	 * Insert the event and its data to event_logs table.
@@ -73,14 +76,18 @@ class EventLogger {
 	 * @param string       $evenType
 	 * @param array|string $data
 	 * @param int|null     $operatorId
+	 * @param string|null  $date
 	 *
-	 * @throws Exceptions\QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
+	 * @throws QueryException
+	 * @uses Insert::run
 	 */
-	public static function log(string $evenType, $data, int $operatorId = null) {
+	public static function log(string $evenType, $data, int $operatorId = null, string $date = null) {
 		$data = is_array($data) ? json_encode($data) : $data;
-		$userId = isset($_SESSION[Request::AUTH_SESSION_KEY]) ? $_SESSION[Request::AUTH_SESSION_KEY] : null;
+		$userId = $_SESSION[Request::AUTH_SESSION_KEY] ?? null;
 
+		if (is_null($date)) {
+			$date = date('Y-m-d H:i:s');
+		}
 		(new Insert())
 			->table('event_logs')
 			->addSingleData([
@@ -88,7 +95,7 @@ class EventLogger {
 				'data'        => $data,
 				'user_id'     => $userId,
 				'operator_id' => $operatorId,
-				'created_at'  => date('Y-m-d H:i:s'),
+				'created_at'  => $date,
 			])
 			->run();
 	}
