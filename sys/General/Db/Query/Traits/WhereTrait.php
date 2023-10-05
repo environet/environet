@@ -199,7 +199,7 @@ trait WhereTrait {
 	 * @uses \makeAccentInsensitiveRegex()
 	 * @uses \Environet\Sys\General\Db\Query\Traits\WhereTrait::where()
 	 */
-	public function search(array $needle, array $searchableFields, array $searchableFieldSubSelects) {
+	public function search(array $needle, array $searchableFields, array $searchableFieldSubSelects = []) {
 		$index = 0;
 
 		// Expected structure of query: ((word1 = field1 OR word1 = field2) AND (word2 = field1 OR word2 = field2))
