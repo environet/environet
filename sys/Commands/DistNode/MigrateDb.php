@@ -69,6 +69,7 @@ class MigrateDb extends DbCommand {
 			'riverBasinNameIndex',
 			'pointLastUpdated',
 			'downloadLogs',
+			'addResultIndexes',
 		];
 		ini_set('memory_limit', - 1);
 
@@ -849,6 +850,55 @@ class MigrateDb extends DbCommand {
 				"ALTER TABLE ONLY public.download_logs ADD CONSTRAINT download_logs_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);",
 				[]
 			);
+		}
+
+		return $return;
+	}
+
+
+	/**
+	 * Add some unique indexes, and rename some fields
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function addResultIndexes(array &$output): int {
+		$return = - 1;
+
+		if (!$this->checkIndex('hydro_result', 'hydro_result_time_seriesid')) {
+			$return = 0;
+			$this->connection->runQuery("CREATE INDEX IF NOT EXISTS hydro_result_time_seriesid ON hydro_result (time_seriesid)", []);
+		}
+		if (!$this->checkIndex('hydro_result', 'hydro_result_time')) {
+			$return = 0;
+			$this->connection->runQuery("CREATE INDEX IF NOT EXISTS hydro_result_time ON hydro_result (time)", []);
+		}
+		if (!$this->checkIndex('hydro_time_series', 'hydro_time_series_observed_propertyid')) {
+			$return = 0;
+			$this->connection->runQuery("CREATE INDEX IF NOT EXISTS hydro_time_series_observed_propertyid ON hydro_time_series (observed_propertyid)", []);
+		}
+		if (!$this->checkIndex('hydro_time_series', 'hydro_time_series_mpointid')) {
+			$return = 0;
+			$this->connection->runQuery("CREATE INDEX IF NOT EXISTS hydro_time_series_mpointid ON hydro_time_series (mpointid)", []);
+		}
+
+		if (!$this->checkIndex('meteo_result', 'meteo_result_time_seriesid')) {
+			$return = 0;
+			$this->connection->runQuery("CREATE INDEX IF NOT EXISTS meteo_result_time_seriesid ON meteo_result (time_seriesid)", []);
+		}
+		if (!$this->checkIndex('meteo_result', 'meteo_result_time')) {
+			$return = 0;
+			$this->connection->runQuery("CREATE INDEX IF NOT EXISTS meteo_result_time ON meteo_result (time)", []);
+		}
+		if (!$this->checkIndex('meteo_time_series', 'meteo_time_series_observed_propertyid')) {
+			$return = 0;
+			$this->connection->runQuery("CREATE INDEX IF NOT EXISTS meteo_time_series_observed_propertyid ON meteo_time_series (observed_propertyid)", []);
+		}
+		if (!$this->checkIndex('meteo_time_series', 'meteo_time_series_mpointid')) {
+			$return = 0;
+			$this->connection->runQuery("CREATE INDEX IF NOT EXISTS meteo_time_series_mpointid ON meteo_time_series (mpointid)", []);
 		}
 
 		return $return;
