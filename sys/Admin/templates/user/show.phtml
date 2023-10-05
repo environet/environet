@@ -14,7 +14,7 @@
         <dt class="col-sm-3">E-mail address</dt>
         <dd class="col-sm-9"><?=$record['email'] ?? '';?></dd>
         <dt class="col-sm-3">Last login at</dt>
-        <dd class="col-sm-9"><?=dateFormat($record['loggedin_at'] ?? null)?></dd>
+        <dd class="col-sm-9"><?=($record['loggedin_at'] ? (new DateTime($record['loggedin_at']))->format('Y-m-d H:i:s') : 'never');?></dd>
         <dt class="col-sm-3">Groups</dt>
         <dd class="col-sm-9">
             <ul>
