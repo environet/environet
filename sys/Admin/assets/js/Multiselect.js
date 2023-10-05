@@ -83,6 +83,7 @@ Array.prototype.filter.call(document.querySelectorAll('select[multiple]'), (sele
 		const onAjaxLoaded = function () {
 			if (typeof select.dataset.value !== 'undefined') {
 				tSelect.setValue(select.dataset.value.split(','));
+				tSelect.refreshItems();
 			}
 			select.removeEventListener('ajaxLoaded', onAjaxLoaded);
 		}

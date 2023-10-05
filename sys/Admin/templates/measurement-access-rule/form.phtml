@@ -9,7 +9,7 @@
                 <div class="field">
                     <legend><?=__('Operator');?></legend>
                     <select name="operator" id="accessRuleOperatorSelect">
-						<?=selectOptions($operators, $record['operator_id'] ?? null);?>
+						<?=selectOptions($operators, formFieldValue('operator_id', $record, 'operator'));?>
                     </select>
 	                <div class="invalid-feedback">
 		                <?=getFieldInvalidMessage('operator', get_defined_vars());?>
@@ -51,7 +51,7 @@
                             class="<?=isFieldInvalidClass('groups', get_defined_vars());?>"
                             multiple>
 						<?php foreach ($groups as $id => $name): ?>
-                            <option value="<?= $id; ?>" <?= isset($record['groups']) && in_array($id, formFieldValue('groups', $record)) ? 'selected' : '' ?>>
+                            <option value="<?= $id; ?>" <?=in_array($id, formFieldValue('groups', $record) ?? []) ? 'selected' : '' ?>>
 	                            <?= $name; ?>
                             </option>
 						<?php endforeach; ?>

@@ -185,15 +185,17 @@ function validate(array $array, string $field, string $pattern = null, bool $req
 /**
  * Get a form field's value from post, or from pre-populated data
  *
- * @param string     $field The field's slug
- * @param array|null $data  The optional data which can containe the field's vale
+ * @param string      $field The field's slug
+ * @param array|null  $data  The optional data which can containe the field's vale
+ * @param string|null $customPostField
  *
  * @return mixed|null
  */
-function formFieldValue(string $field, array $data = null) {
+function formFieldValue(string $field, array $data = null, ?string $customPostField = null) {
 	if (!empty($_POST)) {
+		$postField = $customPostField ?? $field;
 		//Has a post, use the value in the post array
-		return $_POST[$field] ?? null;
+		return $_POST[$postField] ?? null;
 	} elseif (isset($data[$field])) {
 		//No post data, but has an array with pre-populated values
 		return $data[$field] ?? null;
