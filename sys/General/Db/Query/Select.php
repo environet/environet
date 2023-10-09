@@ -262,14 +262,15 @@ class Select extends Query {
 	 * It also runs a cloned, cleaned query to get the total count (without pagination) and calculate the page count.
 	 *
 	 * @param int      $pageSize
-	 * @param int|null $totalCount  Reference for storing total count (without pagination)
 	 * @param int|null $currentPage Reference for storing the number of current page
+	 * @param int|null $totalCount  Reference for storing total count (without pagination)
 	 * @param int|null $maxPage     Reference for storing page count
+	 * @param bool     $countMax
 	 *
 	 * @uses \Environet\Sys\General\Db\Query\Select::limit()
 	 * @uses \Environet\Sys\General\Db\Query\Select::offset()
 	 */
-	public function paginate($pageSize, &$currentPage = null, &$totalCount = null, &$maxPage = null) {
+	public function paginate($pageSize, &$currentPage = null, &$totalCount = null, &$maxPage = null, bool $countMax = true) {
 		// Default limit and offset
 		$limit = $pageSize;
 		$offset = 0;
@@ -280,18 +281,22 @@ class Select extends Query {
 			$offset = ($currentPage - 1) * $limit;
 		}
 
-		try {
-			// Clone the select query, clean it (selects, joins, etc) and get the total count of rows
-			$totalCount = (clone $this)
-				->clearSelects()->clearGroupBy()->clearOrderBy()
-				->select('COUNT(*)')
-				->run(Query::FETCH_COUNT);
-		} catch (QueryException $e) {
-			$totalCount = 0;
-		}
+		if ($countMax) {
+			try {
+				// Clone the select query, clean it (selects, joins, etc) and get the total count of rows
+				$totalCount = (clone $this)
+					->clearSelects()->clearGroupBy()->clearOrderBy()
+					->select('COUNT(*)')
+					->run(Query::FETCH_COUNT);
+			} catch (QueryException $e) {
+				$totalCount = 0;
+			}
 
-		// Calculate max page based on total count
-		$maxPage = (int) ceil($totalCount / $limit);
+			// Calculate max page based on total count
+			$maxPage = (int) ceil($totalCount / $limit);
+		} else {
+			$maxPage = null;
+		}
 
 		// Set limit and offset
 		$this->limit($limit)->offset($offset);

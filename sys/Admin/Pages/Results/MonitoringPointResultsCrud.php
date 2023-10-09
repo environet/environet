@@ -96,7 +96,8 @@ abstract class MonitoringPointResultsCrud extends CrudPage {
 				self::PAGE_SIZE,
 				$currentPage,
 				$totalCount,
-				$maxPage
+				$maxPage,
+				false
 			);
 
 			//Add order by query condition

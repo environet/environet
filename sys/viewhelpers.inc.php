@@ -6,18 +6,21 @@ use Environet\Sys\General\Request;
  * Render an array of paginator numbers. Not all numbers will be added from 1 to max page.
  * Some items will be skipped, and replaced with '...'
  *
- * @param int $currentPage Number of current page
- * @param int $maxPage     Page count
+ * @param int      $currentPage  Number of current page
+ * @param int|null $maxPage      Page count
+ * @param bool     $addMoreToEnd
  *
  * @return array Array of numbers, and '...' items
  */
-function getPaginatorParts(int $currentPage, int $maxPage) {
+function getPaginatorParts(int $currentPage, ?int $maxPage, bool $addMoreToEnd = false) {
 	$parts = [];
 	$skipState = false;
+
+	$maxPage = $maxPage ?? ($addMoreToEnd ? $currentPage + 3 : $currentPage);
 	for ($i = 1; $i <= $maxPage; $i ++) {
 		//Skip numbers is not 1, not the last, and not near current page
 		$skip = ($i > 1 && $i < $currentPage - 1 && $currentPage > 3) ||
-				($i < $maxPage && $i > $currentPage + 1 && $currentPage < $maxPage - 3);
+			($i < $maxPage && $i > $currentPage + 1 && $currentPage < $maxPage - 3);
 		if ($skip && $skipState === false) {
 			//Add '...' part only once, set a flag to true for next skipped pages
 			$parts[] = '...';
@@ -27,6 +30,10 @@ function getPaginatorParts(int $currentPage, int $maxPage) {
 			$parts[] = $i;
 			$skipState = false;
 		}
+	}
+
+	if ($addMoreToEnd) {
+		$parts[] = '...';
 	}
 
 	return $parts;
@@ -58,9 +65,9 @@ function sortableColumn(string $label, string $name, array $definedVars = []) {
 	//Set the class for marker (empty if order is not active for this column)
 	$markerClass = 'fas fa-sort';
 
-	if($active) {
-	    $markerClass = $currentDir === 'ASC' ?  'fas fa-sort-up' : 'fas fa-sort-down';
-    }
+	if ($active) {
+		$markerClass = $currentDir === 'ASC' ? 'fas fa-sort-up' : 'fas fa-sort-down';
+	}
 
 	//Render HTML link
 	return sprintf('<a href="%s">%s</a><span class="sort-icon %s"></span>', $href, $label, $markerClass);
@@ -72,6 +79,7 @@ function sortableColumn(string $label, string $name, array $definedVars = []) {
  */
 function getCurrentOrderBy(): ?string {
 	global $request;
+
 	return $request->getQueryParam('order_by');
 }
 
@@ -80,6 +88,7 @@ function getCurrentOrderBy(): ?string {
  */
 function getCurrentOrderDir(): ?string {
 	global $request;
+
 	return $request->getQueryParam('order_dir');
 }
 
@@ -155,8 +164,8 @@ function userGroupConnectionType(string $type) {
 /**
  * Create select options based on an array, and the selected value
  *
- * @param array        $options  Array of options (key => value)
- * @param string|array $selected Selected value(s)
+ * @param array        $options     Array of options (key => value)
+ * @param string|array $selected    Selected value(s)
  * @param string|null  $emptyOption Label for empty option
  *
  * @return string
@@ -169,7 +178,7 @@ function selectOptions(array $options, $selected = null, string $emptyOption = n
 		$selected = (array) $selected;
 	}
 
-    // Sort options by value
+	// Sort options by value
 	asort($options);
 
 	$optionsHtml = [];
@@ -192,6 +201,7 @@ function selectOptions(array $options, $selected = null, string $emptyOption = n
  *
  * @param string $templatePath
  * @param array  $vars
+ *
  * @return string
  */
 function includeTemplatePart($templatePath, $vars = []) {
@@ -200,6 +210,7 @@ function includeTemplatePart($templatePath, $vars = []) {
 	include 'Admin/templates/parts/' . $templatePath;
 	$contents = ob_get_contents();
 	ob_end_clean();
+
 	return $contents;
 }
 
@@ -208,7 +219,8 @@ function includeTemplatePart($templatePath, $vars = []) {
  * Check that a path matches the current request path, with a given
  *
  * @param string $path
- * @param int $matchExtra
+ * @param int    $matchExtra
+ *
  * @return bool
  */
 function isRoute($path, $matchExtra): bool {
@@ -226,5 +238,6 @@ function isRoute($path, $matchExtra): bool {
 			return false;
 		}
 	}
+
 	return true;
 }

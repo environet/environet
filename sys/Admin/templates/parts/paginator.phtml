@@ -1,14 +1,27 @@
 <?php
 //Return with empty if not all required parameters have been set
-if (!(isset($currentPage) && isset($maxPage))) {
+use Environet\Sys\Admin\Pages\BasePage;
+
+if (!(isset($currentPage))) {
 	return;
 }
+//Count of results if exists
+$resultCount = isset($results) && is_array($results) ? count($results) : null;
+$pageSize = BasePage::PAGE_SIZE;
+
+//Max page can be null if calculation of count is disabled
+$maxPage = $maxPage ?? null;
+
+//Find out if it can have more pages (important in case of undefined maxPage)
+$hasMorePages = isset($resultCount) && $resultCount >= $pageSize;
+//Add an extra more (...) to the end if maxPage unknown, but it maybe has more pages
+$addMoreToEnd = is_null($maxPage) && $hasMorePages;
 ?>
 
 
 <?php
 //Build an array of numbers (and '...') based on the current and max pages
-$paginatorParts = getPaginatorParts($currentPage ?? null, $maxPage ?? null);
+$paginatorParts = getPaginatorParts($currentPage ?? null, $maxPage ?? null, $addMoreToEnd);
 ?>
 
 <ul class="pagination">
@@ -30,9 +43,11 @@ $paginatorParts = getPaginatorParts($currentPage ?? null, $maxPage ?? null);
 		<?php } ?>
 	<?php } ?>
 
-	<?php if($currentPage >= $maxPage) {?>
-		<li class="page-item disabled"><a class="page-link" href="javascript:void(0)">></a></li>
-	<?php } else { ?>
+	<?php if($currentPage < $maxPage) {?>
 		<li class="page-item"><a class="page-link" href="<?=hrefWithParams(['page' => min($maxPage, $currentPage + 1)]);?>">></a></li>
+	<?php } elseif ($hasMorePages) { ?>
+		<li class="page-item"><a class="page-link" href="<?=hrefWithParams(['page' => $currentPage + 1]);?>">></a></li>
+	<?php } else { ?>
+		<li class="page-item disabled"><a class="page-link" href="javascript:void(0)">></a></li>
 	<?php } ?>
 </ul>
