@@ -446,7 +446,7 @@ class MonitoringPointQueries {
 			->select($selectFields);
 
 		if (!$isSubset) {
-			$select->orderBy('mpoint_id')->orderBy('property_id');
+			$select->orderBy('mpoint_id')->orderBy('property_id')->orderBy('result_time');
 		}
 
 		// Add group-bys
