@@ -425,16 +425,19 @@ class MonitoringPointQueries {
 			"{$this->type}_time_series.result_time"
 		];
 
+		$mPointOrderField = 'mpoint_id';
 		if ($this->type === self::TYPE_HYDRO) {
 			$selectFields = array_merge($selectFields, [
 				"{$this->type}point.eucd_wgst",
 				"{$this->type}point.ncd_wgst",
 			]);
+			$mPointOrderField = "eucd_wgst";
 		} elseif ($this->type === self::TYPE_METEO) {
 			$selectFields = array_merge($selectFields, [
 				"{$this->type}point.eucd_pst",
 				"{$this->type}point.ncd_pst",
 			]);
+			$mPointOrderField = "eucd_pst";
 		}
 
 		$select
@@ -446,7 +449,7 @@ class MonitoringPointQueries {
 			->select($selectFields);
 
 		if (!$isSubset) {
-			$select->orderBy('mpoint_id')->orderBy('property_id')->orderBy('result_time');
+			$select->orderBy($mPointOrderField)->orderBy('property_symbol')->orderBy('result_time');
 		}
 
 		// Add group-bys
