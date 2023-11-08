@@ -27,6 +27,12 @@ abstract class BaseAccessSelector extends Selector {
 	 */
 	protected $operatorId;
 
+
+	/**
+	 * @var array|null
+	 */
+	protected $countries = null;
+
 	/**
 	 * @var Identity|null
 	 */
@@ -42,10 +48,11 @@ abstract class BaseAccessSelector extends Selector {
 	 *
 	 * @throws QueryException
 	 */
-	public function __construct(string $values, $type, int $operatorId) {
+	public function __construct(string $values, $type, int $operatorId, ?array $countries = null) {
 		$this->type = $type;
 		$this->operatorIdentity = $operatorId ? $this->getOperatorIdentity($operatorId) : null;
 		$this->operatorId = $operatorId;
+		$this->countries = $countries;
 
 		parent::__construct($values, self::SELECTOR_TYPE_INT);
 	}

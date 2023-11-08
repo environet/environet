@@ -133,7 +133,7 @@ class DownloadHandler extends ApiHandler {
 		$availablePoints = [];
 		$availableProps = [];
 		foreach ($rules as &$rule) {
-			$rule['points'] = new MonitoringPointSelector($rule['points'], $params['type'], $rule['operator_id']);
+			$rule['points'] = new MonitoringPointSelector($rule['points'], $params['type'], $rule['operator_id'], $params['countries']);
 			$rule['props'] = new ObservedPropertySelector($rule['props'], $params['type'], $rule['operator_id']);
 			try {
 				$rule['interval'] = $rule['interval'] !== null ? new DateInterval($rule['interval']) : null;
@@ -146,8 +146,8 @@ class DownloadHandler extends ApiHandler {
 		}
 
 		// Check for monitoring point access
-		if (!empty($params['points'])) {
-			$unauthorizedPoints = MonitoringPointSelector::checkAgainstEUCD($params['type'], $params['points'], $availablePoints);
+		if (!empty($params['points']) || !empty($params['countries'])) {
+			$unauthorizedPoints = MonitoringPointSelector::checkAgainstEUCD($params['type'], $params['points'], $availablePoints, $params['countries']);
 			if (!empty($unauthorizedPoints)) {
 				if (count($unauthorizedPoints) > 1) {
 					throw new AccessRuleException('Monitoring points ' . implode(', ', $unauthorizedPoints) . ' are restricted!');
@@ -247,6 +247,7 @@ class DownloadHandler extends ApiHandler {
 
 			$params['points'] = $this->parseArrayParam('point');
 			$params['symbols'] = $this->parseArrayParam('symbol');
+			$params['countries'] = $this->parseArrayParam('country');
 
 			// Permission check
 			if (!$this->getIdentity()->hasPermissions([Identity::ADMIN_PERMISSION])) {
@@ -264,7 +265,7 @@ class DownloadHandler extends ApiHandler {
 				$queryBuilder->setEndTime($params['end']);
 			}
 
-			$queryBuilder->setCountries($this->parseArrayParam('country'));
+			$queryBuilder->setCountries($params['countries']);
 
 			$queryMeta = [
 				'startTime' => $startTime,

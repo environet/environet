@@ -33,9 +33,9 @@ class MonitoringPointSelector extends BaseAccessSelector {
 	 *
 	 * @throws QueryException
 	 */
-	public function __construct(string $values, $type, int $operatorId) {
+	public function __construct(string $values, $type, int $operatorId, ?array $countries = null) {
 		$this->eucd = null;
-		parent::__construct($values, $type, $operatorId);
+		parent::__construct($values, $type, $operatorId, $countries);
 	}
 
 
@@ -77,13 +77,20 @@ class MonitoringPointSelector extends BaseAccessSelector {
 	 */
 	protected function getHydroPointsByOperator(): string {
 		if ($this->isOperatorAdmin()) {
-			$points = (new Select())->select('string_agg(hydropoint.id::text, \',\') as points')->from('hydropoint')->run(Query::FETCH_FIRST);
+			$select = (new Select())->select('string_agg(hydropoint.id::text, \',\') as points')->from('hydropoint');
+			if ($this->countries) {
+				$select->whereIn('hydropoint.country', $this->countries, 'countries');
+			}
+			$points = $select->run(Query::FETCH_FIRST);
 		} else {
-			$points = (new Select())
+			$select = (new Select())
 				->select('string_agg(hydropoint.id::text, \',\') as points')
 				->from('hydropoint')
-				->where("hydropoint.operatorid = {$this->operatorId}")
-				->run(Query::FETCH_FIRST);
+				->where("hydropoint.operatorid = {$this->operatorId}");
+			if ($this->countries) {
+				$select->whereIn('hydropoint.country', $this->countries, 'countries');
+			}
+			$points = $select->run(Query::FETCH_FIRST);
 		}
 
 		return $points ? $points['points'] ?? '' : '';
@@ -97,13 +104,20 @@ class MonitoringPointSelector extends BaseAccessSelector {
 	 */
 	protected function getMeteoPointsByOperator(): string {
 		if ($this->isOperatorAdmin()) {
-			$points = (new Select())->select('string_agg(meteopoint.id::text, \',\') as points')->from('meteopoint')->run(Query::FETCH_FIRST);
+			$select = (new Select())->select('string_agg(meteopoint.id::text, \',\') as points')->from('meteopoint');
+			if ($this->countries) {
+				$select->whereIn('meteopoint.country', $this->countries, 'countries');
+			}
+			$points = $select->run(Query::FETCH_FIRST);
 		} else {
-			$points = (new Select())
+			$select = (new Select())
 				->select('string_agg(meteopoint.id::text, \',\') as points')
 				->from('meteopoint')
-				->where("meteopoint.operatorid = {$this->operatorId}")
-				->run(Query::FETCH_FIRST);
+				->where("meteopoint.operatorid = {$this->operatorId}");
+			if ($this->countries) {
+				$select->whereIn('meteopoint.country', $this->countries, 'countries');
+			}
+			$points = $select->run(Query::FETCH_FIRST);
 		}
 
 		return $points ? $points['points'] ?? '' : '';
@@ -111,30 +125,40 @@ class MonitoringPointSelector extends BaseAccessSelector {
 
 
 	/**
-	 * @param $type
-	 * @param $eucdValues
-	 * @param $availableValues
+	 * @param       $type
+	 * @param array $eucdValues
+	 * @param array $availableValues
+	 * @param array $countries
 	 *
 	 * @return array
 	 * @throws QueryException
-	 * @throws Exception
 	 */
-	public static function checkAgainstEUCD($type, array $eucdValues, array $availableValues): array {
+	public static function checkAgainstEUCD($type, array $eucdValues, array $availableValues, array $countries): array {
 		if ($type === MPOINT_TYPE_HYDRO) {
-			$requestedPoints = (new Select())
+			$select = (new Select())
 				->select('hydropoint.id, hydropoint.eucd_wgst as eucd')
-				->from('hydropoint')
-				->whereIn('eucd_wgst', $eucdValues, 'eucdParam')
-				->run();
+				->from('hydropoint');
+			if ($eucdValues) {
+				$select->whereIn('eucd_wgst', $eucdValues, 'eucdParam');
+			}
+			if ($countries) {
+				$select->whereIn('hydropoint.country', $countries, 'countries');
+			}
+			$requestedPoints = $select->run();
 		} else {
-			$requestedPoints = (new Select())
+			$select = (new Select())
 				->select('meteopoint.id, meteopoint.eucd_pst as eucd')
-				->from('meteopoint')
-				->whereIn('eucd_pst', $eucdValues, 'eucdParam')
-				->run();
+				->from('meteopoint');
+			if ($eucdValues) {
+				$select->whereIn('eucd_pst', $eucdValues, 'eucdParam');
+			}
+			if ($countries) {
+				$select->whereIn('meteopoint.country', $countries, 'countries');
+			}
+			$requestedPoints = $select->run();
 		}
 
-		if (count($eucdValues) !== count($requestedPoints)) {
+		if (!empty($eucdValues) && count($eucdValues) !== count($requestedPoints)) {
 			$invalid = array_diff($eucdValues, array_column($requestedPoints, 'eucd'));
 			if (count($invalid) > 1) {
 				throw new Exception('Requested monitoring points are invalid: ' . implode(', ', $invalid));
