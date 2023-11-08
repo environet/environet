@@ -32,6 +32,11 @@ include 'layouts/before_app.phtml'; ?>
 										<?=$message;?>
 									</div>
 								<?php } ?>
+								<?php foreach ($fileResponse->getWarningMessages() as $message) { ?>
+									<div class="alert alert-warning" role="alert">
+										<?=$message;?>
+									</div>
+								<?php } ?>
 								<input type="hidden" name="xml_file[xml][]" value="<?=$fileResponse->getStatistics()->getInputXmlFile();?>" />
 								<input type="hidden" name="xml_file[original][]" value="<?=$fileResponse->getOriginalFileName();?>" />
 								<ul>

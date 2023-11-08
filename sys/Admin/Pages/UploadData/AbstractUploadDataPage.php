@@ -117,12 +117,14 @@ abstract class AbstractUploadDataPage extends BasePage {
 		$csvFiles = $this->storeFiles();
 
 		//Convert uploaded csv files to xml, and store it
-		$xmlFiles = $this->convertFilesToXml($csvFiles, $selectedTimezoneOption);
+		$warnings = [];
+		$xmlFiles = $this->convertFilesToXml($csvFiles, $selectedTimezoneOption, $warnings);
 
 		//Process each xml files
 		$fileResponses = [];
 		foreach ($xmlFiles as $originalFileName => $xmlFile) {
 			$fileResponse = new UploadFileResponse($originalFileName);
+			$fileResponse->setWarningMessages(array_filter(array_unique($warnings[$originalFileName] ?? [])));
 			if (is_array($xmlFile)) {
 				//Xml file is already an array of error messages, not an xml path
 				$fileResponse->setFromErrors($xmlFile);
@@ -234,15 +236,18 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 *
 	 * @param array  $files
 	 * @param string $selectedTimezoneOption
+	 * @param array  $warnings
 	 *
 	 * @return array
 	 */
-	protected function convertFilesToXml(array $files, string $selectedTimezoneOption): array {
+	protected function convertFilesToXml(array $files, string $selectedTimezoneOption, array &$warnings): array {
 		//Iterate over files, and convert each to xml
 		$xmlFiles = [];
 		foreach ($files as $originalFileName => $file) {
 			try {
-				$xmlFiles[$originalFileName] = $this->csvToXml($file, $selectedTimezoneOption);
+				$fileWarnings = [];
+				$xmlFiles[$originalFileName] = $this->csvToXml($file, $selectedTimezoneOption, $fileWarnings);
+				$warnings[$originalFileName] = $fileWarnings;
 			} catch (Exception $exception) {
 				$xmlFiles[$originalFileName] = [
 					sprintf("Error during converting file %s: %s", $originalFileName, $exception->getMessage())
@@ -258,19 +263,21 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 * Convert a csv file to xml
 	 *
 	 * @param string $file
+	 * @param string $selectedTimezoneOption
+	 * @param array  $warnings
 	 *
 	 * @return string
 	 * @throws CreateInputXmlException
 	 * @throws QueryException
 	 */
-	protected function csvToXml(string $file, string $selectedTimezoneOption): string {
+	protected function csvToXml(string $file, string $selectedTimezoneOption, array &$warnings): string {
 		//Try to open file
 		if (!(file_exists($file) && ($fileHandle = fopen($file, 'r')) !== false)) {
 			throw new Exception('An error occured: File doesn\'t exist, or can\'t open: ' . $file);
 		}
 
 		//Map CSV file
-		[$mpointId, $propertiesData] = $this->mapCsv($fileHandle, $selectedTimezoneOption);
+		[$mpointId, $propertiesData] = $this->mapCsv($fileHandle, $selectedTimezoneOption, $warnings);
 
 		if (!$mpointId) {
 			//Mpoint not found
@@ -410,11 +417,12 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 *
 	 * @param resource $fileHandle File handle of csv file
 	 * @param string   $selectedTimezoneOption
+	 * @param array    $warnings
 	 *
 	 * @return array Array of processed data. First item must be the monitoring point id, second is the property data, grouped by property symbol
 	 * @throws Exception
 	 */
-	protected function mapCsv($fileHandle, string $selectedTimezoneOption): array {
+	protected function mapCsv($fileHandle, string $selectedTimezoneOption, array &$warnings): array {
 		$mpointId = null;
 		$properties = [];
 		$propertiesData = [];
@@ -435,8 +443,16 @@ abstract class AbstractUploadDataPage extends BasePage {
 			if ($rowIndex > 2) {
 				//Data rows with dates and values for each property
 				foreach ($properties as $propertyKey => $property) {
-					if (!(!empty($row[0]) && ($dateTime = date_create($row[0], $inputTimezone)))) {
+					$dateString = isset($row[0]) ? trim($row[0]) : null;
+					if (empty($dateString)) {
 						continue;
+					}
+					if (date_create_from_format('Y-m-d H:i:s', $dateString) === false) {
+						//Date is not valid, try to parse it with timezone
+						$warnings['date_not_in_expected_format'] = 'Some dates are not in the expected format (yyyy-mm-dd hh:mm:ss), please review parsed times before submit';
+					}
+					if (!($dateTime = date_create($dateString, $inputTimezone))) {
+						throw new Exception(sprintf('Can\'t parse date: "%s". Please use the expected format: yyyy-mm-dd hh:mm:ss', $dateString));
 					}
 					$dateTime->setTimezone($toTimezone);
 					$propertiesData[$property][] = [

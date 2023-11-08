@@ -19,6 +19,8 @@ class UploadFileResponse {
 
 	protected array $errorMessages = [];
 
+	protected array $warningMessages = [];
+
 	protected array $successMessages = [];
 
 	protected string $originalFileName;
@@ -137,6 +139,38 @@ class UploadFileResponse {
 	 */
 	public function addSuccessMessage(string $message): UploadFileResponse {
 		$this->successMessages[] = $message;
+
+		return $this;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getWarningMessages(): array {
+		return $this->warningMessages;
+	}
+
+
+	/**
+	 * @param string $message
+	 *
+	 * @return $this
+	 */
+	public function addWarningMessage(string $message): UploadFileResponse {
+		$this->warningMessages[] = $message;
+
+		return $this;
+	}
+
+
+	/**
+	 * @param array $messages
+	 *
+	 * @return $this
+	 */
+	public function setWarningMessages(array $messages): UploadFileResponse {
+		$this->warningMessages = $messages;
 
 		return $this;
 	}
