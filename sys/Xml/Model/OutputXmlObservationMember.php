@@ -64,7 +64,7 @@ class OutputXmlObservationMember implements XmlRenderable {
 	 */
 	protected function renderMeta(SimpleXMLElement &$container) {
 		if ($this->intervalLimited) {
-			$container->addChild('om:description', 'Start of time series was automatically limited to available data', 'om');
+			$container->addChild('gml:description', 'Start of time series was automatically limited to available data', 'om');
 		}
 		$timePeriod = $container->addChild('om:phenomenonTime', null, 'om')->addChild('gml:TimePeriod', null, 'gml');
 
