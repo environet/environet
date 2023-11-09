@@ -85,8 +85,8 @@ class OutputXmlData implements XmlRenderable {
 	 * @uses \Environet\Sys\Xml\Model\OutputXmlData::renderObservationMembers()
 	 */
 	public function render(SimpleXMLElement &$xml): void {
-		$docMeta = $xml->addChild('wml2:metadata', null, 'wml2')
-			->addChild('wml2:DocumentMetadata', null, 'wml2');
+		$meta = $xml->addChild('wml2:metadata', null, 'wml2');
+		$docMeta = $meta->addChild('wml2:DocumentMetadata', null, 'wml2');
 		$docMeta->addChild('wml2:generationDate', self::dateToISO('now'), 'wml2');
 
 		$version = $docMeta->addChild('wml2:version', null, 'wml2');
@@ -94,6 +94,14 @@ class OutputXmlData implements XmlRenderable {
 		$version->addAttribute('xlink:title', 'WaterML 2.0', 'xlink');
 
 		$docMeta->addChild('wml2:generationSystem', 'HyMeDES EnviroNet', 'wml2');
+
+		if (isset($this->queryMeta['intervalLimited']) && $this->queryMeta['intervalLimited'] === true) {
+			$parameter = $xml->addChild('wml2:parameter', null, 'wml2');
+			$parameterNV = $parameter->addChild('om:NamedValue', null, 'om');
+			$parameterName = $parameterNV->addChild('om:name', null, 'om');
+			$parameterName->addAttribute('xlink:title', 'message', 'xlink');
+			$parameterNV->addChild('om:value', 'Start of time series was automatically limited to available data', 'om');
+		}
 
 		$this->renderObservationMembers($xml);
 	}

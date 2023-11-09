@@ -5,6 +5,7 @@ namespace Environet\Sys\Download;
 
 use DateInterval;
 use DateTime;
+use DateTimeZone;
 use Environet\Sys\Download\Exceptions\DownloadException;
 use Environet\Sys\General\Db\DownloadLogQueries;
 use Environet\Sys\General\Db\MonitoringPointQueries;
@@ -60,9 +61,10 @@ class DownloadHandler extends ApiHandler {
 		$subsets = [];
 		foreach ($rules as $rule) {
 			$subset = [
-				'points' => !empty($params['points']) ? array_intersect($params['points'], $rule['points']->getEUCD()) : $rule['points']->getEUCD(),
-				'props'  => !empty($params['symbols']) ? array_intersect($params['symbols'], $rule['props']->getSymbols()) : $rule['props']->getSymbols(),
-				'end'    => $params['end'] ?: new DateTime()
+				'points'           => !empty($params['points']) ? array_intersect($params['points'], $rule['points']->getEUCD()) : $rule['points']->getEUCD(),
+				'props'            => !empty($params['symbols']) ? array_intersect($params['symbols'], $rule['props']->getSymbols()) : $rule['props']->getSymbols(),
+				'end'              => $params['end'] ?: new DateTime(),
+				'interval_limited' => false
 			];
 
 			// Skip this set if nothing is requested from this rule's affected monitoring points or observed properties
@@ -72,17 +74,14 @@ class DownloadHandler extends ApiHandler {
 
 			// Has start time restriction
 			if ($rule['interval']) {
-				$limit = (new DateTime('now'))->sub($rule['interval']);
+				$limit = (new DateTime('now', new DateTimeZone('UTC')))->sub($rule['interval']);
 
 				// Has requested start time
 				if (isset($params['start'])) {
 					// Requested start time is older than limit
 					if ($params['start'] < $limit) {
-						if (count($rule['points']->getValues()) > 1) {
-							throw new AccessRuleException('Monitoring points ' . implode(',', $rule['points']->getEUCD()) . ' are restricted for the requested time period! The earliest time allowed is ' . $limit->format('Y-m-d H:i:s'));
-						} else {
-							throw new AccessRuleException('Monitoring point ' . $rule['points']->getEUCD()[0] . ' is restricted for the requested time period! The earliest time allowed is ' . $limit->format('Y-m-d H:i:s'));
-						}
+						$subset['start'] = $limit;
+						$subset['interval_limited'] = true;
 					} else {
 						// Requested time is allowed, create subset
 						$subset['start'] = $params['start'];
@@ -108,14 +107,15 @@ class DownloadHandler extends ApiHandler {
 	 * Returns the subsets to be queried.
 	 *
 	 * @param array $params
+	 * @param bool  $intervalLimited
 	 *
 	 * @return array
 	 * @throws AccessRuleException
+	 * @throws ApiException
 	 * @throws DownloadException
 	 * @throws QueryException
-	 * @throws ApiException
 	 */
-	protected function processAccessRules(array $params): array {
+	protected function processAccessRules(array $params, bool &$intervalLimited): array {
 		$rules = (new Select())
 			->select(['mar.id, mar.operator_id, monitoringpoint_selector as points, observed_property_selector as props, gmar.interval'])
 			->from('measurement_access_rules as mar')
@@ -169,7 +169,13 @@ class DownloadHandler extends ApiHandler {
 			}
 		}
 
-		return $this->getRequestedSubsets($rules, $params);
+		$subsets = $this->getRequestedSubsets($rules, $params);
+
+		$intervalLimited = !empty(array_filter($subsets, function ($subset) {
+			return $subset['interval_limited'] ?? false;
+		}));
+
+		return $subsets;
 	}
 
 
@@ -254,7 +260,8 @@ class DownloadHandler extends ApiHandler {
 				$params['type'] = $type === 'hydro' ? MPOINT_TYPE_HYDRO : MPOINT_TYPE_METEO;
 				// Overwrites params with the allowed data for this user
 				try {
-					$queryBuilder->createSubsets($this->processAccessRules($params));
+					$intervalLimited = false;
+					$queryBuilder->createSubsets($this->processAccessRules($params, $intervalLimited));
 				} catch (AccessRuleException $exception) {
 					throw new DownloadException(401, [$exception->getMessage()]);
 				}
@@ -268,8 +275,9 @@ class DownloadHandler extends ApiHandler {
 			$queryBuilder->setCountries($params['countries']);
 
 			$queryMeta = [
-				'startTime' => $startTime,
-				'endTime' => $endTime,
+				'startTime'       => $startTime,
+				'endTime'         => $endTime,
+				'intervalLimited' => $intervalLimited ?? false
 			];
 			$response = (new Response((new CreateOutputXml())->generateXml($queryBuilder->getResults(), $queryMeta)))->setHeaders(['Content-type: application/xml']);
 

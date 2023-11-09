@@ -287,6 +287,7 @@ class MonitoringPointQueries {
 
 			$subset = new stdClass();
 			$subset->filters = [];
+			$subset->intervalLimited = $set['interval_limited'] ?? false;
 			$subset->select = new Select();
 			$this->subsets[$key] = $subset;
 
@@ -370,12 +371,13 @@ class MonitoringPointQueries {
 	/**
 	 * Build the main or one of the sub queries.
 	 *
-	 * @param Select $select
-	 * @param bool   $isSubset
+	 * @param Select      $select
+	 * @param bool        $isSubset
+	 * @param object|null $subsetConfig
 	 *
 	 * @return Select
 	 */
-	protected function buildQuery(Select $select, bool $isSubset = false): Select {
+	protected function buildQuery(Select $select, bool $isSubset = false, ?object $subsetConfig = null): Select {
 		// Sub-select for getting latest value by created at.
 		// There can be multiple values per 'time', for outputs we use the latest.
 		$subSelect = (new Select())
@@ -405,6 +407,9 @@ class MonitoringPointQueries {
 			"($subSelectString) as result_value",
 			"{$this->type}_time_series.result_time as time_series_result_time"
 		];
+
+		$intervalLimited = ($subsetConfig && isset($subsetConfig->intervalLimited) && $subsetConfig->intervalLimited === true) ? 1 : 0;
+		$selectFields[] = "$intervalLimited as interval_limited";
 
 		// Group-by fields for nearly all columns
 		$groupBys = [
@@ -482,7 +487,7 @@ class MonitoringPointQueries {
 			$this->select = $main->select;
 			$this->filters = array_merge($main->filters, $globalFilters);
 			foreach ($this->subsets as $key => &$subset) {
-				$subset->select = $this->buildQuery($subset->select, true);
+				$subset->select = $this->buildQuery($subset->select, true, $subset);
 				foreach ($globalFilters as $filterKey => $globalFilter) {
 					$this->addFilter($globalFilter, $filterKey, $key);
 				}
@@ -492,7 +497,7 @@ class MonitoringPointQueries {
 			}
 		}
 
-		$this->select = $this->buildQuery($this->select);
+		$this->select = $this->buildQuery($this->select, false, $main ?? null);
 		$this->applyFilters();
 
 		return $this->select->run();

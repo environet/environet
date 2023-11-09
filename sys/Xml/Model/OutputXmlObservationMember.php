@@ -20,6 +20,11 @@ class OutputXmlObservationMember implements XmlRenderable {
 	protected array $queryMeta;
 
 	/**
+	 * @var true
+	 */
+	private bool $intervalLimited = false;
+
+	/**
 	 * @var array
 	 */
 	private $propertyData;
@@ -40,6 +45,12 @@ class OutputXmlObservationMember implements XmlRenderable {
 		$this->propertyData = $propertyData;
 		$this->valueRows = $valueRows;
 		$this->queryMeta = $queryMeta;
+		foreach ($valueRows as $valueRow) {
+			if (isset($valueRow['interval_limited']) && $valueRow['interval_limited'] === 1) {
+				$this->intervalLimited = true;
+				break;
+			}
+		}
 	}
 
 
@@ -52,6 +63,9 @@ class OutputXmlObservationMember implements XmlRenderable {
 	 * @uses \Environet\Sys\Xml\Model\OutputXmlData::dateToISO()
 	 */
 	protected function renderMeta(SimpleXMLElement &$container) {
+		if ($this->intervalLimited) {
+			$container->addChild('om:description', 'Start of time series was automatically limited to available data', 'om');
+		}
 		$timePeriod = $container->addChild('om:phenomenonTime', null, 'om')->addChild('gml:TimePeriod', null, 'gml');
 
 		$startTimeRequest = $this->queryMeta['startTime'] ?? null;

@@ -167,11 +167,13 @@ class MonitoringPointSelector extends BaseAccessSelector {
 		}
 
 		$result = [];
-		$unauthorized = array_diff(array_column($requestedPoints, 'id'), $availableValues);
-		if (!empty($unauthorized)) {
-			foreach ($requestedPoints as $point) {
-				if (in_array($point['id'], $unauthorized)) {
-					$result[] = $point['eucd'];
+		if (!empty($eucdValues)) {
+			$unauthorized = array_diff(array_column($requestedPoints, 'id'), $availableValues);
+			if (!empty($unauthorized)) {
+				foreach ($requestedPoints as $point) {
+					if (in_array($point['id'], $unauthorized)) {
+						$result[] = $point['eucd'];
+					}
 				}
 			}
 		}
