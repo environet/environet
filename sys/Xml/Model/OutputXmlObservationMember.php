@@ -164,12 +164,13 @@ class OutputXmlObservationMember implements XmlRenderable {
 	 * Render one observation member.
 	 *
 	 * @param SimpleXMLElement $parent
+	 * @param array            $headers
 	 *
 	 * @throws Exception
 	 * @uses \Environet\Sys\Xml\Model\OutputXmlObservationMember::renderMeta()
 	 * @uses \Environet\Sys\Xml\Model\OutputXmlObservationMember::renderMeasurementResult()
 	 */
-	public function render(SimpleXMLElement &$parent): void {
+	public function render(SimpleXMLElement &$parent, array &$headers): void {
 		$observation = $parent->addChild('wml2:observationMember', null, 'wml2')->addChild('om:OM_Observation', null, 'om');
 		$this->renderMeta($observation);
 		$this->renderMeasurementResult($observation);

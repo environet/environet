@@ -279,7 +279,13 @@ class DownloadHandler extends ApiHandler {
 				'endTime'         => $endTime,
 				'intervalLimited' => $intervalLimited ?? false
 			];
-			$response = (new Response((new CreateOutputXml())->generateXml($queryBuilder->getResults(), $queryMeta)))->setHeaders(['Content-type: application/xml']);
+			$headers = [
+				'Content-type' => 'application/xml'
+			];
+			$response = (new Response((new CreateOutputXml())->generateXml($queryBuilder->getResults(), $queryMeta, $headers)));
+
+			$headers = array_map(fn ($key, $value) => "$key: $value", array_keys($headers), $headers);
+			$response->setHeaders($headers);
 
 			$this->saveDownloadLog($response);
 

@@ -39,13 +39,14 @@ class CreateOutputXml {
 	 *
 	 * @param       $data
 	 * @param array $queryMeta
+	 * @param array $headers
 	 *
 	 * @return SimpleXMLElement
 	 * @throws Exception
 	 * @see OutputXmlData
 	 * @see OutputXmlObservationMember
 	 */
-	public function generateXml($data, array $queryMeta): string {
+	public function generateXml($data, array $queryMeta, array &$headers): string {
 		$result = new OutputXmlData([], $queryMeta);
 		$members = [];
 
@@ -63,7 +64,7 @@ class CreateOutputXml {
 			$result->addObservationMember(new OutputXmlObservationMember(reset($valueRows), $valueRows, $queryMeta));
 		}
 
-		$result->render($this->outputXml);
+		$result->render($this->outputXml, $headers);
 
 		return preg_replace_callback('/<([^\s>]+)([^>]*)>/uim', function ($tagMatch) {
 			if ($tagMatch[1] === 'wml2:Collection') {

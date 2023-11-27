@@ -20,8 +20,9 @@ interface XmlRenderable {
 	 * Output XML string
 	 *
 	 * @param SimpleXMLElement $parent
+	 * @param array            $headers
 	 */
-	public function render(SimpleXMLElement &$parent);
+	public function render(SimpleXMLElement &$parent, array &$headers);
 
 
 }
