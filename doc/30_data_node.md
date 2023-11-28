@@ -63,7 +63,7 @@ Private keys should be placed in the `conf/plugins/credentials` directory, which
 ## Uploader plugin configuration files (conversion filters)
 
 The purpose of the conversion filters is to provide a translation from the data format of the data pro-vider to the common data format of HyMeDES EnviroNet platform.
-In general, there are the following ways to provide the data: via an FTP-server, via a web API, via HTTP or via a local file stored on the data node. The data is encoded in ZRXP-file, CSV-file or XML-file.
+In general, there are the following ways to provide the data: via an FTP-server, via an STFP-server, via a web API, via HTTP or via a local file stored on the data node. The data is encoded in ZRXP-file, CSV-file or XML-file.
 The country-specific settings for data conversion (conversion filters) are done via a basic configuration text file with keyword value pairs and optionally two JSON files. The JSON files are referred to in the basic configuration file. In most cases, the JSON configuration files are not needed.
 
 There are two options to provide the data: Pushing the data (option A) or pulling the data (option B). In the case of option A, a data node is running on a server of the data provider. It regularly accesses the data files and sends them to HyMeDES EnviroNet. In option B, HyMeDES EnviroNet accesses a server of the data provider and pulls data files from it.
@@ -82,7 +82,7 @@ Required files for different use cases are depicted in the following table:
 | Data files in ZIP | yes | | yes |
 
 ### Basic configuration file
-The basic configuration text files are located where the Data Node was installed to in sub-folder conf/plugins/configuration. In the basic configuration file, the way of the transport (called transport layer) is specified (FTP, HTTP, or a local file) and the format (called parser layer) of data file (ZRXP, CSV or XML).
+The basic configuration text files are located where the Data Node was installed to in sub-folder conf/plugins/configuration. In the basic configuration file, the way of the transport (called transport layer) is specified (FTP, SFTP, HTTP, or a local file) and the format (called parser layer) of data file (ZRXP, CSV or XML).
 
 The configuration files have always three sections which configure the properties of the three layers:
 
@@ -191,6 +191,24 @@ Takes the data from a remote FTP server
 * _username_ (required): FTP authentication username
 * _password_ (required): FTP authentication password
 * _path_ (required): The path of the directory which contains the data files, relative to the root of the FTP connection.
+* _filenamePattern_ (required): Pattern of the filenames which should be processed by the transport. Asterisk (```*```) characters can be used for variable parts of the filename
+* _newestFileOnly_ (required): If 1, only the newest file (by date) will be transported
+* _conversionsFilename_ (required): If the layer has a conversion specification file, this is the file name of the CONVERSIONS json file, relative to the path of the configuration folder.
+* _lastNDaysOnly_ (optional): Use only files with modification time newer than or equal N days from current day.
+
+
+##### SftpTransport
+
+Takes the data from a remote SFTP server
+
+* _host_ (required): Host of the SFTP server
+* _port_ (optional): Port of the SFTP server, if non-standard
+* _username_ (required): SFTP authentication username
+* _authMode_ (required): Authentication mode. Possible values: “password”, “keypair”
+* _password_: SFTP authentication password, if authMode is "password"
+* _privateKeyPath_: Path to private key, if authMode is "keypair"
+* _publicKeyPath_: Path to public key, if authMode is "keypair"
+* _path_ (required): The path of the directory which contains the data files, relative to the root of the SFTP connection.
 * _filenamePattern_ (required): Pattern of the filenames which should be processed by the transport. Asterisk (```*```) characters can be used for variable parts of the filename
 * _newestFileOnly_ (required): If 1, only the newest file (by date) will be transported
 * _conversionsFilename_ (required): If the layer has a conversion specification file, this is the file name of the CONVERSIONS json file, relative to the path of the configuration folder.
