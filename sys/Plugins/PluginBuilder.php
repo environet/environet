@@ -11,6 +11,7 @@ use Environet\Sys\Plugins\Transports\FtpTransport;
 use Environet\Sys\Plugins\Transports\HttpTransport;
 use Environet\Sys\Plugins\Transports\LocalDirectoryTransport;
 use Environet\Sys\Plugins\Transports\LocalFileTransport;
+use Environet\Sys\Plugins\Transports\SftpTransport;
 
 /**
  * Class PluginBuilder
@@ -37,7 +38,7 @@ class PluginBuilder {
 		$this->layers = [
 			new PluginLayer(
 				'transport',
-				[HttpTransport::class, LocalFileTransport::class, LocalDirectoryTransport::class, FtpTransport::class],
+				[HttpTransport::class, LocalFileTransport::class, LocalDirectoryTransport::class, FtpTransport::class, SftpTransport::class],
 				'Choose a transport layer implementation. This determines the mechanism by which the plugin will access the data.'
 			),
 			new PluginLayer(
