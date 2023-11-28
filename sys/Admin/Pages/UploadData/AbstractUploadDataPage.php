@@ -449,7 +449,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 					}
 					if (date_create_from_format('Y-m-d H:i:s', $dateString) === false) {
 						//Date is not valid, try to parse it with timezone
-						$warnings['date_not_in_expected_format'] = 'Some dates are not in the expected format (yyyy-mm-dd hh:mm:ss), please review parsed times before submit';
+						$warnings['date_not_in_expected_format'] = 'Some dates are not in the expected format (yyyy-mm-dd hh:mm:ss), please review parsed times before you confirm the data import';
 					}
 					if (!($dateTime = date_create($dateString, $inputTimezone))) {
 						throw new Exception(sprintf('Can\'t parse date: "%s". Please use the expected format: yyyy-mm-dd hh:mm:ss', $dateString));
