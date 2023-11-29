@@ -112,7 +112,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 			throw new Exception("Given elements do not exist in file: " . $xpathCommonElements);
 		}
 
-		foreach ($groups as $group) {
+		foreach ($groups as $groupKey => $group) {
 			// count elements and resolve those which are unique
 			$nResolved = 0;
 			$groupResolved = $resolved;
@@ -139,7 +139,8 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 					if ($format["optional"]) {
 						continue;
 					}
-					throw new Exception("Given elements do not exist in file: " . $xpath);
+					Console::getInstance()->writeLog(sprintf('Required element "%s" missing in group %d, skip group', $xpath, $groupKey + 1));
+					continue 2;
 				}
 				if (count($subXml) === 1) {
 					$subXml = $subXml[0];
