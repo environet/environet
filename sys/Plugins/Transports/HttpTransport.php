@@ -70,7 +70,7 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 	 * @param array $config
 	 * @param array $pluginConfig
 	 */
-	public function __construct(array $config, array $pluginConfig) {
+	public function __construct(array $config, array $pluginConfig = []) {
 		$this->url = $config['url'];
 		$this->isIndex = $config['isIndex'] ?? null;
 		$this->indexRegexPattern = $config['indexRegexPattern'] ?? null;
