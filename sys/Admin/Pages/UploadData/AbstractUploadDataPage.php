@@ -250,7 +250,10 @@ abstract class AbstractUploadDataPage extends BasePage {
 				$warnings[$originalFileName] = $fileWarnings;
 			} catch (Exception $exception) {
 				$xmlFiles[$originalFileName] = [
-					sprintf("Error during converting file %s: %s", $originalFileName, $exception->getMessage())
+					sprintf("Error during converting file %s: %s", $originalFileName, $exception->getMessage()),
+				];
+				$warnings[$originalFileName] = [
+					'Please use the expected date format yyyy-mm-dd hh:mm:ss (time parts are optional), comma (",") as separator of values, and point (".") as decimal separator, e.g. "2023-11-15 14:30,1089,74.3".'
 				];
 			}
 		}
@@ -452,7 +455,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 						$warnings['date_not_in_expected_format'] = 'Some dates are not in the expected format (yyyy-mm-dd hh:mm:ss), please review parsed times before you confirm the data import';
 					}
 					if (!($dateTime = date_create($dateString, $inputTimezone))) {
-						throw new Exception(sprintf('Can\'t parse date: "%s". Please use the expected format: yyyy-mm-dd hh:mm:ss', $dateString));
+						throw new Exception(sprintf('Can\'t parse date: "%s" in row #%s. Please use the expected format: yyyy-mm-dd hh:mm:ss', $dateString, $rowIndex));
 					}
 					$dateTime->setTimezone($toTimezone);
 					$propertiesData[$property][] = [
