@@ -460,7 +460,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 					$dateTime->setTimezone($toTimezone);
 					$propertiesData[$property][] = [
 						'time'  => $dateTime->format('c'),
-						'value' => $row[$propertyKey] ? floatval($row[$propertyKey]) : null
+						'value' => $row[$propertyKey] ?: null
 					];
 					unset($dateTime);
 				}
