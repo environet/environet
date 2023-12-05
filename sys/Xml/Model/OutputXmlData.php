@@ -66,12 +66,13 @@ class OutputXmlData implements XmlRenderable {
 	 * Render items in the observation member collection.
 	 *
 	 * @param SimpleXMLElement $collection
+	 * @param array            $headers
 	 *
 	 * @uses \Environet\Sys\Xml\Model\OutputXmlObservationMember::render()
 	 */
-	protected function renderObservationMembers(SimpleXMLElement &$collection) {
+	protected function renderObservationMembers(SimpleXMLElement &$collection, array &$headers = []): void {
 		foreach ($this->observationMembers as $member) {
-			$member->render($collection);
+			$member->render($collection, $headers);
 		}
 	}
 
@@ -85,7 +86,7 @@ class OutputXmlData implements XmlRenderable {
 	 * @throws Exception
 	 * @uses \Environet\Sys\Xml\Model\OutputXmlData::renderObservationMembers()
 	 */
-	public function render(SimpleXMLElement &$xml, array &$headers): void {
+	public function render(SimpleXMLElement &$xml, array &$headers = []): void {
 		$meta = $xml->addChild('wml2:metadata', null, 'wml2');
 		$docMeta = $meta->addChild('wml2:DocumentMetadata', null, 'wml2');
 		$docMeta->addChild('wml2:generationDate', self::dateToISO('now'), 'wml2');
@@ -106,7 +107,7 @@ class OutputXmlData implements XmlRenderable {
 			$headers['X-Environet-Note'] = $message;
 		}
 
-		$this->renderObservationMembers($xml);
+		$this->renderObservationMembers($xml, $headers);
 	}
 
 
