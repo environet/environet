@@ -30,14 +30,14 @@ class CreateInputXml {
 	public function generateXml(InputXmlData $inputXmlData): SimpleXMLElement {
 		if (!($inputXmlData->getPointId())) {
 			// Point data is required
-			throw new CreateInputXmlException('Property #$key: Point id is required');
+			throw new CreateInputXmlException('Point id is required');
 		}
 
 		// Validate properties
 		foreach ($inputXmlData->getProperties() as $propertyKey => $property) {
 			if (!($property->getPropertySymbol())) {
 				// Property symbol not set for property
-				throw new CreateInputXmlException("Property #$propertyKey: Property symbol is required");
+				throw new CreateInputXmlException("Property #" . ($propertyKey + 1) . ": Property symbol is required");
 			}
 			// Validate array of values
 			$this->validateValues($property->getValues(), $propertyKey);
@@ -84,20 +84,20 @@ class CreateInputXml {
 	protected function validateValues(array $values, int $propertyKey): bool {
 		if (empty($values)) {
 			// Empty values is invalid
-			throw new CreateInputXmlException("Property #$propertyKey: Values is empty");
+			throw new CreateInputXmlException("Property #" . ($propertyKey + 1) . ": Values is empty");
 		}
 		foreach ($values as $key => $value) {
 			if (!(count($value) === 2 && isset($value['time']) && isset($value['value']))) {
 				// Invalid sub-array
-				throw new CreateInputXmlException("Property #$propertyKey, Value #$key: 'time' and 'value' keys are required");
+				throw new CreateInputXmlException("Property #" . ($propertyKey + 1) . ", Value #" . ($key + 1) . ": 'time' and 'value' keys are required");
 			}
 			if (DateTime::createFromFormat(DateTime::ISO8601, $value['time']) === false) {
 				// Invalid data format
-				throw new CreateInputXmlException("Property #$propertyKey, Value #$key: Time format is invalid");
+				throw new CreateInputXmlException("Property #" . ($propertyKey + 1) . ", Value #" . ($key + 1) . ": Time format is invalid");
 			}
 			if (!is_numeric($value['value'])) {
 				// Invalid value format
-				throw new CreateInputXmlException("Property #$propertyKey, Value #$key: Value format is invalid");
+				throw new CreateInputXmlException("Property #" . ($propertyKey + 1) . ", Value #" . ($key + 1) . ": Value format is invalid");
 			}
 		}
 
