@@ -103,7 +103,7 @@ class OutputXmlData implements XmlRenderable {
 			$parameterName = $parameterNV->addChild('om:name', null, 'om');
 			$parameterName->addAttribute('xlink:title', 'message', 'xlink');
 			$parameterNV->addChild('om:value', $message, 'om');
-			$headers['X-Dareffort-Note'] = $message;
+			$headers['X-Environet-Note'] = $message;
 		}
 
 		$this->renderObservationMembers($xml);
