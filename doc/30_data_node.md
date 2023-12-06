@@ -260,6 +260,7 @@ For files which are in XML format
 * _separatorDecimals_ (optional): The decimal separator of values in XML file
 * _formatsFilename_ (required): The filename which contains the format specification of XML file.
 * _skipEmptyValueTag_ (optional): If 1, the empty value tags will be skipped. If 0, these empty value tag will be processed as a zero value
+* _skipValue_ (optional): A specific value which should be parsed as a non-existent value
 
 ##### JsonParser
 For files which are in json format
