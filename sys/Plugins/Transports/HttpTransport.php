@@ -308,9 +308,7 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 				$allObservedProperties = array_merge($allObservedProperties, $item["observed_properties"] ?? []);
 			}
 		}
-		$allObservedProperties = array_filter(array_unique($allObservedProperties), function($property) use ($observedPropertyConversions) {
-			return isset($observedPropertyConversions[$property]);
-		});
+		$allObservedProperties = array_unique($allObservedProperties);
 
 		// check if a monitoring point conversion variable is in URL pattern. If false, all monitoring points will be in one file
 		$allMonitoringPointsInOneFile = !$monitoringPointConversions || !preg_match('/\[('.implode('|', array_keys($monitoringPointConversions)).')\]/i', $baseUrl);
@@ -324,10 +322,6 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 		// Loop over list of monitoring points and observables
 		foreach ($monitoringPoints as $monitoringPoint) {
 			foreach ($monitoringPoint["observed_properties"] as $observedProperty) {
-				if (!in_array($observedProperty, $allObservedProperties)) {
-					//Skip if conversions configuration is only for a single observed property, and $observedProperty is not the same
-					continue;
-				}
 				// variable preparation
 				$variables = $this->prepareVariables($monitoringPoint["NCD"], $observedProperty, $monitoringPointConversions, $observedPropertyConversions);
 
