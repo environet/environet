@@ -90,11 +90,11 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 */
 	private function parseIntoHierarchy(SimpleXMLElement $xml, array $formats, array $resolved, int $hierarchyCounter): array {
 		if ($hierarchyCounter > 10) {
-			throw new Exception("XML hierarchy deeper than 10");
+			throw new Exception('XML hierarchy deeper than 10');
 		}
 
 		if (!count($formats)) {
-			Console::getInstance()->writeLog("Error condition 1: Call, but all information already resolved.", true);
+			Console::getInstance()->writeLog('Error condition 1: Call, but all information already resolved.', true);
 
 			return [];
 		}
@@ -107,8 +107,8 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		$xpathCommonElements = implode('/', $commonElements);
 
 		// Finish condition 1: No common elements, but unresolved information
-		if ($xpathCommonElements == "") {
-			throw new Exception("Unresolved information");
+		if ($xpathCommonElements == '') {
+			throw new Exception('Unresolved information');
 		}
 
 		// get groups
@@ -116,7 +116,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		$groups = $xml->xpath($xpathCommonElements);
 
 		if ($groups == null) {
-			throw new Exception("Given elements do not exist in file: " . $xpathCommonElements);
+			throw new Exception('Given elements do not exist in file: ' . $xpathCommonElements);
 		}
 
 		foreach ($groups as $groupKey => $group) {
@@ -125,25 +125,25 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 			$groupResolved = $resolved;
 			$formatsNew = [];
 			foreach ($formats as $format) {
-				if (($xpath = implode('/', $format["Tag Hierarchy"]))) {
+				if (($xpath = implode('/', $format['Tag Hierarchy']))) {
 					// desired information is sub-item of group
 					$subXml = $group->xpath($xpath);
 				} else {
 					// desired information is group itself
 					$subXml = $group;
-					if (!empty($format["Attribute"]) && $subXml->getName() === end($commonElements)) {
+					if (!empty($format['Attribute']) && $subXml->getName() === end($commonElements)) {
 						// desired information is attribute of group-defining tag
 						$item = [];
-						$item["Type"] = $format["Parameter"] ?? null;
-						$item["Value"] = $subXml[0][$format["Attribute"]]->__toString();
-						$item["Format"] = $format["Value"] ?? null;
-						$item["Unit"] = $format["Unit"] ?? null;
+						$item['Type'] = $format['Parameter'] ?? null;
+						$item['Value'] = $subXml[0][$format['Attribute']]->__toString();
+						$item['Format'] = $format['Value'] ?? null;
+						$item['Unit'] = $format['Unit'] ?? null;
 						array_push($groupResolved, $item);
 						++ $nResolved;
 					}
 				}
 				if ($subXml == null) {
-					if ($format["optional"]) {
+					if ($format['optional']) {
 						continue;
 					}
 					Console::getInstance()->writeLog(sprintf('Required element "%s" missing in group %d, skip group', $xpath, $groupKey + 1));
@@ -152,11 +152,11 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 				if (count($subXml) === 1) {
 					$subXml = $subXml[0];
 					$item = [];
-					$item["Type"] = $format["Parameter"];
-					if (empty($format["Attribute"])) {
-						$item["Value"] = $subXml->__toString();
+					$item['Type'] = $format['Parameter'];
+					if (empty($format['Attribute'])) {
+						$item['Value'] = $subXml->__toString();
 					} else {
-						$item["Value"] = $subXml[$format["Attribute"]]->__toString();
+						$item['Value'] = $subXml[$format['Attribute']]->__toString();
 					}
 
 					if ($item['Type'] === 'ObservedPropertyValue' && $item['Value'] === '') {
@@ -166,8 +166,8 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 						}
 					}
 
-					$item["Format"] = $format["Value"] ?? null;
-					$item["Unit"] = $format["Unit"] ?? null;
+					$item['Format'] = $format['Value'] ?? null;
+					$item['Unit'] = $format['Unit'] ?? null;
 					array_push($groupResolved, $item);
 					++ $nResolved;
 				} else {
@@ -194,8 +194,8 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 * variable conversion information.
 	 *
 	 * @param array  $observedPropertyConversions
-	 * @param string $variableName name of variable definition for observed property. E.g. "OBS"
-	 * @param string $symbol       external symbol for observed property
+	 * @param string $variableName                name of variable definition for observed property. E.g. "OBS"
+	 * @param string $symbol                      external symbol for observed property
 	 *
 	 * @return string internal symbol for observed property
 	 */
@@ -206,7 +206,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 			}
 		}
 
-		return "";
+		return '';
 	}
 
 
@@ -269,12 +269,12 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		//Convert value in case of some symbols and units
 		//For Q (m³/s), tw (°C), and ta °C no conversions are necessary
 		if ($symbol == 'h') {
-			if ($unit == "mm") {
+			if ($unit == 'mm') {
 				$value /= 10;
-			} elseif ($unit == "m") {
+			} elseif ($unit == 'm') {
 				$value *= 100;
 			}
-		} elseif ($symbol == "P") {
+		} elseif ($symbol == 'P') {
 			if (in_array($unit, ['cm', 'cm/h'])) {
 				$value *= 10;
 			} elseif (in_array($unit, ['m', 'm/h'])) {
@@ -315,9 +315,9 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		if ($difference) {
 			return null;
 		}
-		$result = $formats[0]["Tag Hierarchy"][0];
+		$result = $formats[0]['Tag Hierarchy'][0];
 		for ($i = 0; $i < $formatsCount; ++ $i) {
-			array_shift($formats[$i]["Tag Hierarchy"]);
+			array_shift($formats[$i]['Tag Hierarchy']);
 		}
 
 		return $result;
@@ -333,64 +333,64 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 * @throws Exception
 	 */
 	private function assembleDate(array &$entry) {
-		$DateTime = $this->getParameter($entry, "Type", "DateTime");
-		$Date = $this->getParameter($entry, "Type", "Date");
-		$Time = $this->getParameter($entry, "Type", "Time");
-		$Year = $this->getParameter($entry, "Type", "Year");
-		$Month = $this->getParameter($entry, "Type", "Month");
-		$Day = $this->getParameter($entry, "Type", "Day");
-		$Hour = $this->getParameter($entry, "Type", "Hour");
-		$Minute = $this->getParameter($entry, "Type", "Minute");
-		$NCD = $this->getParameter($entry, "Type", "MonitoringPoint")["Value"];
+		$DateTime = $this->getParameter($entry, 'Type', 'DateTime');
+		$Date = $this->getParameter($entry, 'Type', 'Date');
+		$Time = $this->getParameter($entry, 'Type', 'Time');
+		$Year = $this->getParameter($entry, 'Type', 'Year');
+		$Month = $this->getParameter($entry, 'Type', 'Month');
+		$Day = $this->getParameter($entry, 'Type', 'Day');
+		$Hour = $this->getParameter($entry, 'Type', 'Hour');
+		$Minute = $this->getParameter($entry, 'Type', 'Minute');
+		$NCD = $this->getParameter($entry, 'Type', 'MonitoringPoint')['Value'];
 
 		$result = [
-			"Type"   => "DateTime",
-			"Value"  => "",
-			"Format" => self::API_TIME_FORMAT_STRING,
-			"Unit"   => null
+			'Type'   => 'DateTime',
+			'Value'  => '',
+			'Format' => self::API_TIME_FORMAT_STRING,
+			'Unit'   => null
 		];
 
 		if ($Year && $Month && $Day && $Hour && $Minute) {
 			$t = mktime(
-				strval($Hour["Value"]),
-				strval($Minute["Value"]),
+				strval($Hour['Value']),
+				strval($Minute['Value']),
 				0,
-				strval($Month["Value"]),
-				strval($Day["Value"]),
-				strval($Year["Value"])
+				strval($Month['Value']),
+				strval($Day['Value']),
+				strval($Year['Value'])
 			);
-			$format = "dmY H:i:s";
+			$format = 'dmY H:i:s';
 			$dateLocal = date($format, $t);
 			$date = DateTime::createFromFormat($format, $dateLocal, $this->getTimeZone());
 			$date->setTimezone(new DateTimeZone('UTC'));
-			$result["Value"] = $date->format(self::API_TIME_FORMAT_STRING);
-			$this->delete($entry, "Type", "Year");
-			$this->delete($entry, "Type", "Month");
-			$this->delete($entry, "Type", "Day");
-			$this->delete($entry, "Type", "Hour");
-			$this->delete($entry, "Type", "Minute");
+			$result['Value'] = $date->format(self::API_TIME_FORMAT_STRING);
+			$this->delete($entry, 'Type', 'Year');
+			$this->delete($entry, 'Type', 'Month');
+			$this->delete($entry, 'Type', 'Day');
+			$this->delete($entry, 'Type', 'Hour');
+			$this->delete($entry, 'Type', 'Minute');
 		} elseif ($Date && $Time) {
-			$date = DateTime::createFromFormat($Date["Format"] . ' ' . $Time["Format"], $Date["Value"] . ' ' . $Time["Value"], $this->getTimeZone());
+			$date = DateTime::createFromFormat($Date['Format'] . ' ' . $Time['Format'], $Date['Value'] . ' ' . $Time['Value'], $this->getTimeZone());
 			if (!$date) {
 				throw new Exception("Invalid date or time format (monitoring point national code: $NCD): Date format is \"" .
 					$Date["Format"] . "\" value is \"" . $Date["Value"] . "\", Time format is \"" . $Time["Format"] .
-					"\", value is \"" . $Time["Value"] . "\". Entry dropped.");
+				"\", value is \"" . $Time["Value"] . "\". Entry dropped.");
 			}
 			$date->setTimezone(new DateTimeZone('UTC'));
-			$result["Value"] = $date->format(self::API_TIME_FORMAT_STRING);
-			$this->delete($entry, "Type", "Date");
-			$this->delete($entry, "Type", "Time");
+			$result['Value'] = $date->format(self::API_TIME_FORMAT_STRING);
+			$this->delete($entry, 'Type', 'Date');
+			$this->delete($entry, 'Type', 'Time');
 		} elseif ($DateTime) {
-			$date = DateTime::createFromFormat($DateTime["Format"], $DateTime["Value"], $this->getTimeZone());
+			$date = DateTime::createFromFormat($DateTime['Format'], $DateTime['Value'], $this->getTimeZone());
 			if (!$date) {
 				throw new Exception("Invalid datetime format (monitoring point national code: $NCD): Format is \"" . $DateTime["Format"] .
-					"\", value is \"" . $DateTime["Value"] . "\". Entry dropped.");
+				"\", value is \"" . $DateTime["Value"] . "\". Entry dropped.");
 			}
 			$date->setTimezone(new DateTimeZone('UTC'));
-			$result["Value"] = $date->format(self::API_TIME_FORMAT_STRING);
-			$this->delete($entry, "Type", "DateTime");
+			$result['Value'] = $date->format(self::API_TIME_FORMAT_STRING);
+			$this->delete($entry, 'Type', 'DateTime');
 		} else {
-			throw new Exception("Incomplete date");
+			throw new Exception('Incomplete date');
 		}
 		array_push($entry, $result);
 	}
@@ -406,8 +406,8 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 * @return bool returns true, if value is valid. Value may be empty string if not available. In this case value is invalid.
 	 */
 	private function convertValue(array &$entry): bool {
-		$itemUnit = $this->getParameter($entry, "Type", "ObservedPropertyUnit");
-		$itemSymbol = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
+		$itemUnit = $this->getParameter($entry, 'Type', 'ObservedPropertyUnit');
+		$itemSymbol = $this->getParameter($entry, 'Type', 'ObservedPropertySymbol');
 
 		$skipValues = [''];
 		if ($this->skipValue) {
@@ -416,28 +416,28 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 		$valid = false;
 		foreach ($entry as &$item) {
-			if ($item["Type"] == "ObservedPropertyValue") {
+			if ($item['Type'] == 'ObservedPropertyValue') {
 				if (!in_array($item['Value'], $skipValues, true)) {
 					$valid = true;
-					if ($this->separatorThousands != "") {
-						$item["Value"] = str_replace($this->separatorThousands, "", $item["Value"]);
+					if ($this->separatorThousands != '') {
+						$item['Value'] = str_replace($this->separatorThousands, '', $item['Value']);
 					}
-					if ($this->separatorDecimals != "." && $this->separatorDecimals != "") {
-						$item["Value"] = str_replace($this->separatorDecimals, ".", $item["Value"]);
+					if ($this->separatorDecimals != '.' && $this->separatorDecimals != '') {
+						$item['Value'] = str_replace($this->separatorDecimals, '.', $item['Value']);
 					}
 					if (!$itemUnit) {
 						$elem = [
-							"Type"   => "ObservedPropertyUnit",
-							"Value"  => $item["Unit"],
-							"Format" => null,
-							"Unit"   => null,
+							'Type'   => 'ObservedPropertyUnit',
+							'Value'  => $item['Unit'],
+							'Format' => null,
+							'Unit'   => null,
 						];
 						array_push($entry, $elem);
-						$unit = $item["Unit"];
+						$unit = $item['Unit'];
 					} else {
-						$unit = $itemUnit["Value"];
+						$unit = $itemUnit['Value'];
 					}
-					$this->convertUnitToBaseUnit($item["Value"], $itemSymbol["Value"], $unit);
+					$this->convertUnitToBaseUnit($item['Value'], $itemSymbol['Value'], $unit);
 				}
 			}
 		}
@@ -534,9 +534,9 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 * @throws Exception
 	 */
 	public function parse(Resource $resource): array {
-		Console::getInstance()->writeLog("Received " . strlen($resource->contents) . " characters");
+		Console::getInstance()->writeLog(sprintf('Received %s characters', strlen($resource->contents)));
 
-		$resource->contents = str_replace("xlink:href", "href", $resource->contents); // Workaround for WaterML 2.0
+		$resource->contents = str_replace('xlink:href', 'href', $resource->contents); // Workaround for WaterML 2.0
 
 		libxml_use_internal_errors(true); // this turns off spitting parsing errors on screen
 		$xml = new SimpleXMLElement($resource->contents);
@@ -548,7 +548,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 		// strip top-level element from formats
 		if (empty($this->getAndStripOneCommonElement($formats))) {
-			throw new Exception("XML definition does not have a top-level element");
+			throw new Exception('XML definition does not have a top-level element');
 		}
 
 		$flatList = $this->parseIntoHierarchy($xml, $formats, [], 0);
@@ -557,43 +557,43 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		if ($resource->meta) {
 			$newEntries = [];
 			foreach ($flatList as $key => &$entry) {
-				if (!$this->getParameter($entry, "Type", "MonitoringPoint") && !empty($resource->meta["MonitoringPointNCDs"])) {
+				if (!$this->getParameter($entry, 'Type', 'MonitoringPoint') && !empty($resource->meta['MonitoringPointNCDs'])) {
 					//Add monitoring point national code from API-Call
 					$elem = [
-						"Type"   => "MonitoringPoint",
-						"Value"  => $resource->meta["MonitoringPointNCDs"][0],
-						"Format" => null,
-						"Unit"   => null,
+						'Type'   => 'MonitoringPoint',
+						'Value'  => $resource->meta['MonitoringPointNCDs'][0],
+						'Format' => null,
+						'Unit'   => null,
 					];
 					array_push($entry, $elem);
 				}
 
-				$obs = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
+				$obs = $this->getParameter($entry, 'Type', 'ObservedPropertySymbol');
 				if ($obs) {
 					// convert external (in-file) symbol to internal symbol
-					$symbolNameInFile = $obs["Value"] ?? null;
-					$variableName = $obs["Format"] ?? null;
+					$symbolNameInFile = $obs['Value'] ?? null;
+					$variableName = $obs['Format'] ?? null;
 					if ($symbolNameInFile && $variableName) {
-						if (($symbol = $this->getInternalObservedPropertySymbol($resource->meta["observedPropertyConversions"], $variableName, $symbolNameInFile))) {
-							$this->delete($entry, "Type", "ObservedPropertySymbol");
-							$obs["Value"] = $symbol;
+						if (($symbol = $this->getInternalObservedPropertySymbol($resource->meta['observedPropertyConversions'], $variableName, $symbolNameInFile))) {
+							$this->delete($entry, 'Type', 'ObservedPropertySymbol');
+							$obs['Value'] = $symbol;
 							array_push($entry, $obs);
 						} else {
 							unset($flatList[$key]); // Delete whole entry as observed property was not found
 						}
 					}
 				} else {
-					if (isset($resource->meta["ObservedPropertySymbols"]) && count($resource->meta["ObservedPropertySymbols"]) === 1) {
+					if (isset($resource->meta['ObservedPropertySymbols']) && count($resource->meta['ObservedPropertySymbols']) === 1) {
 						// Only one observed property by call: Add observed property symbol from API-Call
 						$elem = [
-							"Type"   => "ObservedPropertySymbol",
-							"Value"  => $resource->meta["ObservedPropertySymbols"][0],
-							"Format" => null,
-							"Unit"   => null,
+							'Type'   => 'ObservedPropertySymbol',
+							'Value'  => $resource->meta['ObservedPropertySymbols'][0],
+							'Format' => null,
+							'Unit'   => null,
 						];
 						// delete all occurrences of ObservedPropertyValue with wrong symbol
 						foreach ($entry as $ekey => &$e) {
-							if ($e["Type"] == "ObservedPropertyValue" && $e["Format"] != $elem["Value"]) {
+							if ($e['Type'] == 'ObservedPropertyValue' && $e['Format'] != $elem['Value']) {
 								unset($entry[$ekey]);
 							}
 						}
@@ -603,21 +603,21 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 						// add observed property symbol from ObservedPropertyValue
 						$count = 0;
 						foreach ($entry as &$e) {
-							if ($e["Type"] == "ObservedPropertyValue") {
-								// copy entry to new entries, because multiple occurrences of "ObservedPropertyValue" may be
+							if ($e['Type'] == 'ObservedPropertyValue') {
+								// copy entry to new entries, because multiple occurrences of 'ObservedPropertyValue' may be
 								// present in $entry for different observed properties
 								$newEntry = $entry;
-								$prop = $e["Format"];
+								$prop = $e['Format'];
 								$elem = [
-									"Type"   => "ObservedPropertySymbol",
-									"Value"  => $prop,
-									"Format" => null,
-									"Unit"   => null,
+									'Type'   => 'ObservedPropertySymbol',
+									'Value'  => $prop,
+									'Format' => null,
+									'Unit'   => null,
 								];
 								array_push($newEntry, $elem);
 								// delete all occurrences of ObservedPropertyValue with wrong symbol
 								foreach ($newEntry as $newenkey => &$newenval) {  // FFF
-									if ($newenval["Type"] == "ObservedPropertyValue" && $newenval["Format"] != $prop) {
+									if ($newenval['Type'] == 'ObservedPropertyValue' && $newenval['Format'] != $prop) {
 										unset($newEntry[$newenkey]);
 									}
 								}
@@ -627,7 +627,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 							}
 						}
 						if ($count == 0) {
-							throw new Exception("No value for any observed property in entry.");
+							throw new Exception('No value for any observed property in entry.');
 						}
 						unset($flatList[$key]);
 					}
@@ -638,11 +638,11 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		}
 
 		// delete entries which do not fit to API-call (extra monitoring points, extra observed properties)
-		if ($resource->meta && (!isset($resource->meta["keepExtraData"]) || !$resource->meta["keepExtraData"])) {
+		if ($resource->meta && (!isset($resource->meta['keepExtraData']) || !$resource->meta['keepExtraData'])) {
 			foreach ($flatList as $key => &$entry) {
-				$mp = $this->getParameter($entry, "Type", "MonitoringPoint");
-				$obs = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
-				if (!in_array($mp["Value"], $resource->meta["MonitoringPointNCDs"]) || !in_array($obs["Value"], $resource->meta["ObservedPropertySymbols"])) {
+				$mp = $this->getParameter($entry, 'Type', 'MonitoringPoint');
+				$obs = $this->getParameter($entry, 'Type', 'ObservedPropertySymbol');
+				if (!in_array($mp['Value'], $resource->meta['MonitoringPointNCDs']) || !in_array($obs['Value'], $resource->meta['ObservedPropertySymbols'])) {
 					unset($flatList[$key]);
 				}
 			}
@@ -654,20 +654,20 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 		$resultArray = [];
 		foreach ($flatList as $line) {
-			$mp = $this->getParameter($line, "Type", "MonitoringPoint")["Value"];
+			$mp = $this->getParameter($line, 'Type', 'MonitoringPoint')['Value'];
 
 			if (!array_key_exists($mp, $resultArray)) {
 				$resultArray[$mp] = [];
 			}
 
-			$obs = $this->getParameter($line, "Type", "ObservedPropertySymbol")["Value"];
+			$obs = $this->getParameter($line, 'Type', 'ObservedPropertySymbol')['Value'];
 
 			if (!array_key_exists($obs, $resultArray[$mp])) {
 				$resultArray[$mp][$obs] = [];
 			}
 
-			$time = $this->getParameter($line, "Type", "DateTime")["Value"];
-			$value = strval($this->getParameter($line, "Type", "ObservedPropertyValue")["Value"]);
+			$time = $this->getParameter($line, 'Type', 'DateTime')['Value'];
+			$value = strval($this->getParameter($line, 'Type', 'ObservedPropertyValue')['Value']);
 
 			$resultArray[$mp][$obs] = array_merge(
 				$resultArray[$mp][$obs],
