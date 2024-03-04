@@ -5,6 +5,7 @@ use Environet\Sys\Commands\BaseCommand;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Commands\DataNode\Cleanup as DataNodeCleanup;
 use Environet\Sys\Commands\DataNode\Install as DataNodeInstall;
+use Environet\Sys\Commands\DataNode\MigrateConfig;
 use Environet\Sys\Commands\DataNode\PluginCreate;
 use Environet\Sys\Commands\DataNode\PluginRun;
 use Environet\Sys\Commands\DistNode\ExportDb;
@@ -54,6 +55,8 @@ function commandRouter(array $arguments): ?string {
 							return PluginCreate::class;
 						case 'run':
 							return PluginRun::class;
+						case 'migrate':
+							return MigrateConfig::class;
 					}
 			}
 			break;

@@ -46,6 +46,10 @@ If the data node is going to access the measurements over a network connection, 
   - Relative path inside docker folder: If measurement files are stored under `[Environet docker directory]/docker/measurements` directory, the line would read:`LOCAL_DATA_DIR=./measurements`
   - Relative path somewhere else: If measurement files are stored under `[Environet docker directory]/measurements` directory, the line would read:`LOCAL_DATA_DIR=../measurements`
 
+# Updates
+
+After updating your deployment, you need to run `./environet data plugin migrate`, to run config migrations that might be included in the update.
+
 ## Creating configurations
     
 Run `./environet data plugin create` to start an interactive script, that will guide you through creating an uploader plugin configuration.  

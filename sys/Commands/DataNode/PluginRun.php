@@ -29,7 +29,6 @@ class PluginRun extends BaseCommand {
 	 * @uses \Environet\Sys\Plugins\PluginBuilder::loadFromConfiguration()
 	 */
 	public function run($arguments): int {
-		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
 		$configFile = $arguments[3] ?? null;
 		if (!$configFile) {
 			$this->console->writeLine("Configuration file name is required", Console::COLOR_RED);
@@ -37,12 +36,12 @@ class PluginRun extends BaseCommand {
 			return 1;
 		}
 
-		if (!file_exists($configurationsPath . $configFile)) {
+		if (!file_exists(rtrim(CONFIGURATION_PATH, '/')  . '/' . $configFile)) {
 			$this->console->writeLine("Configuration file does not exist", Console::COLOR_RED);
 
 			return 1;
 		}
-		$configuration = parse_ini_file($configurationsPath . $configFile, true);
+		$configuration = parse_ini_file(rtrim(CONFIGURATION_PATH, '/')  . '/' . $configFile, true);
 
 		$pluginBuilder = new PluginBuilder();
 		$plugin = $pluginBuilder->loadFromConfiguration($configuration);

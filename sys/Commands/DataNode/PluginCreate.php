@@ -29,18 +29,17 @@ class PluginCreate extends BaseCommand {
 	 * @uses \Environet\Sys\Plugins\PluginBuilder::serializeConfiguration()
 	 */
 	public function run($arguments): int {
-		$configurationsPath = SRC_PATH . '/conf/plugins/configurations/';
-		$configurationsRealPath = empty(getenv('ENVIRONET_PLUGIN_CONF_DIR')) ? $configurationsPath : getenv('ENVIRONET_PLUGIN_CONF_DIR') . '/configurations';
+		$configurationsRealPath = empty(getenv('ENVIRONET_PLUGIN_CONF_DIR')) ? CONFIGURATION_PATH : getenv('ENVIRONET_PLUGIN_CONF_DIR') . '/configurations';
 		$pluginBuilder = new PluginBuilder();
 		$pluginBuilder->createConfiguration($this->console);
 
 		$configuration = $pluginBuilder->serializeConfiguration();
 
 		while (true) {
-			$this->console->writeLine("Your configuration will be saved into '" . $configurationsRealPath . "'. Enter a filename you wish to save it as.");
+			$this->console->writeLine("Your configuration will be saved into '" . CONFIGURATION_PATH . "'. Enter a filename you wish to save it as.");
 			$filename = $this->console->ask("Configuration name:");
 
-			if (file_exists($configurationsPath . $filename)) {
+			if (file_exists(rtrim(CONFIGURATION_PATH, '/')  . '/' . $filename)) {
 				if (!$this->console->askYesNo("The configuration [$filename] already exists, do you want to overwrite it?", true)) {
 					continue;
 				}
@@ -48,10 +47,10 @@ class PluginCreate extends BaseCommand {
 			break;
 		}
 
-		if (!is_dir($configurationsPath)) {
-			mkdir($configurationsPath, 0755, true);
+		if (!is_dir(CONFIGURATION_PATH)) {
+			mkdir(CONFIGURATION_PATH, 0755, true);
 		}
-		file_put_contents($configurationsPath . $filename, $configuration);
+		file_put_contents(rtrim(CONFIGURATION_PATH, '/')  . '/' . $filename, $configuration);
 
 		$this->console->writeLine("The configuration has been saved to " . $configurationsRealPath . '/' . $filename);
 
