@@ -8,17 +8,6 @@
     "generalInformation"
   ],
   "properties": {
-    "generalInformation": {
-      "description": "General information",
-      "type": "object",
-      "properties": {
-        "monitoringPointType": {
-          "description": "Type of requested monitoring points",
-          "type": "string",
-          "enum": ["hydro", "meteo"]
-        }
-      }
-    },
     "monitoringPointConversions": {
       "type": "object",
       "description": "An object where keys are the URL parameters, values are the pattern of the monitoring point ids, represented by #-signs. Number of # signs will be the length of replaced values in URL"

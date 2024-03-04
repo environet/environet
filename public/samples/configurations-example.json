@@ -1,7 +1,4 @@
 {
-  "generalInformation": {
-    "monitoringPointType": "hydro"
-  },
   "monitoringPointConversions": {
     "MPID1": "#####",
     "MPID2": "#"

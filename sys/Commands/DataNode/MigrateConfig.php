@@ -34,6 +34,7 @@ class MigrateConfig extends BaseCommand {
 
 		$migrations = [
 			'removeUrlPattern',
+			'removeGeneralInformation',
 		];
 		ini_set('memory_limit', - 1);
 
@@ -94,6 +95,38 @@ class MigrateConfig extends BaseCommand {
 
 			$this->writeJsonConfig($config['conversionsContent'], $config['conversions']);
 			$this->writeIniConfig($config['iniContent'], $config['ini']);
+			$this->console->writeLine("Config migrated successfully: " . $config['ini'], Console::COLOR_GREEN);
+			$return = 0;
+		}
+
+		return $return;
+	}
+
+
+	/**
+	 * Remove urlPattern from config, and move it to ini config
+	 *
+	 * @param array       $output
+	 * @param string|null $selectedConfigFile
+	 *
+	 * @return int
+	 */
+	private function removeGeneralInformation(array &$output, ?string $selectedConfigFile = null): int {
+		$return = - 1;
+
+		$configs = $this->getConfigurations();
+
+		foreach ($configs as $config) {
+			if ($selectedConfigFile && preg_match('/' . preg_quote($selectedConfigFile, '/') . '$/i', $config['ini']) === 0) {
+				continue;
+			}
+			if (!is_array($config['conversionsContent']) || !array_key_exists('generalInformation', $config['conversionsContent'])) {
+				continue;
+			}
+			$this->console->writeLine("Migrating generalInformation in config: " . $config['ini'], Console::COLOR_YELLOW);
+			unset($config['conversionsContent']['generalInformation']);
+
+			$this->writeJsonConfig($config['conversionsContent'], $config['conversions']);
 			$this->console->writeLine("Config migrated successfully: " . $config['ini'], Console::COLOR_GREEN);
 			$return = 0;
 		}
