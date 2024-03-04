@@ -1829,6 +1829,8 @@ If the data node is going to access the measurements over a network connection, 
 <li>Relative path somewhere else: If measurement files are stored under <code>[Environet docker directory]/measurements</code> directory, the line would read:<code>LOCAL_DATA_DIR=../measurements</code></li>
 </ul></li>
 </ul>
+<h1 id="updates-1">Updates</h1>
+<p>After updating your deployment, you need to run <code>./environet data plugin migrate</code>, to run config migrations that might be included in the update.</p>
 <h2 id="creating-configurations">Creating configurations</h2>
 <p>Run <code>./environet data plugin create</code> to start an interactive script, that will guide you through creating an uploader plugin configuration.</p>
 <p>Generated configurations will be saved to the <code>/conf/plugins/configurations</code> folder, with the filename provided at the end of the process.</p>
@@ -1959,7 +1961,7 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <h5 id="httptransport">HttpTransport</h5>
 <p>Takes the data from an HTTP source. It has two modes. In manual mode the transporter works based on a fixed URL, and in conversion mode the URL is built based on the CONVERSIONS json configuration file.</p>
 <ul>
-<li><em>url</em> (required in “manual” mode): The URL of source, if not defined in JSON configuration file</li>
+<li><em>url</em> (required in “manual” mode): The URL of source. If conversion.json configuration used, it can contain variables in the form of [VARIABLE_NAME]</li>
 <li><em>isIndex</em> (optional): 1, if the source is only an index page which contains links to the files. 0, if the source is the file itself</li>
 <li><em>indexRegexPattern</em> (optional): If isIndex is 1, this is the regular expression pattern which finds the links to the data files</li>
 <li><em>conversionsFilename</em> (required in “conversion” mode): The file name of the CONVERSIONS json file, relative to the path of the configuration folder.</li>
@@ -2064,8 +2066,8 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <li><em>privateKeyPath</em> (required): Path to private key</li>
 </ul>
 <h3 id="json-configuration-files">JSON configuration files</h3>
-<p>In the FORMATS json file the format specifications for XML data files are defined. The observed prop-erty names used in it refer to the variable definitions specified in the CONVERSIONS json file. The CONVERSIONS json file defines the variables for monitoring point, observed property or time intervals for use in the URL, file names and/or in the data file itself. The CONVERSIONS json file is required if there is a complex structure of the URL to access data files, filenames containing variable parts, or zipped data. For example, if the identifier of the monitoring point is coded within the filename or the URL, a CONVERSIONS json file is required.</p>
-<p>JSON is a simple standardized format to easily define structured data. Arrays (lists of entries) are de-fined with brackets like [ “a”, “b”, “c” ] and objects with curly braces. Objects have properties, and the properties have values. For example, the following defines an object with the property “Property1”, which has value “Example” and a property named “Property2” which has value “a value”: { “Prop-erty1”: “Example”, “Property2”: “a value” } In the following the format of the FORMATS file and the CONVERSIONS file are described in detail.</p>
+<p>In the FORMATS json file the format specifications for XML data files are defined. The observed property names used in it refer to the variable definitions specified in the CONVERSIONS json file. The CONVERSIONS json file defines the variables for monitoring point, observed property or time intervals for use in the URL, file names and/or in the data file itself. The CONVERSIONS json file is required if there is a complex structure of the URL to access data files, filenames containing variable parts, or zipped data. For example, if the identifier of the monitoring point is coded within the filename or the URL, a CONVERSIONS json file is required.</p>
+<p>JSON is a simple standardized format to easily define structured data. Arrays (lists of entries) are de-fined with brackets like [ “a”, “b”, “c” ] and objects with curly braces. Objects have properties, and the properties have values. For example, the following defines an object with the property “Property1”, which has value “Example” and a property named “Property2” which has value “a value”: { “Property1”: “Example”, “Property2”: “a value” } In the following the format of the FORMATS file and the CONVERSIONS file are described in detail.</p>
 <h4 id="formats-file-format-specification-for-xml-data-files">FORMATS-file: Format Specification for XML data files</h4>
 <p>The Format Specifications mainly defines the tag hierarchy in the XML data file for the entities moni-toring point, observed properties and date specifications. The json is an array of objects. Each object has the following properties:</p>
 <ul>
@@ -2279,7 +2281,7 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <li>Need for Observable property symbol conversion (between data provider notation and Hy-MeDES EnviroNet notation)</li>
 <li>Need for Monitoring Point id conversions</li>
 </ul>
-<p>Data access is specified by URL patterns with parameters and variable values which are filled in dy-namically depending on what to query. The conversions are specified by translation tables and connected with a variable name to be used in an URL pattern or in an XML file if needed. The CONVERSIONS json file contains an object with three properties:</p>
+<p>Data access is specified by URL in ini config file. It can contain patterns with parameters and variable values which are filled in dynamically depending on what to query. The conversions are specified by translation tables and connected with a variable name to be used in an URL pattern or in an XML file if needed. The CONVERSIONS json file contains an object with three properties:</p>
 <ul>
 <li>generalInformation</li>
 <li>monitoringPointConversions</li>
@@ -2287,28 +2289,27 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <li>An example of a CONVERSIONS json file for XYZ is shown here:</li>
 </ul>
 <div class="sourceCode" id="cb16"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb16-1" title="1"><span class="fu">{</span> </a>
-<a class="sourceLine" id="cb16-2" title="2">    <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb16-3" title="3">        <span class="dt">&quot;URLPattern&quot;</span><span class="fu">:</span> <span class="st">&quot;https://xyz.de/webservices/export.php?user=[USERNAME]&amp;pw=[PASSWORD] &amp;pgnr=[MPID]&amp;werte=[OBS]&amp;tage=1&amp;modus=xml&quot;</span> </a>
-<a class="sourceLine" id="cb16-4" title="4">  <span class="fu">},</span> </a>
-<a class="sourceLine" id="cb16-5" title="5">  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb16-6" title="6">    <span class="dt">&quot;MPID&quot;</span><span class="fu">:</span> <span class="st">&quot;#&quot;</span> </a>
-<a class="sourceLine" id="cb16-7" title="7">  <span class="fu">},</span> </a>
-<a class="sourceLine" id="cb16-8" title="8">  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb16-9" title="9">    <span class="dt">&quot;h&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb16-10" title="10">      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;W&quot;</span> </a>
-<a class="sourceLine" id="cb16-11" title="11">    <span class="fu">},</span> </a>
-<a class="sourceLine" id="cb16-12" title="12">    <span class="dt">&quot;Q&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb16-13" title="13">      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;Q&quot;</span> </a>
-<a class="sourceLine" id="cb16-14" title="14">    <span class="fu">},</span> </a>
-<a class="sourceLine" id="cb16-15" title="15">    <span class="dt">&quot;P_total_hourly&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb16-16" title="16">      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;N&quot;</span> </a>
-<a class="sourceLine" id="cb16-17" title="17">    <span class="fu">}</span> </a>
-<a class="sourceLine" id="cb16-18" title="18">  <span class="fu">}</span> </a>
-<a class="sourceLine" id="cb16-19" title="19"><span class="fu">}</span></a></code></pre></div>
+<a class="sourceLine" id="cb16-2" title="2">  <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb16-3" title="3">  <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb16-4" title="4">  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb16-5" title="5">    <span class="dt">&quot;MPID&quot;</span><span class="fu">:</span> <span class="st">&quot;#&quot;</span> </a>
+<a class="sourceLine" id="cb16-6" title="6">  <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb16-7" title="7">  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb16-8" title="8">    <span class="dt">&quot;h&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb16-9" title="9">      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;W&quot;</span> </a>
+<a class="sourceLine" id="cb16-10" title="10">    <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb16-11" title="11">    <span class="dt">&quot;Q&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb16-12" title="12">      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;Q&quot;</span> </a>
+<a class="sourceLine" id="cb16-13" title="13">    <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb16-14" title="14">    <span class="dt">&quot;P_total_hourly&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb16-15" title="15">      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;N&quot;</span> </a>
+<a class="sourceLine" id="cb16-16" title="16">    <span class="fu">}</span> </a>
+<a class="sourceLine" id="cb16-17" title="17">  <span class="fu">}</span> </a>
+<a class="sourceLine" id="cb16-18" title="18"><span class="fu">}</span></a></code></pre></div>
 <h5 id="data-access">Data Access</h5>
-<p>The property “URLPattern” of the property “generalInformation” contains the URL pattern of the data access. In the URL, parameters that vary, such as the measuring station or the observable, are replaced by variables. Variable names are enclosed in square brackets [ ] and will be replaced by the variable definition on runtime. As an example, XYZ is used. The URL pattern for getting the data from the server is:</p>
+<p>The URL is defined in the basic configuration file (ini file). In the URL, parameters that vary, such as the measuring station or the observable, are replaced by variables. Variable names are enclosed in square brackets [ ] and will be replaced by the variable definition on runtime. As an example, XYZ is used. Example URL pattern for XYZ is shown here:</p>
 <pre><code>https://xyz.de/webservices/ex-port.php?user=[USERNAME]&amp;pw=[PASSWORD]&amp;pgnr=[MPID]&amp;werte=[OBS]&amp;tage=1&amp;modus=xml</code></pre>
-<p>Username and password are predefined variables. The values for them are speci-fied in basic configuration file. The elements highlighted in brackets are variables which will be replaced on run-time when data is acquired.</p>
+<p>Username and password are predefined variables. The values for them are specified in basic configuration file. The elements highlighted in brackets are variables which will be replaced on run-time when data is acquired.</p>
 <p>The definitions in which way the variables have to be replaced are specified in the CONVERSIONS json file (see below). It is possible to freely define names for variables like [OBS], [OBS2] or even [Observable property name 1] as long as there will be an assignment made in the CONVERSIONS json file for this variable.</p>
 <p>For example, if the real time values of water level (HyMeDES EnviroNet symbol “h”, XYZ symbol “W”) is to be retrieved for station 10026301 from XYZ, the software has to call</p>
 <pre><code>https://xyz.de/webservices/export.php?user=exam-pleUser&amp;pw=examplePassword&amp;pgnr=10026301&amp;werte=W&amp;tage=1&amp;modus=xml</code></pre>
@@ -2332,31 +2333,30 @@ stundenwerte_RR_00164_akt.zip|produkt_rr_stunde_*_00164.txt</code></pre>
 <p>The station name [MPID1] will be replaced by the national station number 164 padded with zeros. In the following, the corresponding CONFIGURATION json file is shown. This example does not need a FORMATS json file, because files are served in CSV format.</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb21-1" title="1"><span class="fu">{</span> </a>
 <a class="sourceLine" id="cb21-2" title="2">  <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb21-3" title="3">    <span class="dt">&quot;URLPattern&quot;</span><span class="fu">:</span> <span class="st">&quot;https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/[INT1]/[OBS2]/recent/[INT3]_[OBS1]_[MPID1]_akt.zip|produkt_[OBS3]_[INT2]_*_[MPID1].txt&quot;</span> </a>
-<a class="sourceLine" id="cb21-4" title="4">  <span class="fu">},</span> </a>
-<a class="sourceLine" id="cb21-5" title="5">  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb21-6" title="6">    <span class="dt">&quot;MPID1&quot;</span><span class="fu">:</span> <span class="st">&quot;#####&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-7" title="7">    <span class="dt">&quot;MPID2&quot;</span><span class="fu">:</span> <span class="st">&quot;#&quot;</span> </a>
-<a class="sourceLine" id="cb21-8" title="8">  <span class="fu">},</span> </a>
-<a class="sourceLine" id="cb21-9" title="9">  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb21-10" title="10">    <span class="dt">&quot;P_total_hourly&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb21-11" title="11">      <span class="dt">&quot;OBS1&quot;</span><span class="fu">:</span> <span class="st">&quot;RR&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-12" title="12">      <span class="dt">&quot;OBS2&quot;</span><span class="fu">:</span> <span class="st">&quot;precipitation&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-13" title="13">      <span class="dt">&quot;OBS3&quot;</span><span class="fu">:</span> <span class="st">&quot;rr&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-14" title="14">      <span class="dt">&quot;INT1&quot;</span><span class="fu">:</span> <span class="st">&quot;hourly&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-15" title="15">      <span class="dt">&quot;INT2&quot;</span><span class="fu">:</span> <span class="st">&quot;stunde&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-16" title="16">      <span class="dt">&quot;INT3&quot;</span><span class="fu">:</span> <span class="st">&quot;stundenwerte&quot;</span> </a>
-<a class="sourceLine" id="cb21-17" title="17">    <span class="fu">},</span> </a>
-<a class="sourceLine" id="cb21-18" title="18">    <span class="dt">&quot;ta&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb21-19" title="19">      <span class="dt">&quot;OBS1&quot;</span><span class="fu">:</span> <span class="st">&quot;TU&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-20" title="20">      <span class="dt">&quot;OBS2&quot;</span><span class="fu">:</span> <span class="st">&quot;air_temperature&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-21" title="21">      <span class="dt">&quot;OBS3&quot;</span><span class="fu">:</span> <span class="st">&quot;tu&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-22" title="22">      <span class="dt">&quot;INT1&quot;</span><span class="fu">:</span> <span class="st">&quot;hourly&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-23" title="23">      <span class="dt">&quot;INT2&quot;</span><span class="fu">:</span> <span class="st">&quot;stunde&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-24" title="24">      <span class="dt">&quot;INT3&quot;</span><span class="fu">:</span> <span class="st">&quot;stundenwerte&quot;</span> </a>
-<a class="sourceLine" id="cb21-25" title="25">    <span class="fu">}</span> </a>
-<a class="sourceLine" id="cb21-26" title="26">  <span class="fu">}</span> </a>
-<a class="sourceLine" id="cb21-27" title="27"><span class="fu">}</span></a></code></pre></div>
+<a class="sourceLine" id="cb21-3" title="3">  <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb21-4" title="4">  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb21-5" title="5">    <span class="dt">&quot;MPID1&quot;</span><span class="fu">:</span> <span class="st">&quot;#####&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb21-6" title="6">    <span class="dt">&quot;MPID2&quot;</span><span class="fu">:</span> <span class="st">&quot;#&quot;</span> </a>
+<a class="sourceLine" id="cb21-7" title="7">  <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb21-8" title="8">  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb21-9" title="9">    <span class="dt">&quot;P_total_hourly&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb21-10" title="10">      <span class="dt">&quot;OBS1&quot;</span><span class="fu">:</span> <span class="st">&quot;RR&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb21-11" title="11">      <span class="dt">&quot;OBS2&quot;</span><span class="fu">:</span> <span class="st">&quot;precipitation&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb21-12" title="12">      <span class="dt">&quot;OBS3&quot;</span><span class="fu">:</span> <span class="st">&quot;rr&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb21-13" title="13">      <span class="dt">&quot;INT1&quot;</span><span class="fu">:</span> <span class="st">&quot;hourly&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb21-14" title="14">      <span class="dt">&quot;INT2&quot;</span><span class="fu">:</span> <span class="st">&quot;stunde&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb21-15" title="15">      <span class="dt">&quot;INT3&quot;</span><span class="fu">:</span> <span class="st">&quot;stundenwerte&quot;</span> </a>
+<a class="sourceLine" id="cb21-16" title="16">    <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb21-17" title="17">    <span class="dt">&quot;ta&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb21-18" title="18">      <span class="dt">&quot;OBS1&quot;</span><span class="fu">:</span> <span class="st">&quot;TU&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb21-19" title="19">      <span class="dt">&quot;OBS2&quot;</span><span class="fu">:</span> <span class="st">&quot;air_temperature&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb21-20" title="20">      <span class="dt">&quot;OBS3&quot;</span><span class="fu">:</span> <span class="st">&quot;tu&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb21-21" title="21">      <span class="dt">&quot;INT1&quot;</span><span class="fu">:</span> <span class="st">&quot;hourly&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb21-22" title="22">      <span class="dt">&quot;INT2&quot;</span><span class="fu">:</span> <span class="st">&quot;stunde&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb21-23" title="23">      <span class="dt">&quot;INT3&quot;</span><span class="fu">:</span> <span class="st">&quot;stundenwerte&quot;</span> </a>
+<a class="sourceLine" id="cb21-24" title="24">    <span class="fu">}</span> </a>
+<a class="sourceLine" id="cb21-25" title="25">  <span class="fu">}</span> </a>
+<a class="sourceLine" id="cb21-26" title="26"><span class="fu">}</span></a></code></pre></div>
 <p><a name="41_key_gen"></a></p>
 <h1 id="ssl-key-pair-generation-guide">SSL key pair generation guide</h1>
 <h2 id="windows">Windows</h2>
