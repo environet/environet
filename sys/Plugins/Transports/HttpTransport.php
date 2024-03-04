@@ -279,7 +279,7 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 	protected function buildConversionsUrls(): array {
 		//Build some variables based on conversions config
 		$conversions = $this->getConversionsConfig();
-		$baseUrl = $conversions['generalInformation']['URLPattern'] ?? null;
+		$baseUrl = $this->url ?? null;
 		$monitoringPointConversions = $conversions["monitoringPointConversions"] ?? [];
 		$observedPropertyConversions = $conversions["observedPropertyConversions"] ?? [];
 		$monitoringPointType = $conversions['monitoringPointType'] ?? null;

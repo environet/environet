@@ -162,7 +162,7 @@ Common properties:
 
 Takes the data from an HTTP source. It has two modes. In manual mode the transporter works based on a fixed URL, and in conversion mode the URL is built based on the CONVERSIONS json configuration file.
 
-* _url_ (required in “manual” mode): The URL of source, if not defined in JSON configuration file
+* _url_ (required in “manual” mode): The URL of source. If conversion.json configuration used, it can contain variables in the form of [VARIABLE_NAME]
 * _isIndex_ (optional): 1, if the source is only an index page which contains links to the files. 0, if the source is the file itself
 * _indexRegexPattern_ (optional): If isIndex is 1, this is the regular expression pattern which finds the links to the data files
 * _conversionsFilename_ (required in “conversion” mode): The file name of the CONVERSIONS json file, relative to the path of the configuration folder.
@@ -280,9 +280,9 @@ Data of target distribution node
 
 ### JSON configuration files
 
-In the FORMATS json file the format specifications for XML data files are defined. The observed prop-erty names used in it refer to the variable definitions specified in the CONVERSIONS json file. The CONVERSIONS json file defines the variables for monitoring point, observed property or time intervals for use in the URL, file names and/or in the data file itself. The CONVERSIONS json file is required if there is a complex structure of the URL to access data files, filenames containing variable parts, or zipped data. For example, if the identifier of the monitoring point is coded within the filename or the URL, a CONVERSIONS json file is required.
+In the FORMATS json file the format specifications for XML data files are defined. The observed property names used in it refer to the variable definitions specified in the CONVERSIONS json file. The CONVERSIONS json file defines the variables for monitoring point, observed property or time intervals for use in the URL, file names and/or in the data file itself. The CONVERSIONS json file is required if there is a complex structure of the URL to access data files, filenames containing variable parts, or zipped data. For example, if the identifier of the monitoring point is coded within the filename or the URL, a CONVERSIONS json file is required.
 
-JSON is a simple standardized format to easily define structured data. Arrays (lists of entries) are de-fined with brackets like [ “a”, “b”, “c” ] and objects with curly braces. Objects have properties, and the properties have values. For example, the following defines an object with the property “Property1”, which has value “Example” and a property named “Property2” which has value “a value”: { “Prop-erty1”: “Example”, “Property2”: “a value” }
+JSON is a simple standardized format to easily define structured data. Arrays (lists of entries) are de-fined with brackets like [ “a”, “b”, “c” ] and objects with curly braces. Objects have properties, and the properties have values. For example, the following defines an object with the property “Property1”, which has value “Example” and a property named “Property2” which has value “a value”: { “Property1”: “Example”, “Property2”: “a value” }
 In the following the format of the FORMATS file and the CONVERSIONS file are described in detail.
 
 #### FORMATS-file: Format Specification for XML data files
@@ -440,7 +440,7 @@ The CONVERSIONS json file may be specified in one of the following cases:
 * Need for Observable property symbol conversion (between data provider notation and Hy-MeDES EnviroNet notation)
 * Need for Monitoring Point id conversions
 
-Data access is specified by URL patterns with parameters and variable values which are filled in dy-namically depending on what to query.
+Data access is specified by URL in ini config file. It can contain patterns with parameters and variable values which are filled in dynamically depending on what to query.
 The conversions are specified by translation tables and connected with a variable name to be used in an URL pattern or in an XML file if needed.
 The CONVERSIONS json file contains an object with three properties:
 
@@ -451,8 +451,7 @@ The CONVERSIONS json file contains an object with three properties:
 An example of a CONVERSIONS json file for XYZ is shown here:
 ```json
 { 
-    "generalInformation": { 
-        "URLPattern": "https://xyz.de/webservices/export.php?user=[USERNAME]&pw=[PASSWORD] &pgnr=[MPID]&werte=[OBS]&tage=1&modus=xml" 
+  "generalInformation": { 
   }, 
   "monitoringPointConversions": { 
     "MPID": "#" 
@@ -472,12 +471,12 @@ An example of a CONVERSIONS json file for XYZ is shown here:
 ```
 
 ##### Data Access
-The property “URLPattern” of the property “generalInformation” contains the URL pattern of the data access. In the URL, parameters that vary, such as the measuring station or the observable, are replaced by variables. Variable names are enclosed in square brackets [ ] and will be replaced by the variable definition on runtime. As an example, XYZ is used.
-The URL pattern for getting the data from the server is:
+The URL is defined in the basic configuration file (ini file). In the URL, parameters that vary, such as the measuring station or the observable, are replaced by variables. Variable names are enclosed in square brackets [ ] and will be replaced by the variable definition on runtime. As an example, XYZ is used.
+Example URL pattern for XYZ is shown here:
 ```
 https://xyz.de/webservices/ex-port.php?user=[USERNAME]&pw=[PASSWORD]&pgnr=[MPID]&werte=[OBS]&tage=1&modus=xml
 ```
-Username and password are predefined variables. The values for them are speci-fied in basic configuration file. The elements highlighted in brackets are variables which will be replaced on run-time when data is acquired.
+Username and password are predefined variables. The values for them are specified in basic configuration file. The elements highlighted in brackets are variables which will be replaced on run-time when data is acquired.
 
 The definitions in which way the variables have to be replaced are specified in the CONVERSIONS json file (see below). It is possible to freely define names for variables like [OBS], [OBS2] or even [Observable property name 1] as long as there will be an assignment made in the CONVERSIONS json file for this variable.
 
@@ -525,7 +524,6 @@ The station name [MPID1] will be replaced by the national station number 164 pad
 ```json
 { 
   "generalInformation": { 
-    "URLPattern": "https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/[INT1]/[OBS2]/recent/[INT3]_[OBS1]_[MPID1]_akt.zip|produkt_[OBS3]_[INT2]_*_[MPID1].txt" 
   }, 
   "monitoringPointConversions": { 
     "MPID1": "#####", 

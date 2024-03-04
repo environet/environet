@@ -12,10 +12,6 @@
       "description": "General information",
       "type": "object",
       "properties": {
-        "URLPattern": {
-          "description": "Base url, or url with sub-files (piped with |)",
-          "type": "string"
-        },
         "monitoringPointType": {
           "description": "Type of requested monitoring points",
           "type": "string",
