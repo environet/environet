@@ -7,9 +7,7 @@ use Environet\Sys\General\HttpClient\Exceptions\HttpClientException;
 use Environet\Sys\General\HttpClient\HttpClient;
 use Environet\Sys\General\HttpClient\Request;
 use Environet\Sys\Plugins\ApiClient;
-use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\Resource;
-use Environet\Sys\Plugins\TransportInterface;
 use Environet\Sys\Plugins\WithConversionsConfigTrait;
 use Exception;
 
@@ -21,7 +19,7 @@ use Exception;
  * @package Environet\Sys\Plugins\Transports
  * @author  SRG Group <dev@srg.hu>
  */
-class HttpTransport implements TransportInterface, BuilderLayerInterface {
+class HttpTransport extends AbstractTransport {
 
 	use WithConversionsConfigTrait;
 
@@ -78,6 +76,7 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 		$this->username = $config['username'] ?? null;
 		$this->password = $config['password'] ?? null;
 		$this->pluginConfig = $pluginConfig;
+		parent::__construct($config, $pluginConfig);
 	}
 
 
@@ -87,6 +86,8 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 	public static function create(Console $console): HttpTransport {
 		$console->writeLine('');
 		$console->writeLine("Configuring http transport", Console::COLOR_YELLOW);
+
+		$monitoringPointType = self::createMonitoringPointTypeConfig($console);
 
 		while (true) {
 			//Ask for type of url processing
@@ -123,7 +124,8 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 			'indexRegexPattern'   => $indexRegexPattern ?? null,
 			'conversionsFilename' => $conversionsFilename ?? null,
 			'username'            => $username ?? null,
-			'password'            => $password ?? null
+			'password'            => $password ?? null,
+			'monitoringPointType' => $monitoringPointType ?: null,
 		];
 
 		return new self($config);
@@ -136,7 +138,8 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 	public function serializeConfiguration(): string {
 		return 'url = "' . $this->url . '"' . "\n"
 			   . 'isIndex = ' . $this->isIndex . '' . "\n"
-			   . 'indexRegexPattern = "' . addcslashes($this->indexRegexPattern, '"') . '"' . "\n";
+			   . 'indexRegexPattern = "' . addcslashes($this->indexRegexPattern, '"') . '"' . "\n"
+			   . 'monitoringPointType = "' . $this->monitoringPointType . '"' . "\n";
 	}
 
 
@@ -282,7 +285,6 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 		$baseUrl = $this->url ?? null;
 		$monitoringPointConversions = $conversions["monitoringPointConversions"] ?? [];
 		$observedPropertyConversions = $conversions["observedPropertyConversions"] ?? [];
-		$monitoringPointType = $conversions['monitoringPointType'] ?? null;
 
 		//Query distribution node to get list of monitoring points and observed properties
 		$sMonitoringPoints = $this->getApiClient()->requestMonitoringPoints();
@@ -292,7 +294,7 @@ class HttpTransport implements TransportInterface, BuilderLayerInterface {
 		$allNCDs = [];
 		$monitoringPoints = [];
 		foreach ($sMonitoringPoints as $type => $items) {
-			if ($monitoringPointType && $monitoringPointType !== $type) {
+			if ($this->monitoringPointType && $this->monitoringPointType !== $type) {
 				//Skip if conversions configuration is only for a single monitoring point type, and $type is not the same
 				continue;
 			}

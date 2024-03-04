@@ -35,6 +35,7 @@ class MigrateConfig extends BaseCommand {
 		$migrations = [
 			'removeUrlPattern',
 			'removeGeneralInformation',
+			'moveMonitoringPointType',
 		];
 		ini_set('memory_limit', - 1);
 
@@ -76,7 +77,7 @@ class MigrateConfig extends BaseCommand {
 	private function removeUrlPattern(array &$output, ?string $selectedConfigFile = null): int {
 		$return = - 1;
 
-		$configs = $this->getConfigurations();
+		$configs = $this->getConfigurations($selectedConfigFile);
 
 		foreach ($configs as $config) {
 			if ($selectedConfigFile && preg_match('/' . preg_quote($selectedConfigFile, '/') . '$/i', $config['ini']) === 0) {
@@ -104,7 +105,7 @@ class MigrateConfig extends BaseCommand {
 
 
 	/**
-	 * Remove urlPattern from config, and move it to ini config
+	 * Remove generalInformation from config
 	 *
 	 * @param array       $output
 	 * @param string|null $selectedConfigFile
@@ -114,12 +115,9 @@ class MigrateConfig extends BaseCommand {
 	private function removeGeneralInformation(array &$output, ?string $selectedConfigFile = null): int {
 		$return = - 1;
 
-		$configs = $this->getConfigurations();
+		$configs = $this->getConfigurations($selectedConfigFile);
 
 		foreach ($configs as $config) {
-			if ($selectedConfigFile && preg_match('/' . preg_quote($selectedConfigFile, '/') . '$/i', $config['ini']) === 0) {
-				continue;
-			}
 			if (!is_array($config['conversionsContent']) || !array_key_exists('generalInformation', $config['conversionsContent'])) {
 				continue;
 			}
@@ -136,9 +134,46 @@ class MigrateConfig extends BaseCommand {
 
 
 	/**
+	 * Move monitoringPointType from conversions to ini
+	 *
+	 * @param array       $output
+	 * @param string|null $selectedConfigFile
+	 *
+	 * @return int
+	 */
+	private function moveMonitoringPointType(array &$output, ?string $selectedConfigFile = null): int {
+		$return = - 1;
+
+		$configs = $this->getConfigurations($selectedConfigFile);
+
+		foreach ($configs as $config) {
+			if (!is_array($config['conversionsContent']) || !array_key_exists('monitoringPointType', $config['conversionsContent'])) {
+				continue;
+			}
+			$this->console->writeLine("Migrating monitoringPointType in config: " . $config['ini'], Console::COLOR_YELLOW);
+			$monitoringPointType = $config['conversionsContent']['monitoringPointType'];
+			unset($config['conversionsContent']['monitoringPointType']);
+			if (!empty(trim($monitoringPointType))) {
+				$config['iniContent']['transport']['monitoringPointType'] = $monitoringPointType;
+				$config['iniContent']['parser']['monitoringPointType'] = $monitoringPointType;
+			}
+
+			$this->writeJsonConfig($config['conversionsContent'], $config['conversions']);
+			$this->writeIniConfig($config['iniContent'], $config['ini']);
+			$this->console->writeLine("Config migrated successfully: " . $config['ini'], Console::COLOR_GREEN);
+			$return = 0;
+		}
+
+		return $return;
+	}
+
+
+	/**
+	 * @param string|null $selectedConfigFile
+	 *
 	 * @return array
 	 */
-	private function getConfigurations(): array {
+	private function getConfigurations(?string $selectedConfigFile = null): array {
 		$iterator = new RecursiveIteratorIterator(new \RecursiveDirectoryIterator(CONFIGURATION_PATH), RecursiveIteratorIterator::LEAVES_ONLY);
 		$configurations = [];
 		/** @var SplFileInfo $file */
@@ -150,6 +185,10 @@ class MigrateConfig extends BaseCommand {
 			$filename = $file->getFilename();
 			$extension = pathinfo($filename, PATHINFO_EXTENSION);
 			if (!in_array($extension, ['conf', ''])) {
+				continue;
+			}
+
+			if ($selectedConfigFile && preg_match('/' . preg_quote($selectedConfigFile, '/') . '$/i', $file->getPathname()) === 0) {
 				continue;
 			}
 

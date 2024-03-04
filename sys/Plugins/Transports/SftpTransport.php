@@ -3,7 +3,6 @@
 namespace Environet\Sys\Plugins\Transports;
 
 use Environet\Sys\Commands\Console;
-use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Plugins\TransportInterface;
 use Environet\Sys\Plugins\WithConversionsConfigTrait;
@@ -17,7 +16,7 @@ use Exception;
  * @package Environet\Sys\Plugins\Transports
  * @author  SRG Group <dev@srg.hu>
  */
-class SftpTransport implements TransportInterface, BuilderLayerInterface {
+class SftpTransport extends AbstractTransport {
 
 	use WithConversionsConfigTrait;
 
@@ -88,6 +87,8 @@ class SftpTransport implements TransportInterface, BuilderLayerInterface {
 	public static function create(Console $console): TransportInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring SFTP transport', Console::COLOR_YELLOW);
+
+		$monitoringPointType = self::createMonitoringPointTypeConfig($console);
 
 		$console->writeLine('SFTP host:');
 		$host = $console->ask('');
@@ -162,7 +163,8 @@ class SftpTransport implements TransportInterface, BuilderLayerInterface {
 			'filenamePattern'     => $filenamePattern,
 			'newestFileOnly'      => $newestFileOnly,
 			'lastNDaysOnly'       => $lastNDaysOnly,
-			'conversionsFilename' => $conversionsFilename
+			'conversionsFilename' => $conversionsFilename,
+			'monitoringPointType' => $monitoringPointType ?: null,
 		];
 
 		return new self($config);
@@ -184,7 +186,8 @@ class SftpTransport implements TransportInterface, BuilderLayerInterface {
 			. 'filenamePattern = "' . $this->filenamePattern . '"' . "\n"
 			. 'newestFileOnly = "' . $this->newestFileOnly . '"' . "\n"
 			. 'lastNDaysOnly = "' . $this->lastNDaysOnly . '"' . "\n"
-			. 'conversionsFilename = "' . $this->conversionsFilename . '"' . "\n";
+			. 'conversionsFilename = "' . $this->conversionsFilename . '"' . "\n"
+			. 'monitoringPointType = "' . $this->monitoringPointType . '"' . "\n";
 	}
 
 
@@ -206,6 +209,7 @@ class SftpTransport implements TransportInterface, BuilderLayerInterface {
 		$this->newestFileOnly = $config['newestFileOnly'];
 		$this->lastNDaysOnly = $config['lastNDaysOnly'];
 		$this->conversionsFilename = $config['conversionsFilename'];
+		parent::__construct($config);
 	}
 
 

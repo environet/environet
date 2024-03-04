@@ -3,7 +3,6 @@
 namespace Environet\Sys\Plugins\Transports;
 
 use Environet\Sys\Commands\Console;
-use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Plugins\TransportInterface;
 
@@ -15,7 +14,7 @@ use Environet\Sys\Plugins\TransportInterface;
  * @package Environet\Sys\Plugins\Transports
  * @author  SRG Group <dev@srg.hu>
  */
-class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
+class LocalFileTransport extends AbstractTransport {
 
 	/**
 	 * @var string
@@ -41,6 +40,8 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring local file transport', Console::COLOR_YELLOW);
 
+		$monitoringPointType = self::createMonitoringPointTypeConfig($console);
+
 		$console->writeLine('Enter path to the file to be imported. This should be relative to ' . self::getDataDirDisplay());
 
 		$path = $console->ask('');
@@ -60,6 +61,7 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 
 		$config = [
 			'path' => $path,
+			'monitoringPointType' => $monitoringPointType ?: null,
 		];
 
 		return new self($config);
@@ -70,7 +72,8 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 	 * @inheritDoc
 	 */
 	public function serializeConfiguration(): string {
-		return 'path = ' . $this->path . "\n";
+		return 'path = "' . $this->path . '"' . "\n"
+			. 'monitoringPointType = "' . $this->monitoringPointType . '"' . "\n";
 	}
 
 
@@ -81,6 +84,7 @@ class LocalFileTransport implements TransportInterface, BuilderLayerInterface {
 	 */
 	public function __construct(array $config) {
 		$this->path = $config['path'];
+		parent::__construct($config);
 	}
 
 

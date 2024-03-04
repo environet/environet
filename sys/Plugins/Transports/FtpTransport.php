@@ -18,7 +18,7 @@ use Throwable;
  * @package Environet\Sys\Plugins\Transports
  * @author  SRG Group <dev@srg.hu>
  */
-class FtpTransport implements TransportInterface, BuilderLayerInterface {
+class FtpTransport extends AbstractTransport {
 
 	use WithConversionsConfigTrait;
 
@@ -80,6 +80,8 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring FTP transport', Console::COLOR_YELLOW);
 
+		$monitoringPointType = self::createMonitoringPointTypeConfig($console);
+
 		$console->writeLine('FTP host:');
 		$host = $console->ask('');
 
@@ -131,7 +133,8 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 			'filenamePattern'     => $filenamePattern,
 			'newestFileOnly'      => $newestFileOnly,
 			'lastNDaysOnly'       => $lastNDaysOnly,
-			'conversionsFilename' => $conversionsFilename
+			'conversionsFilename' => $conversionsFilename,
+			'monitoringPointType' => $monitoringPointType,
 		];
 
 		return new self($config);
@@ -151,7 +154,8 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 			. 'filenamePattern = "' . $this->filenamePattern . '"' . "\n"
 			. 'newestFileOnly = "' . $this->newestFileOnly . '"' . "\n"
 			. 'lastNDaysOnly = "' . $this->lastNDaysOnly . '"' . "\n"
-			. 'conversionsFilename = "' . $this->conversionsFilename . '"' . "\n";
+			. 'conversionsFilename = "' . $this->conversionsFilename . '"' . "\n"
+			. 'monitoringPointType = "' . $this->monitoringPointType . '"' . "\n";
 	}
 
 
@@ -171,6 +175,7 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 		$this->newestFileOnly = $config['newestFileOnly'];
 		$this->lastNDaysOnly = $config['lastNDaysOnly'];
 		$this->conversionsFilename = $config['conversionsFilename'];
+		parent::__construct($config);
 	}
 
 
@@ -280,8 +285,8 @@ class FtpTransport implements TransportInterface, BuilderLayerInterface {
 	 * Get list of files with MLSD or NLIST
 	 *
 	 * @param         $connection
-	 * @param string  $path
-	 * @param Console $console
+	 * @param string     $path
+	 * @param Console    $console
 	 *
 	 * @return array|array[]
 	 */

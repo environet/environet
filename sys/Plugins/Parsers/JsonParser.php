@@ -56,15 +56,17 @@ class JsonParser extends AbstractParser implements BuilderLayerInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring json parser property');
 
+		$monitoringPointType = self::createMonitoringPointTypeConfig($console);
 		$timeZone = self::createTimeZoneConfig($console);
 
 		$monitoringPointId = $console->ask('Enter monitoring point id:');
 		$propertySymbol = $console->ask('Enter property symbol:');
 
 		$config = [
-			'monitoringPointId' => $monitoringPointId,
-			'propertySymbol'    => $propertySymbol,
-			'timeZone'          => $timeZone,
+			'monitoringPointId'   => $monitoringPointId,
+			'propertySymbol'      => $propertySymbol,
+			'timeZone'            => $timeZone,
+			'monitoringPointType' => $monitoringPointType ?: null
 		];
 
 		return new self($config);
@@ -91,6 +93,7 @@ class JsonParser extends AbstractParser implements BuilderLayerInterface {
 		$result .= "monitoringPointId = $this->monitoringPointId\n";
 		$result .= "propertySymbol = $this->propertySymbol\n";
 		$result .= 'timeZone = ' . $this->timeZone . "\n";
+		$result .= 'monitoringPointType = "' . $this->monitoringPointType . '"' . "\n";
 
 		return $result;
 	}
