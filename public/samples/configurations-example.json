@@ -1,7 +1,7 @@
 {
   "monitoringPointConversions": {
-    "MPID1": "#####",
-    "MPID2": "#"
+    "MPID1": {},
+    "MPID2": {}
   },
   "observedPropertyConversions": {
     "P_total_hourly": {

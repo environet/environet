@@ -2292,7 +2292,7 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <a class="sourceLine" id="cb16-2" title="2">  <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
 <a class="sourceLine" id="cb16-3" title="3">  <span class="fu">},</span> </a>
 <a class="sourceLine" id="cb16-4" title="4">  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb16-5" title="5">    <span class="dt">&quot;MPID&quot;</span><span class="fu">:</span> <span class="st">&quot;#&quot;</span> </a>
+<a class="sourceLine" id="cb16-5" title="5">    <span class="dt">&quot;MPID&quot;</span><span class="fu">:</span> <span class="fu">{}</span></a>
 <a class="sourceLine" id="cb16-6" title="6">  <span class="fu">},</span> </a>
 <a class="sourceLine" id="cb16-7" title="7">  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
 <a class="sourceLine" id="cb16-8" title="8">    <span class="dt">&quot;h&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
@@ -2316,7 +2316,7 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <p>The station name [MPID] will be replaced by the national station number. In other countries, the na-tional number may also be padded with zeros or preceded by a letter. It is specified using the “moni-toringPointConversions” property of the CONVERSIONS json file.</p>
 <p>The [OBS] variable is the placeholder for the observed property in our example. It is specified using the “observedPropertyConversions” property of the CONVERSIONS json file. The observed parameter or the measuring stations can also be coded with several input values in the URL. Then several variables with different input are assigned. A more complicated example of a URL pattern can be found in the appendix.</p>
 <h5 id="monitoring-point-id-conversions">Monitoring Point ID conversions</h5>
-<p>In the “monitoringPointConversions” section the variable names for the monitoring point are given. The variable names are properties of the “monitoringPointConversions” property. They specify a value pattern. For example, to ensure that a code always has 5 digits, ##### is specified as value pattern. If the real code has fewer digits, the ##### are filled up with zeros from the beginning. If the code should be used as-is, just a single # is entered.</p>
+<p>In the “monitoringPointConversions” section the variable names for the monitoring point are given. The variable names are properties of the “monitoringPointConversions” property. Values are empty objects <code>{}</code>.</p>
 <h5 id="observed-property-symbol-conversions">Observed property symbol conversions</h5>
 <p>In the “observedPropertyConversions” property the variable names for the observed property symbols are specified. The property in this section consists of the observed property symbol name in HyMeDES EnviroNet notation. E.g. water level is denoted by “h”. Multiple variables may be defined all meaning “h” but with a different value. In the example of XYZ, the variable “OBS” is defined to be resolved to “W” if water level should be queried, because the XYZ calls water level “W” in its API. If in a different context the water level is called differently, a further variable for “h” may be defined with a different translation.</p>
 <h5 id="more-complex-example-of-a-conversions-json-file">More complex example of a CONVERSIONS json file</h5>
@@ -2335,8 +2335,8 @@ stundenwerte_RR_00164_akt.zip|produkt_rr_stunde_*_00164.txt</code></pre>
 <a class="sourceLine" id="cb21-2" title="2">  <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
 <a class="sourceLine" id="cb21-3" title="3">  <span class="fu">},</span> </a>
 <a class="sourceLine" id="cb21-4" title="4">  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb21-5" title="5">    <span class="dt">&quot;MPID1&quot;</span><span class="fu">:</span> <span class="st">&quot;#####&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-6" title="6">    <span class="dt">&quot;MPID2&quot;</span><span class="fu">:</span> <span class="st">&quot;#&quot;</span> </a>
+<a class="sourceLine" id="cb21-5" title="5">    <span class="dt">&quot;MPID1&quot;</span><span class="fu">:</span> <span class="fu">{},</span> </a>
+<a class="sourceLine" id="cb21-6" title="6">    <span class="dt">&quot;MPID2&quot;</span><span class="fu">:</span> <span class="fu">{}</span> </a>
 <a class="sourceLine" id="cb21-7" title="7">  <span class="fu">},</span> </a>
 <a class="sourceLine" id="cb21-8" title="8">  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
 <a class="sourceLine" id="cb21-9" title="9">    <span class="dt">&quot;P_total_hourly&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>

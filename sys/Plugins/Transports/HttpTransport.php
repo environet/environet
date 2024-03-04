@@ -391,18 +391,7 @@ class HttpTransport extends AbstractTransport {
 		];
 
 		foreach ($monitoringPointConversions as $key => $value) {
-			if (!preg_match_all("/#+/", $value, $matches, PREG_OFFSET_CAPTURE)) {
-				//Value is valid only if contains # characters
-				continue;
-			}
-			foreach ($matches[0] as $match) {
-				$nr = $ncd;
-				if (strlen($match[0]) > 1) {
-					$nr = str_pad($ncd, strlen($match[0]), "0", STR_PAD_LEFT);
-				}
-				$value = substr_replace($value, $nr, $match[1], strlen($match[0]));
-			}
-			$variables += [ $key => $value ];
+			$variables += [ $key => $ncd ];
 		}
 
 		$observedPropertyConversions = $observedPropertyConversions[$observedProperty];

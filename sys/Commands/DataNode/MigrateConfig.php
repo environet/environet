@@ -36,6 +36,7 @@ class MigrateConfig extends BaseCommand {
 			'removeUrlPattern',
 			'removeGeneralInformation',
 			'moveMonitoringPointType',
+			'changeMonitoringPointConversions',
 		];
 		ini_set('memory_limit', - 1);
 
@@ -161,6 +162,42 @@ class MigrateConfig extends BaseCommand {
 			$this->writeJsonConfig($config['conversionsContent'], $config['conversions']);
 			$this->writeIniConfig($config['iniContent'], $config['ini']);
 			$this->console->writeLine("Config migrated successfully: " . $config['ini'], Console::COLOR_GREEN);
+			$return = 0;
+		}
+
+		return $return;
+	}
+
+
+	/**
+	 * Move monitoringPointType from conversions to ini
+	 *
+	 * @param array       $output
+	 * @param string|null $selectedConfigFile
+	 *
+	 * @return int
+	 */
+	private function changeMonitoringPointConversions(array &$output, ?string $selectedConfigFile = null): int {
+		$return = - 1;
+
+		$configs = $this->getConfigurations($selectedConfigFile);
+
+		foreach ($configs as $config) {
+			if (!is_array($config['conversionsContent']) || !array_key_exists('monitoringPointConversions', $config['conversionsContent'])) {
+				continue;
+			}
+
+			$this->console->writeLine("Migrating monitoringPointConversions in config: " . $config['ini'], Console::COLOR_YELLOW);
+			if (!is_array($config['conversionsContent']['monitoringPointConversions'])) {
+				unset($config['conversionsContent']['monitoringPointConversions']);
+			} else {
+				foreach ($config['conversionsContent']['monitoringPointConversions'] as $key => &$conversion) {
+					$conversion = new stdClass();
+				}
+			}
+
+			$this->writeJsonConfig($config['conversionsContent'], $config['conversions']);
+			$this->console->writeLine("Config migrated successfully: " . $config['conversions'], Console::COLOR_GREEN);
 			$return = 0;
 		}
 

@@ -10,11 +10,11 @@
   "properties": {
     "monitoringPointConversions": {
       "type": "object",
-      "description": "An object where keys are the URL parameters, values are the pattern of the monitoring point ids, represented by #-signs. Number of # signs will be the length of replaced values in URL"
+      "description": "An object where keys are the URL parameters, values are empty objects"
     },
     "observedPropertyConversions": {
       "type": "object",
       "description": "An object where keys are the ID of the property. Values are objects, where keys are the ID of the parameter, values are the replaced values"
-    },
+    }
   }
 }

@@ -1664,7 +1664,7 @@ An example of a CONVERSIONS json file for XYZ is shown here:
   "generalInformation": { 
   }, 
   "monitoringPointConversions": { 
-    "MPID": "#" 
+    "MPID": {}
   }, 
   "observedPropertyConversions": { 
     "h": { 
@@ -1702,7 +1702,7 @@ The observed parameter or the measuring stations can also be coded with several 
 
 ##### Monitoring Point ID conversions
 
-In the “monitoringPointConversions” section the variable names for the monitoring point are given. The variable names are properties of the “monitoringPointConversions” property. They specify a value pattern. For example, to ensure that a code always has 5 digits, ##### is specified as value pattern. If the real code has fewer digits, the ##### are filled up with zeros from the beginning. If the code should be used as-is, just a single # is entered.
+In the “monitoringPointConversions” section the variable names for the monitoring point are given. The variable names are properties of the “monitoringPointConversions” property. Values are empty objects `{}`.
 
 ##### Observed property symbol conversions
 In the “observedPropertyConversions” property the variable names for the observed property symbols are specified. The property in this section consists of the observed property symbol name in HyMeDES EnviroNet notation. E.g. water level is denoted by “h”. Multiple variables may be defined all meaning “h” but with a different value. In the example of XYZ, the variable “OBS” is defined to be resolved to “W” if water level should be queried, because the XYZ calls water level “W” in its API. If in a different context the water level is called differently, a further variable for “h” may be defined with a different translation.
@@ -1736,8 +1736,8 @@ The station name [MPID1] will be replaced by the national station number 164 pad
   "generalInformation": { 
   }, 
   "monitoringPointConversions": { 
-    "MPID1": "#####", 
-    "MPID2": "#" 
+    "MPID1": {}, 
+    "MPID2": {} 
   }, 
   "observedPropertyConversions": { 
     "P_total_hourly": { 
