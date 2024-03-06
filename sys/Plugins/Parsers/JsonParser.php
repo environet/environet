@@ -41,7 +41,7 @@ class JsonParser extends AbstractParser implements BuilderLayerInterface {
 	 */
 	public function parse(Resource $resource): array {
 
-		$parsed = json_decode($resource->contents, true);
+		$parsed = json_decode($resource->getContents(), true);
 		$creator = new CreateInputXml();
 		$property = new InputXmlPropertyData($this->propertySymbol, $parsed);
 

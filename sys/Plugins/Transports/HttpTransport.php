@@ -10,6 +10,7 @@ use Environet\Sys\Plugins\ApiClient;
 use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Plugins\WithConversionsConfigTrait;
 use Exception;
+use ZipArchive;
 
 /**
  * Class HttpTransport
@@ -137,9 +138,9 @@ class HttpTransport extends AbstractTransport {
 	 */
 	public function serializeConfiguration(): string {
 		return 'url = "' . $this->url . '"' . "\n"
-			   . 'isIndex = ' . $this->isIndex . '' . "\n"
-			   . 'indexRegexPattern = "' . addcslashes($this->indexRegexPattern, '"') . '"' . "\n"
-			   . 'monitoringPointType = "' . $this->monitoringPointType . '"' . "\n";
+			. 'isIndex = ' . $this->isIndex . '' . "\n"
+			. 'indexRegexPattern = "' . addcslashes($this->indexRegexPattern, '"') . '"' . "\n"
+			. 'monitoringPointType = "' . $this->monitoringPointType . '"' . "\n";
 	}
 
 
@@ -149,49 +150,33 @@ class HttpTransport extends AbstractTransport {
 	 * @throws Exception
 	 */
 	public function get(Console $console, string $configFile): array {
-		$urls = [];
+		$resources = [];
 		if ($this->conversionsFilename) {
 			//Not manual url-type, but url processing based on convertions JSON file
-			$urls = $this->buildConversionsUrls();
+			$resources = $this->buildConversionsUrls();
 		} elseif ($this->isIndex) {
 			//Fetch files based on HTML source
 			$indexPageContents = (new HttpClient())->sendRequest(new Request($this->url))->getBody();
 			$hasMatches = preg_match_all($this->indexRegexPattern, $indexPageContents, $matches);
 			if ($hasMatches && !empty($matches['relativePath'])) {
 				$urls = array_map(function ($match) {
-					return rtrim($this->url, '/') . '/' . ltrim($match, '/');
+					return (new Resource())->setUrl(rtrim($this->url, '/') . '/' . ltrim($match, '/'));
 				}, $matches['relativePath']);
 			}
 		} else {
 			//User url as file
-			$urls = [$this->url];
+			$resources = [(new Resource())->setUrl($this->url)];
 		}
 
-		$resources = [];
-		foreach ($urls as $url) {
-			if (!is_array($url)) {
-				//Make an url-config array
-				$url = [
-					'url' => $url
-				];
-			}
-			if (!empty($url['isZip'])) {
+		foreach ($resources as $resource) {
+			if (!empty($resource->getSubFile())) {
 				//Url is a zip file
-				$resource = $this->getFromZipFile($console, $url);
+				$this->getFromZipFile($console, $resource);
 			} else {
 				//Url is a simple manual url
-				$resource = new Resource();
-				$resource->name = basename($url['url']); //Filename
-				$resource->contents = (new HttpClient())->sendRequest(new Request($url['url']))->getBody();
-				$console->writeLine('File downloaded from url: '.$url['url'].' ('.strlen($resource->contents).' bytes)');
-			}
-			if ($resource) {
-				//Has a valid resource
-				if (!empty($url['meta'])) {
-					//Add meta from url config
-					$resource->meta = $url['meta'];
-				}
-				$resources[] = $resource;
+				$resource->setName(basename($resource->getUrl())); //Filename
+				$resource->setContents((new HttpClient())->sendRequest(new Request($resource->getUrl()))->getBody());
+				$console->writeLine('File downloaded from url: ' . $resource->getUrl() . ' (' . strlen($resource->getContents()) . ' bytes)');
 			}
 		}
 
@@ -218,44 +203,40 @@ class HttpTransport extends AbstractTransport {
 	/**
 	 * Get a zip file, and find files based on sub-file pattern in zip file's contents
 	 *
-	 * @param Console $console
-	 * @param array   $url
+	 * @param Console  $console
+	 * @param Resource $resource
 	 *
-	 * @return Resource|null
+	 * @return void
 	 * @throws Exception
 	 */
-	protected function getFromZipFile(Console $console, array $url): ?Resource {
-		$zipUrl = $url['url'];
-		if (empty($url['subFile'])) {
+	protected function getFromZipFile(Console $console, Resource $resource): void {
+		$zipUrl = $resource->getUrl();
+		if (empty(($subFile = $resource->getSubFile()))) {
 			//Subfile config is required for zip files
 			throw new Exception('SubFile specification is required for zips');
 		}
-		$subFile = $url['subFile'];
 
 		//Get zip to a temp file
 		$ext = pathinfo($zipUrl, PATHINFO_EXTENSION);
 		$temp = tempnam(sys_get_temp_dir(), $ext);
 		copy($zipUrl, $temp);
-		$console->writeLine('Zip file downloaded from url: '.$zipUrl);
+		$console->writeLine('Zip file downloaded from url: ' . $zipUrl);
 
 		//Make resource
-		$resource = new Resource();
-		$resource->name = basename($zipUrl);
+		$resource->setName(basename($zipUrl));
 
-		$zip = new \ZipArchive;
+		$zip = new ZipArchive;
 		$zip->open($temp);
 		//Iterate over files in zip, and find the matching one.
-		for ($i = 0; $i < $zip->numFiles; ++$i) {
+		for ($i = 0; $i < $zip->numFiles; ++ $i) {
 			$name = $zip->getNameIndex($i);
 			if (fnmatch($subFile, $name)) {
-				$resource->contents = $zip->getFromName($name);
+				$resource->setContents($zip->getFromName($name));
 				break;
 			}
 		}
 		$zip->close();
 		unlink($temp); //Delete temp file
-
-		return $resource->contents ? $resource : null;
 	}
 
 
@@ -276,7 +257,7 @@ class HttpTransport extends AbstractTransport {
 	/**
 	 * Build array of urls based on conversions JSON file
 	 *
-	 * @return array|string[]
+	 * @return array|Resource[]
 	 * @throws Exception
 	 */
 	protected function buildConversionsUrls(): array {
@@ -313,13 +294,13 @@ class HttpTransport extends AbstractTransport {
 		$allObservedProperties = array_unique($allObservedProperties);
 
 		// check if a monitoring point conversion variable is in URL pattern. If false, all monitoring points will be in one file
-		$allMonitoringPointsInOneFile = !$monitoringPointConversions || !preg_match('/\[('.implode('|', array_keys($monitoringPointConversions)).')\]/i', $baseUrl);
+		$allMonitoringPointsInOneFile = !$monitoringPointConversions || !preg_match('/\[(' . implode('|', array_keys($monitoringPointConversions)) . ')\]/i', $baseUrl);
 
 		// check if a observed property conversion variable is in URL pattern. If false, all observed property will be in one file
 		$observedPropertyConversionsVariables = array_keys(array_merge(...array_values($observedPropertyConversions)));
-		$allObservedPropertyInOneFile = !$observedPropertyConversions || !preg_match('/\[('.implode('|', $observedPropertyConversionsVariables).')\]/i', $baseUrl);
+		$allObservedPropertyInOneFile = !$observedPropertyConversions || !preg_match('/\[(' . implode('|', $observedPropertyConversionsVariables) . ')\]/i', $baseUrl);
 
-		$urls = [];
+		$resources = [];
 
 		// Loop over list of monitoring points and observables
 		foreach ($monitoringPoints as $monitoringPoint) {
@@ -336,29 +317,28 @@ class HttpTransport extends AbstractTransport {
 				// remove part after pipe symbol
 				$urlParts = explode('|', $url);
 
-				$url = [
-					'url' => $url
-				];
 				$resource = new Resource();
-				$resource->name = $url;
-
 				if (count($urlParts) > 1) {
-					//Is a zip file
-					$url = [
-						'url' => $urlParts[0],
-						'isZip' => true,
-						'subFile' => $urlParts[1]
-					];
+					$resource->setUrl($urlParts[0])->setSubFile($urlParts[1]);
+				} else {
+					$resource->setUrl($url);
 				}
 
-				//Add extra meta data
-				$url['meta'] = [
-					'MonitoringPointNCDs' => $allMonitoringPointsInOneFile ? $allNCDs : [ $monitoringPoint['NCD'] ],
-					'ObservedPropertySymbols' => $allObservedPropertyInOneFile ? $allObservedProperties : [ $observedProperty ],
-					'observedPropertyConversions' => $observedPropertyConversions,
-				];
+				if ($allNCDs) {
+					$resource->setPointNCDs($allNCDs);
+				} else {
+					$resource->setSpecificPointNCD($monitoringPoint['NCD']);
+				}
 
-				$urls[] = $url;
+				if ($allObservedProperties) {
+					$resource->setPropertySymbols($allObservedProperties);
+				} else {
+					$resource->setSpecificPropertySymbol($observedProperty);
+				}
+
+				$resource->setObservedPropertyConversions($observedPropertyConversions);
+
+				$resources[] = $resource;
 				if ($allObservedPropertyInOneFile) {
 					break;
 				}
@@ -368,7 +348,7 @@ class HttpTransport extends AbstractTransport {
 			}
 		}
 
-		return $urls;
+		return $resources;
 	}
 
 
@@ -376,22 +356,22 @@ class HttpTransport extends AbstractTransport {
 	 * Return list of variables from definitions for a certain monitoring point and a certain observed property
 	 *
 	 * @param string $ncd
-	 * @param string $observedProperty internal name of observed property for which variable preparation should be done
+	 * @param string $observedProperty            internal name of observed property for which variable preparation should be done
 	 *
 	 * @param array  $monitoringPointConversions
 	 * @param array  $observedPropertyConversions
 	 *
 	 * @return array
 	 */
-	protected function prepareVariables(string $ncd, string $observedProperty, array $monitoringPointConversions, array $observedPropertyConversions) : array {
+	protected function prepareVariables(string $ncd, string $observedProperty, array $monitoringPointConversions, array $observedPropertyConversions): array {
 		// variable preparation
 		$variables = [
-			"USERNAME" => $this->username,	// predefined property
-			"PASSWORD" => $this->password 	// predefined property
+			"USERNAME" => $this->username,    // predefined property
+			"PASSWORD" => $this->password    // predefined property
 		];
 
 		foreach ($monitoringPointConversions as $key => $value) {
-			$variables += [ $key => $ncd ];
+			$variables += [$key => $ncd];
 		}
 
 		$observedPropertyConversions = $observedPropertyConversions[$observedProperty];

@@ -118,7 +118,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::meteringPointInputXmlsFromArray()
 	 */
 	public function parse(Resource $resource): array {
-		$lines = preg_split('/\n/', $resource->contents);
+		$lines = preg_split('/\n/', $resource->getContents());
 
 		//Parse sections from a ZRXP file, create an array item for each section with metadata lines, and value lines
 		$sections = [];
@@ -150,7 +150,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 					$results[] = $sectionResult;
 				}
 			} catch (CreateInputXmlException $e) {
-				Console::getInstance()->writeLog(sprintf('Parsing of section %s in file %s failed, response: %s', $sectionNum, $resource->name, $e->getMessage()), true, true);
+				Console::getInstance()->writeLog(sprintf('Parsing of section %s in file %s failed, response: %s', $sectionNum, $resource->getName(), $e->getMessage()), true, true);
 				continue;
 			}
 		}

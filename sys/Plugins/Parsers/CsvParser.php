@@ -134,7 +134,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	public function parse(Resource $resource): array {
 		$propertiesOriginal = $this->propertySymbolsToColumns;
 		$properties = $this->propertySymbolsToColumns;
-		if ($resource->meta) {
+		if ($resource->getPropertySymbols()) {
 			// Delete observed properties which are not requested.
 			// This is necessary because in some csv files only the requested observed property is contained,
 			// but for each observed property in the same column. (e.g. DWD)
@@ -143,7 +143,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 			// the requested observed property.
 			foreach ($properties as $key => &$entry) {
 				$symbol = $entry["symbol"];
-				if (!in_array($symbol, $resource->meta["ObservedPropertySymbols"])) {
+				if (!in_array($symbol, $resource->getPropertySymbols())) {
 					unset($properties[$key]);
 				}
 			}
@@ -171,14 +171,14 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::parseResultLine()
 	 */
 	private function mPointDataArrayFromCSV(Resource $resource): array {
-		$csv = $resource->contents;
+		$csv = $resource->getContents();
 
 		$globalTime = null;
 		if ($this->timeInFilenameFormat) {
 			//Should use global time for whole file
 			try {
 				//Match date based on regex
-				$hasMatch = preg_match('/.*(?P<time>' . dateFormatToRegex($this->timeInFilenameFormat) . ')/', $resource->name, $match);
+				$hasMatch = preg_match('/.*(?P<time>' . dateFormatToRegex($this->timeInFilenameFormat) . ')/', $resource->getName(), $match);
 			} catch (Exception $exception) {
 				$hasMatch = false;
 			}
@@ -269,7 +269,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		}
 
 		if ($allskip) {
-			Console::getInstance()->writeLog("Resource contains only skip values: $resource->name", true);
+			Console::getInstance()->writeLog("Resource contains only skip values: {$resource->getName()}", true);
 		}
 
 		return $resultArray;

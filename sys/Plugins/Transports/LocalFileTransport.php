@@ -94,7 +94,7 @@ class LocalFileTransport extends AbstractTransport {
 	 */
 	public function get(Console $console, string $configFile): array {
 		$resource = new Resource();
-		$resource->name = $this->path;
+		$resource->setName($this->path);
 
 		if (!file_exists('/meteringdata/' . $this->path)) {
 			Console::getInstance()->writeLine('The file at \'' . self::getDataDirDisplay() . '/' . $this->path . '\' does not exist', Console::COLOR_RED);
@@ -102,7 +102,7 @@ class LocalFileTransport extends AbstractTransport {
 			return [];
 		}
 
-		$resource->contents = file_get_contents('/meteringdata/' . $this->path);
+		$resource->setContents(file_get_contents('/meteringdata/' . $this->path));
 
 		return [$resource];
 	}

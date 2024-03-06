@@ -3,6 +3,8 @@
 namespace Environet\Sys\Plugins;
 
 use Environet\Sys\Commands\Console;
+use Environet\Sys\Plugins\Parsers\XmlParser;
+use Environet\Sys\Plugins\Parsers\XmlParserOld;
 
 /**
  * Class Plugin
@@ -32,7 +34,7 @@ class Plugin {
 	 */
 	public function run(Console $console, string $configFile) {
 		$console->writeLog('Running plugin ----------------------------------------------------------------------------------------------', true, true);
-		$console->writeLogNoEol('');	// to prefix data to following message
+		$console->writeLogNoEol('');    // to prefix data to following message
 		try {
 			$resources = $this->transport->get($console, $configFile);
 		} catch (\Exception $e) {
@@ -43,26 +45,23 @@ class Plugin {
 		if (count($resources) < 1) {
 			$console->writeLine('Nothing to upload');
 		} else {
-
 			$successful = 0;
 			$failed = 0;
 			$successfulDownloads = 0;
 			$failedDownloads = 0;
-			$missingMonitoringPoints = 0;
 
-			$MonitoringPointNCDs = [];
+			$allNCDs = [];
 
 			foreach ($resources as $resource) {
 				try {
-					if (is_array($resource->meta['MonitoringPointNCDs'])) {
-						$MonitoringPointNCDs = array_merge($MonitoringPointNCDs, $resource->meta['MonitoringPointNCDs']);
-						$MonitoringPointNCDs = array_unique($MonitoringPointNCDs);
+					if ($resource->getPointNCDs()) {
+						$allNCDs = array_unique(array_merge($resource->getPointNCDs()));
 					}
-					$console->writeLog("Downloaded $resource->name");
+					$console->writeLog(sprintf("Downloaded %s", $resource->getName()));
 
 					$xmls = $this->parser->parse($resource);
 
-					$successfulDownloads++;
+					$successfulDownloads ++;
 
 					$payloadStorage = SRC_PATH . '/data/data_node_payloads';
 					if (!is_dir($payloadStorage)) {
@@ -71,24 +70,25 @@ class Plugin {
 					foreach ($xmls as $xmlPayload) {
 						$ns = $xmlPayload->getNamespaces(true);
 						$child = $xmlPayload->children($ns['environet']);
+						$xmlMPointId = $child->attributes()['MonitoringPointId'];
 
 						// remove current monitoring point id from list
-						if (($key = array_search($child->MonitoringPointId, $MonitoringPointNCDs)) !== false) {
-	 						unset($MonitoringPointNCDs[$key]);
+						if (($key = array_search($xmlMPointId, $allNCDs)) !== false) {
+							unset($allNCDs[$key]);
 						}
 
-						$console->writeLogNoEol('Uploading monitoring point data for station NCD ' . $child->MonitoringPointId . ": ");
+						$console->writeLogNoEol('Uploading monitoring point data for station NCD ' . $xmlMPointId . ": ");
 						//$console->write($xmlPayload->asXML(), Console::COLOR_YELLOW);
 						try {
 							$this->apiClient->upload($xmlPayload);
 							$console->writeLine('success');
 							$successful ++;
 						} catch (\Exception $e) {
-							$filename = $payloadStorage . '/' . date('YmdHis') . '_' . $child->MonitoringPointId . '.xml';
+							$filename = $payloadStorage . '/' . date('YmdHis') . '_' . $xmlMPointId . '.xml';
 							file_put_contents($filename, $xmlPayload->asXML());
 
 							$console->writeLine('failed');
-							$console->writeLog('Upload for station NCD ' . $child->MonitoringPointId . ' failed, response: ', true);
+							$console->writeLog(sprintf("Upload for station NCD %s failed, response: ", $xmlMPointId), true);
 							$console->writeLog($e->getMessage(), true);
 							$console->writeLog('Payload stored: ' . ltrim(str_replace(SRC_PATH, '', $filename), '/'), true);
 							$console->writeLog('---', true);
@@ -96,13 +96,22 @@ class Plugin {
 						}
 					}
 				} catch (\Exception $e) {
-					$console->writeLog('Parsing of ' . $resource->name . ' (first 100 characters: "'. $this->previewString($resource->contents,100) .'") failed, response: ' .$e->getMessage(), true, true);
-					$failedDownloads++;
+					$console->writeLog(
+						sprintf(
+							"Parsing of %s (first 100 characters: \"%s\") failed, response: %s",
+							$resource->getName(),
+							$this->previewString($resource->getContents(), 100),
+							$e->getMessage()
+						),
+						true,
+						true
+					);
+					$failedDownloads ++;
 				}
 			}
 
 
-			$missingMonitoringPoints = sizeof($MonitoringPointNCDs);
+			$missingMonitoringPoints = count($allNCDs);
 
 			$thereWasAnError = false;
 			if ($failedDownloads > 0 || $failed > 0 || $missingMonitoringPoints > 0) {
@@ -113,23 +122,25 @@ class Plugin {
 			$console->writeLog("Failed downloads from data provider: $failedDownloads", $thereWasAnError, $thereWasAnError);
 			$console->writeLog("Failed uploads to distribution node: $failed", $thereWasAnError, $thereWasAnError);
 			$console->writeLog("Monitoring points missing in data: " . $missingMonitoringPoints, $thereWasAnError, $thereWasAnError);
-			if (sizeof($MonitoringPointNCDs)>0) {
-				$console->writeLog("Following monitoring points missing in data: " . implode(" ", $MonitoringPointNCDs), true);
+			if (count($allNCDs) > 0) {
+				$console->writeLog("Following monitoring points missing in data: " . implode(" ", $allNCDs), true);
 			}
-
 		}
 		$console->writeLog('Running plugin finished -------------------------------------------------------------------------------------', true, true);
-
 	}
+
 
 	/**
 	 * Give a preview of a string (example of an xml file)
 	 *
 	 * @param string $data
-	 * @param int $lengthOfPreview
+	 * @param int    $lengthOfPreview
 	 */
 	public function previewString(string $data, int $lengthOfPreview) {
-		$a = str_replace(array("\r", "\n"), "\\n", $data);
-		return substr($a,0,$lengthOfPreview);
+		$a = str_replace(["\r", "\n"], "\\n", $data);
+
+		return substr($a, 0, $lengthOfPreview);
 	}
+
+
 }

@@ -110,8 +110,8 @@ class LocalDirectoryTransport extends AbstractTransport {
 			if (!file_exists($localCopyPath) || filemtime($localCopyPath) < filemtime($filePath)) {
 				file_put_contents($localCopyPath, file_get_contents($filePath));
 				$resource = new Resource();
-				$resource->name = end($filePathArray);
-				$resource->contents = file_get_contents($filePath);
+				$resource->setName(end($filePathArray));
+				$resource->setContents(file_get_contents($filePath));
 				$newOrChangedFiles[] = $resource;
 			}
 		}

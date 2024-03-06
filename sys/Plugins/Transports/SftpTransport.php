@@ -325,17 +325,13 @@ class SftpTransport extends AbstractTransport {
 		foreach ($files as $file) {
 			copy($dirPath . '/' . $file['name'], $localCopyPath . '/' . $file['name']);
 			$resource = new Resource();
-			$resource->name = $file['name'];
-			$resource->contents = file_get_contents($localCopyPath . '/' . $file['name']);
+			$resource->setName($file['name']);
+			$resource->setContents(file_get_contents($localCopyPath . '/' . $file['name']));
 
 			if ($this->conversionsFilename) {
 				//Add some meta information if a conversion filename is specified
-				$resource->meta = [
-					"MonitoringPointNCDs"         => [],
-					"ObservedPropertySymbols"     => [],
-					"observedPropertyConversions" => $this->getConversionsConfig()['observedPropertyConversions'] ?? [],
-					"keepExtraData"               => true,
-				];
+				$resource->setObservedPropertyConversions($this->getConversionsConfig()['observedPropertyConversions'] ?? []);
+				$resource->setKeepExtraData(true);
 			}
 
 			$results[] = $resource;

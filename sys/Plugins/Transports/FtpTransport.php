@@ -261,17 +261,13 @@ class FtpTransport extends AbstractTransport {
 			$filename = basename($file);
 			ftp_get($conn, $localCopyPath . '/' . $filename, $file);
 			$resource = new Resource();
-			$resource->name = $filename;
-			$resource->contents = file_get_contents($localCopyPath . '/' . $filename);
+			$resource->setName($filename);
+			$resource->setContents(file_get_contents($localCopyPath . '/' . $filename));
 
 			if ($this->conversionsFilename) {
 				//Add some meta information if a conversion filename is specified
-				$resource->meta = [
-					"MonitoringPointNCDs"         => [],
-					"ObservedPropertySymbols"     => [],
-					"observedPropertyConversions" => $this->getConversionsConfig()['observedPropertyConversions'] ?? [],
-					"keepExtraData"               => true,
-				];
+				$resource->setObservedPropertyConversions($this->getConversionsConfig()['observedPropertyConversions'] ?? []);
+				$resource->setKeepExtraData(true);
 			}
 
 			$results[] = $resource;
