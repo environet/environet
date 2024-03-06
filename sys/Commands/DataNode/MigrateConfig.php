@@ -37,6 +37,7 @@ class MigrateConfig extends BaseCommand {
 			'removeGeneralInformation',
 			'moveMonitoringPointType',
 			'changeMonitoringPointConversions',
+			'simplifyFormats'
 		];
 		ini_set('memory_limit', - 1);
 
@@ -187,17 +188,89 @@ class MigrateConfig extends BaseCommand {
 				continue;
 			}
 
-			$this->console->writeLine("Migrating monitoringPointConversions in config: " . $config['ini'], Console::COLOR_YELLOW);
 			if (!is_array($config['conversionsContent']['monitoringPointConversions'])) {
 				unset($config['conversionsContent']['monitoringPointConversions']);
 			} else {
 				foreach ($config['conversionsContent']['monitoringPointConversions'] as $key => &$conversion) {
+					if (!empty($conversion)) {
+						$return = 0;
+					}
 					$conversion = new stdClass();
 				}
 			}
 
-			$this->writeJsonConfig($config['conversionsContent'], $config['conversions']);
-			$this->console->writeLine("Config migrated successfully: " . $config['conversions'], Console::COLOR_GREEN);
+			if ($return === 0) {
+				$this->writeJsonConfig($config['conversionsContent'], $config['conversions']);
+				$this->console->writeLine("Config migrated successfully: " . $config['conversions'], Console::COLOR_GREEN);
+			}
+		}
+
+		return $return;
+	}
+
+
+	/**
+	 * Move monitoringPointType from conversions to ini
+	 *
+	 * @param array       $output
+	 * @param string|null $selectedConfigFile
+	 *
+	 * @return int
+	 */
+	private function simplifyFormats(array &$output, ?string $selectedConfigFile = null): int {
+		$return = - 1;
+
+		$configs = $this->getConfigurations($selectedConfigFile);
+
+		foreach ($configs as $config) {
+			if (!is_array($config['formatsContent'])) {
+				continue;
+			}
+
+			$this->console->writeLine("Migrating formats for config: " . $config['ini'], Console::COLOR_YELLOW);
+
+			foreach ($config['formatsContent'] as &$format) {
+				if (!is_array($format) || empty($format['Parameter'])) {
+					continue;
+				}
+				if ($format['Parameter'] === 'MonitoringPoint') {
+					$format = [
+						'Parameter'    => 'MonitoringPoint',
+						'Attribute'    => $format['Attribute'] ?? null,
+						'TagHierarchy' => $format['Tag Hierarchy'] ?? null,
+					];
+				}
+				if ($format['Parameter'] === 'ObservedPropertyValue') {
+					$format = [
+						'Parameter'    => 'ObservedPropertyValue',
+						'Symbol'       => $format['Value'] ?: null,
+						'Optional'     => $format['optional'] ?: null,
+						'Attribute'    => $format['Attribute'] ?? null,
+						'TagHierarchy' => $format['Tag Hierarchy'] ?? null,
+					];
+				}
+				if ($format['Parameter'] === 'ObservedPropertySymbol') {
+					$format = [
+						'Parameter'    => 'ObservedPropertyValue',
+						'Variable'     => $format['Value'] ?: null,
+						'Attribute'    => $format['Attribute'] ?? null,
+						'TagHierarchy' => $format['Tag Hierarchy'] ?? null,
+					];
+				}
+				if (in_array($format['Parameter'], ['DateTime', 'Date', 'Time', 'Year', 'Month', 'Day', 'Hour', 'Minute', 'Second'])) {
+					$format = [
+						'Parameter'    => $format['Parameter'],
+						'Format'       => $format['Value'] ?: null,
+						'Attribute'    => $format['Attribute'] ?? null,
+						'TagHierarchy' => $format['Tag Hierarchy'] ?? null,
+					];
+				}
+
+				$format = array_filter($format, fn($value) => $value !== null);
+			}
+
+			$this->writeJsonConfig($config['formatsContent'], $config['formats']);
+			$this->console->writeLine("Config migrated successfully: " . $config['formats'], Console::COLOR_GREEN);
 			$return = 0;
 		}
 
@@ -246,7 +319,7 @@ class MigrateConfig extends BaseCommand {
 
 			$formatsFilename = trim($iniConfig['parser']['formatsFilename'] ?? '');
 			if (!empty($formatsFilename) &&
-				file_exists(($formatsFile = CONFIGURATION_PATH . $formatsFilename))
+				file_exists(($formatsFile = CONFIGURATION_PATH . '/' . $formatsFilename))
 			) {
 				$configuration['formats'] = $formatsFile;
 				$configuration['formatsContent'] = json_decode(file_get_contents($formatsFile), true);
@@ -296,7 +369,7 @@ class MigrateConfig extends BaseCommand {
 		array $jsonContent,
 		string $targetFile
 	) {
-		$this->writeFile(json_encode($jsonContent, JSON_PRETTY_PRINT), $targetFile);
+		$this->writeFile(json_encode($jsonContent, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), $targetFile);
 	}
 
 
