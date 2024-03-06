@@ -2069,98 +2069,101 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <p>In the FORMATS json file the format specifications for XML data files are defined. The observed property names used in it refer to the variable definitions specified in the CONVERSIONS json file. The CONVERSIONS json file defines the variables for monitoring point, observed property or time intervals for use in the URL, file names and/or in the data file itself. The CONVERSIONS json file is required if there is a complex structure of the URL to access data files, filenames containing variable parts, or zipped data. For example, if the identifier of the monitoring point is coded within the filename or the URL, a CONVERSIONS json file is required.</p>
 <p>JSON is a simple standardized format to easily define structured data. Arrays (lists of entries) are de-fined with brackets like [ “a”, “b”, “c” ] and objects with curly braces. Objects have properties, and the properties have values. For example, the following defines an object with the property “Property1”, which has value “Example” and a property named “Property2” which has value “a value”: { “Property1”: “Example”, “Property2”: “a value” } In the following the format of the FORMATS file and the CONVERSIONS file are described in detail.</p>
 <h4 id="formats-file-format-specification-for-xml-data-files">FORMATS-file: Format Specification for XML data files</h4>
-<p>The Format Specifications mainly defines the tag hierarchy in the XML data file for the entities moni-toring point, observed properties and date specifications. The json is an array of objects. Each object has the following properties:</p>
-<ul>
-<li>Parameter</li>
-<li>Value</li>
-<li>Unit</li>
-<li>Attribute</li>
-<li>optional</li>
-<li>Tag Hierarchy</li>
-</ul>
-<p>There may be as many entries in the array as needed. The property “Parameter” determines the entity the information in the object is about. It may be one of the strings “MonitoringPoint”, “ObservedProp-ertyValue”, “ObservedPropertySymbol” and the date specific entities “Year”, “Month”, “Day”, “Hour”, “Minute”, “Date”, “Time” and “DateTime”, depending in which way the date is given in the XML file (in a single XML tag or in multiple separate tags)</p>
+<p>The Format Specifications mainly defines the tag hierarchy in the XML data file for the entities monitoring point, observed properties and date specifications. The json is an array of objects. Each object has a type, which defined by the “Parameter” key of the object. The types can be:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb14-1" title="1"><span class="fu">{</span><span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;MonitoringPoint&quot;</span><span class="fu">}</span><span class="er">,</span></a>
+<a class="sourceLine" id="cb14-2" title="2"><span class="fu">{</span><span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">}</span><span class="er">,</span></a>
+<a class="sourceLine" id="cb14-3" title="3"><span class="fu">{</span><span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertySymbol&quot;</span><span class="fu">}</span><span class="er">,</span></a>
+<a class="sourceLine" id="cb14-4" title="4"><span class="fu">{</span><span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;DateTime&quot;</span><span class="fu">}</span><span class="er">,</span></a>
+<a class="sourceLine" id="cb14-5" title="5"><span class="fu">{</span><span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Date&quot;</span><span class="fu">}</span><span class="er">,</span></a>
+<a class="sourceLine" id="cb14-6" title="6"><span class="fu">{</span><span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Time&quot;</span><span class="fu">}</span><span class="er">,</span></a>
+<a class="sourceLine" id="cb14-7" title="7"><span class="fu">{</span><span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Year&quot;</span><span class="fu">}</span><span class="er">,</span></a>
+<a class="sourceLine" id="cb14-8" title="8"><span class="fu">{</span><span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Month&quot;</span><span class="fu">}</span><span class="er">,</span></a>
+<a class="sourceLine" id="cb14-9" title="9"><span class="fu">{</span><span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Day&quot;</span><span class="fu">}</span><span class="er">,</span></a>
+<a class="sourceLine" id="cb14-10" title="10"><span class="fu">{</span><span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Hour&quot;</span><span class="fu">}</span><span class="er">,</span></a>
+<a class="sourceLine" id="cb14-11" title="11"><span class="fu">{</span><span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Minute&quot;</span><span class="fu">}</span><span class="er">,</span></a>
+<a class="sourceLine" id="cb14-12" title="12"><span class="fu">{</span><span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Second&quot;</span><span class="fu">}</span></a></code></pre></div>
+<p>There may be as many entries in the array as needed, but only one for MonitoringPoint and ObservedPropertySymbol is allowed.</p>
+<p>Common properties for all types: * Attribute: The name of the attribute of the tag which contains the value. If the value is not in an attribute, this property is an empty string. * TagHierarchy: An array of strings containing the tags names that need to be traversed in the specified order to get to the desired information.</p>
+<p>Every other parameter depends on the type of the object. * MonitoringPoint: Nothing else is needed * ObservedPropertyValue: * Symbol: The symbol of the observed property within notation of HyMeDES EnviroNet system.<br />
+* Optional: Boolean, if the entry is optional or not * ValueConversion: If conversion is needed, it can be defined here. * ObservedPropertySymbol: * Variable: The variable name in the CONVERSIONS json file for property mapping * DateTime, Date, Time, Year, Month, Day, Hour, Minute, Second: * Format: The format of the given date. For example, a datetime format would be “Y-m-d H:i:s” and would describe “2020-01-31 23:40:41”. It can be partial, for example “Y”, or “m”. Every date-type parameter will be merged into one date by the parser.</p>
 <p>The property “Tag Hierarchy” is the path to the information specified by “Parameter”. It is an array of strings containing the tags names that need to be traversed in the specified order to get to the desired information.</p>
 <p>The following is an example of part of a data file of the German hydrological service, LfU. The monitor-ing point id is available by the tag hierarchy “hnd-daten”, “messstelle”, “nummer”. Tag hierarchy strings are given without angle brackets. In this example, date is given separately in the tags “jahr” (year), “monat” (month), “tag” (day), “stunde” (hour) and “minute” (minute).</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb14-1" title="1"><span class="kw">&lt;hnd-daten&gt;</span> </a>
-<a class="sourceLine" id="cb14-2" title="2">  <span class="kw">&lt;messstelle&gt;</span> </a>
-<a class="sourceLine" id="cb14-3" title="3">    <span class="kw">&lt;nummer&gt;</span>10026301<span class="kw">&lt;/nummer&gt;</span> </a>
-<a class="sourceLine" id="cb14-4" title="4">    <span class="kw">&lt;messwert&gt;</span> </a>
-<a class="sourceLine" id="cb14-5" title="5">      <span class="kw">&lt;datum&gt;</span> </a>
-<a class="sourceLine" id="cb14-6" title="6">        <span class="kw">&lt;jahr&gt;</span>2020<span class="kw">&lt;/jahr&gt;</span> </a>
-<a class="sourceLine" id="cb14-7" title="7">        <span class="kw">&lt;monat&gt;</span>06<span class="kw">&lt;/monat&gt;</span> </a>
-<a class="sourceLine" id="cb14-8" title="8">        <span class="kw">&lt;tag&gt;</span>09<span class="kw">&lt;/tag&gt;</span> </a>
-<a class="sourceLine" id="cb14-9" title="9">        <span class="kw">&lt;stunde&gt;</span>00<span class="kw">&lt;/stunde&gt;</span> </a>
-<a class="sourceLine" id="cb14-10" title="10">        <span class="kw">&lt;minute&gt;</span>00<span class="kw">&lt;/minute&gt;</span> </a>
-<a class="sourceLine" id="cb14-11" title="11">      <span class="kw">&lt;/datum&gt;</span> </a>
-<a class="sourceLine" id="cb14-12" title="12">      <span class="kw">&lt;wert&gt;</span>87,2<span class="kw">&lt;/wert&gt;</span> </a>
-<a class="sourceLine" id="cb14-13" title="13">    <span class="kw">&lt;/messwert&gt;</span> </a>
-<a class="sourceLine" id="cb14-14" title="14">    <span class="co">&lt;!-- more data skipped in this example--&gt;</span> </a>
-<a class="sourceLine" id="cb14-15" title="15">  <span class="kw">&lt;/messstelle&gt;</span> </a>
-<a class="sourceLine" id="cb14-16" title="16"><span class="kw">&lt;/hnd-daten&gt;</span></a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb15-1" title="1"><span class="kw">&lt;hnd-daten&gt;</span> </a>
+<a class="sourceLine" id="cb15-2" title="2">  <span class="kw">&lt;messstelle&gt;</span> </a>
+<a class="sourceLine" id="cb15-3" title="3">    <span class="kw">&lt;nummer&gt;</span>10026301<span class="kw">&lt;/nummer&gt;</span> </a>
+<a class="sourceLine" id="cb15-4" title="4">    <span class="kw">&lt;messwert&gt;</span> </a>
+<a class="sourceLine" id="cb15-5" title="5">      <span class="kw">&lt;datum&gt;</span> </a>
+<a class="sourceLine" id="cb15-6" title="6">        <span class="kw">&lt;jahr&gt;</span>2020<span class="kw">&lt;/jahr&gt;</span> </a>
+<a class="sourceLine" id="cb15-7" title="7">        <span class="kw">&lt;monat&gt;</span>06<span class="kw">&lt;/monat&gt;</span> </a>
+<a class="sourceLine" id="cb15-8" title="8">        <span class="kw">&lt;tag&gt;</span>09<span class="kw">&lt;/tag&gt;</span> </a>
+<a class="sourceLine" id="cb15-9" title="9">        <span class="kw">&lt;stunde&gt;</span>00<span class="kw">&lt;/stunde&gt;</span> </a>
+<a class="sourceLine" id="cb15-10" title="10">        <span class="kw">&lt;minute&gt;</span>00<span class="kw">&lt;/minute&gt;</span> </a>
+<a class="sourceLine" id="cb15-11" title="11">      <span class="kw">&lt;/datum&gt;</span> </a>
+<a class="sourceLine" id="cb15-12" title="12">      <span class="kw">&lt;wert&gt;</span>87,2<span class="kw">&lt;/wert&gt;</span> </a>
+<a class="sourceLine" id="cb15-13" title="13">    <span class="kw">&lt;/messwert&gt;</span> </a>
+<a class="sourceLine" id="cb15-14" title="14">    <span class="co">&lt;!-- more data skipped in this example--&gt;</span> </a>
+<a class="sourceLine" id="cb15-15" title="15">  <span class="kw">&lt;/messstelle&gt;</span> </a>
+<a class="sourceLine" id="cb15-16" title="16"><span class="kw">&lt;/hnd-daten&gt;</span></a></code></pre></div>
 <p>The property “Attribute” is used if the desired value is not enclosed in the tag, but it is an attribute of the tag. In this case, “Attribute” is the name of the attribute, else an empty string.</p>
-<p>The property “optional” is boolean (so it may have the values true and false) and specifies whether the entry is optional or not. The meaning of the other properties “Value” and “Unit” depends on the prop-erty “Parameter” and is described in the following sections.</p>
+<p>The property “Optional” is boolean (so it may have the values true and false) and specifies whether the entry is optional or not.</p>
 <p>A corresponding example for the configuration to parse the XML format of LfU is shown here:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb15-1" title="1"><span class="ot">[</span></a>
-<a class="sourceLine" id="cb15-2" title="2">  <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb15-3" title="3">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;MonitoringPoint&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-4" title="4">  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;MPID&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-5" title="5">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-6" title="6">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;nummer&quot;</span> <span class="ot">]</span></a>
-<a class="sourceLine" id="cb15-7" title="7">  <span class="fu">}</span><span class="ot">,</span> </a>
-<a class="sourceLine" id="cb15-8" title="8">  <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb15-9" title="9">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Year&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-10" title="10">  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;Y&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-11" title="11">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-12" title="12">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;jahr&quot;</span> <span class="ot">]</span> </a>
-<a class="sourceLine" id="cb15-13" title="13">  <span class="fu">}</span><span class="ot">,</span> </a>
-<a class="sourceLine" id="cb15-14" title="14">  <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb15-15" title="15">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Month&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-16" title="16">  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;m&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-17" title="17">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-18" title="18">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;monat&quot;</span> <span class="ot">]</span> </a>
-<a class="sourceLine" id="cb15-19" title="19">  <span class="fu">}</span><span class="ot">,</span> </a>
-<a class="sourceLine" id="cb15-20" title="20">  <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb15-21" title="21">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Day&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-22" title="22">  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;d&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-23" title="23">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-24" title="24">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;tag&quot;</span> <span class="ot">]</span> </a>
-<a class="sourceLine" id="cb15-25" title="25">  <span class="fu">}</span><span class="ot">,</span> </a>
-<a class="sourceLine" id="cb15-26" title="26">  <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb15-27" title="27">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Hour&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-28" title="28">  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;H&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-29" title="29">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-30" title="30">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;stunde&quot;</span> <span class="ot">]</span> </a>
-<a class="sourceLine" id="cb15-31" title="31">  <span class="fu">}</span><span class="ot">,</span> </a>
-<a class="sourceLine" id="cb15-32" title="32">  <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb15-33" title="33">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Minute&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-34" title="34">  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;i&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-35" title="35">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-36" title="36">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;minute&quot;</span> <span class="ot">]</span></a>
-<a class="sourceLine" id="cb15-37" title="37">  <span class="fu">}</span><span class="ot">,</span> </a>
-<a class="sourceLine" id="cb15-38" title="38">  <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb15-39" title="39">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-40" title="40">  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;h&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-41" title="41">  <span class="dt">&quot;Unit&quot;</span><span class="fu">:</span> <span class="st">&quot;cm&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-42" title="42">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-43" title="43">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> </a>
-<a class="sourceLine" id="cb15-44" title="44">  <span class="fu">}</span><span class="ot">,</span> </a>
-<a class="sourceLine" id="cb15-45" title="45">  <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb15-46" title="46">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-47" title="47">    <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;Q&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-48" title="48">  <span class="dt">&quot;Unit&quot;</span><span class="fu">:</span> <span class="st">&quot;m3/s&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-49" title="49">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-50" title="50">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> </a>
-<a class="sourceLine" id="cb15-51" title="51">  <span class="fu">}</span><span class="ot">,</span> </a>
-<a class="sourceLine" id="cb15-52" title="52">  <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb15-53" title="53">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-54" title="54">  <span class="dt">&quot;Value&quot;</span><span class="fu">:</span> <span class="st">&quot;P_total_hourly&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-55" title="55">  <span class="dt">&quot;Unit&quot;</span><span class="fu">:</span> <span class="st">&quot;mm&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-56" title="56">  <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb15-57" title="57">  <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> </a>
-<a class="sourceLine" id="cb15-58" title="58">  <span class="fu">}</span> </a>
-<a class="sourceLine" id="cb15-59" title="59"><span class="ot">]</span></a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb16-1" title="1"><span class="ot">[</span></a>
+<a class="sourceLine" id="cb16-2" title="2">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb16-3" title="3">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;MonitoringPoint&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-4" title="4">    <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-5" title="5">    <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;nummer&quot;</span> <span class="ot">]</span></a>
+<a class="sourceLine" id="cb16-6" title="6">  <span class="fu">}</span><span class="ot">,</span> </a>
+<a class="sourceLine" id="cb16-7" title="7">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb16-8" title="8">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Year&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-9" title="9">    <span class="dt">&quot;Format&quot;</span><span class="fu">:</span> <span class="st">&quot;Y&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-10" title="10">    <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-11" title="11">    <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;jahr&quot;</span> <span class="ot">]</span> </a>
+<a class="sourceLine" id="cb16-12" title="12">  <span class="fu">}</span><span class="ot">,</span> </a>
+<a class="sourceLine" id="cb16-13" title="13">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb16-14" title="14">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Month&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-15" title="15">    <span class="dt">&quot;Format&quot;</span><span class="fu">:</span> <span class="st">&quot;m&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-16" title="16">    <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-17" title="17">    <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;monat&quot;</span> <span class="ot">]</span> </a>
+<a class="sourceLine" id="cb16-18" title="18">  <span class="fu">}</span><span class="ot">,</span> </a>
+<a class="sourceLine" id="cb16-19" title="19">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb16-20" title="20">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Day&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-21" title="21">    <span class="dt">&quot;Format&quot;</span><span class="fu">:</span> <span class="st">&quot;d&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-22" title="22">    <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-23" title="23">    <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;tag&quot;</span> <span class="ot">]</span> </a>
+<a class="sourceLine" id="cb16-24" title="24">  <span class="fu">}</span><span class="ot">,</span> </a>
+<a class="sourceLine" id="cb16-25" title="25">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb16-26" title="26">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Hour&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-27" title="27">    <span class="dt">&quot;Format&quot;</span><span class="fu">:</span> <span class="st">&quot;H&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-28" title="28">    <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-29" title="29">    <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;stunde&quot;</span> <span class="ot">]</span> </a>
+<a class="sourceLine" id="cb16-30" title="30">  <span class="fu">}</span><span class="ot">,</span> </a>
+<a class="sourceLine" id="cb16-31" title="31">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb16-32" title="32">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;Minute&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-33" title="33">    <span class="dt">&quot;Format&quot;</span><span class="fu">:</span> <span class="st">&quot;i&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-34" title="34">    <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-35" title="35">    <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;datum&quot;</span><span class="ot">,</span> <span class="st">&quot;minute&quot;</span> <span class="ot">]</span></a>
+<a class="sourceLine" id="cb16-36" title="36">  <span class="fu">}</span><span class="ot">,</span> </a>
+<a class="sourceLine" id="cb16-37" title="37">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb16-38" title="38">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-39" title="39">    <span class="dt">&quot;Symbol&quot;</span><span class="fu">:</span> <span class="st">&quot;h&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-40" title="40">    <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-41" title="41">    <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> </a>
+<a class="sourceLine" id="cb16-42" title="42">  <span class="fu">}</span><span class="ot">,</span> </a>
+<a class="sourceLine" id="cb16-43" title="43">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb16-44" title="44">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-45" title="45">    <span class="dt">&quot;Symbol&quot;</span><span class="fu">:</span> <span class="st">&quot;Q&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-46" title="46">    <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-47" title="47">    <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> </a>
+<a class="sourceLine" id="cb16-48" title="48">  <span class="fu">}</span><span class="ot">,</span> </a>
+<a class="sourceLine" id="cb16-49" title="49">  <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb16-50" title="50">    <span class="dt">&quot;Parameter&quot;</span><span class="fu">:</span> <span class="st">&quot;ObservedPropertyValue&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-51" title="51">    <span class="dt">&quot;Symbol&quot;</span><span class="fu">:</span> <span class="st">&quot;P_total_hourly&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-52" title="52">    <span class="dt">&quot;Attribute&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb16-53" title="53">    <span class="dt">&quot;Tag Hierarchy&quot;</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">&quot;hnd-daten&quot;</span><span class="ot">,</span> <span class="st">&quot;messstelle&quot;</span><span class="ot">,</span> <span class="st">&quot;messwert&quot;</span><span class="ot">,</span> <span class="st">&quot;wert&quot;</span> <span class="ot">]</span> </a>
+<a class="sourceLine" id="cb16-54" title="54">  <span class="fu">}</span> </a>
+<a class="sourceLine" id="cb16-55" title="55"><span class="ot">]</span></a></code></pre></div>
 <h4 id="date-specifications">Date specifications</h4>
-<p>A date specification has the property “Parameter” set to “Year”, “Month”, “Day”, “Hour”, “Minute”, “Date”, “Time” or “DateTime”, depending on the exact information specified. For date fields, “Value” is the format of the given date. For example, a datetime format would be “Y-m-d H:i:s” and would describe “2020-01-31 23:40:41”.</p>
+<p>A date specification has the property “Parameter” set to “Year”, “Month”, “Day”, “Hour”, “Minute”, “Second”, “Date”, “Time” or “DateTime”, depending on the exact information specified. The “Format” field defines the format of the given date. For example, a datetime format would be “Y-m-d H:i:s” and would describe “2020-01-31 23:40:41”.</p>
 <table>
 <thead>
 <tr class="header">
@@ -2228,7 +2231,7 @@ privateKeyPath = username2_private_key.pem</code></pre>
 </tbody>
 </table>
 <h5 id="observed-property-value-specifications">Observed property value specifications</h5>
-<p>Observed property value specifications have the property “Parameter” set to “ObservedProper-tyValue”. The property “Value” is the symbol of the observed property within notation of HyMeDES EnviroNet system. The value must match a registered observed property on the Distribution Node. Common observed property symbols are shown in Table 2. Please note that the symbols are case-sensitive.</p>
+<p>Observed property value specifications have the property “Parameter” set to “ObservedPropertyValue”. The property “Symbol” is the symbol of the observed property within notation of HyMeDES EnviroNet system. The value must match a registered observed property on the Distribution Node. Common observed property symbols are shown in Table 2. Please note that the symbols are case-sensitive.</p>
 <p>Common symbols for observed properties in notation of HyMeDES EnviroNet</p>
 <table>
 <thead>
@@ -2268,11 +2271,11 @@ privateKeyPath = username2_private_key.pem</code></pre>
 </tr>
 </tbody>
 </table>
-<p>For observed property values, “Unit” is the unit in which the value is given. Recognized units are “cm”, “mm”, “m”, “m3/s”, and “°C”.</p>
+<p>For observed property values, “ValueConversion” field can define the necessary conversion. Only multiply and divide operations are supported, with format: “/10” or &quot;*10&quot;. The format must start with the operator, the number can be any number.</p>
 <h5 id="monitoring-point-specifications">Monitoring point specifications</h5>
-<p>For monitoring point specifications, the attribute “Parameter” is “MonitoringPoint”. There need not be given any additional properties except the tag hierarchy, of course. If the property “Value” is given, it refers to the format of the monitoring point id as given in the monitoring point conversions in CONVERSIONS json file by specifying a variable name.</p>
+<p>For monitoring point specifications, the attribute “Parameter” is “MonitoringPoint”. There need not be given any additional properties except the tag hierarchy, of course.</p>
 <h5 id="observed-property-symbol-specifications">Observed property symbol specifications</h5>
-<p>In case the observed property symbol for a measurement section in the XML file is not fixed, but given dynamically in an own tag, it may be specified with an entry in which the property “Parameter” is “ObservedPropertySymbol”. The property “Value” in this case refers to the observed property conver-sion in CONVERSIONS json file by specifying a variable name.</p>
+<p>In case the observed property symbol for a measurement section in the XML file is not fixed, but given dynamically in an own tag, it may be specified with an entry in which the property “Parameter” is “ObservedPropertySymbol”. The property “Variable” in this case refers to the observed property conversion in CONVERSIONS json file by specifying a variable name.</p>
 <h4 id="conversions-file-conversions-specification">CONVERSIONS-file: Conversions Specification</h4>
 <p>The basic idea is to generalize the URL pattern (whether it is an FTP server or a Web-API) by inserting variables. For example, if the measuring station is directly anchored in the URL, it is replaced by the variable [station]. With this method, data conversion from national data formats to the common data format HyMeDEM can be covered in all countries. The CONVERSIONS json file may be specified in one of the following cases:</p>
 <ul>
@@ -2288,24 +2291,24 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <li>observedPropertyConversions</li>
 <li>An example of a CONVERSIONS json file for XYZ is shown here:</li>
 </ul>
-<div class="sourceCode" id="cb16"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb16-1" title="1"><span class="fu">{</span> </a>
-<a class="sourceLine" id="cb16-2" title="2">  <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb16-3" title="3">  <span class="fu">},</span> </a>
-<a class="sourceLine" id="cb16-4" title="4">  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb16-5" title="5">    <span class="dt">&quot;MPID&quot;</span><span class="fu">:</span> <span class="fu">{}</span></a>
-<a class="sourceLine" id="cb16-6" title="6">  <span class="fu">},</span> </a>
-<a class="sourceLine" id="cb16-7" title="7">  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb16-8" title="8">    <span class="dt">&quot;h&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb16-9" title="9">      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;W&quot;</span> </a>
-<a class="sourceLine" id="cb16-10" title="10">    <span class="fu">},</span> </a>
-<a class="sourceLine" id="cb16-11" title="11">    <span class="dt">&quot;Q&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb16-12" title="12">      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;Q&quot;</span> </a>
-<a class="sourceLine" id="cb16-13" title="13">    <span class="fu">},</span> </a>
-<a class="sourceLine" id="cb16-14" title="14">    <span class="dt">&quot;P_total_hourly&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb16-15" title="15">      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;N&quot;</span> </a>
-<a class="sourceLine" id="cb16-16" title="16">    <span class="fu">}</span> </a>
-<a class="sourceLine" id="cb16-17" title="17">  <span class="fu">}</span> </a>
-<a class="sourceLine" id="cb16-18" title="18"><span class="fu">}</span></a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb17-1" title="1"><span class="fu">{</span> </a>
+<a class="sourceLine" id="cb17-2" title="2">  <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb17-3" title="3">  <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb17-4" title="4">  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb17-5" title="5">    <span class="dt">&quot;MPID&quot;</span><span class="fu">:</span> <span class="fu">{}</span></a>
+<a class="sourceLine" id="cb17-6" title="6">  <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb17-7" title="7">  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb17-8" title="8">    <span class="dt">&quot;h&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb17-9" title="9">      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;W&quot;</span> </a>
+<a class="sourceLine" id="cb17-10" title="10">    <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb17-11" title="11">    <span class="dt">&quot;Q&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb17-12" title="12">      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;Q&quot;</span> </a>
+<a class="sourceLine" id="cb17-13" title="13">    <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb17-14" title="14">    <span class="dt">&quot;P_total_hourly&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb17-15" title="15">      <span class="dt">&quot;OBS&quot;</span><span class="fu">:</span> <span class="st">&quot;N&quot;</span> </a>
+<a class="sourceLine" id="cb17-16" title="16">    <span class="fu">}</span> </a>
+<a class="sourceLine" id="cb17-17" title="17">  <span class="fu">}</span> </a>
+<a class="sourceLine" id="cb17-18" title="18"><span class="fu">}</span></a></code></pre></div>
 <h5 id="data-access">Data Access</h5>
 <p>The URL is defined in the basic configuration file (ini file). In the URL, parameters that vary, such as the measuring station or the observable, are replaced by variables. Variable names are enclosed in square brackets [ ] and will be replaced by the variable definition on runtime. As an example, XYZ is used. Example URL pattern for XYZ is shown here:</p>
 <pre><code>https://xyz.de/webservices/ex-port.php?user=[USERNAME]&amp;pw=[PASSWORD]&amp;pgnr=[MPID]&amp;werte=[OBS]&amp;tage=1&amp;modus=xml</code></pre>
@@ -2331,32 +2334,32 @@ stundenwerte_RR_00164_akt.zip|produkt_rr_stunde_*_00164.txt</code></pre>
 <p>In the example the [INT1] variable stands for the interval and will be replaced in the URL by “hourly”.</p>
 <p>The time interval is also coded in different ways in the same URL-call: [INT] is replaced by “hourly”, [INT2] by “stunde”. [INT3] is replaced by “stundenwerte”.</p>
 <p>The station name [MPID1] will be replaced by the national station number 164 padded with zeros. In the following, the corresponding CONFIGURATION json file is shown. This example does not need a FORMATS json file, because files are served in CSV format.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb21-1" title="1"><span class="fu">{</span> </a>
-<a class="sourceLine" id="cb21-2" title="2">  <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb21-3" title="3">  <span class="fu">},</span> </a>
-<a class="sourceLine" id="cb21-4" title="4">  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb21-5" title="5">    <span class="dt">&quot;MPID1&quot;</span><span class="fu">:</span> <span class="fu">{},</span> </a>
-<a class="sourceLine" id="cb21-6" title="6">    <span class="dt">&quot;MPID2&quot;</span><span class="fu">:</span> <span class="fu">{}</span> </a>
-<a class="sourceLine" id="cb21-7" title="7">  <span class="fu">},</span> </a>
-<a class="sourceLine" id="cb21-8" title="8">  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb21-9" title="9">    <span class="dt">&quot;P_total_hourly&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb21-10" title="10">      <span class="dt">&quot;OBS1&quot;</span><span class="fu">:</span> <span class="st">&quot;RR&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-11" title="11">      <span class="dt">&quot;OBS2&quot;</span><span class="fu">:</span> <span class="st">&quot;precipitation&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-12" title="12">      <span class="dt">&quot;OBS3&quot;</span><span class="fu">:</span> <span class="st">&quot;rr&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-13" title="13">      <span class="dt">&quot;INT1&quot;</span><span class="fu">:</span> <span class="st">&quot;hourly&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-14" title="14">      <span class="dt">&quot;INT2&quot;</span><span class="fu">:</span> <span class="st">&quot;stunde&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-15" title="15">      <span class="dt">&quot;INT3&quot;</span><span class="fu">:</span> <span class="st">&quot;stundenwerte&quot;</span> </a>
-<a class="sourceLine" id="cb21-16" title="16">    <span class="fu">},</span> </a>
-<a class="sourceLine" id="cb21-17" title="17">    <span class="dt">&quot;ta&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
-<a class="sourceLine" id="cb21-18" title="18">      <span class="dt">&quot;OBS1&quot;</span><span class="fu">:</span> <span class="st">&quot;TU&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-19" title="19">      <span class="dt">&quot;OBS2&quot;</span><span class="fu">:</span> <span class="st">&quot;air_temperature&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-20" title="20">      <span class="dt">&quot;OBS3&quot;</span><span class="fu">:</span> <span class="st">&quot;tu&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-21" title="21">      <span class="dt">&quot;INT1&quot;</span><span class="fu">:</span> <span class="st">&quot;hourly&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-22" title="22">      <span class="dt">&quot;INT2&quot;</span><span class="fu">:</span> <span class="st">&quot;stunde&quot;</span><span class="fu">,</span> </a>
-<a class="sourceLine" id="cb21-23" title="23">      <span class="dt">&quot;INT3&quot;</span><span class="fu">:</span> <span class="st">&quot;stundenwerte&quot;</span> </a>
-<a class="sourceLine" id="cb21-24" title="24">    <span class="fu">}</span> </a>
-<a class="sourceLine" id="cb21-25" title="25">  <span class="fu">}</span> </a>
-<a class="sourceLine" id="cb21-26" title="26"><span class="fu">}</span></a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb22-1" title="1"><span class="fu">{</span> </a>
+<a class="sourceLine" id="cb22-2" title="2">  <span class="dt">&quot;generalInformation&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb22-3" title="3">  <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb22-4" title="4">  <span class="dt">&quot;monitoringPointConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb22-5" title="5">    <span class="dt">&quot;MPID1&quot;</span><span class="fu">:</span> <span class="fu">{},</span> </a>
+<a class="sourceLine" id="cb22-6" title="6">    <span class="dt">&quot;MPID2&quot;</span><span class="fu">:</span> <span class="fu">{}</span> </a>
+<a class="sourceLine" id="cb22-7" title="7">  <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb22-8" title="8">  <span class="dt">&quot;observedPropertyConversions&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb22-9" title="9">    <span class="dt">&quot;P_total_hourly&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb22-10" title="10">      <span class="dt">&quot;OBS1&quot;</span><span class="fu">:</span> <span class="st">&quot;RR&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb22-11" title="11">      <span class="dt">&quot;OBS2&quot;</span><span class="fu">:</span> <span class="st">&quot;precipitation&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb22-12" title="12">      <span class="dt">&quot;OBS3&quot;</span><span class="fu">:</span> <span class="st">&quot;rr&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb22-13" title="13">      <span class="dt">&quot;INT1&quot;</span><span class="fu">:</span> <span class="st">&quot;hourly&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb22-14" title="14">      <span class="dt">&quot;INT2&quot;</span><span class="fu">:</span> <span class="st">&quot;stunde&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb22-15" title="15">      <span class="dt">&quot;INT3&quot;</span><span class="fu">:</span> <span class="st">&quot;stundenwerte&quot;</span> </a>
+<a class="sourceLine" id="cb22-16" title="16">    <span class="fu">},</span> </a>
+<a class="sourceLine" id="cb22-17" title="17">    <span class="dt">&quot;ta&quot;</span><span class="fu">:</span> <span class="fu">{</span> </a>
+<a class="sourceLine" id="cb22-18" title="18">      <span class="dt">&quot;OBS1&quot;</span><span class="fu">:</span> <span class="st">&quot;TU&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb22-19" title="19">      <span class="dt">&quot;OBS2&quot;</span><span class="fu">:</span> <span class="st">&quot;air_temperature&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb22-20" title="20">      <span class="dt">&quot;OBS3&quot;</span><span class="fu">:</span> <span class="st">&quot;tu&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb22-21" title="21">      <span class="dt">&quot;INT1&quot;</span><span class="fu">:</span> <span class="st">&quot;hourly&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb22-22" title="22">      <span class="dt">&quot;INT2&quot;</span><span class="fu">:</span> <span class="st">&quot;stunde&quot;</span><span class="fu">,</span> </a>
+<a class="sourceLine" id="cb22-23" title="23">      <span class="dt">&quot;INT3&quot;</span><span class="fu">:</span> <span class="st">&quot;stundenwerte&quot;</span> </a>
+<a class="sourceLine" id="cb22-24" title="24">    <span class="fu">}</span> </a>
+<a class="sourceLine" id="cb22-25" title="25">  <span class="fu">}</span> </a>
+<a class="sourceLine" id="cb22-26" title="26"><span class="fu">}</span></a></code></pre></div>
 <p><a name="41_key_gen"></a></p>
 <h1 id="ssl-key-pair-generation-guide">SSL key pair generation guide</h1>
 <h2 id="windows">Windows</h2>

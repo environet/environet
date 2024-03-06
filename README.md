@@ -1497,17 +1497,40 @@ In the following the format of the FORMATS file and the CONVERSIONS file are des
 
 #### FORMATS-file: Format Specification for XML data files
 
-The Format Specifications mainly defines the tag hierarchy in the XML data file for the entities moni-toring point, observed properties and date specifications.
-The json is an array of objects. Each object has the following properties:
+The Format Specifications mainly defines the tag hierarchy in the XML data file for the entities monitoring point, observed properties and date specifications.
+The json is an array of objects. Each object has a type, which defined by the "Parameter" key of the object. 
+The types can be:
+```json
+{"Parameter": "MonitoringPoint"},
+{"Parameter": "ObservedPropertyValue"},
+{"Parameter": "ObservedPropertySymbol"},
+{"Parameter": "DateTime"},
+{"Parameter": "Date"},
+{"Parameter": "Time"},
+{"Parameter": "Year"},
+{"Parameter": "Month"},
+{"Parameter": "Day"},
+{"Parameter": "Hour"},
+{"Parameter": "Minute"},
+{"Parameter": "Second"}
+```
 
-* Parameter
-* Value
-* Unit
-* Attribute
-* optional
-* Tag Hierarchy
+There may be as many entries in the array as needed, but only one for MonitoringPoint and ObservedPropertySymbol is allowed.
 
-There may be as many entries in the array as needed. The property “Parameter” determines the entity the information in the object is about. It may be one of the strings “MonitoringPoint”, “ObservedProp-ertyValue”, “ObservedPropertySymbol” and the date specific entities “Year”, “Month”, “Day”, “Hour”, “Minute”, “Date”, “Time” and “DateTime”, depending in which way the date is given in the XML file (in a single XML tag or in multiple separate tags)
+Common properties for all types:
+* Attribute: The name of the attribute of the tag which contains the value. If the value is not in an attribute, this property is an empty string.
+* TagHierarchy: An array of strings containing the tags names that need to be traversed in the specified order to get to the desired information.
+
+Every other parameter depends on the type of the object.
+* MonitoringPoint: Nothing else is needed
+* ObservedPropertyValue: 
+  * Symbol: The symbol of the observed property within notation of HyMeDES EnviroNet system.  
+  * Optional: Boolean, if the entry is optional or not
+  * ValueConversion: If conversion is needed, it can be defined here.
+* ObservedPropertySymbol: 
+  * Variable: The variable name in the CONVERSIONS json file for property mapping
+* DateTime, Date, Time, Year, Month, Day, Hour, Minute, Second: 
+  * Format: The format of the given date. For example, a datetime format would be “Y-m-d H:i:s” and would describe “2020-01-31 23:40:41”. It can be partial, for example "Y", or "m". Every date-type parameter will be merged into one date by the parser.
 
 The property “Tag Hierarchy” is the path to the information specified by “Parameter”. It is an array of strings containing the tags names that need to be traversed in the specified order to get to the desired information.
 
@@ -1532,73 +1555,69 @@ The following is an example of part of a data file of the German hydrological se
 ```
 The property “Attribute” is used if the desired value is not enclosed in the tag, but it is an attribute of the tag. In this case, “Attribute” is the name of the attribute, else an empty string.
 
-The property “optional” is boolean (so it may have the values true and false) and specifies whether the entry is optional or not. The meaning of the other properties “Value” and “Unit” depends on the prop-erty “Parameter” and is described in the following sections.
+The property “Optional” is boolean (so it may have the values true and false) and specifies whether the entry is optional or not.
 
 A corresponding example for the configuration to parse the XML format of LfU is shown here:
 ```json
 [
   { 
     "Parameter": "MonitoringPoint", 
-  "Value": "MPID", 
-  "Attribute": "", 
-  "Tag Hierarchy": [ "hnd-daten", "messstelle", "nummer" ]
+    "Attribute": "", 
+    "Tag Hierarchy": [ "hnd-daten", "messstelle", "nummer" ]
   }, 
   { 
     "Parameter": "Year", 
-  "Value": "Y", 
-  "Attribute": "", 
-  "Tag Hierarchy": [ "hnd-daten", "messstelle", "messwert", "datum", "jahr" ] 
+    "Format": "Y", 
+    "Attribute": "", 
+    "Tag Hierarchy": [ "hnd-daten", "messstelle", "messwert", "datum", "jahr" ] 
   }, 
   { 
     "Parameter": "Month", 
-  "Value": "m", 
-  "Attribute": "", 
-  "Tag Hierarchy": [ "hnd-daten", "messstelle", "messwert", "datum", "monat" ] 
+    "Format": "m", 
+    "Attribute": "", 
+    "Tag Hierarchy": [ "hnd-daten", "messstelle", "messwert", "datum", "monat" ] 
   }, 
   { 
     "Parameter": "Day", 
-  "Value": "d", 
-  "Attribute": "", 
-  "Tag Hierarchy": [ "hnd-daten", "messstelle", "messwert", "datum", "tag" ] 
+    "Format": "d", 
+    "Attribute": "", 
+    "Tag Hierarchy": [ "hnd-daten", "messstelle", "messwert", "datum", "tag" ] 
   }, 
   { 
     "Parameter": "Hour", 
-  "Value": "H", 
-  "Attribute": "", 
-  "Tag Hierarchy": [ "hnd-daten", "messstelle", "messwert", "datum", "stunde" ] 
+    "Format": "H", 
+    "Attribute": "", 
+    "Tag Hierarchy": [ "hnd-daten", "messstelle", "messwert", "datum", "stunde" ] 
   }, 
   { 
     "Parameter": "Minute", 
-  "Value": "i", 
-  "Attribute": "", 
-  "Tag Hierarchy": [ "hnd-daten", "messstelle", "messwert", "datum", "minute" ]
+    "Format": "i", 
+    "Attribute": "", 
+    "Tag Hierarchy": [ "hnd-daten", "messstelle", "messwert", "datum", "minute" ]
   }, 
   { 
     "Parameter": "ObservedPropertyValue", 
-  "Value": "h", 
-  "Unit": "cm", 
-  "Attribute": "", 
-  "Tag Hierarchy": [ "hnd-daten", "messstelle", "messwert", "wert" ] 
+    "Symbol": "h", 
+    "Attribute": "", 
+    "Tag Hierarchy": [ "hnd-daten", "messstelle", "messwert", "wert" ] 
   }, 
   { 
     "Parameter": "ObservedPropertyValue", 
-    "Value": "Q", 
-  "Unit": "m3/s", 
-  "Attribute": "", 
-  "Tag Hierarchy": [ "hnd-daten", "messstelle", "messwert", "wert" ] 
+    "Symbol": "Q", 
+    "Attribute": "", 
+    "Tag Hierarchy": [ "hnd-daten", "messstelle", "messwert", "wert" ] 
   }, 
   { 
     "Parameter": "ObservedPropertyValue", 
-  "Value": "P_total_hourly", 
-  "Unit": "mm", 
-  "Attribute": "", 
-  "Tag Hierarchy": [ "hnd-daten", "messstelle", "messwert", "wert" ] 
+    "Symbol": "P_total_hourly", 
+    "Attribute": "", 
+    "Tag Hierarchy": [ "hnd-daten", "messstelle", "messwert", "wert" ] 
   } 
 ]
 ```
 
 #### Date specifications
-A date specification has the property “Parameter” set to “Year”, “Month”, “Day”, “Hour”, “Minute”, “Date”, “Time” or “DateTime”, depending on the exact information specified. For date fields, “Value” is the format of the given date. For example, a datetime format would be “Y-m-d H:i:s” and would describe “2020-01-31 23:40:41”.
+A date specification has the property “Parameter” set to “Year”, “Month”, “Day”, “Hour”, “Minute”, “Second”, “Date”, “Time” or “DateTime”, depending on the exact information specified. The "Format" field defines the format of the given date. For example, a datetime format would be “Y-m-d H:i:s” and would describe “2020-01-31 23:40:41”.
 
 | Character | Meaning | Example |
 | :---: | :--: | :---: |
@@ -1616,7 +1635,7 @@ A date specification has the property “Parameter” set to “Year”, “Mont
 
 ##### Observed property value specifications
 
-Observed property value specifications have the property “Parameter” set to “ObservedProper-tyValue”. The property “Value” is the symbol of the observed property within notation of HyMeDES EnviroNet system. The value must match a registered observed property on the Distribution Node. Common observed property symbols are shown in Table 2. Please note that the symbols are case-sensitive.
+Observed property value specifications have the property “Parameter” set to “ObservedPropertyValue”. The property “Symbol” is the symbol of the observed property within notation of HyMeDES EnviroNet system. The value must match a registered observed property on the Distribution Node. Common observed property symbols are shown in Table 2. Please note that the symbols are case-sensitive.
 
 Common symbols for observed properties in notation of HyMeDES EnviroNet 
 
@@ -1630,15 +1649,15 @@ Common symbols for observed properties in notation of HyMeDES EnviroNet
 | ta | Air temperature |
 | p | Atmospheric pressure |
 
-For observed property values, “Unit” is the unit in which the value is given. Recognized units are “cm”, “mm”, “m”, “m3/s”, and “°C”.
+For observed property values, “ValueConversion” field can define the necessary conversion. Only multiply and divide operations are supported, with format: "/10" or "*10". The format must start with the operator, the number can be any number.
 
 ##### Monitoring point specifications
 
-For monitoring point specifications, the attribute “Parameter” is “MonitoringPoint”. There need not be given any additional properties except the tag hierarchy, of course. If the property “Value” is given, it refers to the format of the monitoring point id as given in the monitoring point conversions in CONVERSIONS json file by specifying a variable name.
+For monitoring point specifications, the attribute “Parameter” is “MonitoringPoint”. There need not be given any additional properties except the tag hierarchy, of course.
 
 ##### Observed property symbol specifications
 
-In case the observed property symbol for a measurement section in the XML file is not fixed, but given dynamically in an own tag, it may be specified with an entry in which the property “Parameter” is “ObservedPropertySymbol”. The property “Value” in this case refers to the observed property conver-sion in CONVERSIONS json file by specifying a variable name.
+In case the observed property symbol for a measurement section in the XML file is not fixed, but given dynamically in an own tag, it may be specified with an entry in which the property “Parameter” is “ObservedPropertySymbol”. The property “Variable” in this case refers to the observed property conversion in CONVERSIONS json file by specifying a variable name.
 
 #### CONVERSIONS-file: Conversions Specification
 
