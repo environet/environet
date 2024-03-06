@@ -6,6 +6,7 @@ use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\Parsers\CsvParser;
 use Environet\Sys\Plugins\Parsers\JsonParser;
 use Environet\Sys\Plugins\Parsers\XmlParser;
+use Environet\Sys\Plugins\Parsers\XmlParserOld;
 use Environet\Sys\Plugins\Parsers\ZrxpParser;
 use Environet\Sys\Plugins\Transports\FtpTransport;
 use Environet\Sys\Plugins\Transports\HttpTransport;
@@ -43,7 +44,7 @@ class PluginBuilder {
 			),
 			new PluginLayer(
 				'parser',
-				[JsonParser::class, CsvParser::class, XmlParser::class, ZrxpParser::class],
+				[JsonParser::class, CsvParser::class, XmlParser::class, XmlParserOld::class, ZrxpParser::class],
 				'Choose a parser layer implementation. It will be used to transform the data acquired through the transport into an API compatible XML format.'
 			),
 			new PluginLayer(

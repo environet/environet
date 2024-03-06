@@ -5,6 +5,12 @@ namespace Environet\Sys\Plugins\Parsers;
 use DateTime;
 use DateTimeZone;
 use Environet\Sys\Commands\Console;
+use Environet\Sys\General\Model\Configuration\Type\Parameters\AbstractFormatParameter;
+use Environet\Sys\General\Model\Configuration\Type\Parameters\DateParameter;
+use Environet\Sys\General\Model\Configuration\Type\Parameters\ObservedPropertySymbolParameter;
+use Environet\Sys\General\Model\Configuration\Type\Parameters\ObservedPropertyValueParameter;
+use Environet\Sys\General\Model\ResolvedGroup;
+use Environet\Sys\General\Model\ResolvedItem;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\ParserInterface;
 use Environet\Sys\Plugins\Resource;
@@ -48,14 +54,9 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	private $separatorDecimals;
 
 	/**
-	 * @var string Filename of JSON file which contains formats for xml
+	 * @var array<ResolvedGroup> Resolved groups are stored in this array while parsing
 	 */
-	private $formatsFilename;
-
-	/**
-	 * @var array Format specifications, where to find which information in xml file
-	 */
-	private $formats;
+	private array $flatList = [];
 
 
 	/**
@@ -69,7 +70,6 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 		$this->separatorThousands = $config['separatorThousands'];
 		$this->separatorDecimals = $config['separatorDecimals'];
-		$this->formatsFilename = $config['formatsFilename'];
 		$this->skipEmptyValueTag = isset($config['skipEmptyValueTag']) ? (bool) $config['skipEmptyValueTag'] : false;
 		$this->skipValue = $config['skipValue'];
 
@@ -79,608 +79,405 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 	/**
 	 * Recursive function to parse a xml tree to acquire values for given parameters from xml tree
+	 * List of information gathered from xml stored in $this->flatList
 	 *
-	 * @param SimpleXMLElement $xml              xml element to parse
-	 * @param array            $formats          format of information to be gathered from xml, including tag hierarchies for different parameters
-	 * @param array            $resolved         table of information found. 1st index is the entry if there are multiple, 2nd index is information, call with "[]"
-	 * @param int              $hierarchyCounter level of hierarchy, call with "0"
+	 * @param SimpleXMLElement   $xml              Xml element to parse
+	 * @param ResolvedGroup|null $parentGroup      Parent group in case of nested groups. This group can contain some already parsed parameters
+	 * @param int                $hierarchyCounter Level of hierarchy, initially 0
+	 * @param string|null        $parentPath       Parent common path in case of nested groups
+	 * @param array|null         $parametersOnly   If set, only parameters in this array will be parsed - used for recursive calls
 	 *
-	 * @return array list of information gathered from xml
+	 * @return void
 	 * @throws Exception
 	 */
-	private function parseIntoHierarchy(SimpleXMLElement $xml, array $formats, array $resolved, int $hierarchyCounter): array {
+	private function parseIntoHierarchy(
+		SimpleXMLElement $xml,
+		?ResolvedGroup $parentGroup = null,
+		int $hierarchyCounter = 0,
+		string $parentPath = null,
+		array $parametersOnly = null
+	): void {
+		//Get formats configuration
+		$formatsConfig = $this->getFormatsConfig();
 		if ($hierarchyCounter > 10) {
 			throw new Exception('XML hierarchy deeper than 10');
 		}
 
-		if (!count($formats)) {
+		if (!$formatsConfig->count()) {
+			//No parameters to parse
 			Console::getInstance()->writeLog('Error condition 1: Call, but all information already resolved.', true);
 
-			return [];
+			return;
 		}
 
-		// get groups of common hierarchy
-		$commonElements = [];
-		while (($common = $this->getAndStripOneCommonElement($formats))) {
-			array_push($commonElements, $common);
+		//Get common elements from tag hierarchy, build the common path and the group xpath
+		$commonElements = $this->getCommonElements($parentPath, $parametersOnly);
+		if ($hierarchyCounter === 0 && empty($commonElements)) {
+			throw new Exception('XML definition does not have a top-level element');
 		}
-		$xpathCommonElements = implode('/', $commonElements);
+		$commonPath = ($parentPath ? $parentPath . '/' : '') . implode('/', $commonElements);
+		$groupXpath = implode('/', $hierarchyCounter === 0 ? array_slice($commonElements, 1) : $commonElements); //Root element is not part of group xpath
 
-		// Finish condition 1: No common elements, but unresolved information
-		if ($xpathCommonElements == '') {
-			throw new Exception('Unresolved information');
-		}
-
-		// get groups
-		$flatList = [];
-		$groups = $xml->xpath($xpathCommonElements);
+		//Get groups with group path
+		$groups = $xml->xpath($groupXpath ?: '/');
 
 		if ($groups == null) {
-			throw new Exception('Given elements do not exist in file: ' . $xpathCommonElements);
+			throw new Exception('Given elements do not exist in file: ' . $groupXpath);
 		}
 
+		//Iterate over groups, parse parameters and recurse if needed
 		foreach ($groups as $groupKey => $group) {
-			// count elements and resolve those which are unique
-			$nResolved = 0;
-			$groupResolved = $resolved;
-			$formatsNew = [];
-			foreach ($formats as $format) {
-				if (($xpath = implode('/', $format['Tag Hierarchy']))) {
-					// desired information is sub-item of group
-					$subXml = $group->xpath($xpath);
-				} else {
-					// desired information is group itself
-					$subXml = $group;
-					if (!empty($format['Attribute']) && $subXml->getName() === end($commonElements)) {
-						// desired information is attribute of group-defining tag
-						$item = [];
-						$item['Type'] = $format['Parameter'] ?? null;
-						$item['Value'] = $subXml[0][$format['Attribute']]->__toString();
-						$item['Format'] = $format['Value'] ?? null;
-						$item['Unit'] = $format['Unit'] ?? null;
-						array_push($groupResolved, $item);
-						++ $nResolved;
-					}
+			//The group where the parameters will be stored can be a new group or a clone of the parent group in case of nested calls.
+			//If nested, the parent group already contains some parameters, but we have to clone it because this sub-group can contain the same parameters with different values.
+			$resolvedGroup = $parentGroup ? clone $parentGroup : new ResolvedGroup();
+			$subParameters = []; //Collect sub-parameters for recursion
+
+			foreach ($formatsConfig->getParameters() as $parameter) {
+				if ($parametersOnly && !in_array($parameter, $parametersOnly, true)) {
+					//In case of recursive call, only parse parameters in $parametersOnly (which are not yet resolved)
+					continue;
 				}
-				if ($subXml == null) {
-					if ($format['optional']) {
+
+				//Get xpath under current group
+				$xpath = $parameter->getXpath($commonPath);
+
+				/** @var SimpleXMLElement|SimpleXMLElement[] $targetElement */
+				//Target element is the element to be parsed. It can be the group itself or a collection of sub-items of the group
+				$targetElement = $xpath ? $group->xpath($xpath) : $group;
+
+				if ($targetElement == null) {
+					if ($parameter->isOptional()) {
+						//Optional element is missing, skip group
 						continue;
 					}
 					Console::getInstance()->writeLog(sprintf('Required element "%s" missing in group %d, skip group', $xpath, $groupKey + 1));
 					continue 2;
 				}
-				if (count($subXml) === 1) {
-					$subXml = $subXml[0];
-					$item = [];
-					$item['Type'] = $format['Parameter'];
-					if (empty($format['Attribute'])) {
-						$item['Value'] = $subXml->__toString();
-					} else {
-						$item['Value'] = $subXml[$format['Attribute']]->__toString();
-					}
-
-					if ($item['Type'] === 'ObservedPropertyValue' && $item['Value'] === '') {
-						if (!$this->skipEmptyValueTag) {
-							//Convert empty values to 0
-							$item['Value'] = '0';
-						}
-					}
-
-					$item['Format'] = $format['Value'] ?? null;
-					$item['Unit'] = $format['Unit'] ?? null;
-					array_push($groupResolved, $item);
-					++ $nResolved;
+				if ($targetElement instanceof SimpleXMLElement && !empty($parameter->getAttribute()) && $targetElement->getName() === end($commonElements)) {
+					//Desired information is attribute of group-defining tag
+					$resolvedGroup->addItem(new ResolvedItem($parameter, $parameter->getXmlValue($targetElement, $this->skipEmptyValueTag)));
 				} else {
-					array_push($formatsNew, $format);
+					if (count($targetElement) === 1) {
+						//Target element is a single element, value can be parsed
+						$resolvedGroup->addItem(new ResolvedItem($parameter, $parameter->getXmlValue($targetElement[0], $this->skipEmptyValueTag)));
+					} else {
+						//Target element is a collection of elements, recursion is needed
+						$subParameters[] = $parameter;
+					}
 				}
 			}
 
-			if (count($formatsNew) > 1) {
-				// do recursion
-				$flatList = array_merge($flatList, $this->parseIntoHierarchy($group, $formatsNew, $groupResolved, $hierarchyCounter + 1));
+			if ($subParameters) {
+				//Do recursion for sub-parameters. It can create new groups or add parameters to the current group.
+				//The new groups will be added to $this->flatList in the called nested function.
+				$this->parseIntoHierarchy($group, $resolvedGroup, $hierarchyCounter + 1, $commonPath, $subParameters);
 			} else {
-				// Finish condition 3: Success
-				// all information available. Return flat list entry from resolved
-				array_push($flatList, $groupResolved);
+				//All information available (from this group and from recursion), add to flatList
+				$this->flatList[] = $resolvedGroup;
 			}
-		}// group
-
-		return $flatList;
+		}
 	}
 
 
 	/**
-	 * Get internal symbol for observed property from external symbol. Conversion between symbols is given by
-	 * variable conversion information.
+	 * Returns common elements from xml tag hierarchy
 	 *
-	 * @param array  $observedPropertyConversions
-	 * @param string $variableName                name of variable definition for observed property. E.g. "OBS"
-	 * @param string $symbol                      external symbol for observed property
+	 * @param string|null $underPath      If set, common elements are searched under this path
+	 * @param array|null  $parametersOnly If set, only parameters in this array will be parsed
 	 *
-	 * @return string internal symbol for observed property
+	 * @return array The common elements of tag hierarchy, if any
 	 */
-	private function getInternalObservedPropertySymbol(array $observedPropertyConversions, string $variableName, string $symbol): string {
-		foreach ($observedPropertyConversions as $key => $value) {
-			if ($value[$variableName] && $value[$variableName] == $symbol) {
-				return $key;
+	private function getCommonElements(?string $underPath = null, array $parametersOnly = null): array {
+		$underPath = $underPath ? explode('/', trim($underPath, '/')) : [];
+
+		//Collect parameters where the common elements are searched. If $parametersOnly is set, only these parameters are considered.
+		$parameters = array_values(array_filter(
+			$this->formatsConfig->getParameters(),
+			fn(AbstractFormatParameter $parameter) => !$parametersOnly || in_array($parameter, $parametersOnly, true)
+		));
+
+		//Get tag hierarchies for each parameter, remove elements of $underPath
+		$tagHierarchies = array_map(
+			fn(AbstractFormatParameter $parameter) => array_values(array_diff($parameter->getTagHierarchy(), $underPath)),
+			$parameters
+		);
+
+		//Collect common elements from tag hierarchies. Iterate while all parameter's hierarchy element is the same
+		$i = 0;
+		$commonElements = [];
+		while (true) {
+			$elements = array_map(fn(array $hierarchy) => $hierarchy[$i], $tagHierarchies);
+			$elements = array_values(array_unique(array_filter($elements, fn($element) => $element !== null)));
+			if (count($elements) === 1) {
+				$commonElements[] = $elements[0];
+				$i ++;
+				continue;
 			}
+			break;
 		}
 
-		return '';
+		return $commonElements;
 	}
 
 
 	/**
-	 * Get item from list, for which parameter name has a certain value. List item is an associative array in which parameter names are keys.
+	 * Convert value parameters in group: Remove thousands separator, change decimal separator to ".", convert value to float and convert to unit if needed by valueConversion parameter.
 	 *
-	 * @param array  $list           list of items.
-	 * @param string $parameterName  name of parameter
-	 * @param string $parameterValue value of parameter
-	 *
-	 * @return array items found, "[]" if none found.
-	 */
-	private function getParameter(array $list, string $parameterName, string $parameterValue): array {
-		$result = [];
-		foreach ($list as $item) {
-			if (array_key_exists($parameterName, $item) && $item[$parameterName] == $parameterValue) {
-				$result = $item;
-				break;
-			}
-		}
-
-		return $result;
-	}
-
-
-	/**
-	 * Deletes item from list for specified parameter and value. List item is an associative array in which parameter names are keys.
-	 *
-	 * @param array  $list           list to delete items from
-	 * @param string $parameterName  name of parameter
-	 * @param string $parameterValue value for parameter
-	 */
-	private function delete(array &$list, string $parameterName, string $parameterValue) {
-		foreach ($list as $key => &$item) { // FFF
-			if (array_key_exists($parameterName, $item) && $item[$parameterName] == $parameterValue) {
-				unset($list[$key]);
-			}
-		}
-		$list = array_values($list);
-	}
-
-
-	/**
-	 * Convert a given unit to base unit for observed property.
-	 * Default units are:
-	 * water level h: cm
-	 * river discharge Q: m3/s
-	 * water temperature tw: °C
-	 * precipitation P: mm
-	 * air temperature ta: °C
-	 *
-	 * @param float  $value  measured value to convert
-	 * @param string $symbol internal symbol for observed property
-	 * @param string $unit   unit in which $value is given
-	 */
-	private function convertUnitToBaseUnit(float &$value, string $symbol, string $unit) {
-		$symbol = explode('_', $symbol)[0];
-		$unit = strtolower($unit);
-
-		//Convert value in case of some symbols and units
-		//For Q (m³/s), tw (°C), and ta °C no conversions are necessary
-		if ($symbol == 'h') {
-			if ($unit == 'mm') {
-				$value /= 10;
-			} elseif ($unit == 'm') {
-				$value *= 100;
-			}
-		} elseif ($symbol == 'P') {
-			if (in_array($unit, ['cm', 'cm/h'])) {
-				$value *= 10;
-			} elseif (in_array($unit, ['m', 'm/h'])) {
-				$value *= 1000;
-			}
-		}
-	}
-
-
-	/**
-	 * Returns one common element from xml tag hierarchy and strips it from format information which describes xml format.
-	 *
-	 * @param array $formats format information, including tag hierarchies for different parameters, which should be read from xml
-	 *
-	 * @return string The first common element of tag hierarchy, if any. If there is none, "" is returned.
-	 * @throws Exception
-	 */
-	private function getAndStripOneCommonElement(array &$formats): ?string {
-		if (empty($formats) || !isset($formats[0]['Tag Hierarchy']) || empty($formats[0]['Tag Hierarchy'])) {
-			//Formats is empty, return empty string
-			return null;
-		}
-		if (count($formats) === 1 && count($formats[0]['Tag Hierarchy'])) {
-			//Formats only has one element, return this singe item
-			return array_shift($formats[0]['Tag Hierarchy']);
-		}
-
-		$difference = false;
-		$formatsCount = count($formats);
-		for ($i = 1; $i < $formatsCount; ++ $i) {
-			if (empty($formats[$i]['Tag Hierarchy'][0]) ||
-				empty($formats[$i - 1]['Tag Hierarchy'][0]) ||
-				$formats[$i]['Tag Hierarchy'][0] != $formats[$i - 1]['Tag Hierarchy'][0]
-			) {
-				$difference = true;
-			}
-		}
-		if ($difference) {
-			return null;
-		}
-		$result = $formats[0]['Tag Hierarchy'][0];
-		for ($i = 0; $i < $formatsCount; ++ $i) {
-			array_shift($formats[$i]['Tag Hierarchy']);
-		}
-
-		return $result;
-	}
-
-
-	/**
-	 * Assembles date from componentes like day, month, year, hour and minute
-	 *
-	 * @param array $entry list of parsed properties, in which separate items for day, month, etc... may occur. Separate items are joined to a
-	 *                     "DateTime" item and deleted from $entry. "DateTime" has time format as given by API_TIME_FORMAT_STRING
-	 *
-	 * @throws Exception
-	 */
-	private function assembleDate(array &$entry) {
-		$DateTime = $this->getParameter($entry, 'Type', 'DateTime');
-		$Date = $this->getParameter($entry, 'Type', 'Date');
-		$Time = $this->getParameter($entry, 'Type', 'Time');
-		$Year = $this->getParameter($entry, 'Type', 'Year');
-		$Month = $this->getParameter($entry, 'Type', 'Month');
-		$Day = $this->getParameter($entry, 'Type', 'Day');
-		$Hour = $this->getParameter($entry, 'Type', 'Hour');
-		$Minute = $this->getParameter($entry, 'Type', 'Minute');
-		$NCD = $this->getParameter($entry, 'Type', 'MonitoringPoint')['Value'];
-
-		$result = [
-			'Type'   => 'DateTime',
-			'Value'  => '',
-			'Format' => self::API_TIME_FORMAT_STRING,
-			'Unit'   => null
-		];
-
-		if ($Year && $Month && $Day && $Hour && $Minute) {
-			$t = mktime(
-				strval($Hour['Value']),
-				strval($Minute['Value']),
-				0,
-				strval($Month['Value']),
-				strval($Day['Value']),
-				strval($Year['Value'])
-			);
-			$format = 'dmY H:i:s';
-			$dateLocal = date($format, $t);
-			$date = DateTime::createFromFormat($format, $dateLocal, $this->getTimeZone());
-			$date->setTimezone(new DateTimeZone('UTC'));
-			$result['Value'] = $date->format(self::API_TIME_FORMAT_STRING);
-			$this->delete($entry, 'Type', 'Year');
-			$this->delete($entry, 'Type', 'Month');
-			$this->delete($entry, 'Type', 'Day');
-			$this->delete($entry, 'Type', 'Hour');
-			$this->delete($entry, 'Type', 'Minute');
-		} elseif ($Date && $Time) {
-			$date = DateTime::createFromFormat($Date['Format'] . ' ' . $Time['Format'], $Date['Value'] . ' ' . $Time['Value'], $this->getTimeZone());
-			if (!$date) {
-				throw new Exception("Invalid date or time format (monitoring point national code: $NCD): Date format is \"" .
-					$Date["Format"] . "\" value is \"" . $Date["Value"] . "\", Time format is \"" . $Time["Format"] .
-				"\", value is \"" . $Time["Value"] . "\". Entry dropped.");
-			}
-			$date->setTimezone(new DateTimeZone('UTC'));
-			$result['Value'] = $date->format(self::API_TIME_FORMAT_STRING);
-			$this->delete($entry, 'Type', 'Date');
-			$this->delete($entry, 'Type', 'Time');
-		} elseif ($DateTime) {
-			$date = DateTime::createFromFormat($DateTime['Format'], $DateTime['Value'], $this->getTimeZone());
-			if (!$date) {
-				throw new Exception("Invalid datetime format (monitoring point national code: $NCD): Format is \"" . $DateTime["Format"] .
-				"\", value is \"" . $DateTime["Value"] . "\". Entry dropped.");
-			}
-			$date->setTimezone(new DateTimeZone('UTC'));
-			$result['Value'] = $date->format(self::API_TIME_FORMAT_STRING);
-			$this->delete($entry, 'Type', 'DateTime');
-		} else {
-			throw new Exception('Incomplete date');
-		}
-		array_push($entry, $result);
-	}
-
-
-	/**
-	 * Convert value parameters in entry: Remove thousands separator, change decimal separator to ".",
-	 * add entry for unit if not available and convert values to
-	 * base units.
-	 *
-	 * @param array $entry entry with parsed information
+	 * @param ResolvedGroup $resolvedGroup
 	 *
 	 * @return bool returns true, if value is valid. Value may be empty string if not available. In this case value is invalid.
 	 */
-	private function convertValue(array &$entry): bool {
-		$itemUnit = $this->getParameter($entry, 'Type', 'ObservedPropertyUnit');
-		$itemSymbol = $this->getParameter($entry, 'Type', 'ObservedPropertySymbol');
-
+	private function convertValue(ResolvedGroup $resolvedGroup): bool {
 		$skipValues = [''];
 		if ($this->skipValue) {
 			$skipValues[] = $this->skipValue;
 		}
 
-		$valid = false;
-		foreach ($entry as &$item) {
-			if ($item['Type'] == 'ObservedPropertyValue') {
-				if (!in_array($item['Value'], $skipValues, true)) {
-					$valid = true;
-					if ($this->separatorThousands != '') {
-						$item['Value'] = str_replace($this->separatorThousands, '', $item['Value']);
-					}
-					if ($this->separatorDecimals != '.' && $this->separatorDecimals != '') {
-						$item['Value'] = str_replace($this->separatorDecimals, '.', $item['Value']);
-					}
-					if (!$itemUnit) {
-						$elem = [
-							'Type'   => 'ObservedPropertyUnit',
-							'Value'  => $item['Unit'],
-							'Format' => null,
-							'Unit'   => null,
-						];
-						array_push($entry, $elem);
-						$unit = $item['Unit'];
-					} else {
-						$unit = $itemUnit['Value'];
-					}
-					$this->convertUnitToBaseUnit($item['Value'], $itemSymbol['Value'], $unit);
+		foreach ($resolvedGroup->getItemsWithParameter(ObservedPropertyValueParameter::class) as $valueItem) {
+			if (in_array($valueItem->getValue(), $skipValues, true)) {
+				return false;
+			}
+			if ($this->separatorThousands != '') {
+				$valueItem->setValue(str_replace($this->separatorThousands, '', $valueItem->getValue()));
+			}
+			if ($this->separatorDecimals != '.' && $this->separatorDecimals != '') {
+				$valueItem->setValue(str_replace($this->separatorDecimals, '.', $valueItem->getValue()));
+			}
+			if ($valueItem->getParameter()->getValueConversion()) {
+				//Convert value if valueConversion parameter is set in format configuration
+				$valueItem->setValue($valueItem->getParameter()->convertValueUnit($valueItem->getValue()));
+			}
+			$valueItem->setValue((float) $valueItem->getValue());
+		}
+
+		return true;
+	}
+
+
+	/**
+	 * Assembles date from components like day, month, year, hour and minute. If these components are present in resolved group, they are joined to a "DateTime" item and deleted from $entry.
+	 * The "DateTime" item has time format as given by API_TIME_FORMAT_STRING
+	 *
+	 * @param ResolvedGroup $resolvedGroup
+	 *
+	 * @throws Exception
+	 */
+	private function assembleDate(ResolvedGroup $resolvedGroup) {
+		//Get all date-type items from resolved group
+		$dateItems = $resolvedGroup->getItemsWithParameter(DateParameter::class);
+		$ncd = $resolvedGroup->getMonitoringPointItem()->getValue();
+
+		//Build an initial date array with default values. These values will be overwritten by the date components from.
+		$dateParams = ['Year' => null, 'Month' => null, 'Day' => null, 'Hour' => '00', 'Minute' => '00', 'Second' => '00'];
+		foreach ($dateItems as $dateItem) {
+			$format = $dateItem->getParameter()->getFormat();
+			$type = $dateItem->getParameter()->getDateType();
+			$value = $dateItem->getValue();
+
+			if (in_array($type, ['Year', 'Month', 'Day', 'Hour', 'Minute', 'Second'])) {
+				//Atomic date components are stored in $dateParams
+				$dateParams[$type] = $value;
+			}
+			if (strpos($type, 'Date') !== false) { //In case of Date or DateTime
+				//In case of Date or DateTime, the date components are stored in $dateParams
+				$date = DateTime::createFromFormat($format, $value);
+				if (!$date) {
+					throw new Exception(sprintf("Invalid date format (monitoring point national code: %s): Format is %s, value is %s. Entry dropped.", $ncd, $format, $value));
 				}
+				$dateParams['Year'] = preg_match('/[yY]/', $format) ? $date->format('Y') : '0001';
+				$dateParams['Month'] = preg_match('/[mMnF]/', $format) ? $date->format('m') : '01';
+				$dateParams['Day'] = preg_match('/[dD]/', $format) ? $date->format('d') : '01';
 			}
-		}
-
-		return $valid;
-	}
-
-
-	/**
-	 * Convert value parameters for whole list and deletes entries if value is not valid.
-	 *
-	 * @param array $flatList list of parsed information
-	 *
-	 * @see convertValue
-	 */
-	private function convertValues(array &$flatList) {
-		foreach ($flatList as $key => &$entry) {
-			if (!$this->convertValue($entry)) {
-				unset($flatList[$key]);
+			if (strpos($type, 'Time') !== false) { //In case of Time or DateTime
+				//In case of Time or DateTime, the time components are stored in $dateParams
+				$time = DateTime::createFromFormat($format, $value);
+				if (!$time) {
+					throw new Exception(sprintf("Invalid time format (monitoring point national code: %s): Format is %s, value is %s. Entry dropped.", $ncd, $format, $value));
+				}
+				$dateParams['Hour'] = preg_match('/[GHh]/', $format) ? $time->format('H') : '00';
+				$dateParams['Minute'] = preg_match('/[i]/', $format) ? $time->format('i') : '00';
+				$dateParams['Second'] = preg_match('/[s]/', $format) ? $time->format('s') : '00';
 			}
+			$resolvedGroup->removeItem($dateItem);
 		}
-		$flatList = array_values($flatList);
+
+		//Build DateTime item from dateParams
+		$date = DateTime::createFromFormat('Y-m-d-H-i-s', implode('-', $dateParams), $this->getTimeZone());
+		if (!$date) {
+			throw new Exception(sprintf("Invalid date or time (monitoring point national code: %s): %s - Entry dropped", $ncd, implode('-', $dateParams)));
+		}
+		//Convert date to UTC
+		$date->setTimezone(new DateTimeZone('UTC'));
+
+		//Add DateTime item to resolved group with API_TIME_FORMAT_STRING format
+		$resolvedGroup->addItem(new ResolvedItem(
+			(new DateParameter())->setOptions(['Type' => 'DateTime', 'Format' => self::API_TIME_FORMAT_STRING]),
+			$date->format(self::API_TIME_FORMAT_STRING)
+		));
 	}
 
 
 	/**
-	 * Create XML data from the monitoring point input array.
+	 * Parse XML file and return the parsed data
 	 *
-	 * @param array $mPointsArray
-	 *
-	 * @return SimpleXMLElement[]
-	 * @throws CreateInputXmlException
-	 * @see CreateInputXml
-	 * @see InputXmlData
-	 */
-	private function meteringPointInputXmlsFromArray(array $mPointsArray): array {
-		$payloads = [];
-
-		$creator = new CreateInputXml();
-		foreach ($mPointsArray as $mPointId => $properties) {
-			$properties = array_map(function ($key, $value) {
-				return new InputXmlPropertyData($key, $value);
-			}, array_keys($properties), $properties);
-			array_push($payloads, $creator->generateXml(new InputXmlData($mPointId, $properties)));
-		}
-
-		return $payloads;
-	}
-
-
-	/**
-	 * @return array|false|mixed|string
-	 * @throws Exception
-	 */
-	protected function getFormatsConfig(): array {
-		if (is_null($this->formats)) {
-			$formatsPathname = CONFIGURATION_PATH . '/' . $this->formatsFilename; //Path of file is in a fixed location
-			if (!(file_exists($formatsPathname) && //File must be existing
-				($formats = file_get_contents($formatsPathname)) && //File must be not-empty and readable
-				($formats = json_decode($formats, true)) //Decode to json
-			)) {
-				throw new Exception("Syntax error in json string of formats configuration file '$formatsPathname', or file does not exist.");
-			}
-			$this->formats = $formats;
-		}
-
-		return $this->formats;
-	}
-
-
-	/**
-	 * Assemble dates in whole list of entries.
-	 *
-	 * @param array $flatList list of parsed information. Entries are themselve lists of parsed parameters.
-	 *
-	 * @throws Exception
-	 * @see assembleDate
-	 */
-	private function assembleDates(array &$flatList) {
-		foreach ($flatList as $key => &$entry) {
-			try {
-				$this->assembleDate($entry);
-			} catch (\Exception $e) {
-				unset($flatList[$key]);
-			}
-		}
-		$flatList = array_values($flatList);
-	}
-
-
-	/**
 	 * @inheritDoc
 	 * @throws CreateInputXmlException
 	 * @throws Exception
 	 */
 	public function parse(Resource $resource): array {
-		Console::getInstance()->writeLog(sprintf('Received %s characters', strlen($resource->contents)));
+		$this->flatList = [];
+		Console::getInstance()->writeLog(sprintf('Received %s characters', strlen($resource->getContents())));
 
-		$resource->contents = str_replace('xlink:href', 'href', $resource->contents); // Workaround for WaterML 2.0
+		$resource->setContents(str_replace('xlink:href', 'href', $resource->getContents())); // Workaround for WaterML 2.0
 
 		libxml_use_internal_errors(true); // this turns off spitting parsing errors on screen
-		$xml = new SimpleXMLElement($resource->contents);
+		$xml = new SimpleXMLElement($resource->getContents());
 		if (!empty($ns = $xml->getDocNamespaces())) {
 			$xml->registerXPathNamespace('def', array_values($ns)[0]);
 		}
 
-		$formats = $this->getFormatsConfig();
-
-		// strip top-level element from formats
-		if (empty($this->getAndStripOneCommonElement($formats))) {
-			throw new Exception('XML definition does not have a top-level element');
+		//Check if formats are defined
+		if (!$this->getFormatsConfig()->count()) {
+			throw new Exception('No formats defined for XML parser');
 		}
 
-		$flatList = $this->parseIntoHierarchy($xml, $formats, [], 0);
+		//Parse XML into hierarchy, store in $this->flatList.
+		//This list contains resolved groups, each group can contain one MonitoringPoint, one ObservedPropertySymbol, multiple Date and multiple ObservedPropertyValue items
+		$this->parseIntoHierarchy($xml);
 
-		// replace external observed property symbols and add missing information from API-Call (Monitoring Point or Observed Property Symbol)
-		if ($resource->meta) {
-			$newEntries = [];
-			foreach ($flatList as $key => &$entry) {
-				if (!$this->getParameter($entry, 'Type', 'MonitoringPoint') && !empty($resource->meta['MonitoringPointNCDs'])) {
-					//Add monitoring point national code from API-Call
-					$elem = [
-						'Type'   => 'MonitoringPoint',
-						'Value'  => $resource->meta['MonitoringPointNCDs'][0],
-						'Format' => null,
-						'Unit'   => null,
-					];
-					array_push($entry, $elem);
+		foreach ($this->flatList as $key => $resolvedGroup) {
+			//Remove groups without value
+			$valueItems = $resolvedGroup->getItemsWithParameter(ObservedPropertyValueParameter::class);
+			if (count($valueItems) < 1) {
+				continue;
+			}
+
+			//Split groups with multiple value items to multiple groups with one value item. The original group is deleted from $this->flatList
+			foreach ($valueItems as $valueItem) {
+				//Create new group with the same parameter.
+				$newGroup = new ResolvedGroup();
+				$newGroup->addItem(new ResolvedItem($resolvedGroup->getMonitoringPointItem()->getParameter(), $resolvedGroup->getMonitoringPointItem()->getValue()));
+
+				//Add observed property symbol to new group
+				if ($resolvedGroup->getObservedPropertySymbolItem()) {
+					//The property symbol is defined in the resolved group. Copy this item to the new group.
+					$newGroup->addItem(new ResolvedItem(
+						$resolvedGroup->getObservedPropertySymbolItem()->getParameter(),
+						$resolvedGroup->getObservedPropertySymbolItem()->getValue()
+					));
+				} elseif ($valueItem->getParameter()->getSymbol()) {
+					//The property symbol is not defined in the resolved group, but it is defined in the value item (by the configuration). Add this symbol to the new group.
+					$newGroup->addItem(new ResolvedItem(new ObservedPropertySymbolParameter(), $valueItem->getParameter()->getSymbol()));
 				}
 
-				$obs = $this->getParameter($entry, 'Type', 'ObservedPropertySymbol');
-				if ($obs) {
-					// convert external (in-file) symbol to internal symbol
-					$symbolNameInFile = $obs['Value'] ?? null;
-					$variableName = $obs['Format'] ?? null;
-					if ($symbolNameInFile && $variableName) {
-						if (($symbol = $this->getInternalObservedPropertySymbol($resource->meta['observedPropertyConversions'], $variableName, $symbolNameInFile))) {
-							$this->delete($entry, 'Type', 'ObservedPropertySymbol');
-							$obs['Value'] = $symbol;
-							array_push($entry, $obs);
-						} else {
-							unset($flatList[$key]); // Delete whole entry as observed property was not found
-						}
-					}
-				} else {
-					if (isset($resource->meta['ObservedPropertySymbols']) && count($resource->meta['ObservedPropertySymbols']) === 1) {
-						// Only one observed property by call: Add observed property symbol from API-Call
-						$elem = [
-							'Type'   => 'ObservedPropertySymbol',
-							'Value'  => $resource->meta['ObservedPropertySymbols'][0],
-							'Format' => null,
-							'Unit'   => null,
-						];
-						// delete all occurrences of ObservedPropertyValue with wrong symbol
-						foreach ($entry as $ekey => &$e) {
-							if ($e['Type'] == 'ObservedPropertyValue' && $e['Format'] != $elem['Value']) {
-								unset($entry[$ekey]);
-							}
-						}
-						$entry = array_values($entry);
-						array_push($entry, $elem);
+				//Copy date items to new group
+				foreach ($resolvedGroup->getDateItems() as $dateItem) {
+					$newGroup->addItem(new ResolvedItem($dateItem->getParameter(), $dateItem->getValue()));
+				}
+
+				//Add new value item to new group, and add new group to $this->flatList
+				$newGroup->addItem($valueItem);
+				$this->flatList[] = $newGroup;
+			}
+
+			unset($this->flatList[$key]);
+		}
+
+		$this->flatList = array_values($this->flatList);
+
+		//Replace external observed property symbols and add missing information from API-Call (Monitoring Point or Observed Property Symbol)
+		foreach ($this->flatList as $key => $resolvedGroup) {
+			if ($resource->getSpecificPointNCD() && !$resolvedGroup->getMonitoringPointItem()) {
+				//Add monitoring point national code from Resource, if it's not present in resolved item but was defined in the transport layer.
+				$resolvedGroup->addItem(new ResolvedItem(
+					$this->getFormatsConfig()->getMonitoringPointParameter(),
+					$resource->getSpecificPointNCD()
+				));
+			}
+
+			if (($symbolItem = $resolvedGroup->getObservedPropertySymbolItem())) {
+				//Convert external (in-file) symbol to internal symbol based on opserverd property symbol mapping
+				/** @var ObservedPropertySymbolParameter $configParameter */
+				$configParameter = $symbolItem->getParameter();
+				$symbolNameInFile = $symbolItem->getValue();
+				$variableName = $configParameter->getVariable();
+				if ($symbolNameInFile && $variableName) {
+					if (($symbol = $configParameter->mapObservedPropertySymbol($resource, $symbolNameInFile))) {
+						$symbolItem->setValue($symbol);
 					} else {
-						// add observed property symbol from ObservedPropertyValue
-						$count = 0;
-						foreach ($entry as &$e) {
-							if ($e['Type'] == 'ObservedPropertyValue') {
-								// copy entry to new entries, because multiple occurrences of 'ObservedPropertyValue' may be
-								// present in $entry for different observed properties
-								$newEntry = $entry;
-								$prop = $e['Format'];
-								$elem = [
-									'Type'   => 'ObservedPropertySymbol',
-									'Value'  => $prop,
-									'Format' => null,
-									'Unit'   => null,
-								];
-								array_push($newEntry, $elem);
-								// delete all occurrences of ObservedPropertyValue with wrong symbol
-								foreach ($newEntry as $newenkey => &$newenval) {  // FFF
-									if ($newenval['Type'] == 'ObservedPropertyValue' && $newenval['Format'] != $prop) {
-										unset($newEntry[$newenkey]);
-									}
-								}
-								$newEntry = array_values($newEntry);
-								array_push($newEntries, $newEntry);
-								++ $count;
-							}
-						}
-						if ($count == 0) {
-							throw new Exception('No value for any observed property in entry.');
-						}
-						unset($flatList[$key]);
+						// Delete whole resolved item as observed property was not found
+						unset($this->flatList[$key]);
+						continue;
 					}
 				}
-			}
-			$flatList = array_values($flatList);
-			$flatList = array_merge($flatList, $newEntries);
-		}
+			} elseif ($resource->getSpecificPropertySymbol()) {
+				//If Observed Property Symbol is defined in the Resource (by the transport layer), set it in the resolved group
 
-		// delete entries which do not fit to API-call (extra monitoring points, extra observed properties)
-		if ($resource->meta && (!isset($resource->meta['keepExtraData']) || !$resource->meta['keepExtraData'])) {
-			foreach ($flatList as $key => &$entry) {
-				$mp = $this->getParameter($entry, 'Type', 'MonitoringPoint');
-				$obs = $this->getParameter($entry, 'Type', 'ObservedPropertySymbol');
-				if (!in_array($mp['Value'], $resource->meta['MonitoringPointNCDs']) || !in_array($obs['Value'], $resource->meta['ObservedPropertySymbols'])) {
-					unset($flatList[$key]);
+				//delete all occurrences of flat list with symbol different from the one in Resource
+				$symbolItem = $resolvedGroup->getObservedPropertySymbolItem();
+				if ($symbolItem && $symbolItem->getValue() != $resource->getSpecificPropertySymbol()) {
+					unset($this->flatList[$key]);
+					continue;
+				}
+
+				//Add property symbol from Resource, it is not present in resolved item
+				$resolvedGroup->addItem(new ResolvedItem(
+					$this->getFormatsConfig()->getPropertySymbolParameter(),
+					$resource->getSpecificPropertySymbol()
+				));
+			}
+		}
+		$this->flatList = array_values($this->flatList);
+
+		//Delete entries which do not fit to Resource meta (extra monitoring points, extra observed properties)
+		if (!$resource->isKeepExtraData()) {
+			foreach ($this->flatList as $key => $resolvedGroup) {
+				if ($resource->getPointNCDs() && !in_array($resolvedGroup->getMonitoringPointItem()->getValue(), $resource->getPointNCDs())) {
+					unset($this->flatList[$key]);
+				} elseif ($resource->getPropertySymbols() && !in_array($resolvedGroup->getObservedPropertySymbolItem()->getValue(), $resource->getPropertySymbols())) {
+					unset($this->flatList[$key]);
 				}
 			}
-			$flatList = array_values($flatList);
+			$this->flatList = array_values($this->flatList);
 		}
 
-		$this->assembleDates($flatList);
-		$this->convertValues($flatList);
+		//Assemble dates from components if needed
+		foreach ($this->flatList as $key => $resolvedGroup) {
+			try {
+				$this->assembleDate($resolvedGroup);
+			} catch (\Exception $e) {
+				unset($this->flatList[$key]);
+			}
+		}
+		$this->flatList = array_values($this->flatList);
 
+		//Convert values
+		foreach ($this->flatList as $key => $resolvedGroup) {
+			if (!$this->convertValue($resolvedGroup)) {
+				unset($this->flatList[$key]);
+			}
+		}
+		$this->flatList = array_values($this->flatList);
+
+		//Build result array, grouped by monitoring point and observed property symbol
 		$resultArray = [];
-		foreach ($flatList as $line) {
-			$mp = $this->getParameter($line, 'Type', 'MonitoringPoint')['Value'];
-
-			if (!array_key_exists($mp, $resultArray)) {
-				$resultArray[$mp] = [];
-			}
-
-			$obs = $this->getParameter($line, 'Type', 'ObservedPropertySymbol')['Value'];
-
-			if (!array_key_exists($obs, $resultArray[$mp])) {
-				$resultArray[$mp][$obs] = [];
-			}
-
-			$time = $this->getParameter($line, 'Type', 'DateTime')['Value'];
-			$value = strval($this->getParameter($line, 'Type', 'ObservedPropertyValue')['Value']);
-
-			$resultArray[$mp][$obs] = array_merge(
-				$resultArray[$mp][$obs],
-				[
-					[
-						'time'  => $time,
-						'value' => $value
-					]
-				]
-			);
+		foreach ($this->flatList as $resolvedGroup) {
+			$resultArray[$resolvedGroup->getMonitoringPointItem()->getValue()][$resolvedGroup->getObservedPropertySymbolItem()->getValue()][] = [
+				'time'  => $resolvedGroup->getDateItems()[0]->getValue(),
+				'value' => strval($resolvedGroup->getItemsWithParameter(ObservedPropertyValueParameter::class)[0]->getValue())
+			];
 		}
 
-		return $this->meteringPointInputXmlsFromArray($resultArray);
+		$payloads = [];
+		$creator = new CreateInputXml();
+		foreach ($resultArray as $mPointId => $properties) {
+			$properties = array_map(function ($key, $value) {
+				return new InputXmlPropertyData($key, $value);
+			}, array_keys($properties), $properties);
+			$payloads[] = $creator->generateXml(new InputXmlData($mPointId, $properties));
+		}
+
+		return $payloads;
 	}
 
 

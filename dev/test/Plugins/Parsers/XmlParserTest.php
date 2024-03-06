@@ -35,9 +35,9 @@ class XmlParserTest extends TestCase {
 		$this->configuration = parse_ini_file(CONFIGURATION_PATH.'/http_xml.conf');
 
 		$this->resource = new Resource();
-		$this->resource->name = 'test';
-		$this->resource->contents = file_get_contents(TEST_RESOURCES_PATH.'/xmls/arso_hydro.xml');
-		$this->resource->meta = include TEST_RESOURCES_PATH.'/xmls/arso_hydro_meta.php';
+		$this->resource->setName('test');
+		$this->resource->setContents(file_get_contents(TEST_RESOURCES_PATH.'/xmls/arso_hydro.xml'));
+		//$this->resource->meta = include TEST_RESOURCES_PATH.'/xmls/arso_hydro_meta.php';
  	}
 
 

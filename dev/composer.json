@@ -11,5 +11,8 @@
       "type": "vcs",
       "url": "https://github.com/srggroup/srg_standards"
     }
-  ]
+  ],
+	"require": {
+		"ext-simplexml": "*"
+	}
 }
