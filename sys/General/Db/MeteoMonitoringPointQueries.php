@@ -32,7 +32,8 @@ class MeteoMonitoringPointQueries extends AbstractMonitoringPointQueries {
 		'meteopoint.country',
 		'meteopoint.name',
 		'meteopoint.location',
-        'meteopoint.ncd_pst', // national code listed in log files
+		'meteopoint.ncd_pst', // national code listed in log files
+		'operator.name'
 	];
 
 
@@ -108,9 +109,7 @@ class MeteoMonitoringPointQueries extends AbstractMonitoringPointQueries {
 				->where('mpop.mpointid = :mpopId')
 				->addParameter(':mpopId', $id)
 				->run();
-			$monitoringPoint['last_updated_by_user'] = !empty($monitoringPoint['last_updated_by']) ?
-				UserQueries::getById($monitoringPoint['last_updated_by']) :
-				null;
+			$monitoringPoint['last_updated_by_user'] = !empty($monitoringPoint['last_updated_by']) ? UserQueries::getById($monitoringPoint['last_updated_by']) : null;
 		}
 
 		return $monitoringPoint;
@@ -192,7 +191,7 @@ class MeteoMonitoringPointQueries extends AbstractMonitoringPointQueries {
 	public static function prepareData(array $data): array {
 		$mapKeys = [
 			'station_classificationid' => 'classification',
-			'operatorid'                    => 'operator',
+			'operatorid'               => 'operator',
 		];
 		foreach ($mapKeys as $toKey => $fromKey) {
 			if (array_key_exists($fromKey, $data)) {
@@ -203,36 +202,36 @@ class MeteoMonitoringPointQueries extends AbstractMonitoringPointQueries {
 
 		$returnData = [
 			//strings
-			'name'                          => $data['name'] ?? null,
-			'ncd_pst'                       => $data['ncd_pst'] ?? null,
-			'eucd_pst'                      => $data['eucd_pst'] ?? null,
-			'country'                       => $data['country'] ?? null,
-			'location'                      => $data['location'] ?? null,
-			'river_basin_id'                => $data['river_basin_id'] ?: null,
-			'vertical_reference'            => $data['vertical_reference'] ?? null,
+			'name'                     => $data['name'] ?? null,
+			'ncd_pst'                  => $data['ncd_pst'] ?? null,
+			'eucd_pst'                 => $data['eucd_pst'] ?? null,
+			'country'                  => $data['country'] ?? null,
+			'location'                 => $data['location'] ?? null,
+			'river_basin_id'           => $data['river_basin_id'] ?: null,
+			'vertical_reference'       => $data['vertical_reference'] ?? null,
 
 			// numbers
-			'long'                          => isset($data['long']) && $data['long'] !== '' ? (float) $data['long'] : null,
-			'lat'                           => isset($data['lat']) && $data['lat'] !== '' ? (float) $data['lat'] : null,
-			'z'                             => isset($data['z']) && $data['z'] !== '' ? (float) $data['z'] : null,
-			'maplat'                        => isset($data['maplat']) && $data['maplat'] !== '' ? (float) $data['maplat'] : null,
-			'maplong'                       => isset($data['maplong']) && $data['maplong'] !== '' ? (float) $data['maplong'] : null,
-			'altitude'                      => isset($data['altitude']) && $data['altitude'] !== '' ? (float) $data['altitude'] : null,
-			'utc_offset'                    => isset($data['utc_offset']) && $data['utc_offset'] !== '' ? (int) $data['utc_offset'] : null,
+			'long'                     => isset($data['long']) && $data['long'] !== '' ? (float) $data['long'] : null,
+			'lat'                      => isset($data['lat']) && $data['lat'] !== '' ? (float) $data['lat'] : null,
+			'z'                        => isset($data['z']) && $data['z'] !== '' ? (float) $data['z'] : null,
+			'maplat'                   => isset($data['maplat']) && $data['maplat'] !== '' ? (float) $data['maplat'] : null,
+			'maplong'                  => isset($data['maplong']) && $data['maplong'] !== '' ? (float) $data['maplong'] : null,
+			'altitude'                 => isset($data['altitude']) && $data['altitude'] !== '' ? (float) $data['altitude'] : null,
+			'utc_offset'               => isset($data['utc_offset']) && $data['utc_offset'] !== '' ? (int) $data['utc_offset'] : null,
 
 			// foreign keys
-			'station_classificationid'      => isset($data['station_classificationid']) ? $data['station_classificationid'] ?: null : null,
-			'operatorid'                    => isset($data['operatorid']) ? $data['operatorid'] ?: null : null,
-			'last_updated_by'               => isset($data['last_updated_by']) ? $data['last_updated_by'] ?: null : null,
+			'station_classificationid' => isset($data['station_classificationid']) ? $data['station_classificationid'] ?: null : null,
+			'operatorid'               => isset($data['operatorid']) ? $data['operatorid'] ?: null : null,
+			'last_updated_by'          => isset($data['last_updated_by']) ? $data['last_updated_by'] ?: null : null,
 
 			// dates
-			'start_time'                    => !empty($data['start_time']) ? $data['start_time'] : null,
-			'end_time'                      => !empty($data['end_time']) ? $data['end_time'] : null,
-			'last_updated_at'               => !empty($data['last_updated_at']) ? $data['last_updated_at'] : null,
+			'start_time'               => !empty($data['start_time']) ? $data['start_time'] : null,
+			'end_time'                 => !empty($data['end_time']) ? $data['end_time'] : null,
+			'last_updated_at'          => !empty($data['last_updated_at']) ? $data['last_updated_at'] : null,
 
 			//boolean
-			'is_active'                    => isset($data['is_active']) && $data['is_active'] !== '' ? (bool) $data['is_active'] : null,
-            'is_out_of_order'              => isset($data['is_out_of_order']) && $data['is_out_of_order'] !== '' ? (bool) $data['is_out_of_order'] : null,
+			'is_active'                => isset($data['is_active']) && $data['is_active'] !== '' ? (bool) $data['is_active'] : null,
+			'is_out_of_order'          => isset($data['is_out_of_order']) && $data['is_out_of_order'] !== '' ? (bool) $data['is_out_of_order'] : null,
 		];
 
 		//Save only fields which have been provided in data array
