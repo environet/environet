@@ -21,6 +21,10 @@ abstract class AbstractFormatParameter {
 
 	protected bool $optional = false;
 
+	protected ?int $iterationStart = null;
+
+	protected ?int $iterationEnd = null;
+
 
 	/**
 	 * @param array $config
@@ -108,15 +112,30 @@ abstract class AbstractFormatParameter {
 
 
 	/**
+	 * @return string|null
+	 */
+	public function getLastTag(): ?string {
+		return $this->tagHierarchy[array_key_last($this->tagHierarchy)] ?? null;
+	}
+
+
+	/**
 	 * Get the XPath of the parameter, optionally under a given path.
 	 *
-	 * @param string $underPath
+	 * @param string   $underPath
+	 * @param int|null $i
 	 *
 	 * @return string
 	 */
-	public function getXPath(string $underPath = ''): string {
+	public function getXPath(string $underPath = '', ?int $i = null): string {
 		$underPath = explode('/', trim($underPath, '/'));
 		$tagHierarchy = array_diff($this->tagHierarchy, $underPath);
+
+		if ($this->isIterable()) {
+			//If the parameter is iterable, replace the last tag's variable part with the iteration index
+			$lastTagKey = array_key_last($tagHierarchy);
+			$tagHierarchy[$lastTagKey] = preg_replace('/\[i:\d+-\d+\]$/', $i, $tagHierarchy[$lastTagKey]);
+		}
 
 		return implode('/', $tagHierarchy);
 	}
@@ -136,6 +155,36 @@ abstract class AbstractFormatParameter {
 		} else {
 			return $element->__toString();
 		}
+	}
+
+
+	/**
+	 * Check if the parameter is iterable, and set the iteration boundaries if it is.
+	 * Iterable if the tag hierarchy ends with [i:start-end]
+	 * @return bool
+	 */
+	public function isIterable(): bool {
+		if ($this->iterationStart !== null && $this->iterationEnd !== null) {
+			//Already checked and set
+			return true;
+		}
+		if ($this->getLastTag() && preg_match('/^([^[]+)(\[i:(\d+)-(\d+)\])$/', $this->getLastTag(), $m)) {
+			$this->iterationStart = (int) $m[3];
+			$this->iterationEnd = (int) $m[4];
+
+			return true;
+		}
+
+		return false;
+	}
+
+
+	/**
+	 * Return the iteration boundaries if the parameter is iterable.
+	 * @return array{int, int}
+	 */
+	public function getIterationBoundaries(): ?array {
+		return $this->isIterable() ? [$this->iterationStart, $this->iterationEnd] : null;
 	}
 
 

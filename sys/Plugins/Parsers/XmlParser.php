@@ -125,55 +125,71 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 			throw new Exception('Given elements do not exist in file: ' . $groupXpath);
 		}
 
-		//Iterate over groups, parse parameters and recurse if needed
-		foreach ($groups as $groupKey => $group) {
-			//The group where the parameters will be stored can be a new group or a clone of the parent group in case of nested calls.
-			//If nested, the parent group already contains some parameters, but we have to clone it because this sub-group can contain the same parameters with different values.
-			$resolvedGroup = $parentGroup ? clone $parentGroup : new ResolvedGroup();
-			$subParameters = []; //Collect sub-parameters for recursion
-
-			foreach ($formatsConfig->getParameters() as $parameter) {
-				if ($parametersOnly && !in_array($parameter, $parametersOnly, true)) {
-					//In case of recursive call, only parse parameters in $parametersOnly (which are not yet resolved)
-					continue;
+		//Get iteration boundaries for the current tag
+		$iterationsBoundaries = null;
+		foreach ($formatsConfig->getParameters() as $parameter) {
+			if ($parameter->isIterable()) {
+				if ($iterationsBoundaries && $iterationsBoundaries !== $parameter->getIterationBoundaries()) {
+					//Iteration boundaries can't be different for tags
+					throw new Exception('Different iteration boundaries for the same tag');
 				}
+				$iterationsBoundaries = $parameter->getIterationBoundaries();
+			}
+		}
+		$start = $iterationsBoundaries[0] ?? 1;
+		$end = $iterationsBoundaries[0] ?? 1;
 
-				//Get xpath under current group
-				$xpath = $parameter->getXpath($commonPath);
+		for ($i = $start; $i <= $end; $i ++) {
+			//Iterate over groups, parse parameters and recurse if needed
+			foreach ($groups as $groupKey => $group) {
+				//The group where the parameters will be stored can be a new group or a clone of the parent group in case of nested calls.
+				//If nested, the parent group already contains some parameters, but we have to clone it because this sub-group can contain the same parameters with different values.
+				$resolvedGroup = $parentGroup ? clone $parentGroup : new ResolvedGroup();
+				$subParameters = []; //Collect sub-parameters for recursion
 
-				/** @var SimpleXMLElement|SimpleXMLElement[] $targetElement */
-				//Target element is the element to be parsed. It can be the group itself or a collection of sub-items of the group
-				$targetElement = $xpath ? $group->xpath($xpath) : $group;
-
-				if ($targetElement == null) {
-					if ($parameter->isOptional()) {
-						//Optional element is missing, skip group
+				foreach ($formatsConfig->getParameters() as $parameter) {
+					if ($parametersOnly && !in_array($parameter, $parametersOnly, true)) {
+						//In case of recursive call, only parse parameters in $parametersOnly (which are not yet resolved)
 						continue;
 					}
-					Console::getInstance()->writeLog(sprintf('Required element "%s" missing in group %d, skip group', $xpath, $groupKey + 1));
-					continue 2;
-				}
-				if ($targetElement instanceof SimpleXMLElement && !empty($parameter->getAttribute()) && $targetElement->getName() === end($commonElements)) {
-					//Desired information is attribute of group-defining tag
-					$resolvedGroup->addItem(new ResolvedItem($parameter, $parameter->getXmlValue($targetElement, $this->skipEmptyValueTag)));
-				} else {
-					if (count($targetElement) === 1) {
-						//Target element is a single element, value can be parsed
-						$resolvedGroup->addItem(new ResolvedItem($parameter, $parameter->getXmlValue($targetElement[0], $this->skipEmptyValueTag)));
+
+					//Get xpath under current group
+					$xpath = $parameter->getXpath($commonPath, $i);
+
+					/** @var SimpleXMLElement|SimpleXMLElement[] $targetElement */
+					//Target element is the element to be parsed. It can be the group itself or a collection of sub-items of the group
+					$targetElement = $xpath ? $group->xpath($xpath) : $group;
+
+					if ($targetElement == null) {
+						if ($parameter->isOptional()) {
+							//Optional element is missing, skip group
+							continue;
+						}
+						Console::getInstance()->writeLog(sprintf('Required element "%s" missing in group %d, skip group', $xpath, $groupKey + 1));
+						continue 2;
+					}
+					if ($targetElement instanceof SimpleXMLElement && !empty($parameter->getAttribute()) && $targetElement->getName() === end($commonElements)) {
+						//Desired information is attribute of group-defining tag
+						$resolvedGroup->addItem(new ResolvedItem($parameter, $parameter->getXmlValue($targetElement, $this->skipEmptyValueTag)));
 					} else {
-						//Target element is a collection of elements, recursion is needed
-						$subParameters[] = $parameter;
+						if (count($targetElement) === 1) {
+							//Target element is a single element, value can be parsed
+							$resolvedGroup->addItem(new ResolvedItem($parameter, $parameter->getXmlValue($targetElement[0], $this->skipEmptyValueTag)));
+						} else {
+							//Target element is a collection of elements, recursion is needed
+							$subParameters[] = $parameter;
+						}
 					}
 				}
-			}
 
-			if ($subParameters) {
-				//Do recursion for sub-parameters. It can create new groups or add parameters to the current group.
-				//The new groups will be added to $this->flatList in the called nested function.
-				$this->parseIntoHierarchy($group, $resolvedGroup, $hierarchyCounter + 1, $commonPath, $subParameters);
-			} else {
-				//All information available (from this group and from recursion), add to flatList
-				$this->flatList[] = $resolvedGroup;
+				if ($subParameters) {
+					//Do recursion for sub-parameters. It can create new groups or add parameters to the current group.
+					//The new groups will be added to $this->flatList in the called nested function.
+					$this->parseIntoHierarchy($group, $resolvedGroup, $hierarchyCounter + 1, $commonPath, $subParameters);
+				} else {
+					//All information available (from this group and from recursion), add to flatList
+					$this->flatList[] = $resolvedGroup;
+				}
 			}
 		}
 	}

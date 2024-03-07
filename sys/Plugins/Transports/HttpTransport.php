@@ -383,11 +383,14 @@ class HttpTransport extends AbstractTransport {
 			$variables += [$key => $ncd];
 		}
 
-		if (empty($observedPropertyConversions[$observedProperty])) {
-			//Observed property is not in the conversion list, not mapped, this property should be skipped
-			return null;
+		if (!empty($observedPropertyConversions)) {
+			if (empty($observedPropertyConversions[$observedProperty])) {
+				//Observed property is not in the conversion list, not mapped, this property should be skipped
+				return null;
+			}
+			$variables += $observedPropertyConversions[$observedProperty];
 		}
-		$variables += $observedPropertyConversions[$observedProperty];
+
 
 		return $variables;
 	}
