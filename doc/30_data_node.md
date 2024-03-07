@@ -410,6 +410,20 @@ A corresponding example for the configuration to parse the XML format of LfU is 
 ]
 ```
 
+In some special cases multiple time series items can be placed under one tag. e.g.:
+```xml
+<timeSeriesItem>
+  <mpointid></mpointid> <!--Tag of Monitoring Point ID, common for each iteration-->
+  <time1>2020-01-31 23:40:41</time1> <!--Date of Time series item 1-->
+  <value1>5.3</value1> <!--Value of Time series item 1-->
+  <time2>2020-01-31 23:40:41</time2> <!--Date of Time series item 2-->
+  <value2>5.3</value2> <!--Value of Time series item 2-->
+</timeSeriesItem>
+```
+To handle these cases, the last item of the tag hierarchy array can define this iteration In the following syntax:
+`time[i:1-20]`
+This means the time1, time2, time3, ... time20 tags will be iterated and the value of the i-th tag will be parsed. The same syntax can be used for the value tags as well, and the iterated tags will be paired together.
+
 #### Date specifications
 A date specification has the property “Parameter” set to “Year”, “Month”, “Day”, “Hour”, “Minute”, “Second”, “Date”, “Time” or “DateTime”, depending on the exact information specified. The "Format" field defines the format of the given date. For example, a datetime format would be “Y-m-d H:i:s” and would describe “2020-01-31 23:40:41”.
 
