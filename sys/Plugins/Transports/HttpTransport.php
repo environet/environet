@@ -306,7 +306,16 @@ class HttpTransport extends AbstractTransport {
 		foreach ($monitoringPoints as $monitoringPoint) {
 			foreach ($monitoringPoint["observed_properties"] as $observedProperty) {
 				// variable preparation
-				$variables = $this->prepareVariables($monitoringPoint["NCD"], $observedProperty, $monitoringPointConversions, $observedPropertyConversions);
+				$variables = $this->prepareVariables(
+					$monitoringPoint["NCD"],
+					$observedProperty,
+					$monitoringPointConversions,
+					$observedPropertyConversions
+				);
+				if ($variables === null) {
+					//Variable preparation is not possible, skip this property
+					continue;
+				}
 
 				// do variable substitution
 				$url = $baseUrl;
@@ -361,9 +370,9 @@ class HttpTransport extends AbstractTransport {
 	 * @param array  $monitoringPointConversions
 	 * @param array  $observedPropertyConversions
 	 *
-	 * @return array
+	 * @return array|null Null if variable preparation is not possible, otherwise an array of variables
 	 */
-	protected function prepareVariables(string $ncd, string $observedProperty, array $monitoringPointConversions, array $observedPropertyConversions): array {
+	protected function prepareVariables(string $ncd, string $observedProperty, array $monitoringPointConversions, array $observedPropertyConversions): ?array {
 		// variable preparation
 		$variables = [
 			"USERNAME" => $this->username,    // predefined property
@@ -374,10 +383,11 @@ class HttpTransport extends AbstractTransport {
 			$variables += [$key => $ncd];
 		}
 
-		$observedPropertyConversions = $observedPropertyConversions[$observedProperty];
-		if ($observedPropertyConversions) {
-			$variables += $observedPropertyConversions;
+		if (empty($observedPropertyConversions[$observedProperty])) {
+			//Observed property is not in the conversion list, not mapped, this property should be skipped
+			return null;
 		}
+		$variables += $observedPropertyConversions[$observedProperty];
 
 		return $variables;
 	}
