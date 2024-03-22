@@ -62,9 +62,12 @@ abstract class AbstractParser implements ParserInterface {
 	 * @return mixed
 	 */
 	public static function createTimeZoneConfig(Console $console) {
-		$validList = array_merge(timezone_identifiers_list(), timezone_abbreviations_list());
+		$validList = array_merge(
+			timezone_identifiers_list(),
+			array_map('strtoupper', array_keys(timezone_abbreviations_list()))
+		);
 		do {
-			$console->writeLine('Enter a source valid timezone string for conversion to UTC', Console::COLOR_YELLOW);
+			$console->writeLine('Enter a source valid timezone string for conversion to UTC (e.g CET or Europe/Vienna)', Console::COLOR_YELLOW);
 			$timezone = $console->ask('Timezone:');
 		} while (!in_array($timezone, $validList));
 
