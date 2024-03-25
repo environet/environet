@@ -137,7 +137,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 			}
 		}
 		$start = $iterationsBoundaries[0] ?? 1;
-		$end = $iterationsBoundaries[0] ?? 1;
+		$end = $iterationsBoundaries[1] ?? 1;
 
 		for ($i = $start; $i <= $end; $i ++) {
 			//Iterate over groups, parse parameters and recurse if needed
