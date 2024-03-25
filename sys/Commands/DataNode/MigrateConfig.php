@@ -251,7 +251,7 @@ class MigrateConfig extends BaseCommand {
 				}
 				if ($format['Parameter'] === 'ObservedPropertySymbol') {
 					$format = [
-						'Parameter'    => 'ObservedPropertyValue',
+						'Parameter'    => 'ObservedPropertySymbol',
 						'Variable'     => $format['Value'] ?: null,
 						'Attribute'    => $format['Attribute'] ?? null,
 						'TagHierarchy' => $format['Tag Hierarchy'] ?? null,
