@@ -333,13 +333,13 @@ class HttpTransport extends AbstractTransport {
 					$resource->setUrl($url);
 				}
 
-				if ($allNCDs) {
+				if ($allMonitoringPointsInOneFile) {
 					$resource->setPointNCDs($allNCDs);
 				} else {
 					$resource->setSpecificPointNCD($monitoringPoint['NCD']);
 				}
 
-				if ($allObservedProperties) {
+				if ($allObservedPropertyInOneFile) {
 					$resource->setPropertySymbols($allObservedProperties);
 				} else {
 					$resource->setSpecificPropertySymbol($observedProperty);

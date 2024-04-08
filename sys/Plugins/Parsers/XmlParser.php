@@ -426,7 +426,8 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 						continue;
 					}
 				}
-			} elseif ($resource->getSpecificPropertySymbol()) {
+			}
+			if ($resource->getSpecificPropertySymbol()) {
 				//If Observed Property Symbol is defined in the Resource (by the transport layer), set it in the resolved group
 
 				//delete all occurrences of flat list with symbol different from the one in Resource
@@ -436,11 +437,13 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 					continue;
 				}
 
-				//Add property symbol from Resource, it is not present in resolved item
-				$resolvedGroup->addItem(new ResolvedItem(
-					$this->getFormatsConfig()->getPropertySymbolParameter(),
-					$resource->getSpecificPropertySymbol()
-				));
+				if (!$symbolItem) {
+					//Add property symbol from Resource, it is not present in resolved item
+					$resolvedGroup->addItem(new ResolvedItem(
+						new ObservedPropertySymbolParameter,
+						$resource->getSpecificPropertySymbol()
+					));
+				}
 			}
 		}
 		$this->flatList = array_values($this->flatList);
