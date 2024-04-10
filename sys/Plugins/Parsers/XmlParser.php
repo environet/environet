@@ -13,6 +13,7 @@ use Environet\Sys\General\Model\ResolvedGroup;
 use Environet\Sys\General\Model\ResolvedItem;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\ParserInterface;
+use Environet\Sys\Plugins\PluginBuilder;
 use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Xml\CreateInputXml;
 use Environet\Sys\Xml\Exceptions\CreateInputXmlException;
@@ -505,11 +506,11 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 * @throws Exception
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::serializePropertyConfiguration()
 	 */
-	public static function create(Console $console): ParserInterface {
+	public static function create(Console $console, PluginBuilder $builder): ParserInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring XML parser', Console::COLOR_YELLOW);
 
-		$monitoringPointType = self::createMonitoringPointTypeConfig($console);
+		$monitoringPointType = self::createMonitoringPointTypeConfig($console, $builder);
 		$timeZone = self::createTimeZoneConfig($console);
 
 		$separatorThousands = $console->ask('Separator for groups of thousands in values. May be empty. Example: , for 12,040.01 cm');

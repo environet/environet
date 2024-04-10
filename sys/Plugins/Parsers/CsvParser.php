@@ -8,6 +8,7 @@ use DateTimeZone;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\ParserInterface;
+use Environet\Sys\Plugins\PluginBuilder;
 use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Plugins\WithConversionsConfigTrait;
 use Environet\Sys\Xml\CreateInputXml;
@@ -420,11 +421,11 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	 * @inheritDoc
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::serializePropertyConfiguration()
 	 */
-	public static function create(Console $console): ParserInterface {
+	public static function create(Console $console, PluginBuilder $builder): ParserInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring csv parser', Console::COLOR_YELLOW);
 
-		$monitoringPointType = self::createMonitoringPointTypeConfig($console);
+		$monitoringPointType = self::createMonitoringPointTypeConfig($console, $builder);
 		$timeZone = self::createTimeZoneConfig($console);
 
 		$console->writeLine('Enter the csv delimiter character. E.g.: a comma in case of comma separated csv files', Console::COLOR_YELLOW);

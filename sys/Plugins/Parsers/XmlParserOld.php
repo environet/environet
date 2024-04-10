@@ -7,6 +7,7 @@ use DateTimeZone;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\ParserInterface;
+use Environet\Sys\Plugins\PluginBuilder;
 use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Xml\CreateInputXml;
 use Environet\Sys\Xml\Exceptions\CreateInputXmlException;
@@ -125,7 +126,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 			$groupResolved = $resolved;
 			$formatsNew = [];
 			foreach ($formats as $format) {
-				if (($xpath = implode('/', $format["Tag Hierarchy"]))) {
+				if (($xpath = implode('/', $format["TagHierarchy"]))) {
 					// desired information is sub-item of group
 					$subXml = $group->xpath($xpath);
 				} else {
@@ -293,21 +294,21 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 	 * @throws Exception
 	 */
 	private function getAndStripOneCommonElement(array &$formats): ?string {
-		if (empty($formats) || !isset($formats[0]['Tag Hierarchy']) || empty($formats[0]['Tag Hierarchy'])) {
+		if (empty($formats) || !isset($formats[0]['TagHierarchy']) || empty($formats[0]['TagHierarchy'])) {
 			//Formats is empty, return empty string
 			return null;
 		}
-		if (count($formats) === 1 && count($formats[0]['Tag Hierarchy'])) {
+		if (count($formats) === 1 && count($formats[0]['TagHierarchy'])) {
 			//Formats only has one element, return this singe item
-			return array_shift($formats[0]['Tag Hierarchy']);
+			return array_shift($formats[0]['TagHierarchy']);
 		}
 
 		$difference = false;
 		$formatsCount = count($formats);
 		for ($i = 1; $i < $formatsCount; ++ $i) {
-			if (empty($formats[$i]['Tag Hierarchy'][0]) ||
-				empty($formats[$i - 1]['Tag Hierarchy'][0]) ||
-				$formats[$i]['Tag Hierarchy'][0] != $formats[$i - 1]['Tag Hierarchy'][0]
+			if (empty($formats[$i]['TagHierarchy'][0]) ||
+				empty($formats[$i - 1]['TagHierarchy'][0]) ||
+				$formats[$i]['TagHierarchy'][0] != $formats[$i - 1]['TagHierarchy'][0]
 			) {
 				$difference = true;
 			}
@@ -315,9 +316,9 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 		if ($difference) {
 			return null;
 		}
-		$result = $formats[0]["Tag Hierarchy"][0];
+		$result = $formats[0]["TagHierarchy"][0];
 		for ($i = 0; $i < $formatsCount; ++ $i) {
-			array_shift($formats[$i]["Tag Hierarchy"]);
+			array_shift($formats[$i]["TagHierarchy"]);
 		}
 
 		return $result;
@@ -690,11 +691,11 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 	 * @throws Exception
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::serializePropertyConfiguration()
 	 */
-	public static function create(Console $console): ParserInterface {
+	public static function create(Console $console, PluginBuilder $builder): ParserInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring XML parser', Console::COLOR_YELLOW);
 
-		$monitoringPointType = self::createMonitoringPointTypeConfig($console);
+		$monitoringPointType = self::createMonitoringPointTypeConfig($console, $builder);
 		$timeZone = self::createTimeZoneConfig($console);
 
 		$separatorThousands = $console->ask('Separator for groups of thousands in values. May be empty. Example: , for 12,040.01 cm');

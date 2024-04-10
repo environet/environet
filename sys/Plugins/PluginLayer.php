@@ -69,16 +69,17 @@ class PluginLayer {
 	/**
 	 * Create configuration during install command.
 	 *
-	 * @param Console $console
+	 * @param Console       $console
+	 * @param PluginBuilder $builder
 	 *
 	 * @return mixed
 	 * @uses \Environet\Sys\Plugins\PluginLayer::chooseAlternative()
 	 * @uses \Environet\Sys\Plugins\BuilderLayerInterface::create()
 	 */
-	public function createConfiguration(Console $console) {
+	public function createConfiguration(Console $console, PluginBuilder $builder) {
 		$class = $this->chooseAlternative($console);
 
-		return $class::create($console);
+		return $class::create($console, $builder);
 	}
 
 

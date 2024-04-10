@@ -4,6 +4,7 @@ namespace Environet\Sys\Plugins\Transports;
 
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\BuilderLayerInterface;
+use Environet\Sys\Plugins\PluginBuilder;
 use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Plugins\TransportInterface;
 use Environet\Sys\Plugins\WithConversionsConfigTrait;
@@ -76,7 +77,7 @@ class FtpTransport extends AbstractTransport {
 	/**
 	 * @inheritDoc
 	 */
-	public static function create(Console $console): TransportInterface {
+	public static function create(Console $console, PluginBuilder $builder): TransportInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring FTP transport', Console::COLOR_YELLOW);
 

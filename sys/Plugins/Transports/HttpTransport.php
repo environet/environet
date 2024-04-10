@@ -7,6 +7,7 @@ use Environet\Sys\General\HttpClient\Exceptions\HttpClientException;
 use Environet\Sys\General\HttpClient\HttpClient;
 use Environet\Sys\General\HttpClient\Request;
 use Environet\Sys\Plugins\ApiClient;
+use Environet\Sys\Plugins\PluginBuilder;
 use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Plugins\WithConversionsConfigTrait;
 use Exception;
@@ -84,7 +85,7 @@ class HttpTransport extends AbstractTransport {
 	/**
 	 * @inheritDoc
 	 */
-	public static function create(Console $console): HttpTransport {
+	public static function create(Console $console, PluginBuilder $builder): HttpTransport {
 		$console->writeLine('');
 		$console->writeLine("Configuring http transport", Console::COLOR_YELLOW);
 

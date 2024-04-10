@@ -7,6 +7,7 @@ use DateTimeZone;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\ParserInterface;
+use Environet\Sys\Plugins\PluginBuilder;
 use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Xml\CreateInputXml;
 use Environet\Sys\Xml\Exceptions\CreateInputXmlException;
@@ -354,7 +355,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	 *
 	 * @return ParserInterface
 	 */
-	public static function create(Console $console): ParserInterface {
+	public static function create(Console $console, PluginBuilder $builder): ParserInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring ZRXP parser', Console::COLOR_YELLOW);
 

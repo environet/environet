@@ -36,11 +36,13 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 */
 	private $privateKeyPath;
 
+	protected array $configArray;
+
 
 	/**
 	 * @inheritDoc
 	 */
-	public static function create(Console $console): ApiClient {
+	public static function create(Console $console, PluginBuilder $builder): ApiClient {
 		$console->writeLine("Configuring API client", Console::COLOR_YELLOW);
 
 		$console->writeLine("Enter the address of the distribution node", Console::COLOR_YELLOW);
@@ -83,6 +85,7 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 * @param array $config
 	 */
 	public function __construct(array $config) {
+		$this->configArray = $config;
 		$this->apiAddress = $config['apiAddress'];
 		$this->apiUsername = $config['apiUsername'];
 		$this->privateKeyPath = $config['privateKeyPath'];
@@ -165,7 +168,7 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 * @throws HttpClientException
 	 * @throws Exception
 	 */
-	public function requestMonitoringPoints() : array {
+	public function requestMonitoringPoints(): array {
 		$token = random_bytes(128);
 
 		// Create a request
@@ -196,8 +199,8 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 * Generate authorization header information.
 	 * The signature is built from the token and the given user's private key.
 	 *
-	 * @param string           $token
-	 * @param string           $username
+	 * @param string $token
+	 * @param string $username
 	 *
 	 * @return string
 	 * @throws Exception
@@ -229,6 +232,11 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 */
 	public static function getHelp(): string {
 		return '';
+	}
+
+
+	public function getConfigArray(): array {
+		return $this->configArray;
 	}
 
 

@@ -3,6 +3,7 @@
 namespace Environet\Sys\Plugins\Transports;
 
 use Environet\Sys\Commands\Console;
+use Environet\Sys\Plugins\PluginBuilder;
 use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Plugins\TransportInterface;
 use Environet\Sys\Plugins\WithConversionsConfigTrait;
@@ -84,7 +85,7 @@ class SftpTransport extends AbstractTransport {
 	/**
 	 * @inheritDoc
 	 */
-	public static function create(Console $console): TransportInterface {
+	public static function create(Console $console, PluginBuilder $builder): TransportInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring SFTP transport', Console::COLOR_YELLOW);
 

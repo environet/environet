@@ -70,7 +70,7 @@ class PluginBuilder {
 		foreach ($this->layers as $layer) {
 			$console->writeLine($layer->getHelp(), Console::COLOR_YELLOW);
 			$console->writeLine('');
-			$this->plugin->{$layer->getName()} = $layer->createConfiguration($console);
+			$this->plugin->{$layer->getName()} = $layer->createConfiguration($console, $this);
 		}
 
 		return $this->plugin;
@@ -120,6 +120,15 @@ class PluginBuilder {
 		}
 
 		return $result;
+	}
+
+
+	public function getLayer(string $layerName): ?BuilderLayerInterface {
+		if (isset($this->plugin->{$layerName})) {
+			return $this->plugin->{$layerName};
+		}
+
+		return null;
 	}
 
 

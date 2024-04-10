@@ -5,6 +5,7 @@ namespace Environet\Sys\Plugins\Parsers;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\ParserInterface;
+use Environet\Sys\Plugins\PluginBuilder;
 use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Xml\CreateInputXml;
 use Environet\Sys\Xml\Exceptions\CreateInputXmlException;
@@ -52,11 +53,11 @@ class JsonParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public static function create(Console $console): ParserInterface {
+	public static function create(Console $console, PluginBuilder $builder): ParserInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring json parser property');
 
-		$monitoringPointType = self::createMonitoringPointTypeConfig($console);
+		$monitoringPointType = self::createMonitoringPointTypeConfig($console, $builder);
 		$timeZone = self::createTimeZoneConfig($console);
 
 		$monitoringPointId = $console->ask('Enter monitoring point id:');

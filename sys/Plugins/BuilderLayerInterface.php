@@ -43,11 +43,18 @@ interface BuilderLayerInterface {
 	/**
 	 * Create an instance during plugin creation
 	 *
-	 * @param Console $console
+	 * @param Console       $console
+	 * @param PluginBuilder $builder
 	 *
 	 * @return mixed
 	 */
-	public static function create(Console $console);
+	public static function create(Console $console, PluginBuilder $builder);
+
+
+	/**
+	 * @return array
+	 */
+	public function getConfigArray(): array;
 
 
 }

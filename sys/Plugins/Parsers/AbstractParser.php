@@ -6,7 +6,9 @@ namespace Environet\Sys\Plugins\Parsers;
 use DateTimeZone;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\General\Model\Configuration\FormatsConfig;
+use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\ParserInterface;
+use Environet\Sys\Plugins\PluginBuilder;
 use Exception;
 
 /**
@@ -15,7 +17,7 @@ use Exception;
  * @package Environet\Sys\Plugins\Parsers
  * @author  Ádám Bálint <adam.balint@srg.hu>
  */
-abstract class AbstractParser implements ParserInterface {
+abstract class AbstractParser implements ParserInterface, BuilderLayerInterface {
 
 	/**
 	 * @var string
@@ -42,6 +44,8 @@ abstract class AbstractParser implements ParserInterface {
 	 */
 	protected $formatsFilename;
 
+	protected array $configArray;
+
 
 	/**
 	 * AbstractParser constructor.
@@ -49,10 +53,19 @@ abstract class AbstractParser implements ParserInterface {
 	 * @param array $config
 	 */
 	public function __construct(array $config) {
+		$this->configArray = $config;
 		$this->timeZone = $config['timeZone'] ?? 'UTC';
 		$this->timeInFilenameFormat = $config['timeInFilenameFormat'] ?? null;
 		$this->monitoringPointType = $config['monitoringPointType'] ?? null;
 		$this->formatsFilename = $config['formatsFilename'] ?? null;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getConfigArray(): array {
+		return $this->configArray;
 	}
 
 
@@ -98,11 +111,15 @@ abstract class AbstractParser implements ParserInterface {
 
 
 	/**
-	 * @param Console $console
+	 * @param Console       $console
+	 * @param PluginBuilder $builder
 	 *
 	 * @return mixed
 	 */
-	public static function createMonitoringPointTypeConfig(Console $console) {
+	public static function createMonitoringPointTypeConfig(Console $console, PluginBuilder $builder) {
+		if (($transportLayer = $builder->getLayer('transport')) && array_key_exists('monitoringPointType', $transportLayer->getConfigArray())) {
+			return $transportLayer->getConfigArray()['monitoringPointType'];
+		}
 		do {
 			$console->writeLine('Do you want to restrict the transport to a monitoring point type? If yes, enter "hydro" of "meteo":', Console::COLOR_YELLOW);
 			$type = $console->ask('Monitoring point type:');

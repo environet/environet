@@ -21,6 +21,8 @@ abstract class AbstractTransport implements TransportInterface, BuilderLayerInte
 	 */
 	protected $monitoringPointType;
 
+	protected array $configArray;
+
 
 	/**
 	 * HttpTransport constructor.
@@ -29,7 +31,16 @@ abstract class AbstractTransport implements TransportInterface, BuilderLayerInte
 	 * @param array $pluginConfig
 	 */
 	public function __construct(array $config, array $pluginConfig = []) {
+		$this->configArray = $config;
 		$this->monitoringPointType = $config['monitoringPointType'] ?? null;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getConfigArray(): array {
+		return $this->configArray;
 	}
 
 
