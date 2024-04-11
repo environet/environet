@@ -425,7 +425,6 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring csv parser', Console::COLOR_YELLOW);
 
-		$monitoringPointType = self::createMonitoringPointTypeConfig($console, $builder);
 		$timeZone = self::createTimeZoneConfig($console);
 
 		$console->writeLine('Enter the csv delimiter character. E.g.: a comma in case of comma separated csv files', Console::COLOR_YELLOW);
@@ -495,8 +494,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 			'propertyLevel'        => $propertyLevel,
 			'conversionsFilename'  => $conversionsFilename,
 			'propertySymbolColumn' => $propertySymbolColumn,
-			'propertyValueColumn'  => $propertyValueColumn,
-			'monitoringPointType'  => $monitoringPointType ?: null
+			'propertyValueColumn'  => $propertyValueColumn
 		];
 
 		return new self($config);
@@ -575,7 +573,6 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		$config .= 'propertyLevel = ' . $this->propertyLevel . "\n";
 		$config .= 'propertySymbolColumn = ' . $this->propertySymbolColumn . "\n";
 		$config .= 'propertyValueColumn = ' . $this->propertyValueColumn . "\n";
-		$config .= 'monitoringPointType = "' . $this->monitoringPointType . '"' . "\n";
 
 
 		foreach ($this->propertySymbolsToColumns as $property) {

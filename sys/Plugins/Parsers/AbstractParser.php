@@ -30,11 +30,6 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 	protected $timeInFilenameFormat;
 
 	/**
-	 * @var string|null
-	 */
-	protected $monitoringPointType;
-
-	/**
 	 * @var FormatsConfig|null Format specifications, where to find which information in xml file
 	 */
 	protected ?FormatsConfig $formatsConfig = null;
@@ -56,7 +51,6 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 		$this->configArray = $config;
 		$this->timeZone = $config['timeZone'] ?? 'UTC';
 		$this->timeInFilenameFormat = $config['timeInFilenameFormat'] ?? null;
-		$this->monitoringPointType = $config['monitoringPointType'] ?? null;
 		$this->formatsFilename = $config['formatsFilename'] ?? null;
 	}
 
@@ -107,25 +101,6 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 		}
 
 		return $timeInFilenameFormat;
-	}
-
-
-	/**
-	 * @param Console       $console
-	 * @param PluginBuilder $builder
-	 *
-	 * @return mixed
-	 */
-	public static function createMonitoringPointTypeConfig(Console $console, PluginBuilder $builder) {
-		if (($transportLayer = $builder->getLayer('transport')) && array_key_exists('monitoringPointType', $transportLayer->getConfigArray())) {
-			return $transportLayer->getConfigArray()['monitoringPointType'];
-		}
-		do {
-			$console->writeLine('Do you want to restrict the transport to a monitoring point type? If yes, enter "hydro" of "meteo":', Console::COLOR_YELLOW);
-			$type = $console->ask('Monitoring point type:');
-		} while (!in_array($type, ['', 'hydro', 'meteo']));
-
-		return $type;
 	}
 
 

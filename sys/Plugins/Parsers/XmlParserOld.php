@@ -695,7 +695,6 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 		$console->writeLine('');
 		$console->writeLine('Configuring XML parser', Console::COLOR_YELLOW);
 
-		$monitoringPointType = self::createMonitoringPointTypeConfig($console, $builder);
 		$timeZone = self::createTimeZoneConfig($console);
 
 		$separatorThousands = $console->ask('Separator for groups of thousands in values. May be empty. Example: , for 12,040.01 cm');
@@ -714,8 +713,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 			'formatsFilename'     => $formatsFilename,
 			'skipEmptyValueTag'   => $skipEmptyValueTag,
 			'skipValue'           => $skipValue,
-			'timeZone'            => $timeZone,
-			'monitoringPointType' => $monitoringPointType ?: null
+			'timeZone'            => $timeZone
 		];
 
 		return new self($config);
@@ -734,7 +732,6 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 		$config .= 'skipEmptyValueTag = ' . $this->skipEmptyValueTag ? 1 : 0 . "\n";
 		$config .= 'skipValue = ' . $this->skipValue . "\n";
 		$config .= 'timeZone = ' . $this->timeZone . "\n";
-		$config .= 'monitoringPointType = "' . $this->monitoringPointType . '"' . "\n";
 
 		return $config;
 	}
