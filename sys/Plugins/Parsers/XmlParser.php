@@ -366,6 +366,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 			//Remove groups without value
 			$valueItems = $resolvedGroup->getItemsWithParameter(ObservedPropertyValueParameter::class);
 			if (count($valueItems) < 1) {
+				unset($this->flatList[$key]);
 				continue;
 			}
 
