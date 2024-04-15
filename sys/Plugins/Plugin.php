@@ -70,7 +70,7 @@ class Plugin {
 					foreach ($xmls as $xmlPayload) {
 						$ns = $xmlPayload->getNamespaces(true);
 						$child = $xmlPayload->children($ns['environet']);
-						$xmlMPointId = $child->attributes()['MonitoringPointId'];
+						$xmlMPointId = $child->MonitoringPointId->__toString();
 
 						// remove current monitoring point id from list
 						if (($key = array_search($xmlMPointId, $allNCDs)) !== false) {
