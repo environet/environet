@@ -16,17 +16,9 @@ You can verify that Docker is installed correctly by running:
 If should output a friendly message to the terminal.
 
 ### Docker Compose [Deprecated]
-In case of new installations (after June of 2021) Compose V2 is integrated in docker or docker-desktop. For this kind of installations it's not necessary to install docker-compose separately. 
-In case of Compose V2 every `docker-compose` command in this documentation must be understood as `docker compose` (without hyphen). The `environet` entrypoint script is compatible with both versions.
-
-If it is still necessary to install `docker-compose` separately:
-
-* *Setting up Compose is a simpler process, which is described in detail on [this page](https://docs.docker.com/compose/install/#install-compose-on-linux-systems).  
-It involves downloading the docker-compose binary from github and setting executable permissions on it.*
-
-* *You can verify that Docker Compose is installed correctly by running:*  
-`$ docker-compose --version`  
-*It should output the currently installed version number.*
+Docker compose V1 is deprecated, and it is necessary to install Compose V2. Compose V2 is integrated in supported docker versions, so it is not necessary to install it separately.
+If system is updated from compose V1 to V2, it can be necessary to prune the networks created by composer V1 with this command before starting containers:
+`docker network prune`
 
 ## Get the source
 
