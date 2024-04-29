@@ -77,6 +77,11 @@ class SftpTransport extends AbstractTransport {
 	private $lastNDaysOnly;
 
 	/**
+	 * @var mixed
+	 */
+	private $skipProcessed;
+
+	/**
 	 * @var string
 	 */
 	private $conversionsFilename;
@@ -143,6 +148,10 @@ class SftpTransport extends AbstractTransport {
 		$console->write('Enter a number > 0 for N or 0 to use all files:');
 		$lastNDaysOnly = $console->askWithDefault('', 0);
 
+		$console->writeLine('Do you want to skip already processed and successfully uploaded files?');
+		$console->write('Enter 1 if processed files shouldn\'t be downloaded again:');
+		$skipProcessed = $console->askWithDefault('', false);
+
 		$console->writeLine('Do you want to user a conversion specification?');
 		$console->write('Enter 1 if to specify the conversion specification file:');
 		$withConversions = $console->askWithDefault('', '0');
@@ -164,6 +173,7 @@ class SftpTransport extends AbstractTransport {
 			'filenamePattern'     => $filenamePattern,
 			'newestFileOnly'      => $newestFileOnly,
 			'lastNDaysOnly'       => $lastNDaysOnly,
+			'skipProcessed'       => $skipProcessed,
 			'conversionsFilename' => $conversionsFilename,
 			'monitoringPointType' => $monitoringPointType ?: null,
 		];
@@ -187,6 +197,7 @@ class SftpTransport extends AbstractTransport {
 			. 'filenamePattern = "' . $this->filenamePattern . '"' . "\n"
 			. 'newestFileOnly = "' . $this->newestFileOnly . '"' . "\n"
 			. 'lastNDaysOnly = "' . $this->lastNDaysOnly . '"' . "\n"
+			. 'skipProcessed = "' . $this->skipProcessed . '"' . "\n"
 			. 'conversionsFilename = "' . $this->conversionsFilename . '"' . "\n"
 			. 'monitoringPointType = "' . $this->monitoringPointType . '"' . "\n";
 	}
@@ -209,6 +220,7 @@ class SftpTransport extends AbstractTransport {
 		$this->filenamePattern = $config['filenamePattern'];
 		$this->newestFileOnly = $config['newestFileOnly'];
 		$this->lastNDaysOnly = $config['lastNDaysOnly'];
+		$this->skipProcessed = $config['skipProcessed'] ?? false;
 		$this->conversionsFilename = $config['conversionsFilename'];
 		parent::__construct($config);
 	}
@@ -221,7 +233,7 @@ class SftpTransport extends AbstractTransport {
 	 */
 	public function get(Console $console, string $configFile): array {
 		$configuration = preg_replace('/^(.*)\.[^\.]+$/i', '$1', $configFile);
-		$localFileDir = SRC_PATH . '/data/plugin_input_files/' . $configuration . '/';
+		$localFileDir = $this->getLocalFileDir($configuration);
 		$localCopyPath = rtrim($localFileDir, '/');
 
 		if (!file_exists($localCopyPath)) {
@@ -321,6 +333,13 @@ class SftpTransport extends AbstractTransport {
 			$files = $newFiles;
 		}
 
+		if ($this->skipProcessed) {
+			$processedFiles = $this->getProcessedFiles($configuration);
+			$files = array_filter($files, function ($file) use ($processedFiles) {
+				return !in_array($file['name'], $processedFiles);
+			});
+		}
+
 		//Create resources base on files
 		$results = [];
 		foreach ($files as $file) {
@@ -328,6 +347,7 @@ class SftpTransport extends AbstractTransport {
 			$resource = new Resource();
 			$resource->setName($file['name']);
 			$resource->setContents(file_get_contents($localCopyPath . '/' . $file['name']));
+			$resource->setLocalCopyPath($localCopyPath . '/' . $file['name']);
 
 			if ($this->conversionsFilename) {
 				//Add some meta information if a conversion filename is specified
@@ -340,6 +360,8 @@ class SftpTransport extends AbstractTransport {
 
 		return $results;
 	}
+
+
 
 
 	/**

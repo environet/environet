@@ -47,8 +47,8 @@ This document is the documentation of the Environet system.
 # System requirements
 
 * **OS**: Linux operation system, Ubuntu 18+ or Debian 9+
-* **Docker Engine**: 19+
-* **Docker Compose**: 1.25+
+* **Docker Engine**: 23+
+* **Docker Compose**: 2.20+
 * **RAM**: at least 2GB
 * **HDD**: at least 1GB
 
@@ -72,17 +72,9 @@ You can verify that Docker is installed correctly by running:
 If should output a friendly message to the terminal.
 
 ### Docker Compose [Deprecated]
-In case of new installations (after June of 2021) Compose V2 is integrated in docker or docker-desktop. For this kind of installations it's not necessary to install docker-compose separately. 
-In case of Compose V2 every `docker-compose` command in this documentation must be understood as `docker compose` (without hyphen). The `environet` entrypoint script is compatible with both versions.
-
-If it is still necessary to install `docker-compose` separately:
-
-* *Setting up Compose is a simpler process, which is described in detail on [this page](https://docs.docker.com/compose/install/#install-compose-on-linux-systems).  
-It involves downloading the docker-compose binary from github and setting executable permissions on it.*
-
-* *You can verify that Docker Compose is installed correctly by running:*  
-`$ docker-compose --version`  
-*It should output the currently installed version number.*
+Docker compose V1 is deprecated, and it is necessary to install Compose V2. Compose V2 is integrated in supported docker versions, so it is not necessary to install it separately.
+If system is updated from compose V1 to V2, it can be necessary to prune the networks created by composer V1 with this command before starting containers:
+`docker network prune`
 
 ## Get the source
 
@@ -1405,6 +1397,7 @@ Takes the data from a remote FTP server
 * _newestFileOnly_ (required): If 1, only the newest file (by date) will be transported
 * _conversionsFilename_ (required): If the layer has a conversion specification file, this is the file name of the CONVERSIONS json file, relative to the path of the configuration folder.
 * _lastNDaysOnly_ (optional): Use only files with modification time newer than or equal N days from current day.
+* _skipProcessed_ (optional): Process only files which have not been processed yet. The data node stores the already processed files in a subfolder of the data directory, called “processed”. If this option is set to 1, the data node will check if the file is in the “processed” folder, and if it is, it will not process it again.
 
 
 ##### SftpTransport
@@ -1423,6 +1416,7 @@ Takes the data from a remote SFTP server
 * _newestFileOnly_ (required): If 1, only the newest file (by date) will be transported
 * _conversionsFilename_ (required): If the layer has a conversion specification file, this is the file name of the CONVERSIONS json file, relative to the path of the configuration folder.
 * _lastNDaysOnly_ (optional): Use only files with modification time newer than or equal N days from current day.
+* _skipProcessed_ (optional): Process only files which have not been processed yet. The data node stores the already processed files in a subfolder of the data directory, called “processed”. If this option is set to 1, the data node will check if the file is in the “processed” folder, and if it is, it will not process it again.
 
 #### Parser layer properties
 

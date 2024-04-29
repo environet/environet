@@ -57,6 +57,11 @@ class Resource {
 	 */
 	protected bool $keepExtraData = false;
 
+	/**
+	 * @var string|null File path to the local copy of the resource
+	 */
+	protected ?string $localCopyPath = null;
+
 
 	/**
 	 * @return string|null
@@ -253,6 +258,26 @@ class Resource {
 	 */
 	public function setKeepExtraData(bool $keepExtraData): Resource {
 		$this->keepExtraData = $keepExtraData;
+
+		return $this;
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getLocalCopyPath(): ?string {
+		return $this->localCopyPath;
+	}
+
+
+	/**
+	 * @param string|null $localCopyPath
+	 *
+	 * @return Resource
+	 */
+	public function setLocalCopyPath(?string $localCopyPath): Resource {
+		$this->localCopyPath = $localCopyPath;
 
 		return $this;
 	}

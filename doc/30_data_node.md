@@ -199,6 +199,7 @@ Takes the data from a remote FTP server
 * _newestFileOnly_ (required): If 1, only the newest file (by date) will be transported
 * _conversionsFilename_ (required): If the layer has a conversion specification file, this is the file name of the CONVERSIONS json file, relative to the path of the configuration folder.
 * _lastNDaysOnly_ (optional): Use only files with modification time newer than or equal N days from current day.
+* _skipProcessed_ (optional): Process only files which have not been processed yet. The data node stores the already processed files in a subfolder of the data directory, called “processed”. If this option is set to 1, the data node will check if the file is in the “processed” folder, and if it is, it will not process it again.
 
 
 ##### SftpTransport
@@ -217,6 +218,7 @@ Takes the data from a remote SFTP server
 * _newestFileOnly_ (required): If 1, only the newest file (by date) will be transported
 * _conversionsFilename_ (required): If the layer has a conversion specification file, this is the file name of the CONVERSIONS json file, relative to the path of the configuration folder.
 * _lastNDaysOnly_ (optional): Use only files with modification time newer than or equal N days from current day.
+* _skipProcessed_ (optional): Process only files which have not been processed yet. The data node stores the already processed files in a subfolder of the data directory, called “processed”. If this option is set to 1, the data node will check if the file is in the “processed” folder, and if it is, it will not process it again.
 
 #### Parser layer properties
 

@@ -59,4 +59,34 @@ abstract class AbstractTransport implements TransportInterface, BuilderLayerInte
 	}
 
 
+	/**
+	 * Get files under processed directory
+	 *
+	 * @param string $configuration
+	 *
+	 * @return array
+	 */
+	protected function getProcessedFiles(string $configuration): array {
+		$localFileDir = $this->getLocalFileDir($configuration);
+		$processedFileDir = rtrim($localFileDir, '/') . '/processed/';
+		$files = scandir($processedFileDir);
+
+		return array_filter($files, function ($file) {
+			return !in_array($file, ['.', '..']);
+		});
+	}
+
+
+	/**
+	 * Get directory of local copy files
+	 *
+	 * @param string $configuration
+	 *
+	 * @return string
+	 */
+	protected function getLocalFileDir(string $configuration): string {
+		return SRC_PATH . '/data/plugin_input_files/' . $configuration . '/';
+	}
+
+
 }

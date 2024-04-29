@@ -1052,8 +1052,8 @@
 <h1 id="system-requirements">System requirements</h1>
 <ul>
 <li><strong>OS</strong>: Linux operation system, Ubuntu 18+ or Debian 9+</li>
-<li><strong>Docker Engine</strong>: 19+</li>
-<li><strong>Docker Compose</strong>: 1.25+</li>
+<li><strong>Docker Engine</strong>: 23+</li>
+<li><strong>Docker Compose</strong>: 2.20+</li>
 <li><strong>RAM</strong>: at least 2GB</li>
 <li><strong>HDD</strong>: at least 1GB</li>
 </ul>
@@ -1068,15 +1068,7 @@
 <code>$ docker run hello-world</code><br />
 If should output a friendly message to the terminal.</p>
 <h3 id="docker-compose-deprecated">Docker Compose [Deprecated]</h3>
-<p>In case of new installations (after June of 2021) Compose V2 is integrated in docker or docker-desktop. For this kind of installations it’s not necessary to install docker-compose separately. In case of Compose V2 every <code>docker-compose</code> command in this documentation must be understood as <code>docker compose</code> (without hyphen). The <code>environet</code> entrypoint script is compatible with both versions.</p>
-<p>If it is still necessary to install <code>docker-compose</code> separately:</p>
-<ul>
-<li><p><em>Setting up Compose is a simpler process, which is described in detail on <a href="https://docs.docker.com/compose/install/#install-compose-on-linux-systems">this page</a>.<br />
-It involves downloading the docker-compose binary from github and setting executable permissions on it.</em></p></li>
-<li><p><em>You can verify that Docker Compose is installed correctly by running:</em><br />
-<code>$ docker-compose --version</code><br />
-<em>It should output the currently installed version number.</em></p></li>
-</ul>
+<p>Docker compose V1 is deprecated, and it is necessary to install Compose V2. Compose V2 is integrated in supported docker versions, so it is not necessary to install it separately. If system is updated from compose V1 to V2, it can be necessary to prune the networks created by composer V1 with this command before starting containers: <code>docker network prune</code></p>
 <h2 id="get-the-source">Get the source</h2>
 <p>You will need to have Git installed to be able to download the project source, and to receive updates later. It is easiest to install Git on Linux using the preferred package manager of your Linux distribution. See the <a href="https://git-scm.com/download/linux">Git downloads page</a> for details.</p>
 <p>Checkout the Environet docker repository - Navigate to the directory where you would like to install environet<br />
@@ -1991,6 +1983,7 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <li><em>newestFileOnly</em> (required): If 1, only the newest file (by date) will be transported</li>
 <li><em>conversionsFilename</em> (required): If the layer has a conversion specification file, this is the file name of the CONVERSIONS json file, relative to the path of the configuration folder.</li>
 <li><em>lastNDaysOnly</em> (optional): Use only files with modification time newer than or equal N days from current day.</li>
+<li><em>skipProcessed</em> (optional): Process only files which have not been processed yet. The data node stores the already processed files in a subfolder of the data directory, called “processed”. If this option is set to 1, the data node will check if the file is in the “processed” folder, and if it is, it will not process it again.</li>
 </ul>
 <h5 id="sftptransport">SftpTransport</h5>
 <p>Takes the data from a remote SFTP server</p>
@@ -2007,6 +2000,7 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <li><em>newestFileOnly</em> (required): If 1, only the newest file (by date) will be transported</li>
 <li><em>conversionsFilename</em> (required): If the layer has a conversion specification file, this is the file name of the CONVERSIONS json file, relative to the path of the configuration folder.</li>
 <li><em>lastNDaysOnly</em> (optional): Use only files with modification time newer than or equal N days from current day.</li>
+<li><em>skipProcessed</em> (optional): Process only files which have not been processed yet. The data node stores the already processed files in a subfolder of the data directory, called “processed”. If this option is set to 1, the data node will check if the file is in the “processed” folder, and if it is, it will not process it again.</li>
 </ul>
 <h4 id="parser-layer-properties">Parser layer properties</h4>
 <p>Common properties:</p>

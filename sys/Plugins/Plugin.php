@@ -3,8 +3,6 @@
 namespace Environet\Sys\Plugins;
 
 use Environet\Sys\Commands\Console;
-use Environet\Sys\Plugins\Parsers\XmlParser;
-use Environet\Sys\Plugins\Parsers\XmlParserOld;
 
 /**
  * Class Plugin
@@ -53,6 +51,7 @@ class Plugin {
 			$allNCDs = [];
 
 			foreach ($resources as $resource) {
+				/** @var Resource $resource */
 				try {
 					if ($resource->getPointNCDs()) {
 						$allNCDs = array_unique(array_merge($resource->getPointNCDs()));
@@ -67,6 +66,8 @@ class Plugin {
 					if (!is_dir($payloadStorage)) {
 						mkdir($payloadStorage, 0755, true);
 					}
+
+					$resourceSuccess = true;
 					foreach ($xmls as $xmlPayload) {
 						$ns = $xmlPayload->getNamespaces(true);
 						$child = $xmlPayload->children($ns['environet']);
@@ -93,6 +94,22 @@ class Plugin {
 							$console->writeLog('Payload stored: ' . ltrim(str_replace(SRC_PATH, '', $filename), '/'), true);
 							$console->writeLog('---', true);
 							$failed ++;
+							$resourceSuccess = false;
+						}
+					}
+
+					if ($resourceSuccess) {
+						//Move the file to processed directory if it was successfully uploaded
+						if ($resource->getLocalCopyPath()) {
+							$dir = dirname($resource->getLocalCopyPath());
+							$filename = basename($resource->getLocalCopyPath());
+							$processedDir = $dir . '/processed';
+							if (!is_dir($processedDir)) {
+								mkdir($processedDir, 0755, true);
+							}
+							if (file_exists($dir . '/' . $filename)) {
+								rename($dir . '/' . $filename, $processedDir . '/' . $filename);
+							}
 						}
 					}
 				} catch (\Exception $e) {
