@@ -301,7 +301,7 @@ class SftpTransport extends AbstractTransport {
 			}
 			closedir($dirHandler);
 		}
-
+        $console->writeLog(sprintf('Found %s files available on server.', count($files)));
 
 		//Filter to newest file only
 		if (!empty($files) && $this->newestFileOnly) {
@@ -332,6 +332,7 @@ class SftpTransport extends AbstractTransport {
 			}
 			$files = $newFiles;
 		}
+        $console->writeLog(sprintf('Filtered to %s relevant files.', count($files)));
 
 		if ($this->skipProcessed) {
 			$processedFiles = $this->getProcessedFiles($configuration);
@@ -339,6 +340,7 @@ class SftpTransport extends AbstractTransport {
 				return !in_array($file['name'], $processedFiles);
 			});
 		}
+        $console->writeLog(sprintf('Skipping files already processed, processing %s files.', count($files)));
 
 		//Create resources base on files
 		$results = [];

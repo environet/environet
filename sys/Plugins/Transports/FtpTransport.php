@@ -232,6 +232,7 @@ class FtpTransport extends AbstractTransport {
 				return fnmatch($this->filenamePattern, $file['name']);
 			});
 		}
+		$console->writeLog(sprintf('Found %s files available on server.', count($files)));
 
 		//Filter to newest file only
 		if (!empty($files) && $this->newestFileOnly) {
@@ -262,6 +263,7 @@ class FtpTransport extends AbstractTransport {
 			}
 			$files = $newFiles;
 		}
+		$console->writeLog(sprintf('Filtered to %s relevant files.', count($files)));
 
 		if ($this->skipProcessed) {
 			$processedFiles = $this->getProcessedFiles($configuration);
@@ -269,6 +271,7 @@ class FtpTransport extends AbstractTransport {
 				return !in_array($file['name'], $processedFiles);
 			});
 		}
+		$console->writeLog(sprintf('Skipping files already processed, processing %s files.', count($files)));
 
 		//Prepend path the filename
 		$files = array_map(function ($file) {
