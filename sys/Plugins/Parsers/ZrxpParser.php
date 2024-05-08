@@ -242,7 +242,8 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		$propertyNameDb = $this->findProperty($propertyNameZrxp, $metaData);
 		//Find the db-symbol of property
 		if (is_null($propertyNameDb)) {
-			Console::getInstance()->writeLog(sprintf('Property mapping for property %s isn\'t found in configuration', $propertyNameZrxp), true);
+			$tsPath = $metaData['TSPATH'] ?? null;
+			Console::getInstance()->writeLog(sprintf('Property mapping for property %s (%s) isn\'t found in configuration', $propertyNameZrxp, $tsPath), true);
 
 			return null;
 		}
@@ -385,9 +386,9 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		} while ($console->askYesNo('Do you want to add more properties?'));
 
 		$config = [
-			'zrxpVersion' => $zrxpVersion,
+			'zrxpVersion'           => $zrxpVersion,
 			'cutMpointLeadingZeros' => $cutMpointLeadingZeros,
-			'properties'  => $properties
+			'properties'            => $properties
 		];
 
 		return new self($config);
