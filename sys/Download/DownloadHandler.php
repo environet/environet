@@ -232,7 +232,7 @@ class DownloadHandler extends ApiHandler {
 			$startTime = $this->request->getQueryParam('start', false);
 			if ($startTime) {
 				try {
-					$params['start'] = new DateTime(filter_var($startTime, FILTER_SANITIZE_STRING));
+					$params['start'] = createValidDate(filter_var($startTime, FILTER_SANITIZE_STRING));
 				} catch (Throwable $e) {
 					throw new DownloadException(304);
 				}
@@ -243,7 +243,7 @@ class DownloadHandler extends ApiHandler {
 			$endTime = $this->request->getQueryParam('end', false);
 			if ($endTime) {
 				try {
-					$params['end'] = new DateTime(filter_var($endTime, FILTER_SANITIZE_STRING));
+					$params['end'] = createValidDate(filter_var($endTime, FILTER_SANITIZE_STRING));
 				} catch (Throwable $e) {
 					throw new DownloadException(305);
 				}

@@ -87,7 +87,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 		try {
 			// Send the data with a http client, and store the response body in a variable
 			return $this->preProcessData();
-		} catch (HttpClientException|CreateInputXmlException $e) {
+		} catch (HttpClientException | CreateInputXmlException $e) {
 			// Store error response of the request in $error var
 			$this->addMessage($e->getMessage(), self::MESSAGE_ERROR);
 		} catch (Exception $e) {
@@ -418,7 +418,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 	/**
 	 * Map the CSV file, parse monitoring point id, and values for multiple properties.
 	 *
-	 * @param resource $fileHandle File handle of csv file
+	 * @param resource $fileHandle             File handle of csv file
 	 * @param string   $selectedTimezoneOption
 	 * @param array    $warnings
 	 *
@@ -454,7 +454,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 						//Date is not valid, try to parse it with timezone
 						$warnings['date_not_in_expected_format'] = 'Some dates are not in the expected format (yyyy-mm-dd hh:mm:ss), please review parsed times before you confirm the data import';
 					}
-					if (!($dateTime = date_create($dateString, $inputTimezone))) {
+					if (!($dateTime = createValidDate($dateString, $inputTimezone))) {
 						throw new Exception(sprintf('Can\'t parse date: "%s" in row #%s. Please use the expected format: yyyy-mm-dd hh:mm:ss', $dateString, $rowIndex));
 					}
 					$dateTime->setTimezone($toTimezone);

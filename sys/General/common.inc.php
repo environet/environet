@@ -13,9 +13,9 @@
  */
 
 use Environet\Sys\Admin\Pages\BasePage;
+use Environet\Sys\General\Exceptions\InvalidDateException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\Response;
-
 
 defined('REGEX_NAME') || define('REGEX_NAME', '/^[\p{L}\s\-]*$/iu');
 defined('REGEX_PHONE') || define('REGEX_PHONE', '/^[\d\-\+]*$/iu');
@@ -37,6 +37,7 @@ defined('REGEX_RIVERBASINCODE') || define('REGEX_RIVERBASINCODE', '/^\d+$/i');
 function __($str) {
 	return $str;
 }
+
 
 /**
  * Non-cryptographically secure random string generator
@@ -107,6 +108,7 @@ function snakeToCamelCase($string, $capitalizeFirstCharacter = false, $separator
 	return $str;
 }
 
+
 /**
  * Convert a string from camel case to snake case.
  * The separator character is _ by default.
@@ -126,6 +128,7 @@ function camelCaseToSnake(string $string, $separator = '_') {
 	return implode($separator, $ret);
 }
 
+
 /**
  * Creates an empty http response with the given status code
  *
@@ -142,6 +145,7 @@ function httpErrorPage($code = 500) {
 	return $response;
 }
 
+
 /**
  * Creates a http redirect response with the given url
  *
@@ -153,6 +157,7 @@ function httpErrorPage($code = 500) {
 function httpRedirect(string $url, $code = 302) {
 	return (new Response())->redirect($url, $code);
 }
+
 
 /**
  * Validate a data with some pre-defined rules, and regex patterns
@@ -182,11 +187,12 @@ function validate(array $array, string $field, string $pattern = null, bool $req
 	return true;
 }
 
+
 /**
  * Get a form field's value from post, or from pre-populated data
  *
- * @param string      $field The field's slug
- * @param array|null  $data  The optional data which can containe the field's vale
+ * @param string      $field           The field's slug
+ * @param array|null  $data            The optional data which can containe the field's vale
  * @param string|null $customPostField
  *
  * @return mixed|null
@@ -194,6 +200,7 @@ function validate(array $array, string $field, string $pattern = null, bool $req
 function formFieldValue(string $field, array $data = null, ?string $customPostField = null) {
 	if (!empty($_POST)) {
 		$postField = $customPostField ?? $field;
+
 		//Has a post, use the value in the post array
 		return $_POST[$postField] ?? null;
 	} elseif (isset($data[$field])) {
@@ -249,6 +256,7 @@ function arrayMapRecursive(array $data, callable $function) {
 	return $data;
 }
 
+
 /**
  * Make strings accent insensitive on db search.
  *
@@ -287,6 +295,7 @@ function makeAccentInsensitiveRegex(string $string) {
 	return implode('', $stringArray);
 }
 
+
 /**
  * Build and ini file from a 2-level array
  *
@@ -314,6 +323,7 @@ function buildIni(array $array) {
 
 	return implode("\n", $lines);
 }
+
 
 /**
  * Generate a regex pattern based on date format
@@ -362,6 +372,7 @@ function dateFormatToRegex(string $dateFormat): string {
 	return implode('', $regexParts);
 }
 
+
 /**
  * Delete directory recursively
  *
@@ -393,4 +404,23 @@ function rrmdir($dir) {
  */
 function isUploadDryRun(): bool {
 	return defined('UPLOAD_DRY_RUN') && UPLOAD_DRY_RUN === true;
+}
+
+
+/**
+ * @param string                   $dateString
+ * @param string|DateTimeZone|null $timezone
+ *
+ * @return DateTime
+ * @throws Exception
+ */
+function createValidDate(string $dateString, $timezone = null): DateTime {
+	$date = new DateTime($dateString, $timezone);
+	$lastErrors = DateTime::getLastErrors();
+	$valid = $lastErrors === false || (DateTime::getLastErrors()['warning_count'] === 0 && DateTime::getLastErrors()['error_count'] === 0);
+	if (!$valid) {
+		throw new InvalidDateException('Invalid date: ' . $dateString);
+	}
+
+	return $date;
 }

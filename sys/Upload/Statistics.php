@@ -460,7 +460,7 @@ class Statistics {
 		$properties = $xml->xpath('/environet:UploadStatistics/environet:PropertyStatistics');
 
 		$statistics->setInputPropertiesCount((int) ($xml->xpath('/environet:UploadStatistics/environet:InputPropertiesCount')[0] ?? null));
-		$statistics->setDate(new DateTime((string) $xml->xpath('/environet:UploadStatistics/environet:Date')[0] ?? null));
+		$statistics->setDate(createValidDate((string) $xml->xpath('/environet:UploadStatistics/environet:Date')[0] ?? null));
 		$statistics->setMonitoringPointId((string) $xml->xpath('/environet:UploadStatistics/environet:MonitoringPointId')[0] ?? null);
 
 		foreach ($properties as $property) {

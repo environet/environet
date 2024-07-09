@@ -135,7 +135,7 @@ function dateFormat($date, $format = 'Y. m. d. H:i:s'): ?string {
 
 	try {
 		//Parse date, and format it
-		$date = new DateTime($date);
+		$date = createValidDate($date);
 
 		return $date->format($format);
 	} catch (Exception $e) {

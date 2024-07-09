@@ -267,7 +267,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 			}
 
 			//Convert date to UTC
-			$date = new DateTime($timestamp, $timezone);
+			$date = createValidDate($timestamp, $timezone);
 			$date->setTimezone(new DateTimeZone('UTC'));
 
 			//Add value item
