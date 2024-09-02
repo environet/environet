@@ -415,7 +415,12 @@ function isUploadDryRun(): bool {
  * @throws Exception
  */
 function createValidDate(string $dateString, $timezone = null): DateTime {
-	$date = new DateTime($dateString, $timezone);
+	try {
+		$date = new DateTime($dateString, $timezone);
+	} catch (Exception $e) {
+		throw new InvalidDateException('Invalid date: ' . $dateString);
+	}
+
 	$lastErrors = DateTime::getLastErrors();
 	$valid = $lastErrors === false || (DateTime::getLastErrors()['warning_count'] === 0 && DateTime::getLastErrors()['error_count'] === 0);
 	if (!$valid) {
