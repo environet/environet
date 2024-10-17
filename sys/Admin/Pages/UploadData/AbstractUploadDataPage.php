@@ -39,7 +39,6 @@ use InvalidArgumentException;
  */
 abstract class AbstractUploadDataPage extends BasePage {
 
-
 	/**
 	 * Get directory path where upload files will be stored before processing
 	 *
@@ -460,7 +459,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 					$dateTime->setTimezone($toTimezone);
 					$propertiesData[$property][] = [
 						'time'  => $dateTime->format('c'),
-						'value' => $row[$propertyKey] ?: null
+						'value' => $row[$propertyKey] ?? null
 					];
 					unset($dateTime);
 				}
