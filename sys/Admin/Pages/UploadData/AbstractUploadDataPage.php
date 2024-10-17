@@ -39,6 +39,7 @@ use InvalidArgumentException;
  */
 abstract class AbstractUploadDataPage extends BasePage {
 
+
 	/**
 	 * Get directory path where upload files will be stored before processing
 	 *
@@ -481,6 +482,16 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 * @throws PKIException
 	 */
 	protected function makeRequest(string $path, string $bodyFile): Response {
+		$username = SYS_USERNAME;
+		if (($identity = $this->request->getIdentity()) && //Has a logged in user
+			(!empty(UserQueries::getOperatorsOfUser($identity->getId()))) && //Logged in user has operators
+			($username = $identity->getData()['username'] ?? null) //Has a username
+		) {
+			//If the loggedin user has operators, use the username of the user, and send the request under this identity, not the SYS user
+			//In this case the request will be sent with the username of the logged in user, but the signature will be generated with the SYS user's keypair
+			$username = $identity->getData()['username'];
+		}
+
 		// Create a request
 		$apiHost = Config::getInstance()->getDatanodeDistHost();
 		$apiHost = preg_match('/^https?:\/\//', $apiHost) ? $apiHost : 'https://' . $apiHost;
@@ -489,7 +500,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 		$request->setMethod('POST');
 
 		// Add generated auth header with signature
-		$request->addHeader('Authorization', $this->generateSignatureHeader($request->getBody(), SYS_USERNAME));
+		$request->addHeader('Authorization', $this->generateSignatureHeader($request->getBody(), $username));
 
 		// Send request
 		$client = new HttpClient();

@@ -215,6 +215,8 @@ abstract class ApiHandler extends BaseHandler {
 	 * Validate the request signature in the auth header, against the token query parameter
 	 *
 	 * @throws ApiException
+	 * @noinspection PhpComposerExtensionStubsInspection
+	 * @phpcs        :disable
 	 */
 	protected function validateSignature() {
 		$token = $this->request->getQueryParam('token', false);
@@ -224,7 +226,13 @@ abstract class ApiHandler extends BaseHandler {
 
 		$signature = base64_decode($this->getAuthHeaderParts()['signature'] ?? '');
 
+		//Check the signature with the public key of the user
 		$signatureValid = @openssl_verify($token, $signature, $this->identity->getPublicKey(), OPENSSL_ALGO_SHA256);
+
+		//If the signature is not valid, and the request is called from the php container, check the signature with the sys public key
+		if (!$signatureValid && gethostbyname('dist_php') === $_SERVER['REMOTE_ADDR']) {
+			$signatureValid = @openssl_verify($token, $signature, file_get_contents(SysIdentity::getSysPublicKeyFile()), OPENSSL_ALGO_SHA256);
+		}
 
 		if (!$signatureValid) {
 			throw new ApiException(208);

@@ -10,6 +10,7 @@ use Environet\Sys\General\Db\MeteoObservedPropertyQueries;
 use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\HttpClient\ApiHandler;
 use Environet\Sys\General\Response;
+use Environet\Sys\General\SysIdentity;
 use Environet\Sys\Upload\Exceptions\UploadException;
 use Environet\Sys\Xml\CreateErrorXml;
 use Environet\Sys\Xml\CreateUploadStatisticsXml;
@@ -127,6 +128,11 @@ class UploadHandler extends ApiHandler {
 		$signature = base64_decode($this->getAuthHeaderParts()['signature'] ?? '');
 		$publicKey = $this->identity->getPublicKey();
 		$signatureValid = openssl_verify($hash, $signature, $publicKey, OPENSSL_ALGO_SHA256);
+
+		// If the signature is not valid, and the request is called from the php container, check the signature with the sys public key
+		if (!$signatureValid && gethostbyname('dist_php') === $_SERVER['REMOTE_ADDR']) {
+			$signatureValid = @openssl_verify($hash, $signature, file_get_contents(SysIdentity::getSysPublicKeyFile()), OPENSSL_ALGO_SHA256);
+		}
 
 		if (!$signatureValid) {
 			// Signature is not valid
