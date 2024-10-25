@@ -4,9 +4,6 @@ namespace Environet\Sys\Admin\Pages\Hydro\ObservedProperty;
 
 use Environet\Sys\Admin\Pages\CrudPage;
 use Environet\Sys\General\Db\HydroObservedPropertyQueries;
-use Environet\Sys\General\Exceptions\HttpNotFoundException;
-use Environet\Sys\General\Exceptions\RenderException;
-use Environet\Sys\General\Response;
 
 /**
  * Class ObservedPropertyCrud
@@ -75,8 +72,8 @@ class ObservedPropertyCrud extends CrudPage {
 			$valid = false;
 		}
 
-		if (!HydroObservedPropertyQueries::checkUnique(['symbol' => $data['symbol'], 'type' => $data['type']], $editedRecord ? $editedRecord['id'] : null)) {
-			$this->addFieldMessage('symbol', sprintf('Symbol must be unique with type %s', observedPropertyTypeOptions()[$data['type']] ?? null), self::MESSAGE_ERROR);
+		if (!HydroObservedPropertyQueries::checkUnique(['symbol' => $data['symbol']], $editedRecord ? $editedRecord['id'] : null)) {
+			$this->addFieldMessage('symbol', 'Symbol must be unique', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 

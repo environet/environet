@@ -72,8 +72,8 @@ class ObservedPropertyCrud extends CrudPage {
 			$valid = false;
 		}
 
-		if (!MeteoObservedPropertyQueries::checkUnique(['symbol' => $data['symbol'], 'type' => $data['type']], $editedRecord ? $editedRecord['id'] : null)) {
-			$this->addFieldMessage('symbol', sprintf('Symbol must be unique with type %s', observedPropertyTypeOptions()[$data['type']] ?? null), self::MESSAGE_ERROR);
+		if (!MeteoObservedPropertyQueries::checkUnique(['symbol' => $data['symbol']], $editedRecord ? $editedRecord['id'] : null)) {
+			$this->addFieldMessage('symbol', 'Symbol must be unique', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 

@@ -70,6 +70,7 @@ class MigrateDb extends DbCommand {
 			'pointLastUpdated',
 			'downloadLogs',
 			'addResultIndexes',
+			'addUniqueSymbolIndexes',
 		];
 		ini_set('memory_limit', - 1);
 
@@ -899,6 +900,39 @@ class MigrateDb extends DbCommand {
 		if (!$this->checkIndex('meteo_time_series', 'meteo_time_series_mpointid')) {
 			$return = 0;
 			$this->connection->runQuery("CREATE INDEX IF NOT EXISTS meteo_time_series_mpointid ON meteo_time_series (mpointid)", []);
+		}
+
+		return $return;
+	}
+
+
+	/**
+	 * Add unique indexes for symbol fields
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function addUniqueSymbolIndexes(array &$output): int {
+		$return = - 1;
+
+		if ($this->checkIndex('hydro_observed_property', 'hydro_observed_property_symbol_type_unique')) {
+			$return = 0;
+			$this->connection->runQuery("DROP INDEX IF EXISTS hydro_observed_property_symbol_type_unique", []);
+		}
+		if (!$this->checkIndex('hydro_observed_property', 'hydro_observed_property_symbol_unique')) {
+			$return = 0;
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS hydro_observed_property_symbol_unique ON hydro_observed_property (symbol)", []);
+		}
+
+		if ($this->checkIndex('meteo_observed_property', 'meteo_observed_property_symbol_type_unique')) {
+			$return = 0;
+			$this->connection->runQuery("DROP INDEX IF EXISTS meteo_observed_property_symbol_type_unique", []);
+		}
+		if (!$this->checkIndex('meteo_observed_property', 'meteo_observed_property_symbol_unique')) {
+			$return = 0;
+			$this->connection->runQuery("CREATE UNIQUE INDEX IF NOT EXISTS meteo_observed_property_symbol_unique ON meteo_observed_property (symbol)", []);
 		}
 
 		return $return;
