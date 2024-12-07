@@ -9,7 +9,7 @@ include 'layouts/before_app.phtml'; ?>
 
 	<div class="card">
 		<h1>Upload processed or missing data - Step 2</h1>
-		<?php if ($hasErrors) {?>
+		<?php if ($hasErrors) { ?>
 			<p>The uploaded files have been preprocessed, but validation failed. Please check the errors, and try again!</p>
 		<?php } else { ?>
 			<p>The uploaded files have been validated, but not yet imported. Please review the changes listed below and press the "Confirm" button to import the data.</p>
@@ -20,7 +20,7 @@ include 'layouts/before_app.phtml'; ?>
 					<ul class="list-group">
 						<li class="list-group-item">
 							<h3><?=$fileResponse->getOriginalFileName();?></h3>
-							<?php if ($fileResponse->hasErrors()) {?>
+							<?php if ($fileResponse->hasErrors()) { ?>
 								<?php foreach ($fileResponse->getErrorMessages() as $message) { ?>
 									<div class="alert alert-danger" role="alert">
 										<?=$message;?>
@@ -42,6 +42,14 @@ include 'layouts/before_app.phtml'; ?>
 										<?=$message;?>
 									</div>
 								<?php } ?>
+								<?php if (!empty($fileResponse->getStatistics()->hasDuplicatePointTimes())) { ?>
+									<div class="alert alert-warning" role="alert">
+										<strong>Warning!</strong> The uploaded file contains multiple values for the same time. You can check the affected times below.
+										<br />
+										If you confirm the upload, the last value will be used for the given time, everything else will be imported as obsolete values.
+									</div>
+								<?php } ?>
+
 								<input type="hidden" name="xml_file[xml][]" value="<?=$fileResponse->getStatistics()->getInputXmlFile();?>" />
 								<input type="hidden" name="xml_file[original][]" value="<?=$fileResponse->getOriginalFileName();?>" />
 								<ul>
@@ -52,6 +60,16 @@ include 'layouts/before_app.phtml'; ?>
 										<ul>
 											<li><strong>Inserts </strong>: <?=$fileResponse->getStatistics()->getPropertyInserts($propertySymbol);?></li>
 											<li><strong>Updates </strong>: <?=$fileResponse->getStatistics()->getPropertyUpdates($propertySymbol);?></li>
+											<?php if ($fileResponse->getStatistics()->getDuplicatePointTimes($propertySymbol)) { ?>
+												<li>
+													<strong>Duplicate times </strong>:
+													<ul>
+														<?php foreach ($fileResponse->getStatistics()->getDuplicatePointTimes($propertySymbol) as $duplicatePointTime) { ?>
+															<li><?=$duplicatePointTime;?></li>
+														<?php } ?>
+													</ul>
+												</li>
+											<?php } ?>
 											<li><strong>No changes </strong>: <?=$fileResponse->getStatistics()->getPropertyNoChanges($propertySymbol);?></li>
 											<li><strong>Minimum result time </strong>: <?=$fileResponse->getStatistics()->getPropertyMinTimeFormatted($propertySymbol);?></li>
 											<li><strong>Maximum result time </strong>: <?=$fileResponse->getStatistics()->getPropertyMaxTimeFormatted($propertySymbol);?></li>
@@ -63,9 +81,9 @@ include 'layouts/before_app.phtml'; ?>
 					</ul>
 				<?php } ?>
 			</div>
-			<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
+			<input type="hidden" name="__csrf" value="<?=$csrf;?>" />
 
-			<?php if (!$hasErrors) {?>
+			<?php if (!$hasErrors) { ?>
 				<input type="submit" class="btn btn-primary oneClickSubmit" data-processingvalue="Upload is in progress..." value="Confirm">
 			<?php } ?>
 		</form>

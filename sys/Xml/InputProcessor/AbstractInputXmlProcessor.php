@@ -104,7 +104,7 @@ abstract class AbstractInputXmlProcessor {
 	 *
 	 * @return Query
 	 */
-	abstract protected function createResultUpdate(): Query;
+	abstract protected function createResultObsoleteUpdate(): Query;
 
 
 	/**
@@ -226,8 +226,18 @@ abstract class AbstractInputXmlProcessor {
 					throw new UploadException(404, $messages, $identity->getData());
 				}
 
+				//Check duplicate values. Create array of values with normalized times
+				$values = array_map(
+					fn($point) => createAtomDateTime((string) ($point->xpath('environet:PointTime')[0] ?? null))->format(DateTimeInterface::ATOM),
+					$timeSeriesPoints
+				);
+				//Find duplicates for times
+				$duplicates = array_filter(array_count_values($values), fn($value) => $value > 1);
+
+				$this->stats->setDuplicatePointTimes($propertySymbol, $duplicates);
+
 				// Insert results
-				$this->insertResults($timeSeriesPoints, $timeSeriesId, $propertySymbol, $now);
+				$this->insertResults($timeSeriesPoints, $timeSeriesId, $propertySymbol, $now, $duplicates);
 				if (!isUploadDryRun()) {
 					$this->getPointQueriesClass()::updatePropertyLastUpdate($mPoint['id'], $propertyId, $now);
 				}
@@ -253,6 +263,7 @@ abstract class AbstractInputXmlProcessor {
 	 * @param int                      $timeSeriesId     Id of time series record
 	 * @param string                   $propertySymbol
 	 * @param DateTime                 $now
+	 * @param array                    $duplicateTimes
 	 *
 	 * @throws ApiException
 	 * @uses AbstractInputXmlProcessor::createResultInsert
@@ -261,7 +272,7 @@ abstract class AbstractInputXmlProcessor {
 	 * @uses \DateTimeInterface
 	 * @uses \DateTimeZone
 	 */
-	protected function insertResults(array $timeSeriesPoints, int $timeSeriesId, string $propertySymbol, DateTime $now) {
+	protected function insertResults(array $timeSeriesPoints, int $timeSeriesId, string $propertySymbol, DateTime $now, array $duplicateTimes = []) {
 		try {
 			$timeSeriesPointsBatches = array_chunk($timeSeriesPoints, 3000, true);
 
@@ -272,7 +283,9 @@ abstract class AbstractInputXmlProcessor {
 
 				foreach ($batch as $key => $point) {
 					// Convert time to UTC
-					$time = DateTime::createFromFormat(DateTimeInterface::ISO8601, (string) $point->xpath('environet:PointTime')[0] ?? null);
+					$time = createAtomDateTime((string) ($point->xpath('environet:PointTime')[0] ?? null));
+					$timeAtom = $time->format(DateTimeInterface::ATOM);
+
 					if (is_null($minTime) || $time->getTimestamp() < $minTime->getTimestamp()) {
 						$minTime = $time;
 					}
@@ -284,12 +297,19 @@ abstract class AbstractInputXmlProcessor {
 
 					$value = (string) $point->xpath('environet:PointValue')[0] ?? null;
 
+					// Check if the value is obsolete. It is obsolete if there are more than one value for the same time. The last value is not obsolete.
+					$isObsolete = false;
+					if (array_key_exists($timeAtom, $duplicateTimes) && $duplicateTimes[$timeAtom] > 1) {
+						$isObsolete = true;
+						$duplicateTimes[$timeAtom] --;
+					}
+
 					//Add result to stats
 					$statisticsSelect = $this->createResultStatisticsSelect();
 					$this->stats->addResult($propertySymbol, $value, $statisticsSelect->addParameters([
-						"tsid"       => $timeSeriesId,
-						"time"       => $time->format('c'),
-						"isForecast" => $now < $time
+						'tsid'       => $timeSeriesId,
+						'time'       => $time->format('c'),
+						'isForecast' => $now < $time
 					])->run());
 
 					if (isUploadDryRun()) {
@@ -298,16 +318,17 @@ abstract class AbstractInputXmlProcessor {
 					}
 
 					// Add 'values' row to insert query
-					$insert->addValueRow([":tsid$key", ":time$key", ":value$key", ":isForecast$key", ":createdAt$key"]);
+					$insert->addValueRow([":tsid$key", ":time$key", ":value$key", ":isForecast$key", ":isObsolete$key", ":createdAt$key"]);
 					$insert->addParameters([
 						"tsid$key"       => $timeSeriesId,
 						"time$key"       => $time->format('c'),
 						"value$key"      => $value,
 						"isForecast$key" => $now < $time,
+						"isObsolete$key" => $isObsolete,
 						"createdAt$key"  => $now->format('c'),
 					]);
 
-					$update = $this->createResultUpdate();
+					$update = $this->createResultObsoleteUpdate();
 					$update->addParameters([
 						"tsid"       => $timeSeriesId,
 						"time"       => $time->format('c'),

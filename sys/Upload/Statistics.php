@@ -45,6 +45,11 @@ class Statistics {
 	 */
 	protected ?DateTime $date = null;
 
+	/**
+	 * @var array
+	 */
+	protected array $duplicatePointTimes = [];
+
 
 	/**
 	 * Get count of input properties
@@ -93,6 +98,37 @@ class Statistics {
 	public function setPropertyValuesCount(string $symbol, int $propertyValuesCount): Statistics {
 		$this->addProperty($symbol);
 		$this->properties[$symbol]['count'] = $propertyValuesCount;
+
+		return $this;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function hasDuplicatePointTimes(): bool {
+		return !empty(array_filter($this->duplicatePointTimes));
+	}
+
+
+	/**
+	 * @param string $symbol
+	 *
+	 * @return array
+	 */
+	public function getDuplicatePointTimes(string $symbol): array {
+		return $this->duplicatePointTimes[$symbol] ?? [];
+	}
+
+
+	/**
+	 * @param string $symbol
+	 * @param array  $duplicatePointTimes
+	 *
+	 * @return Statistics
+	 */
+	public function setDuplicatePointTimes(string $symbol, array $duplicatePointTimes): Statistics {
+		$this->duplicatePointTimes[$symbol] = $duplicatePointTimes;
 
 		return $this;
 	}
@@ -437,6 +473,10 @@ class Statistics {
 			$xmlProperty = $xml->addChild('PropertyStatistics');
 			$xmlProperty->addChild('Symbol', $property);
 			$xmlProperty->addChild('ValuesCount', $this->getPropertyValuesCount($property));
+			$dptProperty = $xmlProperty->addChild('DuplicatePointTimes');
+			foreach (array_keys($this->getDuplicatePointTimes($property)) as $time) {
+				$dptProperty->addChild('DuplicatePointTime', $time);
+			}
 			$xmlProperty->addChild('Inserts', $this->getPropertyInserts($property));
 			$xmlProperty->addChild('Updates', $this->getPropertyUpdates($property));
 			$xmlProperty->addChild('NoChanges', $this->getPropertyNoChanges($property));
@@ -473,6 +513,13 @@ class Statistics {
 			$maxTime = $property->xpath('environet:MaxTime')[0] ?? null;
 			$statistics->addProperty($symbol);
 			$statistics->setPropertyValuesCount($symbol, (int) $property->xpath('environet:ValuesCount')[0] ?? 0);
+
+			$duplicatePointTimes = [];
+			foreach ($property->xpath('environet:DuplicatePointTimes/environet:DuplicatePointTime') as $time) {
+				$duplicatePointTimes[] = (string) $time;
+			}
+			$statistics->setDuplicatePointTimes($symbol, $duplicatePointTimes);
+
 			$statistics->setPropertyInserts($symbol, (int) $property->xpath('environet:Inserts')[0] ?? 0);
 			$statistics->setPropertyUpdates($symbol, (int) $property->xpath('environet:Updates')[0] ?? 0);
 			$statistics->setPropertyNoChanges($symbol, (int) $property->xpath('environet:NoChanges')[0] ?? 0);

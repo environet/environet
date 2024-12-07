@@ -429,3 +429,20 @@ function createValidDate(string $dateString, $timezone = null): DateTime {
 
 	return $date;
 }
+
+
+/**
+ * Create an Atom formatted date time object from a string, with a fallback to a different format
+ * @param string $timeString
+ *
+ * @return DateTime|false
+ */
+function createAtomDateTime(string $timeString) {
+	$time = DateTime::createFromFormat(DateTimeInterface::ATOM, $timeString);
+	if ($time === false) {
+		// Fallback to the format without timezone
+		$time = DateTime::createFromFormat('Y-m-d\TH:i:s', $timeString, new DateTimeZone('UTC'));
+	}
+
+	return $time;
+}
