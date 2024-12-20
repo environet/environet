@@ -276,6 +276,8 @@ abstract class AbstractInputXmlProcessor {
 		try {
 			$timeSeriesPointsBatches = array_chunk($timeSeriesPoints, 3000, true);
 
+			$lastValue = [];
+
 			$minTime = $maxTime = null;
 			foreach ($timeSeriesPointsBatches as $batch) {
 				// Create empty insert query
@@ -328,14 +330,8 @@ abstract class AbstractInputXmlProcessor {
 						"createdAt$key"  => $now->format('c'),
 					]);
 
-					$update = $this->createResultObsoleteUpdate();
-					$update->addParameters([
-						"tsid"       => $timeSeriesId,
-						"time"       => $time->format('c'),
-						"isForecast" => $now < $time,
-						"value"      => $value,
-					]);
-					$update->run();
+					$isForecast = $now < $time;
+					$lastValue[$time->format('c')][$isForecast ? 1 : 0] = $value;
 				}
 
 				try {
@@ -350,6 +346,19 @@ abstract class AbstractInputXmlProcessor {
 
 			//Update min-max values of time series
 			if (!isUploadDryRun()) {
+				foreach ($lastValue as $time => $values) {
+					foreach ($values as $isForecast => $value) {
+						$update = $this->createResultObsoleteUpdate();
+						$update->addParameters([
+							"tsid"       => $timeSeriesId,
+							"time"       => $time,
+							"isForecast" => $isForecast,
+							"value"      => $value,
+						]);
+						$update->run();
+					}
+				}
+
 				$this->getPointQueriesClass()::updateTimeSeriesPropertyMinMax($timeSeriesId);
 				$this->getPointQueriesClass()::updateTimeSeriesPropertyPhenomenon($timeSeriesId);
 				$this->getPointQueriesClass()::updateTimeSeriesResultTime($timeSeriesId);
