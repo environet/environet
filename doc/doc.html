@@ -2006,6 +2006,7 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <p>Common properties:</p>
 <ul>
 <li><em>timeZone</em> (required): A valid timezone, in which the data is stored in the source. The times will be converted to UTC before the API client layer. Possible values: <a href="https://www.php.net/manual/en/timezones.php" class="uri">https://www.php.net/manual/en/timezones.php</a></li>
+<li><em>onlyTimes</em> (optional): A valid cron expression to filter values. Only times which match the expression will be processed. Example: “0 * * * *” will process only values which have a minute of 0, so only the values of the full hour will be processed.</li>
 </ul>
 <h5 id="csvparser">CsvParser</h5>
 <p>For files which are in CSV format</p>

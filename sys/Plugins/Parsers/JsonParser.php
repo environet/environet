@@ -43,6 +43,12 @@ class JsonParser extends AbstractParser implements BuilderLayerInterface {
 	public function parse(Resource $resource): array {
 
 		$parsed = json_decode($resource->getContents(), true);
+
+		//Filter out values with not allowed times
+		$parsed = array_filter($parsed, function ($item) {
+			return !($this->onlyTimes && !(isset($item['time']) && $this->isAllowedByOnlyTimes($item['time'])));
+		});
+
 		$creator = new CreateInputXml();
 		$property = new InputXmlPropertyData($this->propertySymbol, $parsed);
 
@@ -59,13 +65,16 @@ class JsonParser extends AbstractParser implements BuilderLayerInterface {
 
 		$timeZone = self::createTimeZoneConfig($console);
 
+		$onlyTimes = self::createOnlyTimesConfig($console);
+
 		$monitoringPointId = $console->ask('Enter monitoring point id:');
 		$propertySymbol = $console->ask('Enter property symbol:');
 
 		$config = [
-			'monitoringPointId'   => $monitoringPointId,
-			'propertySymbol'      => $propertySymbol,
-			'timeZone'            => $timeZone
+			'monitoringPointId' => $monitoringPointId,
+			'propertySymbol'    => $propertySymbol,
+			'timeZone'          => $timeZone,
+			'onlyTimes'         => $onlyTimes
 		];
 
 		return new self($config);
@@ -92,6 +101,7 @@ class JsonParser extends AbstractParser implements BuilderLayerInterface {
 		$result .= "monitoringPointId = $this->monitoringPointId\n";
 		$result .= "propertySymbol = $this->propertySymbol\n";
 		$result .= 'timeZone = ' . $this->timeZone . "\n";
+		$result .= 'onlyTimes = ' . $this->onlyTimes . "\n";
 
 		return $result;
 	}

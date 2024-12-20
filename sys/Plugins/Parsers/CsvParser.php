@@ -203,7 +203,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		$fixedMPoint = null;
 		$fixedObservedProperty = null;
 		$lineCount = 0;
-		$allskip = true;	// signals whether file consists only of skip values
+		$allskip = true;    // signals whether file consists only of skip values
 		foreach ($lines as $line) {
 			++ $lineCount;
 
@@ -233,6 +233,11 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 			}
 			$resultLine = $this->parseResultLine($line, $globalTime, $fixedMPoint);
 			if (empty($resultLine)) {
+				continue;
+			}
+
+			if ($this->onlyTimes && !(isset($resultLine['time']) && $this->isAllowedByOnlyTimes($resultLine['time']))) {
+				// Skip if time is not in allowed times
 				continue;
 			}
 
@@ -317,7 +322,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	 * Parse one line of the CSV input string.
 	 *
 	 * @param                        $line
-	 * @param DateTimeInterface|null $time A global time for the whole file
+	 * @param DateTimeInterface|null $time     A global time for the whole file
 	 * @param string|null            $mPointId A pre-defined, fixed mpoint id
 	 *
 	 * @return array
@@ -351,7 +356,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 
 		$data = [
 			'mPointId' => $mPointId ?: $values[$this->mPointIdCol],
-			'time' => $time->format(self::API_TIME_FORMAT_STRING)
+			'time'     => $time->format(self::API_TIME_FORMAT_STRING)
 		];
 
 		switch ($this->propertyLevel) {
@@ -449,6 +454,8 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		$console->writeLine('Skip values with exact values: (if the value of a property matches the entered value, the row will be ignored)', Console::COLOR_YELLOW);
 		$skipValue = $console->ask('Skip value:');
 
+		$onlyTimes = self::createOnlyTimesConfig($console);
+
 		$console->writeLine('Configuring observed properties', Console::COLOR_YELLOW);
 
 		$console->writeLine('In what way are the values in the files matched to the observed property symbols?');
@@ -484,6 +491,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		$config = [
 			'csvDelimiter'         => $csvDelimiter,
 			'timeZone'             => $timeZone,
+			'onlyTimes'            => $onlyTimes,
 			'nHeaderSkip'          => $nHeaderSkip,
 			'mPointIdCol'          => $mPointIdCol,
 			'timeCol'              => $timeCol,
@@ -568,6 +576,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		$config .= 'timeFormat = ' . $this->timeFormat . "\n";
 		$config .= 'timeInFilenameFormat = ' . $this->timeInFilenameFormat . "\n";
 		$config .= 'timeZone = ' . $this->timeZone . "\n";
+		$config .= 'onlyTimes = ' . $this->onlyTimes . "\n";
 		$config .= 'skipValue = ' . $this->skipValue . "\n";
 		$config .= 'conversionsFilename = ' . $this->conversionsFilename . "\n";
 		$config .= 'propertyLevel = ' . $this->propertyLevel . "\n";

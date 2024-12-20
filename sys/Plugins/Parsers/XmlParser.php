@@ -477,6 +477,13 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 			if (!$this->convertValue($resolvedGroup)) {
 				unset($this->flatList[$key]);
 			}
+
+			//Filter out values with not allowed times
+			$dateItem = $resolvedGroup->getItemsWithParameter(DateParameter::class)[0] ?? null;
+			if ($this->onlyTimes && !(isset($dateItem) && $this->isAllowedByOnlyTimes($dateItem->getValue()))) {
+				unset($this->flatList[$key]);
+			}
+
 		}
 		$this->flatList = array_values($this->flatList);
 
@@ -513,6 +520,8 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 		$timeZone = self::createTimeZoneConfig($console);
 
+		$onlyTimes = self::createOnlyTimesConfig($console);
+
 		$separatorThousands = $console->ask('Separator for groups of thousands in values. May be empty. Example: , for 12,040.01 cm');
 		$separatorDecimals = $console->ask('Separator for decimals. Example: . for 142.3 cm');
 		$formatsFilename = $console->ask('Filename for xml format definitions');
@@ -524,12 +533,13 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		$skipValue = $console->ask('Skip value:');
 
 		$config = [
-			'separatorThousands'  => $separatorThousands,
-			'separatorDecimals'   => $separatorDecimals,
-			'formatsFilename'     => $formatsFilename,
-			'skipEmptyValueTag'   => $skipEmptyValueTag,
-			'skipValue'           => $skipValue,
-			'timeZone'            => $timeZone
+			'separatorThousands' => $separatorThousands,
+			'separatorDecimals'  => $separatorDecimals,
+			'formatsFilename'    => $formatsFilename,
+			'skipEmptyValueTag'  => $skipEmptyValueTag,
+			'skipValue'          => $skipValue,
+			'timeZone'           => $timeZone,
+			'onlyTimes'          => $onlyTimes
 		];
 
 		return new self($config);
@@ -548,6 +558,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		$config .= 'skipEmptyValueTag = ' . $this->skipEmptyValueTag ? 1 : 0 . "\n";
 		$config .= 'skipValue = ' . $this->skipValue . "\n";
 		$config .= 'timeZone = ' . $this->timeZone . "\n";
+		$config .= 'onlyTimes = ' . $this->onlyTimes . "\n";
 
 		return $config;
 	}

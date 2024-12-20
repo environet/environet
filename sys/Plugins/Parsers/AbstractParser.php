@@ -3,12 +3,12 @@
 
 namespace Environet\Sys\Plugins\Parsers;
 
+use Cron\CronExpression;
 use DateTimeZone;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\General\Model\Configuration\FormatsConfig;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\ParserInterface;
-use Environet\Sys\Plugins\PluginBuilder;
 use Exception;
 
 /**
@@ -41,6 +41,8 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 
 	protected array $configArray;
 
+	protected ?string $onlyTimes;
+
 
 	/**
 	 * AbstractParser constructor.
@@ -52,6 +54,7 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 		$this->timeZone = $config['timeZone'] ?? 'UTC';
 		$this->timeInFilenameFormat = $config['timeInFilenameFormat'] ?? null;
 		$this->formatsFilename = $config['formatsFilename'] ?? null;
+		$this->onlyTimes = $config['onlyTimes'] ?? null;
 	}
 
 
@@ -79,6 +82,30 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 		} while (!in_array($timezone, $validList));
 
 		return $timezone;
+	}
+
+
+	/**
+	 * @param Console $console
+	 *
+	 * @return ?string
+	 */
+	public static function createOnlyTimesConfig(Console $console) {
+		$console->writeLine('Do you want to filter import times with a cron config?', Console::COLOR_YELLOW);
+		$filterTimes = $console->askWithDefault('[y/n]', 'n');
+		$filterTimes = trim(strtolower($filterTimes)) === 'y';
+
+
+		$onlyTimes = null;
+		if ($filterTimes) {
+			do {
+				$console->writeLine('Enter e cron expression (e.g. import only values in every hour: \'0 * * * *\'', Console::COLOR_YELLOW);
+				$onlyTimes = $console->ask('Cron expression:');
+				$onlyTimes = trim($onlyTimes);
+			} while (!(CronExpression::isValidExpression($onlyTimes)));
+		}
+
+		return $onlyTimes;
 	}
 
 
@@ -114,6 +141,15 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 
 
 	/**
+	 * Get onlyTimes of plugin
+	 * @return string|null
+	 */
+	protected function getOnlyTimes(): ?string {
+		return $this->onlyTimes;
+	}
+
+
+	/**
 	 * Get the configuration from formats.json, and build a FormatsConfig object from it
 	 *
 	 * @return FormatsConfig|null
@@ -133,6 +169,36 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 		}
 
 		return $this->formatsConfig;
+	}
+
+
+	/**
+	 * Check if a time is allowed by the onlyTimes configuration
+	 *
+	 * @param string $timeValue
+	 *
+	 * @return bool
+	 */
+	protected function isAllowedByOnlyTimes(string $timeValue): bool {
+		try {
+			//Parse time
+			$dateTime = createValidDate($timeValue);
+		} catch (Exception $e) {
+			//If time is not valid, it is not allowed
+			return false;
+		}
+
+		//Get onlyTimes config
+		$onlyTimes = $this->getOnlyTimes();
+		if ($onlyTimes) {
+			//Check if time is allowed by cron expression
+			$cron = new CronExpression($onlyTimes);
+
+			return $cron->isDue($dateTime);
+		}
+
+		//If no onlyTimes config, all times are allowed
+		return true;
 	}
 
 
