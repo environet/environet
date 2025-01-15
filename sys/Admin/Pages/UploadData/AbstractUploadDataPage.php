@@ -458,9 +458,14 @@ abstract class AbstractUploadDataPage extends BasePage {
 						throw new Exception(sprintf('Can\'t parse date: "%s" in row #%s. Please use the expected format: yyyy-mm-dd hh:mm:ss', $dateString, $rowIndex));
 					}
 					$dateTime->setTimezone($toTimezone);
+
+					$value = $row[$propertyKey] ?? null;
+					if ($value === '') {
+						$value = null;
+					}
 					$propertiesData[$property][] = [
 						'time'  => $dateTime->format('c'),
-						'value' => $row[$propertyKey] ?? null
+						'value' => $value
 					];
 					unset($dateTime);
 				}
