@@ -1423,7 +1423,7 @@ Takes the data from a remote SFTP server
 Common properties:
 
 * _timeZone_ (required): A valid timezone, in which the data is stored in the source. The times will be converted to UTC before the API client layer. Possible values: [https://www.php.net/manual/en/timezones.php](https://www.php.net/manual/en/timezones.php)
-* _onlyTimes_ (optional): A valid cron expression to filter values. Only times which match the expression will be processed. Example: “0 * * * *” will process only values which have a minute of 0, so only the values of the full hour will be processed.
+* _onlyTimes_ (optional): A valid cron expression to filter values. Only times which match the expression will be processed. Example: “0 * * * *” will process only values which have a minute of 0, so only the values of the full hour will be processed. The filtering happens after dates converted to UTC, so the time zone of the cron expression is UTC.
 
 ##### CsvParser
 
