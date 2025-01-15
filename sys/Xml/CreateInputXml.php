@@ -27,7 +27,7 @@ class CreateInputXml {
 	 * @throws CreateInputXmlException
 	 * @uses \Environet\Sys\Xml\CreateInputXml::validateValues()
 	 */
-	public function generateXml(InputXmlData $inputXmlData): SimpleXMLElement {
+	public function generateXml(InputXmlData $inputXmlData, array &$warnings = []): SimpleXMLElement {
 		if (!($inputXmlData->getPointId())) {
 			// Point data is required
 			throw new CreateInputXmlException('Point id is required');
@@ -40,6 +40,10 @@ class CreateInputXml {
 				throw new CreateInputXmlException("Property #" . ($propertyKey + 1) . ": Property symbol is required");
 			}
 			// Validate array of values
+			if (empty($property->getValues())) {
+				//Warning about empty values for a property in data set
+				$warnings[] = "Property #" . ($propertyKey + 1) . ": Values is empty, no values for property " . $property->getPropertySymbol();
+			}
 			$this->validateValues($property->getValues(), $propertyKey);
 		}
 
@@ -53,6 +57,10 @@ class CreateInputXml {
 
 		// Add properties and time series elements
 		foreach ($inputXmlData->getProperties() as $propertyKey => $property) {
+			if (empty($property->getValues())) {
+				// Skip property without any values
+				continue;
+			}
 			// Add property, and propertyID
 			$xmlProperty = $xml->addChild('Property');
 			$xmlProperty->addChild('PropertyId', $property->getPropertySymbol());
@@ -82,10 +90,6 @@ class CreateInputXml {
 	 * @uses \DateTime
 	 */
 	protected function validateValues(array $values, int $propertyKey): bool {
-		if (empty($values)) {
-			// Empty values is invalid
-			throw new CreateInputXmlException("Property #" . ($propertyKey + 1) . ": Values is empty");
-		}
 		foreach ($values as $key => $value) {
 			if (!(count($value) === 2 && isset($value['time']) && isset($value['value']))) {
 				// Invalid sub-array

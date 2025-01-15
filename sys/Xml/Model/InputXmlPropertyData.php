@@ -71,9 +71,9 @@ class InputXmlPropertyData {
 	/**
 	 * Get values
 	 *
-	 * @return array|null
+	 * @return array
 	 */
-	public function getValues(): ?array {
+	public function getValues(): array {
 		return $this->values;
 	}
 

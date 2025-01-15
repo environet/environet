@@ -321,7 +321,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 			$propertyXmls[] = new InputXmlPropertyData($propertySymbol, $propertyData);
 		}
 		//Generate whole xml content
-		$xml = $creator->generateXml(new InputXmlData($mpointId, $propertyXmls))->asXML();
+		$xml = $creator->generateXml(new InputXmlData($mpointId, $propertyXmls), $warnings)->asXML();
 
 		//Create directory if not exists
 		if (!is_dir($this->getXmlFileDir())) {
