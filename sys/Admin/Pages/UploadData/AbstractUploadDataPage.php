@@ -87,7 +87,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 		try {
 			// Send the data with a http client, and store the response body in a variable
 			return $this->preProcessData();
-		} catch (HttpClientException | CreateInputXmlException $e) {
+		} catch (HttpClientException|CreateInputXmlException $e) {
 			// Store error response of the request in $error var
 			$this->addMessage($e->getMessage(), self::MESSAGE_ERROR);
 		} catch (Exception $e) {
@@ -418,7 +418,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 	/**
 	 * Map the CSV file, parse monitoring point id, and values for multiple properties.
 	 *
-	 * @param resource $fileHandle             File handle of csv file
+	 * @param resource $fileHandle File handle of csv file
 	 * @param string   $selectedTimezoneOption
 	 * @param array    $warnings
 	 *
@@ -434,6 +434,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 		$toTimezone = new DateTimeZone('UTC');
 		while (($row = fgetcsv($fileHandle, 10000)) !== false) {
 			$rowIndex ++;
+			$row = array_map(fn($value) => is_string($value) ? trim($value) : $value, $row);
 			if ($rowIndex === 1 && !empty($row[1])) {
 				//Get mpoint id from first row
 				$mpointId = $row[1];
