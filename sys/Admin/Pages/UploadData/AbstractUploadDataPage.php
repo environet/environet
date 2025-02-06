@@ -434,7 +434,9 @@ abstract class AbstractUploadDataPage extends BasePage {
 		$toTimezone = new DateTimeZone('UTC');
 		while (($row = fgetcsv($fileHandle, 10000)) !== false) {
 			$rowIndex ++;
-			$row = array_map(fn($value) => is_string($value) ? trim($value) : $value, $row);
+			if (is_array($row)) {
+				$row = array_map(fn($value) => is_string($value) ? trim($value) : $value, $row);
+			}
 			if ($rowIndex === 1 && !empty($row[1])) {
 				//Get mpoint id from first row
 				$mpointId = $row[1];
