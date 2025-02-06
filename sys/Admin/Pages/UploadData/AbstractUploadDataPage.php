@@ -123,6 +123,9 @@ abstract class AbstractUploadDataPage extends BasePage {
 		//Process each xml files
 		$fileResponses = [];
 		foreach ($xmlFiles as $originalFileName => $xmlFile) {
+			if ($selectedTimezoneOption !== 'UTC') {
+				$warnings[$originalFileName][] = sprintf('Times are converted from %s to UTC during import.', $selectedTimezoneOption);
+			}
 			$fileResponse = new UploadFileResponse($originalFileName);
 			$fileResponse->setWarningMessages(array_filter(array_unique($warnings[$originalFileName] ?? [])));
 			if (is_array($xmlFile)) {
@@ -157,6 +160,8 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 * @see  CreateInputXml
 	 */
 	protected function handleSend(array $xmlFiles): array {
+		$selectedTimezoneOption = $this->request->getCleanData()['timezone_selector'] ?? null;
+
 		//Iterate over files, and send it
 		$fileResponses = [];
 		foreach ($xmlFiles['xml'] ?? [] as $key => $xmlFile) {
@@ -167,6 +172,10 @@ abstract class AbstractUploadDataPage extends BasePage {
 			$fileResponse->setFromResponse($response, $this->request);
 
 			$fileResponses[] = $fileResponse;
+
+			if ($selectedTimezoneOption !== 'UTC') {
+				$fileResponse->addSuccessMessage(sprintf('Times were converted from %s to UTC during import.', $selectedTimezoneOption));
+			}
 
 			if (!$fileResponse->hasErrors()) {
 				$fileResponse->addSuccessMessage(sprintf('File imported successfully: %s', $fileResponse->getOriginalFileName()));

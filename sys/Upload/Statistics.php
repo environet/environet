@@ -4,6 +4,7 @@ namespace Environet\Sys\Upload;
 
 use DateTime;
 use DateTimeInterface;
+use DateTimeZone;
 use Exception;
 use SimpleXMLElement;
 
@@ -293,14 +294,41 @@ class Statistics {
 
 
 	/**
-	 * Get min time of a property
+	 * Get min time of a property, with optional format, and timezone conversion
 	 *
 	 * @param string $symbol
 	 *
 	 * @return DateTime|null
 	 */
-	public function getPropertyMinTimeFormatted(string $symbol): ?string {
-		return $this->getPropertyMinTime($symbol) ? $this->getPropertyMinTime($symbol)->format('c') : null;
+	public function getPropertyMinTimeFormatted(string $symbol, string $format = 'c', ?string $timezone = null): ?string {
+		$date = $this->getPropertyMinTime($symbol) ? (clone $this->getPropertyMinTime($symbol)) : null;
+		if (!$date) {
+			return null;
+		}
+		if ($timezone) {
+			$date->setTimezone(new DateTimeZone($timezone));
+		}
+
+		return $date->format($format);
+	}
+
+
+	/**
+	 * Get min time of a property to output in html. In case of UTC, or no specified timezone, it will return the time in UTC.
+	 * If a custom timezone is specified, it will return the time in that timezone, with the UTC time in parentheses.
+	 *
+	 * @param string      $symbol
+	 * @param string|null $customTimezone
+	 *
+	 * @return DateTime|null
+	 */
+	public function getPropertyMinTimeWithTimezones(string $symbol, ?string $customTimezone = null): ?string {
+		if ($customTimezone === 'UTC' || $customTimezone === null) {
+			return $this->getPropertyMinTimeFormatted($symbol, 'Y-m-d H:i:s') . ' UTC';
+		} else {
+			return $this->getPropertyMinTimeFormatted($symbol, 'Y-m-d H:i:s', $customTimezone) . ' ' . $customTimezone
+				. ' (' . $this->getPropertyMinTimeFormatted($symbol, 'Y-m-d H:i:s') . ' UTC)';
+		}
 	}
 
 
@@ -333,14 +361,41 @@ class Statistics {
 
 
 	/**
-	 * Get min time of a property
+	 * Get min time of a property, with optional format, and timezone conversion
 	 *
 	 * @param string $symbol
 	 *
 	 * @return DateTime|null
 	 */
-	public function getPropertyMaxTimeFormatted(string $symbol): ?string {
-		return $this->getPropertyMaxTime($symbol) ? $this->getPropertyMaxTime($symbol)->format('c') : null;
+	public function getPropertyMaxTimeFormatted(string $symbol, string $format = 'c', ?string $timezone = null): ?string {
+		$date = $this->getPropertyMaxTime($symbol) ? (clone $this->getPropertyMaxTime($symbol)) : null;
+		if (!$date) {
+			return null;
+		}
+		if ($timezone) {
+			$date->setTimezone(new DateTimeZone($timezone));
+		}
+
+		return $date->format($format);
+	}
+
+
+	/**
+	 * Get max time of a property to output in html. In case of UTC, or no specified timezone, it will return the time in UTC.
+	 * If a custom timezone is specified, it will return the time in that timezone, with the UTC time in parentheses.
+	 *
+	 * @param string      $symbol
+	 * @param string|null $customTimezone
+	 *
+	 * @return DateTime|null
+	 */
+	public function getPropertyMaxTimeWithTimezones(string $symbol, ?string $customTimezone = null): ?string {
+		if ($customTimezone === 'UTC' || $customTimezone === null) {
+			return $this->getPropertyMaxTimeFormatted($symbol, 'Y-m-d H:i:s') . ' UTC';
+		} else {
+			return $this->getPropertyMaxTimeFormatted($symbol, 'Y-m-d H:i:s', $customTimezone) . ' ' . $customTimezone
+				. ' (' . $this->getPropertyMaxTimeFormatted($symbol, 'Y-m-d H:i:s') . ' UTC)';
+		}
 	}
 
 

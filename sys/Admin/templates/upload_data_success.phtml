@@ -35,8 +35,12 @@ include 'layouts/before_app.phtml'; ?>
 										<li><strong>Inserts </strong>: <?=$fileResponse->getStatistics()->getPropertyInserts($propertySymbol);?></li>
 										<li><strong>Updates </strong>: <?=$fileResponse->getStatistics()->getPropertyUpdates($propertySymbol);?></li>
 										<li><strong>No changes </strong>: <?=$fileResponse->getStatistics()->getPropertyNoChanges($propertySymbol);?></li>
-										<li><strong>Minimum result time </strong>: <?=$fileResponse->getStatistics()->getPropertyMinTimeFormatted($propertySymbol);?></li>
-										<li><strong>Maximum result time </strong>: <?=$fileResponse->getStatistics()->getPropertyMaxTimeFormatted($propertySymbol);?></li>
+										<li><strong>Minimum result time </strong>
+											<?=$fileResponse->getStatistics()->getPropertyMinTimeWithTimezones($propertySymbol, $selectedTimezoneOption ?? null);?>
+										</li>
+										<li><strong>Maximum result time </strong>:
+											<?=$fileResponse->getStatistics()->getPropertyMaxTimeWithTimezones($propertySymbol, $selectedTimezoneOption ?? null);?>
+										</li>
 									</ul>
 								<?php } ?>
 							</ul>

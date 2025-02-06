@@ -39,6 +39,8 @@ class UploadData extends AbstractUploadDataPage {
 		$selectedTimezoneOption = null;
 
 		if ($this->request->isPost()) {
+			$selectedTimezoneOption = $this->request->getCleanData()['timezone_selector'] ?? null;
+
 			if (array_key_exists('xml_file', $this->request->getCleanData())) {
 				//Step 2 - do upload
 				$fileResponses = $this->handleSend($this->request->getCleanData()['xml_file']);
@@ -51,8 +53,6 @@ class UploadData extends AbstractUploadDataPage {
 					'selectedTimezoneOption'
 				));
 			} else {
-				$selectedTimezoneOption = $this->request->getCleanData()['timezone_selector'] ?? null;
-
 				//Step 1 - statistics
 				$fileResponses = $this->handleStatistics();
 

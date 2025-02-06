@@ -2,6 +2,7 @@
 /**
  * @var UploadFileResponse $fileResponse
  */
+
 use Environet\Sys\Upload\Statistics;
 use Environet\Sys\Upload\UploadFileResponse;
 
@@ -71,8 +72,12 @@ include 'layouts/before_app.phtml'; ?>
 												</li>
 											<?php } ?>
 											<li><strong>No changes </strong>: <?=$fileResponse->getStatistics()->getPropertyNoChanges($propertySymbol);?></li>
-											<li><strong>Minimum result time </strong>: <?=$fileResponse->getStatistics()->getPropertyMinTimeFormatted($propertySymbol);?></li>
-											<li><strong>Maximum result time </strong>: <?=$fileResponse->getStatistics()->getPropertyMaxTimeFormatted($propertySymbol);?></li>
+											<li><strong>Minimum result time </strong>
+												<?=$fileResponse->getStatistics()->getPropertyMinTimeWithTimezones($propertySymbol, $selectedTimezoneOption ?? null);?>
+											</li>
+											<li><strong>Maximum result time </strong>:
+												<?=$fileResponse->getStatistics()->getPropertyMaxTimeWithTimezones($propertySymbol, $selectedTimezoneOption ?? null);?>
+											</li>
 										</ul>
 									<?php } ?>
 								</ul>
@@ -82,6 +87,7 @@ include 'layouts/before_app.phtml'; ?>
 				<?php } ?>
 			</div>
 			<input type="hidden" name="__csrf" value="<?=$csrf;?>" />
+			<input type="hidden" name="timezone_selector" value="<?=($selectedTimezoneOption ?? null);?>" />
 
 			<?php if (!$hasErrors) { ?>
 				<input type="submit" class="btn btn-primary oneClickSubmit" data-processingvalue="Upload is in progress..." value="Confirm">
