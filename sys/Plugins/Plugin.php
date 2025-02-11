@@ -3,6 +3,7 @@
 namespace Environet\Sys\Plugins;
 
 use Environet\Sys\Commands\Console;
+use SimpleXMLElement;
 
 /**
  * Class Plugin
@@ -81,8 +82,21 @@ class Plugin {
 						$console->writeLogNoEol('Uploading monitoring point data for station NCD ' . $xmlMPointId . ": ");
 						//$console->write($xmlPayload->asXML(), Console::COLOR_YELLOW);
 						try {
-							$this->apiClient->upload($xmlPayload);
+							$response = $this->apiClient->upload($xmlPayload);
 							$console->writeLine('success');
+
+							try {
+								//Fetch response XML and log messages if any
+								$responseXml = new SimpleXMLElement($response->getBody());
+								foreach ($responseXml->xpath('/environet:UploadStatistics/environet:Messages/environet:Message') as $message) {
+									$type = (string) $message->attributes('environet')['type'];
+									$code = isset($message->attributes('environet')['code']) ? (int) $message->attributes()['code'] : null;
+									$console->writeLog(ucfirst($type) . ": " . ($code ? "[$code], " : "") . $message->__toString());
+								}
+							} catch (\Exception $e) {
+								$console->writeLog('Failed to parse response XML', true);
+							}
+
 							$successful ++;
 						} catch (\Exception $e) {
 							$filename = $payloadStorage . '/' . date('YmdHis') . '_' . $xmlMPointId . '.xml';
@@ -97,6 +111,7 @@ class Plugin {
 							$resourceSuccess = false;
 						}
 					}
+
 
 					if ($resourceSuccess) {
 						//Move the file to processed directory if it was successfully uploaded
