@@ -9,17 +9,17 @@
 
 ## Headers
 
-| Header name | Content |
-| --- | --- |
+| Header name   | Content               |
+|---------------|-----------------------|
 | Authorization | Signature (See below) |
-| Content-Type | application/xml |
+| Content-Type  | application/xml       |
 
 ### Signature header:
 
 The pattern of the header: `Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"`
 
 The `keyId` is the username of the uploader user.
-The `signature` part is the base64 encoded openssl signature which was created with the user's private key 
+The `signature` part is the base64 encoded openssl signature which was created with the user's private key
 from the from the body of the response, which is the XML data.
 
 ---
@@ -53,12 +53,21 @@ Sample input XML:
 			</environet:Point>
 		</environet:TimeSeries>
 	</environet:Property>
+	<environet:UploadOptions>
+		<environet:IgnoreUndefinedPoints>0</environet:IgnoreUndefinedPoints>
+	</environet:UploadOptions>
 </environet:UploadData>
 ```
 
 --- 
 
-## Repsonses
+### Upload options
+
+The `environet:UploadOptions` element is optional. If it present, it can contain the following elements:
+
+* `environet:IgnoreUndefinedPoints` - If it is set to 1, the upload process will not throw an error if the monitoring point is not found, but will return an empty statistic response instead. Default value is 0.
+
+## Responses
 
 ### Success
 
@@ -74,34 +83,37 @@ Sample input XML:
 * **Body**: XML: `environet:ErrorResponse`
 * **Description**: Input or processing error during the upload process. The response in an error xml which is valid against environet's upload api schema: [environet.xsd](resources/environet.xsd)
 * **Body example**:
-	 
-	```xml
-	<?xml version="1.0" encoding="UTF-8"?>
-	<environet:ErrorResponse xmlns:environet="environet">
-		<environet:Error>
-			<environet:ErrorCode>101</environet:ErrorCode>
-			<environet:ErrorMessage>Error</environet:ErrorMessage>
-		</environet:Error>
-	</environet:ErrorResponse>
-	```
+
+  ```xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <environet:ErrorResponse xmlns:environet="environet">
+      <environet:Error>
+          <environet:ErrorCode>101</environet:ErrorCode>
+          <environet:ErrorMessage>Error</environet:ErrorMessage>
+      </environet:Error>
+  </environet:ErrorResponse>
+  ```
 * **Error codes**
-    * `101`: Unknown error 
-	* `102`: Server error
-	* `201`: Authorization header is missing
-	* `202`: Username is empty
-	* `203`: User not found with username
-	* `204`: Invalid Authorization header
-	* `205`: Action not permitted
-	* `206`: Public key for user not found
-	* `301`: Signature is invalid
-	* `302`: Xml syntax is invalid
-	* `303`: Xml is invalid against schema
-	* `401`: Error during processing data
-	* `402`: Monitoring point not found with the given identifier
-	* `403`: Property for the selected monitoring point not found, or not allowed
-	* `404`: Could not initialize time series for monitoring point and property
-	
-	
+    * `101`: Unknown error
+    * `102`: Server error
+    * `201`: Authorization header is missing
+    * `202`: Username is empty
+    * `203`: User not found with username
+    * `204`: Invalid Authorization header
+    * `205`: Action not permitted
+    * `206`: Public key for user not found
+    * `301`: Signature is invalid
+    * `302`: Xml syntax is invalid
+    * `303`: Xml is invalid against schema
+    * `401`: Error during processing data
+    * `402`: Monitoring point not found with the given identifier
+    * `403`: Property for the selected monitoring point not found, or not allowed
+    * `404`: Could not initialize time series for monitoring point and property
+    * `405`: Monitoring point is inactive
+    * `406`: Can't detect type of monitoring point based on observed properties. There are mixed type of properties
+    * `407`: Can't detect type of monitoring point based on observed properties. There aren't any valid property
+    * `408`: Invalid upload option: %s
+
 ### Server error
 
 * **Status code**: 500
@@ -109,13 +121,13 @@ Sample input XML:
 * **Body**: XML: `environet:ErrorResponse`
 * **Description**: Unidentified error during request. The response is an xml which is valid agains environet's upload api schema: [environet.xsd](resources/environet.xsd)
 * **Body example**:
-	 
-	```xml
-	<?xml version="1.0" encoding="UTF-8"?>
-	<environet:ErrorResponse xmlns:environet="environet">
-		<environet:Error>
-			<environet:ErrorCode>500</environet:ErrorCode>
-			<environet:ErrorMessage>Error</environet:ErrorMessage>
-		</environet:Error>
-	</environet:ErrorResponse>
-	```
+
+  ```xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <environet:ErrorResponse xmlns:environet="environet">
+      <environet:Error>
+          <environet:ErrorCode>500</environet:ErrorCode>
+          <environet:ErrorMessage>Error</environet:ErrorMessage>
+      </environet:Error>
+  </environet:ErrorResponse>
+  ```

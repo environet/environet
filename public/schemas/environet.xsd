@@ -15,6 +15,7 @@
 			<xs:sequence>
 				<xs:element ref="environet:MonitoringPointId"/>
 				<xs:element ref="environet:Property" minOccurs="1" maxOccurs="unbounded"/>
+				<xs:element ref="environet:UploadOptions" minOccurs="0" maxOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -35,7 +36,8 @@
 				<xs:element name="InputPropertiesCount" minOccurs="1" maxOccurs="1" type="xs:int"/>
 				<xs:element name="Date" minOccurs="1" maxOccurs="1" type="xs:string"/>
 				<xs:element name="MonitoringPointId" minOccurs="1" maxOccurs="1" type="xs:string"/>
-				<xs:element ref="environet:PropertyStatistics" minOccurs="1" maxOccurs="unbounded"/>
+				<xs:element ref="environet:PropertyStatistics" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="environet:Messages" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

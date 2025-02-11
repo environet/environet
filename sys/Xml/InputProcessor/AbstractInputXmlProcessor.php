@@ -14,6 +14,7 @@ use Environet\Sys\General\Exceptions\InvalidConfigurationException;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\Exceptions\UniqueConstraintQueryException;
 use Environet\Sys\General\Identity;
+use Environet\Sys\General\Model\UploadOptions;
 use Environet\Sys\Upload\Exceptions\UploadException;
 use Environet\Sys\Upload\Statistics;
 use Exception;
@@ -157,8 +158,9 @@ abstract class AbstractInputXmlProcessor {
 	 * 3. Iterates the observed properties in the xml, and updates time series for them.
 	 * 4. Inserts the results in the database. {@see AbstractInputXmlProcessor::insertResults()}
 	 *
-	 * @param Identity $identity
-	 * @param DateTime $now
+	 * @param Identity      $identity
+	 * @param DateTime      $now
+	 * @param UploadOptions $options
 	 *
 	 * @throws ApiException
 	 * @throws InvalidConfigurationException
@@ -169,7 +171,7 @@ abstract class AbstractInputXmlProcessor {
 	 * @uses AbstractInputXmlProcessor::getOrCreateTimeSeries
 	 * @uses AbstractInputXmlProcessor::insertResults
 	 */
-	public function process(Identity $identity, DateTime $now) {
+	public function process(Identity $identity, DateTime $now, UploadOptions $options) {
 		$this->stats->setUserId($identity->getId());
 		$this->stats->setDate($now);
 

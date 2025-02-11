@@ -39,6 +39,7 @@ class UploadException extends ApiException {
 			405 => 'Monitoring point is inactive',
 			406 => 'Can\'t detect type of monitoring point based on observed properties. There are mixed type of properties',
 			407 => 'Can\'t detect type of monitoring point based on observed properties. There aren\'t any valid property',
+			408 => 'Invalid upload option: %s',
 		];
 		parent::__construct($code, $errorMessages, $identityData);
 	}
