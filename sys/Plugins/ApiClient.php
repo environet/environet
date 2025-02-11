@@ -36,6 +36,11 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 */
 	private $privateKeyPath;
 
+	/**
+	 * @var bool Ignore errors when monitoring point is not found
+	 */
+	private $ignoreUndefinedPoints;
+
 	protected array $configArray;
 
 
@@ -55,10 +60,13 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 		$console->writeLine("For example: If you placed your private key into conf/plugins/credentials/privatekey.pem, you would enter 'privatekey.pem'", Console::COLOR_YELLOW);
 		$privateKeyPath = $console->ask("API private key path:");
 
+		$ignoreUndefinedPoints = $console->askYesNo('Do you want to ignore errors when the monitoring point is not found in the database?', false);
+
 		$config = [
-			'apiAddress'     => $apiAddress,
-			'apiUsername'    => $apiUsername,
-			'privateKeyPath' => $privateKeyPath
+			'apiAddress'            => $apiAddress,
+			'apiUsername'           => $apiUsername,
+			'privateKeyPath'        => $privateKeyPath,
+			'ignoreUndefinedPoints' => $ignoreUndefinedPoints,
 		];
 
 		return new self($config);
@@ -73,6 +81,7 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 		$result .= "apiAddress = $this->apiAddress\n";
 		$result .= "apiUsername = $this->apiUsername\n";
 		$result .= "privateKeyPath = $this->privateKeyPath\n";
+		$result .= "ignoreUndefinedPoints = " . ($this->ignoreUndefinedPoints ? 1 : 0) . "\n";
 
 		return $result;
 	}
@@ -89,6 +98,7 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 		$this->apiAddress = $config['apiAddress'];
 		$this->apiUsername = $config['apiUsername'];
 		$this->privateKeyPath = $config['privateKeyPath'];
+		$this->ignoreUndefinedPoints = isset($config['ignoreUndefinedPoints']) && $config['ignoreUndefinedPoints'] == 1;
 	}
 
 
@@ -104,6 +114,15 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 * @uses \Environet\Sys\General\HttpClient\HttpClient::sendRequest()
 	 */
 	public function upload(SimpleXMLElement $payload): Response {
+		if ($this->ignoreUndefinedPoints) {
+			// Add ignore undefined points option to the payload
+			$optionsElement = $payload->xpath('/environet:UploadData/environet:UploadOptions')[0] ?? null;
+			if (!$optionsElement) {
+				$optionsElement = $payload->addChild('UploadOptions');
+				$optionsElement->addChild('IgnoreUndefinedPoints', '1');
+			}
+		}
+
 		$request = $this->requestFromPayload($payload);
 		$client = new HttpClient();
 		$response = $client->sendRequest($request);

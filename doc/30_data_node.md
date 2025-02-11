@@ -132,6 +132,7 @@ className = Environet\Sys\Plugins\ApiClient
 apiAddress = https://xxx.xxx.xx/ 
 apiUsername = username 
 privateKeyPath = username_private_key.pem
+ignoreUndefinedPoints = 0
 ```
 For a web API which uses data files in XML format a typical example is:
 ```
@@ -153,6 +154,7 @@ className = Environet\Sys\Plugins\ApiClient
 apiAddress = https://xxx.xxx.xx 
 apiUsername = username2 
 privateKeyPath = username2_private_key.pem
+ignoreUndefinedPoints = 0
 ```
 In this case, additional JSON configuration files are needed and referred to for accessing the web API and to specify the XML format.
 In the following sections the properties of the three sections of the basic configuration files are de-scribed in detail.
@@ -284,6 +286,7 @@ Data of target distribution node
 * _apiAddress_ (required): Host of distribution node
 * _apiUsername_ (required): Username for upload to distribution node
 * _privateKeyPath_ (required): Path to private key
+* _ignoreUndefinedPoints_ (optional): If 1, and upload option will be set, and the distribution node will not throw an error if the monitoring point is not defined on the distribution node.
 
 ### JSON configuration files
 
