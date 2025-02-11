@@ -76,6 +76,33 @@
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
+
+	<xs:simpleType name="messageType" final="restriction">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="info"/>
+			<xs:enumeration value="success"/>
+			<xs:enumeration value="warning"/>
+			<xs:enumeration value="error"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Message">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="code" type="xs:int" use="optional"/>
+					<xs:attribute name="type" type="environet:messageType" use="required"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Messages">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="environet:Message" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
 	<xs:element name="PropertyStatistics">
 		<xs:complexType>
 			<xs:all>
@@ -84,6 +111,17 @@
 				<xs:element name="Inserts" minOccurs="1" maxOccurs="1" type="xs:int"/>
 				<xs:element name="Updates" minOccurs="1" maxOccurs="1" type="xs:int"/>
 				<xs:element name="NoChanges" minOccurs="1" maxOccurs="1" type="xs:int"/>
+				<xs:element name="MinTime" minOccurs="1" maxOccurs="1" type="xs:dateTime"/>
+				<xs:element name="MaxTime" minOccurs="1" maxOccurs="1" type="xs:dateTime"/>
+				<xs:element ref="environet:Messages" minOccurs="0" maxOccurs="1"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="UploadOptions">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="IgnoreUndefinedPoints" minOccurs="0" maxOccurs="1" type="xs:boolean"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>

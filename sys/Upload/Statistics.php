@@ -51,6 +51,22 @@ class Statistics {
 	 */
 	protected array $duplicatePointTimes = [];
 
+	/**
+	 * Array of message types, and messages
+	 * @var array
+	 */
+	protected $messages;
+
+
+	public function __construct() {
+		$this->messages = [
+			'info'    => [],
+			'success' => [],
+			'warning' => [],
+			'error'   => [],
+		];
+	}
+
 
 	/**
 	 * Get count of input properties
@@ -508,6 +524,33 @@ class Statistics {
 
 
 	/**
+	 * Get messages, or messages of a specific type
+	 * @return array|array[]
+	 */
+	public function getMessages(string $type = null): array {
+		if (isset($type)) {
+			return $this->messages[$type] ?? [];
+		}
+
+		return $this->messages;
+	}
+
+
+	/**
+	 * Add an info, success, warning or error message to the statistics
+	 * @throws Exception
+	 */
+	public function addMessage(string $type, string $message): Statistics {
+		if (!array_key_exists($type, $this->messages)) {
+			throw new Exception('Invalid message type');
+		}
+		$this->messages[$type][] = $message;
+
+		return $this;
+	}
+
+
+	/**
 	 * Convert statistics to XML response
 	 *
 	 * @return SimpleXMLElement
@@ -537,6 +580,18 @@ class Statistics {
 			$xmlProperty->addChild('NoChanges', $this->getPropertyNoChanges($property));
 			$xmlProperty->addChild('MinTime', $this->getPropertyMinTimeFormatted($property));
 			$xmlProperty->addChild('MaxTime', $this->getPropertyMaxTimeFormatted($property));
+		}
+
+		//If is there any message, add it to the statistics response
+		$messages = array_filter($this->getMessages());
+		if (!empty($messages)) {
+			$xmlMessages = $xml->addChild('Messages');
+			foreach ($messages as $type => $typeMessages) {
+				foreach ($typeMessages as $typeMessage) {
+					$xmlMessage = $xmlMessages->addChild('Message', $typeMessage);
+					$xmlMessage->addAttribute('environet:type', $type, 'environet');
+				}
+			}
 		}
 
 		return $xml;
