@@ -18,4 +18,7 @@
 			</environet:Point>
 		</environet:TimeSeries>
 	</environet:Property>
+	<environet:UploadOptions>
+		<environet:IgnoreUndefinedPoints>1</environet:IgnoreUndefinedPoints>
+	</environet:UploadOptions>
 </environet:UploadData>

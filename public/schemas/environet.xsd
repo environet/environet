@@ -108,6 +108,13 @@
 			<xs:all>
 				<xs:element name="Symbol" minOccurs="1" maxOccurs="1" type="xs:string"/>
 				<xs:element name="ValuesCount" minOccurs="1" maxOccurs="1" type="xs:int"/>
+				<xs:element name="DuplicatePointTimes">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="DuplicatePointTime" minOccurs="0" maxOccurs="unbounded" type="xs:dateTime"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
 				<xs:element name="Inserts" minOccurs="1" maxOccurs="1" type="xs:int"/>
 				<xs:element name="Updates" minOccurs="1" maxOccurs="1" type="xs:int"/>
 				<xs:element name="NoChanges" minOccurs="1" maxOccurs="1" type="xs:int"/>
