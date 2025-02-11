@@ -9,6 +9,7 @@ use Environet\Sys\General\Db\HydroObservedPropertyQueries;
 use Environet\Sys\General\Db\MeteoObservedPropertyQueries;
 use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\HttpClient\ApiHandler;
+use Environet\Sys\General\Model\UploadOptions;
 use Environet\Sys\General\Response;
 use Environet\Sys\General\SysIdentity;
 use Environet\Sys\Upload\Exceptions\UploadException;
@@ -87,15 +88,26 @@ class UploadHandler extends ApiHandler {
 
 			//Define a common 'now' date, which will be used in the upload process everywhere
 			$nowDate = new DateTime('now', (new DateTimeZone('UTC')));
+			$options = (new UploadOptions())->initFromXml($parsedXml);
 
 			try {
 				// Input is valid syntactically and semantically valid, process it
-				$processor = $this->createInputProcessor($parsedXml);
-				$processor->process($this->getIdentity(), $nowDate);
+				$processor = $this->createInputProcessor($parsedXml, $options);
+				$processor->process($this->getIdentity(), $nowDate, $options);
 
 				return (new Response($processor->getStatistics()->toXml()->asXML()))
 					->setStatusCode(200)
 					->setHeaders(['Content-type: application/xml']);
+			} catch (UploadException $e) {
+				if ($e->getCode() === 402 && $options->isIgnoreUndefinedPoints() && isset($processor)) {
+					//If the upload option is set to ignore undefined points, and the monitoring point is not found, return the statistics with a warning message
+					$processor->getStatistics()->addMessage('warning', 'Monitoring point not found with the given identifier, nothing was uploaded');
+
+					return (new Response($processor->getStatistics()->toXml()->asXML()))
+						->setStatusCode(200)
+						->setHeaders(['Content-type: application/xml']);
+				}
+				throw $e;
 			} catch (InputXmlProcessException $e) {
 				// There are some invalid values in XML
 				throw new UploadException(401, [], $this->identity->getData());
@@ -145,13 +157,15 @@ class UploadHandler extends ApiHandler {
 	 * Create input processor based on the mpoint type. Type is detected with finding it in the type's database table
 	 *
 	 * @param SimpleXMLElement $xml Parsed XML
+	 * @param UploadOptions    $options
 	 *
 	 * @return AbstractInputXmlProcessor
-	 * @throws UploadException|ApiException
+	 * @throws ApiException
+	 * @throws UploadException
 	 * @see MeteoInputXmlProcessor
 	 * @see HydroInputXmlProcessor
 	 */
-	protected function createInputProcessor(SimpleXMLElement $xml): AbstractInputXmlProcessor {
+	protected function createInputProcessor(SimpleXMLElement $xml, UploadOptions $options): AbstractInputXmlProcessor {
 		$monitoringPointId = (string) $xml->xpath('/environet:UploadData/environet:MonitoringPointId[1]')[0] ?? null;
 		$messages = [
 			'NCD: ' . $monitoringPointId,
@@ -195,10 +209,10 @@ class UploadHandler extends ApiHandler {
 			throw new UploadException(407, $messages, $this->identity->getData());
 		}
 
-		if (($hydroProcessor = new HydroInputXmlProcessor($xml))->isValidType($this->getIdentity()) && $detectedType === 'hydro') {
+		if ((($hydroProcessor = new HydroInputXmlProcessor($xml))->isValidType($this->getIdentity()) || $options->isIgnoreUndefinedPoints()) && $detectedType === 'hydro') {
 			return $hydroProcessor;
 		}
-		if (($meteoProcessor = new MeteoInputXmlProcessor($xml))->isValidType($this->getIdentity()) && $detectedType === 'meteo') {
+		if ((($meteoProcessor = new MeteoInputXmlProcessor($xml))->isValidType($this->getIdentity()) || $options->isIgnoreUndefinedPoints()) && $detectedType === 'meteo') {
 			return $meteoProcessor;
 		}
 
