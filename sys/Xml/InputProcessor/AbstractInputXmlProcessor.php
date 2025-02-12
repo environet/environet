@@ -101,14 +101,6 @@ abstract class AbstractInputXmlProcessor {
 
 
 	/**
-	 * Crate a base update request for results table
-	 *
-	 * @return Query
-	 */
-	abstract protected function createResultObsoleteUpdate(): Query;
-
-
-	/**
 	 * @return Query
 	 */
 	abstract protected function createResultStatisticsSelect(): Query;
@@ -239,7 +231,7 @@ abstract class AbstractInputXmlProcessor {
 				$this->stats->setDuplicatePointTimes($propertySymbol, $duplicates);
 
 				// Insert results
-				$this->insertResults($timeSeriesPoints, $timeSeriesId, $propertySymbol, $now, $duplicates);
+				$this->insertResults($timeSeriesPoints, $timeSeriesId, $propertySymbol, $now);
 				if (!isUploadDryRun()) {
 					$this->getPointQueriesClass()::updatePropertyLastUpdate($mPoint['id'], $propertyId, $now);
 				}
@@ -322,13 +314,12 @@ abstract class AbstractInputXmlProcessor {
 					}
 
 					// Add 'values' row to insert query
-					$insert->addValueRow([":tsid$key", ":time$key", ":value$key", ":isForecast$key", ":isObsolete$key", ":createdAt$key"]);
+					$insert->addValueRow([":tsid$key", ":time$key", ":value$key", ":isForecast$key", ":createdAt$key"]);
 					$insert->addParameters([
 						"tsid$key"       => $timeSeriesId,
 						"time$key"       => $time->format('c'),
 						"value$key"      => $value,
 						"isForecast$key" => $now < $time,
-						"isObsolete$key" => $isObsolete,
 						"createdAt$key"  => $now->format('c'),
 					]);
 
@@ -348,19 +339,6 @@ abstract class AbstractInputXmlProcessor {
 
 			//Update min-max values of time series
 			if (!isUploadDryRun()) {
-				foreach ($lastValue as $time => $values) {
-					foreach ($values as $isForecast => $value) {
-						$update = $this->createResultObsoleteUpdate();
-						$update->addParameters([
-							"tsid"       => $timeSeriesId,
-							"time"       => $time,
-							"isForecast" => $isForecast,
-							"value"      => $value,
-						]);
-						$update->run();
-					}
-				}
-
 				$this->getPointQueriesClass()::updateTimeSeriesPropertyMinMax($timeSeriesId);
 				$this->getPointQueriesClass()::updateTimeSeriesPropertyPhenomenon($timeSeriesId);
 				$this->getPointQueriesClass()::updateTimeSeriesResultTime($timeSeriesId);

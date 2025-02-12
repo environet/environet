@@ -9,7 +9,6 @@
 			<th class="text-right"><?=sortableColumn('Result time', 'r.time', get_defined_vars());?></th>
 			<th class="text-right"><?=sortableColumn('Created at', 'r.created_at', get_defined_vars());?></th>
             <th class="text-right"><?=sortableColumn('Is Forecast', 'r.is_forecast', get_defined_vars());?></th>
-            <th class="text-right"><?=sortableColumn('Is Obsolete', 'r.is_obsolete', get_defined_vars());?></th>
 			<th class="text-right"><?=sortableColumn('Value', 'r.value', get_defined_vars());?></th>
 		</tr>
 		</thead>
@@ -24,7 +23,6 @@
 				<td class="text-right text-monospace"><?=$result['time'] ?? null;?></td>
 				<td class="text-right text-monospace"><?=$result['created_at'] ?? null;?></td>
                 <td class="text-right text-monospace"><i class="fa <?=$result['is_forecast'] ? 'fa-check text-success' : 'fa-times text-danger';?>"></i></td>
-                <td class="text-right text-monospace"><?=$result['is_obsolete'] ? '<i class="fa fa-calendar-times"></i>' : null ?></td>
                 <td class="text-right text-monospace"><?=isset($result['value']) ? number_format((float) $result['value'], $precision, '.', ' ') : null;?></td>
 			</tr>
 			<?php

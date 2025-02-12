@@ -71,7 +71,7 @@ class MigrateDb extends DbCommand {
 			'downloadLogs',
 			'addResultIndexes',
 			'addUniqueSymbolIndexes',
-			'addUniqueIndexResult',
+			'separateObsoleteResults'
 		];
 		ini_set('memory_limit', - 1);
 
@@ -948,22 +948,125 @@ class MigrateDb extends DbCommand {
 	 * @return int
 	 * @throws QueryException
 	 */
-	private function addUniqueIndexResult(array &$output): int {
+	private function separateObsoleteResults(array &$output): int {
 		$return = - 1;
 
-		if (!$this->checkIndex('hydro_result', 'unique_hydro_result_constraint')) {
-			$return = 0;
-			$this->connection->runQuery(
-				"CREATE UNIQUE INDEX IF NOT EXISTS unique_hydro_result_constraint ON hydro_result (time_seriesid, time, is_forecast) WHERE is_obsolete = false;",
-				[]
-			);
-		}
-		if (!$this->checkIndex('meteo_result', 'unique_meteo_result_constraint')) {
-			$return = 0;
-			$this->connection->runQuery(
-				"CREATE UNIQUE INDEX IF NOT EXISTS unique_meteo_result_constraint ON meteo_result (time_seriesid, time, is_forecast) WHERE is_obsolete = false;",
-				[]
-			);
+		foreach (['hydro', 'meteo'] as $type) {
+			$resultTable = "{$type}_result";
+			$obsoleteTable = "{$type}_result_obsolete";
+			$timeSeriesTable = "{$type}_time_series";
+
+			//Remove old conditional unique index if exists
+			if ($this->checkIndex($resultTable, "unique_{$resultTable}_constraint")) {
+				$return = 0;
+				$this->connection->runQuery("DROP INDEX IF EXISTS unique_{$resultTable}_constraint;", []);
+			}
+
+			//Create obsolete table if not exists
+			if (!$this->checkTable($obsoleteTable)) {
+				$return = 0;
+				//Create sequence
+				$this->connection->runQuery("CREATE SEQUENCE IF NOT EXISTS public.{$obsoleteTable}_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;", []);
+
+				//Create table
+				$this->connection->runQuery(
+					"CREATE TABLE public.{$obsoleteTable} (
+					id int8 DEFAULT nextval('public.{$obsoleteTable}_id_seq'::regclass) NOT NULL,
+					time_seriesid int8 NOT NULL,
+					\"time\" timestamp NOT NULL,
+				    value numeric(20,10) NOT NULL,
+				    created_at timestamp NOT NULL,
+				    obsolete_at timestamp NOT NULL,
+				    is_forecast boolean DEFAULT false NOT NULL,
+				    CONSTRAINT {$obsoleteTable}_time_seriesid_fkey FOREIGN KEY (time_seriesid) REFERENCES public.{$timeSeriesTable}(id),
+				    PRIMARY KEY (id)
+				);",
+					[]
+				);
+
+				//Move data from result to result_obsolete
+				$this->connection->runQuery("
+					INSERT INTO public.{$obsoleteTable} (time_seriesid, \"time\", value, created_at, obsolete_at, is_forecast)
+					SELECT time_seriesid, \"time\", value, created_at, now()::timestamp(0), is_forecast
+					FROM public.{$resultTable}
+					WHERE is_obsolete = true;
+				", []);
+
+				//Dop is_obsolete column from result table
+				$this->connection->runQuery("DELETE FROM public.{$resultTable} WHERE is_obsolete = true;", []);
+			}
+
+			//Create indexes on obsolete table
+			if (!$this->checkIndex($obsoleteTable, "{$type}_obsolete_unique_time_value")) {
+				$return = 0;
+				$this->connection->runQuery(
+					"CREATE UNIQUE INDEX IF NOT EXISTS {$type}_obsolete_unique_time_value ON public.{$obsoleteTable} USING btree (time_seriesid, \"time\", value, is_forecast);",
+					[]
+				);
+			}
+			if (!$this->checkIndex($obsoleteTable, "{$obsoleteTable}_time_seriesid")) {
+				$return = 0;
+				$this->connection->runQuery("CREATE INDEX {$obsoleteTable}_time_seriesid ON public.{$obsoleteTable} USING btree (time_seriesid);", []);
+			}
+			if (!$this->checkIndex($obsoleteTable, "{$obsoleteTable}_time")) {
+				$return = 0;
+				$this->connection->runQuery("CREATE INDEX {$obsoleteTable}_time ON public.{$obsoleteTable} USING btree (\"time\");", []);
+			}
+
+			//Drop is_obsolete column from result table
+			if ($this->checkColumn($resultTable, 'is_obsolete')) {
+				$return = 0;
+				$this->connection->runQuery("ALTER TABLE public.{$resultTable} DROP COLUMN is_obsolete;", []);
+			}
+
+			//Create function which moves obsolete data to obsolete table
+			if (!$this->checkFunction("move_{$type}_obsolete_results")) {
+				$return = 0;
+				$this->connection->runQuery("
+					CREATE OR REPLACE FUNCTION public.move_{$type}_obsolete_results() RETURNS trigger LANGUAGE plpgsql AS \$function\$
+					BEGIN
+						-- Check if an identical row already exists in result table
+						IF EXISTS (SELECT 1
+								   FROM {$resultTable}
+								   WHERE time_seriesid = NEW.time_seriesid
+									 AND time = NEW.time
+									 AND value = NEW.value
+									 AND is_forecast = NEW.is_forecast) THEN
+							RETURN NULL; -- The row already exists, so we don't move anything, skip the insert
+						END IF;
+
+						-- Move existing non-obsolete data to the obsolete table
+						INSERT INTO {$obsoleteTable} (id, time_seriesid, time, value, created_at, obsolete_at, is_forecast)
+						SELECT id, time_seriesid, time, value, created_at, now()::timestamp(0), is_forecast
+						FROM {$resultTable}
+						WHERE time_seriesid = NEW.time_seriesid
+						  AND time = NEW.time
+						  AND is_forecast = NEW.is_forecast
+						ON CONFLICT (time_seriesid, time, value, is_forecast) DO NOTHING; -- Ignore if the row already exists
+
+						-- Delete moved data from result table
+						DELETE
+						FROM {$resultTable}
+						WHERE time_seriesid = NEW.time_seriesid
+						  AND time = NEW.time
+						  AND is_forecast = NEW.is_forecast;
+
+						RETURN NEW;
+					END;
+					\$function\$
+				", []);
+			}
+
+			//Create trigger which moves obsolete data to obsolete table
+			if (!$this->checkTrigger("before_insert_{$resultTable}")) {
+				$return = 0;
+				$this->connection->runQuery("
+					CREATE TRIGGER \"before_insert_{$resultTable}\"
+					BEFORE INSERT ON {$resultTable}
+					FOR EACH ROW
+					EXECUTE FUNCTION move_{$type}_obsolete_results();
+				", []);
+			}
 		}
 
 		return $return;
@@ -1032,7 +1135,7 @@ class MigrateDb extends DbCommand {
 	private function checkIndex(string $tableName, string $indexName) {
 		$count = $this->connection->runQuery("select COUNT(*)
 			from pg_class t, pg_class i, pg_index ix, pg_attribute a
-			where t.oid = ix.indrelid and i.oid = ix.indexrelid and a.attrelid = t.oid and a.attnum = ANY(ix.indkey) and t.relkind = 'r' 
+			where t.oid = ix.indrelid and i.oid = ix.indexrelid and a.attrelid = t.oid and a.attnum = ANY(ix.indkey) and t.relkind = 'r'
 			  and t.relname like '$tableName' and i.relname = '$indexName'", [])->fetchColumn();
 
 		return ((int) $count) > 0;
@@ -1054,6 +1157,46 @@ class MigrateDb extends DbCommand {
 			INNER JOIN pg_catalog.pg_class rel ON rel.oid = con.conrelid
 			INNER JOIN pg_catalog.pg_namespace nsp ON nsp.oid = connamespace
 			where rel.relname like '$tableName' and con.conname = '$constraintName'", [])->fetchColumn();
+
+		return ((int) $count) > 0;
+	}
+
+
+	/**
+	 * Check if constraint exists in table
+	 *
+	 * @param string $triggerName
+	 *
+	 * @return bool
+	 * @throws QueryException
+	 */
+	private function checkTrigger(string $triggerName) {
+		$count = $this->connection->runQuery("
+			SELECT COUNT(*) FROM pg_trigger
+			JOIN pg_class ON pg_trigger.tgrelid = pg_class.oid
+			JOIN pg_namespace ON pg_class.relnamespace = pg_namespace.oid
+			WHERE tgname = '{$triggerName}';
+		", [])->fetchColumn();
+
+		return ((int) $count) > 0;
+	}
+
+
+	/**
+	 * Check if constraint exists in table
+	 *
+	 * @param string $functionName
+	 *
+	 * @return bool
+	 * @throws QueryException
+	 */
+	private function checkFunction(string $functionName) {
+		$count = $this->connection->runQuery("
+			SELECT COUNT(*)
+			FROM pg_proc p
+			JOIN pg_namespace n ON p.pronamespace = n.oid
+			WHERE proname = '{$functionName}';
+		", [])->fetchColumn();
 
 		return ((int) $count) > 0;
 	}

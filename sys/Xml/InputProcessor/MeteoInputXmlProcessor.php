@@ -142,23 +142,7 @@ class MeteoInputXmlProcessor extends AbstractInputXmlProcessor {
 	 * @inheritDoc
 	 */
 	protected function createResultInsert(): Insert {
-		return (new Insert())->table('meteo_result')->columns(['time_seriesid', 'time', 'value', 'is_forecast', 'is_obsolete', 'created_at'])
-			->ignoreConflict(['time_seriesid', 'time', 'value', 'is_forecast']);
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	protected function createResultObsoleteUpdate(): Query {
-		$table = 'meteo_result';
-		$obsoleteUpdateQuery = "
-            UPDATE $table
-            SET is_obsolete = CASE WHEN value != :value THEN true ELSE false END
-            WHERE (time_seriesid = :tsid AND time = :time AND is_forecast = :isForecast)
-        ";
-
-		return (new Query())->table($table)->setRawQuery($obsoleteUpdateQuery);
+		return (new Insert())->table('meteo_result')->columns(['time_seriesid', 'time', 'value', 'is_forecast', 'created_at']);
 	}
 
 
