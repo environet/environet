@@ -7,4 +7,5 @@
 /data/logs
 /database/dareffort_content.sql
 /conf/conf.local.ini
+/vendor
 

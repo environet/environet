@@ -12,7 +12,7 @@ $autoloader->addPrefix('Environet\Sys', SRC_PATH.'/sys');
 $autoloader->addPrefix('Environet\Confg', SRC_PATH.'/config');
 $autoloader->addPrefix('Environet\Tools', SRC_PATH.'/tools');
 $autoloader->addPrefix('Environet\Testing', SRC_PATH.'/testing');
-$autoloader->addPrefix('Cron', SRC_PATH . '/vendor/cron-expression/src/Cron');
+$autoloader->addPrefix('Cron', SRC_PATH . '/lib/cron-expression/src/Cron');
 
 //Load seom includes with the autoloader
 $autoloader->loadIncFiles([
