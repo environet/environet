@@ -8,4 +8,5 @@
 /database/dareffort_content.sql
 /conf/conf.local.ini
 /vendor
-
+/composer.json
+/composer.lock
