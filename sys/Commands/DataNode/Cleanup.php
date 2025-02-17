@@ -32,13 +32,15 @@ class Cleanup extends BaseCommand {
 	 *
 	 * Delete unnecessary, old files from data node
 	 *
-	 * @param $arguments
+	 *
+	 * @param array $arguments
+	 * @param array $options
 	 *
 	 * @return int
 	 * @uses \Environet\Sys\Plugins\PluginBuilder::createConfiguration()
 	 * @uses \Environet\Sys\Plugins\PluginBuilder::serializeConfiguration()
 	 */
-	public function run($arguments): int {
+	public function run($arguments, $options): int {
 		$this->console->writeLine('Start cleanup...');
 		$pluginInputFiles = SRC_PATH . '/data/plugin_input_files';
 

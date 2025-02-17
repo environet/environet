@@ -26,10 +26,11 @@ class MigrateConfig extends BaseCommand {
 	 * The command does the following steps:
 	 *
 	 * @param array $arguments
+	 * @param array $options
 	 *
 	 * @return int
 	 */
-	public function run($arguments): int {
+	public function run($arguments, $options): int {
 		$selectedConfigFile = $arguments[3] ?? null;
 
 		$migrations = [

@@ -23,12 +23,13 @@ class PluginRun extends BaseCommand {
 	 *
 	 * Parses the plugin configuration from the fourth argument and runs the selected plugin.
 	 *
-	 * @param $arguments
+	 * @param array $arguments
+	 * @param array $options
 	 *
 	 * @return int
 	 * @uses \Environet\Sys\Plugins\PluginBuilder::loadFromConfiguration()
 	 */
-	public function run($arguments): int {
+	public function run($arguments, $options): int {
 		$configFile = $arguments[3] ?? null;
 		if (!$configFile) {
 			$this->console->writeLine("Configuration file name is required", Console::COLOR_RED);

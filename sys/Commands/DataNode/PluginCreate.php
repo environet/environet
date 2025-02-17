@@ -22,13 +22,14 @@ class PluginCreate extends BaseCommand {
 	 *
 	 * Creates and saves a configuration file under '/src/conf/plugins/configurations/'.
 	 *
-	 * @param $arguments
+	 * @param array $arguments
+	 * @param array $options
 	 *
 	 * @return int
 	 * @uses \Environet\Sys\Plugins\PluginBuilder::createConfiguration()
 	 * @uses \Environet\Sys\Plugins\PluginBuilder::serializeConfiguration()
 	 */
-	public function run($arguments): int {
+	public function run($arguments, $options): int {
 		$configurationsRealPath = empty(getenv('ENVIRONET_PLUGIN_CONF_DIR')) ? CONFIGURATION_PATH : getenv('ENVIRONET_PLUGIN_CONF_DIR') . '/configurations';
 		$pluginBuilder = new PluginBuilder();
 		$pluginBuilder->createConfiguration($this->console);

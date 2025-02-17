@@ -31,13 +31,14 @@ class GenerateKeys extends BaseCommand {
 	 * Creates a 2048 bit long RSA key pair with sha256 algorithm and saves it to the given path. Also creates the destination folder it it doesn't exist.
 	 *
 	 * @param array $arguments
+	 * @param array $options
 	 *
 	 * @return int
 	 */
-	public function run($arguments): int {
+	public function run($arguments, $options): int {
 		$keyDefaultLocation = SRC_PATH . '/conf/plugins/credentials/';
 		$keyRealLocation = empty(getenv('ENVIRONET_PLUGIN_CONF_DIR')) ? $keyDefaultLocation : getenv('ENVIRONET_PLUGIN_CONF_DIR') . '/credentials';
-		
+
 		$keyLocation = $this->console->askWithDefault('Enter the destination of files (relative to ' . $keyRealLocation . '):', self::$keyDefaultLocation);
 		$prefix = $this->console->ask('Enter the prefix for filenames (prefix_private.pem & prefix_public.pem). Prefix is optional');
 

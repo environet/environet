@@ -24,11 +24,12 @@ class Install extends BaseCommand {
 	 *
 	 * Create a local configuration for the distribution node. Required data: Timezone, DB host, DB port, DB name, DB username, DB password.
 	 *
-	 * @param $arguments
+	 * @param array $arguments
+	 * @param array $options
 	 *
 	 * @return int
 	 */
-	public function run($arguments): int {
+	public function run($arguments, $options): int {
 
 		$configDir = SRC_PATH . '/conf';
 

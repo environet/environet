@@ -21,17 +21,20 @@ class Install extends BaseCommand {
 	/**
 	 * Run installer
 	 *
-	 * @param $arguments
+	 *
+	 * @param array $arguments
+	 * @param array $options
 	 *
 	 * @return int
 	 */
-	public function run($arguments): int {
-		$configFilePath = realpath(SRC_PATH.'/conf/conf.local.ini');
+	public function run($arguments, $options): int {
+		$configFilePath = realpath(SRC_PATH . '/conf/conf.local.ini');
 
 		if (file_exists($configFilePath)) {
 			$continue = $this->console->askYesNo("Local configuration file already exists: $configFilePath. Do you want to overwrite it?", false);
 			if (!$continue) {
 				$this->console->writeLine("Abort install, keep existing config file", Console::COLOR_YELLOW);
+
 				return 0;
 			}
 		}

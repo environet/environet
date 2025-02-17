@@ -29,12 +29,13 @@ class GenerateSignature extends BaseCommand {
 	 * 5. Generates signature and outputs it to the console.
 	 *
 	 * @param array $arguments
+	 * @param array $options
 	 *
 	 * @return int
 	 * @throws PKIException
 	 * @uses \Environet\Sys\General\PKI::generateSignature()
 	 */
-	public function run($arguments): int {
+	public function run($arguments, $options): int {
 
 		$arguments = array_values(array_diff($arguments, ['dist', 'tool', 'sign']));
 		$inputContent = null;

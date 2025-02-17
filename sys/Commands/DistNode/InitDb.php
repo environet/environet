@@ -29,13 +29,14 @@ class InitDb extends DbCommand {
 	 * 4. Creates the administrator account with the provided data.
 	 *
 	 * @param array $arguments
+	 * @param array $options
 	 *
 	 * @return int
 	 * @throws CommandException
 	 * @uses \Environet\Sys\Commands\DistNode\InitDb::importSchema()
 	 * @uses \Environet\Sys\Commands\DistNode\InitDb::importData()
 	 */
-	public function run($arguments): int {
+	public function run($arguments, $options): int {
 		$output = [];
 		// Import structure
 		$exitCode = $this->importSchema($output);
