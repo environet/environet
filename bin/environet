@@ -8,6 +8,7 @@ use Environet\Sys\Commands\DataNode\Install as DataNodeInstall;
 use Environet\Sys\Commands\DataNode\MigrateConfig;
 use Environet\Sys\Commands\DataNode\PluginCreate;
 use Environet\Sys\Commands\DataNode\PluginRun;
+use Environet\Sys\Commands\DistNode\CalculationCommand;
 use Environet\Sys\Commands\DistNode\ExportDb;
 use Environet\Sys\Commands\DistNode\InitDb;
 use Environet\Sys\Commands\DistNode\Install as DistNodeInstall;
@@ -78,6 +79,11 @@ function commandRouter(array $arguments): ?string {
 							return ExportDb::class;
 					}
 					break;
+				case 'calc':
+					switch ($arguments[2] ?? null) {
+						case 'run':
+							return CalculationCommand::class;
+					}
 			}
 			break;
 		case 'tool':

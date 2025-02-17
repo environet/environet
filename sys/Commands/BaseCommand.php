@@ -35,11 +35,12 @@ abstract class BaseCommand {
 	 * Method stub to run commands with.
 	 *
 	 * @param array $arguments
+	 * @param array $options
 	 *
 	 * @return int
 	 * @throws CommandException
 	 */
-	abstract public function run($arguments): int;
+	abstract public function run($arguments, $options): int;
 
 
 }
