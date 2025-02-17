@@ -37,6 +37,8 @@ class Console {
 
 	private string $timeFormat;
 
+	protected bool $datePrefix = false;
+
 
 	/**
 	 * Console constructor.
@@ -64,11 +66,36 @@ class Console {
 	 * @param string      $string
 	 * @param string|null $color
 	 * @param string|null $bgColor
+	 * @param bool        $outError
+	 * @param bool        $outBoth
+	 * @param bool        $datePrefix
 	 */
-	public function write(string $string, string $color = null, string $bgColor = null) {
+	public function write(
+		string $string,
+		string $color = null,
+		string $bgColor = null,
+		bool $outError = false,
+		bool $outBoth = false,
+		?bool $datePrefix = null
+	) {
+		if ($datePrefix ?? $this->datePrefix) {
+			// Add date prefix
+			$dt = new \DateTime();
+			$dt->setTimezone($this->timezone);
+			$datePrefix = $dt->format($this->timeFormat) . ' ';
+		}
+
 		$colorPrefix = $this->buildColorPrefix($color, $bgColor);
 		$colorPostfix = $colorPrefix ? "\e[0m" : "";
-		echo $colorPrefix . $string . $colorPostfix;
+
+		if ($outError || $outBoth) {
+			// Write to stderr
+			fwrite(STDERR, $datePrefix . $colorPrefix . $string . $colorPostfix);
+		}
+		if (!$outError || $outBoth) {
+			// Write to stdout
+			echo $datePrefix . $colorPrefix . $string . $colorPostfix;
+		}
 	}
 
 
@@ -86,50 +113,35 @@ class Console {
 	 * @param string      $string
 	 * @param string|null $color
 	 * @param string|null $bgColor
+	 * @param bool        $outError
+	 * @param bool        $outBoth
+	 * @param bool|null   $datePrefix
 	 */
-	public function writeLine(string $string, string $color = null, string $bgColor = null) {
-		$this->write($string, $color, $bgColor);
+	public function writeLine(
+		string $string,
+		string $color = null,
+		string $bgColor = null,
+		bool $outError = false,
+		bool $outBoth = false,
+		?bool $datePrefix = null
+	) {
+		$this->write($string, $color, $bgColor, $outError, $outBoth, $datePrefix);
 		$this->writeLineBreak();
 	}
 
 
 	/**
-	 * Write log entry with a line break
+	 * Write with date prefix
 	 *
 	 * @param string      $string
-	 * @param bool        $isError
-	 * @param bool        $writeToBoth
+	 * @param string|null $color
+	 * @param string|null $bgColor
+	 * @param bool        $outError
+	 * @param bool        $outBoth
 	 */
-	public function writeLog(string $string, bool $isError = false, bool $writeToBoth = false) {
-		$dt = new \DateTime();
-		$dt->setTimezone($this->timezone);
-
-		if ($isError || $writeToBoth) {
-			fwrite(STDERR, $dt->format($this->timeFormat) . " " . $string . "\n");
-		}
-		if (!$isError || $writeToBoth) {
-			echo $dt->format($this->timeFormat) . " " . $string . "\n";
-		}
-	}
-
-
-	/**
-	 * Write log entry without a line break
-	 *
-	 * @param string      $string
-	 * @param bool        $isError
-	 * @param bool        $writeToBoth
-	 */
-	public function writeLogNoEol(string $string, bool $isError = false, bool $writeToBoth = false) {
-		$dt = new \DateTime();
-		$dt->setTimezone($this->timezone);
-
-		if ($isError || $writeToBoth) {
-			fwrite(STDERR, $dt->format($this->timeFormat) . " " . $string);
-		}
-		if (!$isError || $writeToBoth) {
-			echo $dt->format($this->timeFormat) . " " . $string;
-		}
+	public function writeLineDp(string $string, string $color = null, string $bgColor = null, bool $outError = false, bool $outBoth = false) {
+		$this->write($string, $color, $bgColor, $outError, $outBoth, true);
+		$this->writeLineBreak();
 	}
 
 
@@ -264,6 +276,30 @@ class Console {
 		}
 
 		return (strtolower($answer) == 'y');
+	}
+
+
+	/**
+	 * Turn on date prefix
+	 *
+	 * @return $this
+	 */
+	public function setDatePrefix(): Console {
+		$this->datePrefix = true;
+
+		return $this;
+	}
+
+
+	/**
+	 * Turn off date prefix
+	 *
+	 * @return $this
+	 */
+	public function resetDatePrefix(): Console {
+		$this->datePrefix = false;
+
+		return $this;
 	}
 
 
