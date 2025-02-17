@@ -415,6 +415,7 @@ function isUploadDryRun(): bool {
  * @throws Exception
  */
 function createValidDate(string $dateString, $timezone = null): DateTime {
+	$dateString = strtr($dateString, ['&nbsp;' => ' ']);
 	try {
 		$date = new DateTime($dateString, $timezone);
 	} catch (Exception $e) {
@@ -433,6 +434,7 @@ function createValidDate(string $dateString, $timezone = null): DateTime {
 
 /**
  * Create an Atom formatted date time object from a string, with a fallback to a different format
+ *
  * @param string $timeString
  *
  * @return DateTime|false
