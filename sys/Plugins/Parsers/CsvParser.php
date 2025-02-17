@@ -275,7 +275,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		}
 
 		if ($allskip) {
-			Console::getInstance()->writeLog("Resource contains only skip values: {$resource->getName()}", true);
+			Console::getInstance()->writeLineDp("Resource contains only skip values: {$resource->getName()}", null, null, true);
 		}
 
 		return $resultArray;
@@ -341,7 +341,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 
 			if (!$time) {
 				// Couldn't parse time
-				Console::getInstance()->writeLog('Couldn\'t parse time in row: ' . $line, true);
+				Console::getInstance()->writeLineDp('Couldn\'t parse time in row: ' . $line, null, null, true);
 
 				return [];
 			}
@@ -363,7 +363,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 			case 'row':
 				$symbol = $this->mapToDistributionSymbol($values[$this->propertySymbolColumn]);
 				if (!$symbol) {
-					Console::getInstance()->writeLog('Unknown symbol: ' . $values[$this->propertySymbolColumn], true);
+					Console::getInstance()->writeLineDp('Unknown symbol: ' . $values[$this->propertySymbolColumn], null, null, true);
 				}
 				$data[$symbol] = $values[$this->propertyValueColumn];
 

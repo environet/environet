@@ -151,7 +151,13 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 					$results[] = $sectionResult;
 				}
 			} catch (CreateInputXmlException $e) {
-				Console::getInstance()->writeLog(sprintf('Parsing of section %s in file %s failed, response: %s', $sectionNum, $resource->getName(), $e->getMessage()), true, true);
+				Console::getInstance()->writeLineDp(
+					sprintf('Parsing of section %s in file %s failed, response: %s', $sectionNum, $resource->getName(), $e->getMessage()),
+					null,
+					null,
+					true,
+					true
+				);
 				continue;
 			}
 		}
@@ -187,7 +193,12 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 
 		//Check if every required metadata is set, abort section if not found
 		if (!empty(($missingKeys = $this->checkRequiredMetadataKeys($metaData)))) {
-			Console::getInstance()->writeLog(sprintf('Some required metadata keys are missing in section %d: %s', $sectionNum, implode(',', $missingKeys)), true);
+			Console::getInstance()->writeLineDp(
+				sprintf('Some required metadata keys are missing in section %d: %s', $sectionNum, implode(',', $missingKeys)),
+				null,
+				null,
+				true
+			);
 
 			return null;
 		}
@@ -195,7 +206,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		//Check ZRXP version, abort section if invalid
 		$version = (int) substr($metaData['ZRXPVERSION'], 0, 1);
 		if ($version !== $this->zrxpVersion) {
-			Console::getInstance()->writeLog(sprintf('Version %s is not supported under section %d', $version, $sectionNum), true);
+			Console::getInstance()->writeLineDp(sprintf('Version %s is not supported under section %d', $version, $sectionNum), null, null, true);
 
 			return null;
 		}
@@ -205,7 +216,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		$layout = explode(',', $layout);
 		$layoutColCount = count($layout);
 		if (!in_array('timestamp', $layout) || !in_array('value', $layout)) {
-			Console::getInstance()->writeLog('Timestamp and value layout definition is required', true);
+			Console::getInstance()->writeLineDp('Timestamp and value layout definition is required', null, null, true);
 
 			return null;
 		}
@@ -234,7 +245,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		}
 
 		if (is_null($propertyNameZrxp)) {
-			Console::getInstance()->writeLog('Property name not found in meta tags (not in CNR and not in CNAME)', true);
+			Console::getInstance()->writeLineDp('Property name not found in meta tags (not in CNR and not in CNAME)', null, null, true);
 
 			return null;
 		}
@@ -243,7 +254,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		//Find the db-symbol of property
 		if (is_null($propertyNameDb)) {
 			$tsPath = $metaData['TSPATH'] ?? null;
-			Console::getInstance()->writeLog(sprintf('Property mapping for property %s (%s) isn\'t found in configuration', $propertyNameZrxp, $tsPath), true);
+			Console::getInstance()->writeLineDp(sprintf('Property mapping for property %s (%s) isn\'t found in configuration', $propertyNameZrxp, $tsPath), null, null, true);
 
 			return null;
 		}

@@ -32,12 +32,13 @@ class Plugin {
 	 * @param string  $configFile
 	 */
 	public function run(Console $console, string $configFile) {
-		$console->writeLog('Running plugin ----------------------------------------------------------------------------------------------', true, true);
-		$console->writeLogNoEol('');    // to prefix data to following message
+		$console->setDatePrefix();
+		$console->writeLine('Running plugin ----------------------------------------------------------------------------------------------', null, null, true, true);
+		$console->write('');    // to prefix data to following message
 		try {
 			$resources = $this->transport->get($console, $configFile);
 		} catch (\Exception $e) {
-			$console->writeLog($e->getMessage(), true, true);
+			$console->writeLine($e->getMessage(), null, null, true, true);
 			$resources = [];
 		}
 
@@ -57,7 +58,7 @@ class Plugin {
 					if ($resource->getPointNCDs()) {
 						$allNCDs = array_unique(array_merge($resource->getPointNCDs()));
 					}
-					$console->writeLog(sprintf("Downloaded %s", $resource->getName()));
+					$console->writeLine(sprintf("Downloaded %s", $resource->getName()));
 
 					$xmls = $this->parser->parse($resource);
 
@@ -79,7 +80,7 @@ class Plugin {
 							unset($allNCDs[$key]);
 						}
 
-						$console->writeLogNoEol('Uploading monitoring point data for station NCD ' . $xmlMPointId . ": ");
+						$console->write('Uploading monitoring point data for station NCD ' . $xmlMPointId . ": ");
 						//$console->write($xmlPayload->asXML(), Console::COLOR_YELLOW);
 						try {
 							$response = $this->apiClient->upload($xmlPayload);
@@ -91,10 +92,10 @@ class Plugin {
 								foreach ($responseXml->xpath('/environet:UploadStatistics/environet:Messages/environet:Message') as $message) {
 									$type = (string) $message->attributes('environet')['type'];
 									$code = isset($message->attributes('environet')['code']) ? (int) $message->attributes()['code'] : null;
-									$console->writeLog(ucfirst($type) . ": " . ($code ? "[$code], " : "") . $message->__toString());
+									$console->writeLine(ucfirst($type) . ": " . ($code ? "[$code], " : "") . $message->__toString());
 								}
 							} catch (\Exception $e) {
-								$console->writeLog('Failed to parse response XML', true);
+								$console->writeLine('Failed to parse response XML', null, null, true);
 							}
 
 							$successful ++;
@@ -103,10 +104,10 @@ class Plugin {
 							file_put_contents($filename, $xmlPayload->asXML());
 
 							$console->writeLine('failed');
-							$console->writeLog(sprintf("Upload for station NCD %s failed, response: ", $xmlMPointId), true);
-							$console->writeLog($e->getMessage(), true);
-							$console->writeLog('Payload stored: ' . ltrim(str_replace(SRC_PATH, '', $filename), '/'), true);
-							$console->writeLog('---', true);
+							$console->writeLine(sprintf("Upload for station NCD %s failed, response: ", $xmlMPointId), null, null, true);
+							$console->writeLine($e->getMessage(), null, null, true);
+							$console->writeLine('Payload stored: ' . ltrim(str_replace(SRC_PATH, '', $filename), '/'), null, null, true);
+							$console->writeLine('---', null, null, true);
 							$failed ++;
 							$resourceSuccess = false;
 						}
@@ -128,13 +129,15 @@ class Plugin {
 						}
 					}
 				} catch (\Exception $e) {
-					$console->writeLog(
+					$console->writeLine(
 						sprintf(
 							"Parsing of %s (first 100 characters: \"%s\") failed, response: %s",
 							$resource->getName(),
 							$this->previewString($resource->getContents(), 100),
 							$e->getMessage()
 						),
+						null,
+						null,
 						true,
 						true
 					);
@@ -149,16 +152,18 @@ class Plugin {
 			if ($failedDownloads > 0 || $failed > 0 || $missingMonitoringPoints > 0) {
 				$thereWasAnError = true;
 			}
-			$console->writeLog("Successful downloads from data provider: $successfulDownloads");
-			$console->writeLog("Successful uploads to distribution node: $successful");
-			$console->writeLog("Failed downloads from data provider: $failedDownloads", $thereWasAnError, $thereWasAnError);
-			$console->writeLog("Failed uploads to distribution node: $failed", $thereWasAnError, $thereWasAnError);
-			$console->writeLog("Monitoring points missing in data: " . $missingMonitoringPoints, $thereWasAnError, $thereWasAnError);
+			$console->writeLine("Successful downloads from data provider: $successfulDownloads");
+			$console->writeLine("Successful uploads to distribution node: $successful");
+			$console->writeLine("Failed downloads from data provider: $failedDownloads", $thereWasAnError, $thereWasAnError);
+			$console->writeLine("Failed uploads to distribution node: $failed", $thereWasAnError, $thereWasAnError);
+			$console->writeLine("Monitoring points missing in data: " . $missingMonitoringPoints, $thereWasAnError, $thereWasAnError);
 			if (count($allNCDs) > 0) {
-				$console->writeLog("Following monitoring points missing in data: " . implode(" ", $allNCDs), true);
+				$console->writeLine("Following monitoring points missing in data: " . implode(" ", $allNCDs), null, null, true);
 			}
 		}
-		$console->writeLog('Running plugin finished -------------------------------------------------------------------------------------', true, true);
+		$console->writeLine('Running plugin finished -------------------------------------------------------------------------------------', null, null, true, true);
+
+		$console->resetDatePrefix();
 	}
 
 

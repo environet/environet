@@ -106,7 +106,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 		if (!$formatsConfig->count()) {
 			//No parameters to parse
-			Console::getInstance()->writeLog('Error condition 1: Call, but all information already resolved.', true);
+			Console::getInstance()->writeLineDp('Error condition 1: Call, but all information already resolved.', null, null, true);
 
 			return;
 		}
@@ -166,7 +166,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 							//Optional element is missing, skip group
 							continue;
 						}
-						Console::getInstance()->writeLog(sprintf('Required element "%s" missing in group %d, skip group', $xpath, $groupKey + 1));
+						Console::getInstance()->writeLineDp(sprintf('Required element "%s" missing in group %d, skip group', $xpath, $groupKey + 1));
 						continue 2;
 					}
 					if ($targetElement instanceof SimpleXMLElement && !empty($parameter->getAttribute()) && $targetElement->getName() === end($commonElements)) {
@@ -343,7 +343,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 */
 	public function parse(Resource $resource): array {
 		$this->flatList = [];
-		Console::getInstance()->writeLog(sprintf('Received %s characters', strlen($resource->getContents())));
+		Console::getInstance()->writeLineDp(sprintf('Received %s characters', strlen($resource->getContents())));
 
 		$resource->setContents(str_replace('xlink:href', 'href', $resource->getContents())); // Workaround for WaterML 2.0
 
@@ -483,7 +483,6 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 			if ($this->onlyTimes && !(isset($dateItem) && $this->isAllowedByOnlyTimes($dateItem->getValue()))) {
 				unset($this->flatList[$key]);
 			}
-
 		}
 		$this->flatList = array_values($this->flatList);
 

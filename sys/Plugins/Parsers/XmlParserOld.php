@@ -95,7 +95,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 		}
 
 		if (!count($formats)) {
-			Console::getInstance()->writeLog("Error condition 1: Call, but all information already resolved.", true);
+			Console::getInstance()->writeLineDp("Error condition 1: Call, but all information already resolved.", null, null, true);
 
 			return [];
 		}
@@ -147,7 +147,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 					if ($format["optional"]) {
 						continue;
 					}
-					Console::getInstance()->writeLog(sprintf('Required element "%s" missing in group %d, skip group', $xpath, $groupKey + 1));
+					Console::getInstance()->writeLineDp(sprintf('Required element "%s" missing in group %d, skip group', $xpath, $groupKey + 1));
 					continue 2;
 				}
 				if (count($subXml) === 1) {
@@ -195,8 +195,8 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 	 * variable conversion information.
 	 *
 	 * @param array  $observedPropertyConversions
-	 * @param string $variableName name of variable definition for observed property. E.g. "OBS"
-	 * @param string $symbol       external symbol for observed property
+	 * @param string $variableName                name of variable definition for observed property. E.g. "OBS"
+	 * @param string $symbol                      external symbol for observed property
 	 *
 	 * @return string internal symbol for observed property
 	 */
@@ -375,7 +375,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 			if (!$date) {
 				throw new Exception("Invalid date or time format (monitoring point national code: $NCD): Date format is \"" .
 					$Date["Format"] . "\" value is \"" . $Date["Value"] . "\", Time format is \"" . $Time["Format"] .
-					"\", value is \"" . $Time["Value"] . "\". Entry dropped.");
+				"\", value is \"" . $Time["Value"] . "\". Entry dropped.");
 			}
 			$date->setTimezone(new DateTimeZone('UTC'));
 			$result["Value"] = $date->format(self::API_TIME_FORMAT_STRING);
@@ -385,7 +385,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 			$date = DateTime::createFromFormat($DateTime["Format"], $DateTime["Value"], $this->getTimeZone());
 			if (!$date) {
 				throw new Exception("Invalid datetime format (monitoring point national code: $NCD): Format is \"" . $DateTime["Format"] .
-					"\", value is \"" . $DateTime["Value"] . "\". Entry dropped.");
+				"\", value is \"" . $DateTime["Value"] . "\". Entry dropped.");
 			}
 			$date->setTimezone(new DateTimeZone('UTC'));
 			$result["Value"] = $date->format(self::API_TIME_FORMAT_STRING);
@@ -535,7 +535,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 	 * @throws Exception
 	 */
 	public function parse(Resource $resource): array {
-		Console::getInstance()->writeLog("Received " . strlen($resource->contents) . " characters");
+		Console::getInstance()->writeLineDp("Received " . strlen($resource->contents) . " characters");
 
 		$resource->contents = str_replace("xlink:href", "href", $resource->contents); // Workaround for WaterML 2.0
 
@@ -708,12 +708,12 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 		$skipValue = $console->ask('Skip value:');
 
 		$config = [
-			'separatorThousands'  => $separatorThousands,
-			'separatorDecimals'   => $separatorDecimals,
-			'formatsFilename'     => $formatsFilename,
-			'skipEmptyValueTag'   => $skipEmptyValueTag,
-			'skipValue'           => $skipValue,
-			'timeZone'            => $timeZone
+			'separatorThousands' => $separatorThousands,
+			'separatorDecimals'  => $separatorDecimals,
+			'formatsFilename'    => $formatsFilename,
+			'skipEmptyValueTag'  => $skipEmptyValueTag,
+			'skipValue'          => $skipValue,
+			'timeZone'           => $timeZone
 		];
 
 		return new self($config);
