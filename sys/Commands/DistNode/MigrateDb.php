@@ -72,7 +72,8 @@ class MigrateDb extends DbCommand {
 			'downloadLogs',
 			'addResultIndexes',
 			'addUniqueSymbolIndexes',
-			'separateObsoleteResults'
+			'separateObsoleteResults',
+			'createCalculationConfigs',
 		];
 		ini_set('memory_limit', - 1);
 
@@ -1068,6 +1069,50 @@ class MigrateDb extends DbCommand {
 					EXECUTE FUNCTION move_{$type}_obsolete_results();
 				", []);
 			}
+		}
+
+		return $return;
+	}
+
+
+	/**
+	 * Add calculation configs table
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function createCalculationConfigs(array &$output): int {
+		$return = - 1;
+
+		//Create obsolete table if not exists
+		if (!$this->checkTable('calculation_configs')) {
+			$return = 0;
+			//Create sequence
+			$this->connection->runQuery("CREATE SEQUENCE IF NOT EXISTS public.calculation_configs_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;", []);
+
+			//Create table
+			$this->connection->runQuery(
+				"CREATE TABLE public.calculation_configs (
+					id int4 NOT NULL DEFAULT nextval('public.calculation_configs_id_seq'::regclass) NOT NULL,
+					name varchar(255) NOT NULL,
+					is_active bool NOT NULL,
+					mpoint_type varchar(20) NOT NULL,
+					operatorid int4 NOT NULL,
+					mpointid int4,
+					method varchar(20) NOT NULL,
+					source_interval varchar(100) NOT NULL,
+					target_interval varchar(100) NOT NULL,
+					start_time varchar(5) NOT NULL,
+					source_propertyid int4 NOT NULL,
+					target_propertyid int4 NOT NULL,
+					last_run timestamp,
+					CONSTRAINT calculation_configs_operatorid_fkey FOREIGN KEY (operatorid) REFERENCES public.operator(id),
+					PRIMARY KEY (id)
+				);",
+				[]
+			);
 		}
 
 		return $return;
