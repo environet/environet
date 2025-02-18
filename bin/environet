@@ -110,7 +110,18 @@ try {
 	/** @var BaseCommand $command */
 	$command = new $commandClass($console);
 
-	$exitCode = $command->run($arguments);
+	//Build options
+	$options = [];
+	foreach ($arguments as $key => $argument) {
+		if (!is_string($argument)) {
+			continue;
+		}
+		if (preg_match('/^--([a-z0-9\-_]+)((=)(.*))?$/i', trim($argument), $m)) {
+			$options[$m[1]] = isset($m[3]) && $m[3] === '=' ? ($m[4] ?? null) : true;
+		}
+	}
+
+	$exitCode = $command->run($arguments, $options);
 } catch (\Exception $exception) {
 	$console->writeLine($exception->getMessage(), Console::COLOR_RED);
 	$exitCode = 1;
