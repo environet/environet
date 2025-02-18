@@ -2,9 +2,10 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/dev/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/lib/cron-expression/src/Cron" isTestSource="false" packagePrefix="Cron\" />
       <sourceFolder url="file://$MODULE_DIR$/lib/cron-expression/tests/Cron" isTestSource="true" packagePrefix="Cron\Tests\" />
+      <sourceFolder url="file://$MODULE_DIR$/sys" isTestSource="false" packagePrefix="Environet\Sys\" />
+      <sourceFolder url="file://$MODULE_DIR$/dev/test" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/dev/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/dev/vendor/squizlabs/php_codesniffer" />
       <excludeFolder url="file://$MODULE_DIR$/dev/vendor/srggroup/srg_standards" />
