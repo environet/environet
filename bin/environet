@@ -79,11 +79,6 @@ function commandRouter(array $arguments): ?string {
 							return ExportDb::class;
 					}
 					break;
-				case 'calc':
-					switch ($arguments[2] ?? null) {
-						case 'run':
-							return CalculationCommand::class;
-					}
 			}
 			break;
 		case 'tool':
@@ -110,7 +105,7 @@ try {
 	/** @var BaseCommand $command */
 	$command = new $commandClass($console);
 
-	$exitCode = $command->run($arguments);
+	$exitCode = $command->run($arguments, []);
 } catch (\Exception $exception) {
 	$console->writeLine($exception->getMessage(), Console::COLOR_RED);
 	$exitCode = 1;
