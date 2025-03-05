@@ -29,7 +29,7 @@ class UploadOptions {
 		if ($parsedXml !== null) {
 			//Set values from XML. If not set, default values will be used
 			$uploadOptions = $parsedXml->xpath('/environet:UploadData/environet:UploadOptions')[0] ?? null;
-			if ($uploadOptions) {
+			if ($uploadOptions !== null) {
 				foreach ($uploadOptions->xpath('*') as $option) {
 					$optionName = lcfirst($option->getName());
 					if (!property_exists($this, $optionName)) {
