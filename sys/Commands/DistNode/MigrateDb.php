@@ -72,7 +72,8 @@ class MigrateDb extends DbCommand {
 			'downloadLogs',
 			'addResultIndexes',
 			'addUniqueSymbolIndexes',
-			'separateObsoleteResults'
+			'separateObsoleteResults',
+			'resultSingleValueIndex'
 		];
 		ini_set('memory_limit', - 1);
 
@@ -1067,6 +1068,38 @@ class MigrateDb extends DbCommand {
 					FOR EACH ROW
 					EXECUTE FUNCTION move_{$type}_obsolete_results();
 				", []);
+			}
+		}
+
+		return $return;
+	}
+
+
+	/**
+	 * Add unique indexes for symbol fields
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function resultSingleValueIndex(array &$output): int {
+		$return = - 1;
+
+		foreach (['hydro', 'meteo'] as $type) {
+			$resultTable = "{$type}_result";
+			$oldIndexName = "{$type}_unique_time_value";
+			$newIndexName = "{$type}_unique_value";
+
+			//Remove old conditional unique index if exists
+			if ($this->checkIndex($resultTable, $oldIndexName)) {
+				$return = 0;
+				$this->connection->runQuery("DROP INDEX IF EXISTS $oldIndexName;", []);
+			}
+
+			if (!$this->checkIndex($resultTable, $newIndexName)) {
+				$return = 0;
+				$this->connection->runQuery("CREATE UNIQUE INDEX $newIndexName ON public.$resultTable USING btree (time_seriesid, \"time\", is_forecast);", []);
 			}
 		}
 
