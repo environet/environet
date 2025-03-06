@@ -5,6 +5,7 @@ namespace Environet\Sys\Upload;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
+use Environet\Sys\General\Enums\MessageCodes;
 use Exception;
 use SimpleXMLElement;
 
@@ -540,11 +541,22 @@ class Statistics {
 	 * Add an info, success, warning or error message to the statistics
 	 * @throws Exception
 	 */
-	public function addMessage(string $type, string $message): Statistics {
+	public function addMessage(string $type, ?string $message = null, ?int $code = null, array $messageParams = []): Statistics {
 		if (!array_key_exists($type, $this->messages)) {
 			throw new Exception('Invalid message type');
 		}
-		$this->messages[$type][] = $message;
+
+		if ($code === null && $message === null) {
+			throw new Exception('Either code or message must be set');
+		}
+
+		if ($code && !$message) {
+			$message = MessageCodes::getMessage($code, $messageParams);
+		}
+		$this->messages[$type][] = [
+			'code'    => $code,
+			'message' => $message
+		];
 
 		return $this;
 	}
@@ -588,8 +600,12 @@ class Statistics {
 			$xmlMessages = $xml->addChild('Messages');
 			foreach ($messages as $type => $typeMessages) {
 				foreach ($typeMessages as $typeMessage) {
-					$xmlMessage = $xmlMessages->addChild('Message', $typeMessage);
+					['code' => $code, 'message' => $message] = $typeMessage;
+					$xmlMessage = $xmlMessages->addChild('Message', $message);
 					$xmlMessage->addAttribute('environet:type', $type, 'environet');
+					if ($code) {
+						$xmlMessage->addAttribute('environet:code', $code, 'environet');
+					}
 				}
 			}
 		}

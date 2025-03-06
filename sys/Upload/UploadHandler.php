@@ -7,6 +7,7 @@ use DateTimeZone;
 use Environet\Sys\Config;
 use Environet\Sys\General\Db\HydroObservedPropertyQueries;
 use Environet\Sys\General\Db\MeteoObservedPropertyQueries;
+use Environet\Sys\General\Enums\MessageCodes;
 use Environet\Sys\General\Exceptions\ApiException;
 use Environet\Sys\General\HttpClient\ApiHandler;
 use Environet\Sys\General\Model\UploadOptions;
@@ -101,7 +102,7 @@ class UploadHandler extends ApiHandler {
 			} catch (UploadException $e) {
 				if ($e->getCode() === 402 && $options->isIgnoreUndefinedPoints() && isset($processor)) {
 					//If the upload option is set to ignore undefined points, and the monitoring point is not found, return the statistics with a warning message
-					$processor->getStatistics()->addMessage('warning', 'Monitoring point not found with the given identifier, nothing was uploaded');
+					$processor->getStatistics()->addMessage('warning', null, MessageCodes::UPLOAD_WARNING_POINT_NOT_FOUND);
 
 					return (new Response($processor->getStatistics()->toXml()->asXML()))
 						->setStatusCode(200)
@@ -156,7 +157,7 @@ class UploadHandler extends ApiHandler {
 	/**
 	 * Create input processor based on the mpoint type. Type is detected with finding it in the type's database table
 	 *
-	 * @param SimpleXMLElement $xml Parsed XML
+	 * @param SimpleXMLElement $xml     Parsed XML
 	 * @param UploadOptions    $options
 	 *
 	 * @return AbstractInputXmlProcessor

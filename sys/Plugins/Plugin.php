@@ -3,6 +3,7 @@
 namespace Environet\Sys\Plugins;
 
 use Environet\Sys\Commands\Console;
+use Environet\Sys\General\Enums\MessageCodes;
 use SimpleXMLElement;
 
 /**
@@ -33,7 +34,7 @@ class Plugin {
 	 */
 	public function run(Console $console, string $configFile) {
 		$console->setDatePrefix();
-		$console->writeLine('Running plugin ----------------------------------------------------------------------------------------------', null, null, true, true);
+		$console->writeLine('Running plugin ----------------------------------------------------------------------------------------------');
 		$console->write('');    // to prefix data to following message
 		try {
 			$resources = $this->transport->get($console, $configFile);
@@ -46,9 +47,11 @@ class Plugin {
 			$console->writeLine('Nothing to upload');
 		} else {
 			$successful = 0;
+			$warnings = 0;
 			$failed = 0;
 			$successfulDownloads = 0;
 			$failedDownloads = 0;
+			$warningCodes = [];
 
 			$allNCDs = [];
 
@@ -83,6 +86,7 @@ class Plugin {
 						$console->write('Uploading monitoring point data for station NCD ' . $xmlMPointId . ": ");
 						//$console->write($xmlPayload->asXML(), Console::COLOR_YELLOW);
 						try {
+							$requestHasWarnings = false;
 							$response = $this->apiClient->upload($xmlPayload);
 							$console->writeLine('success');
 
@@ -91,14 +95,24 @@ class Plugin {
 								$responseXml = new SimpleXMLElement($response->getBody());
 								foreach ($responseXml->xpath('/environet:UploadStatistics/environet:Messages/environet:Message') as $message) {
 									$type = (string) $message->attributes('environet')['type'];
-									$code = isset($message->attributes('environet')['code']) ? (int) $message->attributes()['code'] : null;
+									$code = isset($message->attributes('environet')['code']) ? (int) $message->attributes('environet')['code'] : null;
 									$console->writeLine(ucfirst($type) . ": " . ($code ? "[$code], " : "") . $message->__toString());
+
+									//Collect warnings and mark the request as having warnings
+									$requestHasWarnings = $requestHasWarnings || $type === 'warning';
+									$warningCodes[$code] ++;
 								}
 							} catch (\Exception $e) {
 								$console->writeLine('Failed to parse response XML', null, null, true);
 							}
 
-							$successful ++;
+							if ($requestHasWarnings) {
+								//If the request had warnings, increment the warning counter
+								$warnings ++;
+							} else {
+								//If the request was successful, increment the successful counter
+								$successful ++;
+							}
 						} catch (\Exception $e) {
 							$filename = $payloadStorage . '/' . date('YmdHis') . '_' . $xmlMPointId . '.xml';
 							file_put_contents($filename, $xmlPayload->asXML());
@@ -154,6 +168,13 @@ class Plugin {
 			}
 			$console->writeLine("Successful downloads from data provider: $successfulDownloads");
 			$console->writeLine("Successful uploads to distribution node: $successful");
+			if ($warnings) {
+				$console->writeLine("Upload with warnings: $warnings");
+				$console->writeLine("\tWarning counts");
+				foreach ($warningCodes as $code => $codeCount) {
+					$console->writeLine(sprintf("\t%d with message: %s", $codeCount, MessageCodes::getMessage($code)));
+				}
+			}
 			$console->writeLine("Failed downloads from data provider: $failedDownloads", $thereWasAnError, $thereWasAnError);
 			$console->writeLine("Failed uploads to distribution node: $failed", $thereWasAnError, $thereWasAnError);
 			$console->writeLine("Monitoring points missing in data: " . $missingMonitoringPoints, $thereWasAnError, $thereWasAnError);
@@ -161,7 +182,7 @@ class Plugin {
 				$console->writeLine("Following monitoring points missing in data: " . implode(" ", $allNCDs), null, null, true);
 			}
 		}
-		$console->writeLine('Running plugin finished -------------------------------------------------------------------------------------', null, null, true, true);
+		$console->writeLine('Running plugin finished -------------------------------------------------------------------------------------');
 
 		$console->resetDatePrefix();
 	}
