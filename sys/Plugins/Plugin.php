@@ -170,9 +170,8 @@ class Plugin {
 			$console->writeLine("Successful uploads to distribution node: $successful");
 			if ($warnings) {
 				$console->writeLine("Upload with warnings: $warnings");
-				$console->writeLine("\tWarning counts");
 				foreach ($warningCodes as $code => $codeCount) {
-					$console->writeLine(sprintf("\t%d with message: %s", $codeCount, MessageCodes::getMessage($code)));
+					$console->writeLine(sprintf("\t%d with warning message: %s", $codeCount, MessageCodes::getMessage($code)));
 				}
 			}
 			$console->writeLine("Failed downloads from data provider: $failedDownloads", $thereWasAnError, $thereWasAnError);
