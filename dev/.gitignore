@@ -1,2 +1,7 @@
-vendor
-composer.lock
+*
+
+!/sample_xmls
+!/sample_xmls/*
+!CodeSnifferRuleSet.xml
+!nginx.conf
+!phpunit.xml

@@ -10,3 +10,6 @@
 /vendor
 /composer.json
 /composer.lock
+!/dev/sample_xmls/
+phpdebug
+setCodingStandardPaths
