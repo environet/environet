@@ -73,7 +73,8 @@ class MigrateDb extends DbCommand {
 			'addResultIndexes',
 			'addUniqueSymbolIndexes',
 			'separateObsoleteResults',
-			'resultSingleValueIndex'
+			'resultSingleValueIndex',
+			'downloadLogFormat'
 		];
 		ini_set('memory_limit', - 1);
 
@@ -1101,6 +1102,31 @@ class MigrateDb extends DbCommand {
 				$return = 0;
 				$this->connection->runQuery("CREATE UNIQUE INDEX $newIndexName ON public.$resultTable USING btree (time_seriesid, \"time\", is_forecast);", []);
 			}
+		}
+
+		return $return;
+	}
+
+
+	/**
+	 * Create format and format_options column in download_logs table
+	 *
+	 * @param array $output
+	 *
+	 * @return int
+	 * @throws QueryException
+	 */
+	private function downloadLogFormat(array &$output): int {
+		$return = - 1;
+
+		if ($this->checkTable('download_logs') && !$this->checkColumn('download_logs', 'format')) {
+			$return = 0;
+			$this->connection->runQuery("
+				ALTER TABLE public.download_logs 
+					ADD COLUMN format varchar(10),
+					ADD COLUMN format_options json
+				;
+			", []);
 		}
 
 		return $return;
