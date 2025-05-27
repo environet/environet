@@ -508,6 +508,10 @@ class CalculationCommand extends BaseCommand {
 			->where('time_series.observed_propertyid = :propertyId')
 			->where('time_series.mpointid = :pointId')
 			->setParameters(['propertyId' => $property['id'], 'pointId' => $mPoint['id']])->run(Query::FETCH_FIRST);
+		$hasMPointProperty = (new Select())->from("{$type}point_observed_property as point_property")->select('COUNT(*) as count')
+			->where('point_property.observed_propertyid = :propertyId')
+			->where('point_property.mpointid = :pointId')
+			->setParameters(['propertyId' => $property['id'], 'pointId' => $mPoint['id']])->run(Query::FETCH_COUNT);
 
 		if (empty($timeSeriesId['id'])) {
 			if ($createIfNotExists) {
@@ -525,6 +529,13 @@ class CalculationCommand extends BaseCommand {
 					), Console::COLOR_RED);
 
 					return null;
+				}
+
+				if (!$hasMPointProperty) {
+					(new Insert())->table("{$type}point_observed_property")
+						->columns(['observed_propertyid', 'mpointid'])
+						->addValueRow([':propertyId', ':pointId'])
+						->setParameters(['propertyId' => $property['id'], 'pointId' => $mPoint['id']])->run();
 				}
 
 				$timeSeriesId = $createdTsId;
