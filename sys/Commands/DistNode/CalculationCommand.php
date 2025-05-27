@@ -262,8 +262,8 @@ class CalculationCommand extends BaseCommand {
 				//Find results from the source time series in the interval
 				$results = (new Select())->from("{$type}_result")->select("{$type}_result.value, {$type}_result.time")
 					->where("{$type}_result.time_seriesid = :timeSeriesId")
-					->where("{$type}_result.time >= :intervalStart")
-					->where("{$type}_result.time < :intervalEnd")
+					->where("{$type}_result.time > :intervalStart")
+					->where("{$type}_result.time <= :intervalEnd")
 					->setParameters([
 						'timeSeriesId'  => $sourceTimeSeriesId,
 						'intervalStart' => $intervalStartLoop->format('Y-m-d H:i:s'),
