@@ -1116,6 +1116,15 @@ class MigrateDb extends DbCommand {
 			);
 		}
 
+		if ($this->checkTable('calculation_configs') && $this->checkColumn('calculation_configs', 'last_run')) {
+			$return = 0;
+			//Create table
+			$this->connection->runQuery(
+				"ALTER TABLE public.calculation_configs RENAME COLUMN last_run TO last_calculation;",
+				[]
+			);
+		}
+
 		return $return;
 	}
 

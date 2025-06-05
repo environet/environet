@@ -76,7 +76,7 @@ class CalculationCommand extends BaseCommand {
 			$calculationsSkip = $calculationsFailed = $calculationsSuccess = 0;
 			//Iterate over calculations and run them
 			foreach ($calculations as $calculation) {
-				if (!(($lastRun = $this->checkShouldRun($calculation, $now)))) {
+				if (!(($lastCalculation = $this->checkShouldRun($calculation, $now)))) {
 					//Calculation should not run now based on current time
 					$calculationsSkip ++;
 
@@ -87,7 +87,7 @@ class CalculationCommand extends BaseCommand {
 
 				//Run calculation
 				$this->console->writeLine(sprintf("Running calculation: '%s'", $calculation['name']));
-				$success = $this->runCalculation($calculation, $lastRun, $now, $dryRun);
+				$success = $this->runCalculation($calculation, $lastCalculation, $now, $dryRun);
 
 				if ($success) {
 					$calculationsSuccess ++;
@@ -128,7 +128,13 @@ class CalculationCommand extends BaseCommand {
 	protected function checkShouldRun(array $calculation, DateTime $now): ?DateTime {
 		$targetInterval = $calculation['target_interval']; //String, one of: 'hourly', 'daily', 'weekly', 'monthly', 'yearly'
 		$startTime = $calculation['start_time']; //String, format: H:i
-		$lastRun = !empty($calculation['last_run']) ? new DateTime($calculation['last_run'], $this->tz) : new DateTime('2020-01-01', $this->tz); //DateTime|null
+
+		$lastCalculation = !empty($calculation['last_calculation']) ? new DateTime($calculation['last_calculation'], $this->tz) : new DateTime('2020-01-01', $this->tz); //DateTime|null
+
+		if ($lastCalculation > $now) {
+			//If the last calculation is in the future, set it to now, so maybe it will overwrite some results, or make corrections
+			$lastCalculation = $now;
+		}
 
 		//Check config validity
 		if (!preg_match('/^\d{2}:\d{2}$/', $startTime)) {
@@ -140,38 +146,9 @@ class CalculationCommand extends BaseCommand {
 
 		//Set start time to last run date
 		$startTime = array_map(fn($n) => (int) $n, explode(':', $startTime));
-		$lastRun->setTime($startTime[0], $startTime[1]);
+		$lastCalculation->setTime($startTime[0], $startTime[1]);
 
-		//Check if the calculation should run now
-		$interval = $lastRun->diff($now);
-		switch ($targetInterval) {
-			case CalculationConfigQueries::INTERVAL_HOUR:
-				//Target is hourly, run if at least an hour passed since last run
-				$shouldRun = $interval->h >= 1 && $interval->i === 0;
-				break;
-			case CalculationConfigQueries::INTERVAL_DAY:
-				//Target is daily, run if at least a day passed since last run and it's the same time as the start time
-				$shouldRun = $interval->d >= 1 && $interval->h === 0 && $interval->i === 0;
-				break;
-			case CalculationConfigQueries::INTERVAL_WEEK:
-				//Target is weekly, run if at least a week passed since last run and it's the same time and day as the start time
-				$shouldRun = $interval->d % 7 === 0 && $interval->h === 0 && $interval->i === 0;
-				break;
-			case CalculationConfigQueries::INTERVAL_MONTH:
-				//Target is monthly, run if at least a month passed since last run and it's the same time and day as the start time
-				$shouldRun = $interval->m >= 1 && $interval->d === 0 && $interval->h === 0 && $interval->i === 0;
-				break;
-			case CalculationConfigQueries::INTERVAL_YEAR:
-				//Target is yearly, run if at least a year passed since last run and it's the same time, day and month as the start time
-				$shouldRun = $interval->y >= 1 && $interval->m === 0 && $interval->d === 0 && $interval->h === 0 && $interval->i === 0;
-				break;
-			default:
-				$shouldRun = false;
-				break;
-		}
-
-		//Return last run date if the calculation should run now
-		return $shouldRun ? $lastRun : null;
+		return $lastCalculation;
 	}
 
 
@@ -179,14 +156,14 @@ class CalculationCommand extends BaseCommand {
 	 * Run the calculation
 	 *
 	 * @param array    $calculation
-	 * @param DateTime $lastRun
+	 * @param DateTime $lastCalculation
 	 * @param DateTime $now
 	 * @param bool     $dryRun
 	 *
 	 * @return bool
 	 * @throws QueryException
 	 */
-	protected function runCalculation(array $calculation, DateTime $lastRun, DateTime $now, bool $dryRun = false): bool {
+	protected function runCalculation(array $calculation, DateTime $lastCalculation, DateTime $now, bool $dryRun = false): bool {
 		$targetInterval = $calculation['target_interval']; //String, one of: 'hourly', 'daily', 'weekly', 'monthly', 'yearly'
 		$sourceInterval = $calculation['source_interval']; //String, one of: 'hourly', 'daily', 'weekly', 'monthly', 'yearly'
 
@@ -247,7 +224,7 @@ class CalculationCommand extends BaseCommand {
 			$minTime = $minTime['min'] ? new DateTime($minTime['min']) : null;
 
 			//Do the calculation for each interval. First interval is the last run date
-			$intervalStart = $lastRun;
+			$intervalStart = $lastCalculation;
 			do {
 				$intervalStartLoop = $intervalStart; //$intervalStart will be modified in the loop
 				$intervalEnd = $this->datePlusInterval($intervalStartLoop, $targetInterval); //Calculate the end of the interval
@@ -257,7 +234,7 @@ class CalculationCommand extends BaseCommand {
 					continue;
 				}
 
-				$this->console->write(sprintf("Interval %s - %s ... ", $intervalStartLoop->format('Y-m-d H:i'), $intervalEnd->format('Y-m-d H:i')));
+				$this->console->write(sprintf("Interval (%s < x <= %s] ... ", $intervalStartLoop->format('Y-m-d H:i'), $intervalEnd->format('Y-m-d H:i')));
 
 				//Find results from the source time series in the interval
 				$results = (new Select())->from("{$type}_result")->select("{$type}_result.value, {$type}_result.time")
@@ -272,7 +249,7 @@ class CalculationCommand extends BaseCommand {
 					->orderBy('time')->run();
 				if (empty($results)) {
 					//No results in the interval, skip this interval calculation
-					$this->console->writeLine("No results", Console::COLOR_YELLOW);
+					$this->console->writeLine("No results", Console::COLOR_YELLOW, null, false, false, false);
 					continue;
 				}
 
@@ -286,7 +263,7 @@ class CalculationCommand extends BaseCommand {
 						count($filteredResults),
 						$intervalStartLoop->format('Y-m-d H:i'),
 						$intervalEnd->format('Y-m-d H:i')
-					), Console::COLOR_YELLOW);
+					), Console::COLOR_YELLOW, null, false, false, false);
 
 					continue;
 				}
@@ -296,17 +273,20 @@ class CalculationCommand extends BaseCommand {
 
 				//Add the result to the insert values
 				$insertValues[] = ['date' => $intervalEnd, 'value' => $value];
-				$this->console->writeLine(sprintf("Value: %s", $value));
+				$this->console->writeLine(sprintf("Value: %s", $value), null, null, false, false, false);
+
+				//A valid result is calculated for this interval, so we can set the last calculation to the end of this interval
+				$lastCalculation = $intervalEnd;
 			} while ($intervalEnd < $now);
 
 			//Insert every result to the target time series
 			$this->insertResults($type, $targetTimeSeriesId, $insertValues, $now, $dryRun);
 		}
 
-		$calculation['last_run'] = $now->format('Y-m-d H:i:s');
+		$calculation['last_calculation'] = $lastCalculation->format('Y-m-d H:i:s');
 		if (!$dryRun) {
-			(new Update())->table('calculation_configs')->addSet('last_run', ':lastRun')->where('id = :id')
-				->setParameters(['lastRun' => $calculation['last_run'], 'id' => $calculation['id']])->run();
+			(new Update())->table('calculation_configs')->addSet('last_calculation', ':lastCalculation')->where('id = :id')
+				->setParameters(['lastCalculation' => $calculation['last_calculation'], 'id' => $calculation['id']])->run();
 		}
 
 		return true;
@@ -337,6 +317,10 @@ class CalculationCommand extends BaseCommand {
 	protected function methodDifference(array $results) {
 		$results = array_map(fn($result) => (float) $result, $results);
 
+		if (empty($results)) {
+			return null;
+		}
+
 		return end($results) - reset($results);
 	}
 
@@ -355,6 +339,7 @@ class CalculationCommand extends BaseCommand {
 	 */
 	protected function insertResults(string $type, int $timeSeriesId, array $values, DateTime $now, bool $dryRun = false) {
 		$chunks = array_chunk($values, 3000, true);
+		$realNow = new DateTime('now', $this->tz);
 
 		foreach ($chunks as $chunk) {
 			//Create empty insert query
@@ -369,8 +354,8 @@ class CalculationCommand extends BaseCommand {
 					"tsid$i"       => $timeSeriesId,
 					"time$i"       => $time->format('c'),
 					"value$i"      => $value,
-					"isForecast$i" => $now < $time,
-					"createdAt$i"  => $now->format('c'),
+					"isForecast$i" => false,
+					"createdAt$i"  => $realNow->format('Y-m-d H:i:s'),
 				]);
 			}
 
@@ -575,7 +560,7 @@ class CalculationCommand extends BaseCommand {
 
 			return null;
 		}
-		$this->console->writeLine(sprintf("%s property: #%d - %s - %s", ucfirst($propertyType), $propertyId['id'], $property['symbol'], $property['description']));
+		$this->console->writeLine(sprintf("%s property: #%d - %s - %s", ucfirst($propertyType), $propertyId, $property['symbol'], $property['description']));
 
 		return $property;
 	}
