@@ -121,7 +121,9 @@ abstract class AbstractOutputFormat {
 		//Build and run the query
 		$query = (new Select())->from("$tableName as point");
 		$query->join('operator', 'point.operatorid = operator.id');
-		$query->join('river', 'point.eucd_riv = river.eucd_riv', Query::JOIN_LEFT);
+		if ($queryMeta['type'] === 'hydro') {
+			$query->join('river', 'point.eucd_riv = river.eucd_riv', Query::JOIN_LEFT);
+		}
 		$query->join('river_basin', 'point.river_basin_id = river_basin.id', Query::JOIN_LEFT);
 
 		$results = $query->select($columns)->whereIn('point.id', $ids, 'mpointId')->where('point.is_active = true')->orderBy('1')->run();

@@ -19,20 +19,33 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 
 
 		// Excel column titles and data types
-		'station_header_types'    => [
-			'International code'   => 'string',
-			'Country'              => 'string',
-			'National code'        => 'string',
-			'Name'                 => 'string',
-			'Latitude'             => '0.0000',
-			'Longitude'            => '0.0000',
-			'River'                => 'string',
-			'River-km'             => '0.0',
-			'Catchment area (km²)' => '0.0',
-			'Gauge zero (m)'       => '0.0', // METEO: Altitude (m)
-			'Vertical reference'   => 'string',
-			'Sub-basin'            => 'string',
-			'Operator'             => 'string'
+		'station_columns'         => [
+			'hydro' => [
+				['select' => 'point.eucd_wgst as station_code', 'label' => 'International code', 'type' => 'string'],
+				['select' => 'point.country', 'label' => 'Country', 'type' => 'string'],
+				['select' => 'point.ncd_wgst as national_code', 'label' => 'National code', 'type' => 'string'],
+				['select' => 'point.name station_name', 'label' => 'Name', 'type' => 'string'],
+				['select' => 'point.lat', 'label' => 'Latitude', 'type' => '0.0000'],
+				['select' => 'point.long', 'label' => 'Longitude', 'type' => '0.0000'],
+				['select' => 'river.cname as river', 'label' => 'River', 'type' => 'string'],
+				['select' => 'point.river_kilometer', 'label' => 'River-km', 'type' => '0.0'],
+				['select' => 'point.catchment_area', 'label' => 'Catchment area (km²)', 'type' => '0.0'],
+				['select' => 'point.gauge_zero', 'label' => 'Gauge zero (m)', 'type' => '0.0'],
+				['select' => 'point.vertical_reference', 'label' => 'Vertical reference', 'type' => 'string'],
+				['select' => 'river_basin.name as subbasin', 'label' => 'Sub-basin', 'type' => 'string'],
+				['select' => 'operator.name as operator_name', 'label' => 'Operator', 'type' => 'string'],
+			],
+			'meteo' => [
+				['select' => 'point.eucd_pst as station_code', 'label' => 'International code', 'type' => 'string'],
+				['select' => 'point.country', 'label' => 'Country', 'type' => 'string'],
+				['select' => 'point.ncd_pst as national_code', 'label' => 'National code', 'type' => 'string'],
+				['select' => 'point.name station_name', 'label' => 'Name', 'type' => 'string'],
+				['select' => 'point.lat', 'label' => 'Latitude', 'type' => '0.0000'],
+				['select' => 'point.long', 'label' => 'Longitude', 'type' => '0.0000'],
+				['select' => 'point.altitude', 'label' => 'Altitude', 'type' => '0.0'],
+				['select' => 'river_basin.name as subbasin', 'label' => 'Sub-basin', 'type' => 'string'],
+				['select' => 'operator.name as operator_name', 'label' => 'Operator', 'type' => 'string'],
+			]
 		],
 		'data_header_types'       => [
 			'Station code' => 'string',
@@ -108,22 +121,16 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 
 		if ($this->options['add_stations_sheet']) {
 			//Get station data, and write it to the sheet
-			$stationData = $this->getStationData($results, $queryMeta, [
-				'point.eucd_wgst as station_code',
-				'point.country',
-				'point.ncd_wgst as national_code',
-				'point.name station_name',
-				'point.long',
-				'point.lat',
-				'river.cname as river',
-				'point.river_kilometer',
-				'point.catchment_area',
-				'point.gauge_zero',
-				'point.vertical_reference',
-				'river_basin.name as subbasin',
-				'operator.name as operator_name',
-			]);
-			$this->writer->writeSheetHeader('Stations', $this->config['station_header_types'], $this->config['station_sheet_options']);
+			$selectColumns = array_map(fn($colData) => $colData['select'], $this->config['station_columns'][$queryMeta['type']]);
+			$stationData = $this->getStationData($results, $queryMeta, $selectColumns);
+			$this->writer->writeSheetHeader(
+				'Stations',
+				array_combine(
+					array_map(fn($colData) => $colData['label'], $this->config['station_columns'][$queryMeta['type']]),
+					array_map(fn($colData) => $colData['type'], $this->config['station_columns'][$queryMeta['type']])
+				),
+				$this->config['station_sheet_options']
+			);
 			foreach ($stationData as $station) {
 				$this->writer->writeSheetRow('Stations', $station);
 			}
