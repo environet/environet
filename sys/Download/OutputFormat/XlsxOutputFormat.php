@@ -145,6 +145,10 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 			}
 		}
 
+		//Check if we need to group by station
+		$groupByStation = $this->options['group_by_station'];
+		$this->config['data_sheet_options']['auto_filter'] = !$groupByStation;
+
 		//Build data sheet header. Add default columns, and columns for each property
 		$dataHeaderType = $this->config['data_header_types'];
 		$dataSheetOptions = $this->config['data_sheet_options'];
@@ -152,10 +156,6 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 			$dataHeaderType[$property['symbol']] = $this->config['data_column_type'];
 			$dataSheetOptions['widths'][] = $this->config['data_column_width'];
 		}
-
-		//Check if we need to group by station
-		$groupByStation = $this->options['group_by_station'];
-		$this->config['data_sheet_options']['auto_filter'] = !$groupByStation;
 
 		//Organize results by station and time. It builds a new multidimensional array with the station code and time as keys
 		//Array structure: {station_code: {time: {property_symbol: row_data}}}
