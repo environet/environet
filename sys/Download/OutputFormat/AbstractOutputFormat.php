@@ -109,6 +109,9 @@ abstract class AbstractOutputFormat {
 	 */
 	protected function getStationData(array $results, array $queryMeta, array $columns = null): array {
 		$ids = array_values(array_unique(array_column($results, 'mpoint_id'))); //Find unique mpoint ids
+		if (empty($ids)) {
+			return [];
+		}
 		$tableName = $queryMeta['type'] . 'point';
 
 		//Build columns, add a _keyid column to the end, it will be used to map the results
@@ -143,6 +146,9 @@ abstract class AbstractOutputFormat {
 	 */
 	protected function getPropertyData(array $results, array $queryMeta, array $columns = null): array {
 		$ids = array_values(array_unique(array_column($results, 'property_id'))); //Find unique property ids
+		if (empty($ids)) {
+			return [];
+		}
 		$tableName = $queryMeta['type'] . '_observed_property';
 
 		//Build columns, add a _keyid column to the end, it will be used to map the results
