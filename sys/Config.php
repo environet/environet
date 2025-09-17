@@ -24,6 +24,8 @@ use Environet\Sys\General\Exceptions\InvalidConfigurationException;
  * @method string getDatabasePort
  * @method string getDatabaseUser
  * @method string getDatabasePass
+ * @method string|null getExportTitle
+ * @method string|null getExportAuthor
  *
  * @package Environet\Sys
  * @author  SRG Group <dev@srg.hu>

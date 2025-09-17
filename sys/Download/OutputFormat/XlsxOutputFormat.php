@@ -13,8 +13,6 @@ use XLSXWriter;
 class XlsxOutputFormat extends AbstractOutputFormat {
 
 	protected array $config = [
-		'title'                   => 'DanubeHIS Export',
-		'author'                  => 'ICPDR',
 		'default_data_sheet_name' => 'Results', //Default sheet name
 
 
@@ -106,8 +104,15 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 
 
 	public function outputResults(array $results, array $queryMeta): Response {
-		$this->writer->setTitle($this->config['title']);
-		$this->writer->setAuthor($this->config['author']);
+		$exportTitle = $exportAuthor = '';
+		if (is_string($this->globalConfig->getExportTitle()) && !empty($this->globalConfig->getExportTitle())) {
+			$exportTitle = $this->globalConfig->getExportTitle();
+		}
+		if (is_string($this->globalConfig->getExportAuthor()) && !empty($this->globalConfig->getExportAuthor())) {
+			$exportAuthor = $this->globalConfig->getExportAuthor();
+		}
+		$this->writer->setTitle($exportTitle);
+		$this->writer->setAuthor($exportAuthor);
 
 		//Determine the eucd field based on the type of query
 		switch ($queryMeta['type']) {
@@ -213,7 +218,10 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 
 
 		// Generate export filename
-		$filenameParts = [str_replace(' ', '_', $this->config['title'])]; //Base name
+		$filenameParts = [];
+		if ($exportTitle) {
+			$filenameParts[] = str_replace(' ', '_', preg_replace('/\W+/iu', '_', $exportTitle)); //Use export title if given
+		} //Base name
 		$filenameParts[] = implode('-', array_unique([reset($propertySymbols), end($propertySymbols)])); //First and last property symbol
 		if (!empty(($countries = $queryMeta['params']['countries']))) {
 			sort($countries);

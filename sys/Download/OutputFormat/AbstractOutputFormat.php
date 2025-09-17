@@ -2,6 +2,7 @@
 
 namespace Environet\Sys\Download\OutputFormat;
 
+use Environet\Sys\Config;
 use Environet\Sys\Download\Exceptions\DownloadException;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
@@ -17,12 +18,14 @@ abstract class AbstractOutputFormat {
 
 	protected array $options = [];
 
+	protected Config $globalConfig;
+
 
 	abstract public function outputResults(array $results, array $queryMeta): Response;
 
 
 	public function __construct() {
-		// Constructor logic if needed
+		$this->globalConfig = Config::getInstance();
 	}
 
 
