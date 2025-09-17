@@ -22,12 +22,17 @@ class XmlOutputFormat extends AbstractOutputFormat {
 	 * @throws Exception
 	 */
 	public function outputResults(array $results, array $queryMeta): Response {
-		$response = new Response();
-		$response->addHeader('Content-Type: application/xml');
-
 		$headers = [];
 		$response = new Response((new CreateOutputXml())->generateXml($results, $queryMeta, $headers));
 		$this->addResponseHeaders($response, $headers);
+
+		$filename = $this->generateFilename([], $queryMeta);
+
+		$response->addHeader('Content-Type: application/xml')
+			->addHeader('Content-Length: ' . $response->getSize())
+			->addHeader('Content-Disposition: inline; filename="' . $filename . '.xlsx"')
+			->addHeader('Cache-Control: must-revalidate')
+			->addHeader('Pragma: public');
 
 		return $response;
 	}

@@ -172,4 +172,32 @@ abstract class AbstractOutputFormat {
 	}
 
 
+	protected function generateFilename(array $propertySymbols, array $queryMeta): string {
+		// Generate export filename
+		$filenameParts = [];
+		if (is_string($this->globalConfig->getExportTitle()) && !empty($this->globalConfig->getExportTitle())) {
+			$filenameParts[] = str_replace(' ', '_', preg_replace('/\W+/iu', '_', $this->globalConfig->getExportTitle())); //Use export title if given
+		} //Base name
+
+		if ($propertySymbols) {
+			$filenameParts[] = implode('-', array_unique([reset($propertySymbols), end($propertySymbols)])); //First and last property symbol
+		}
+		if (!empty(($countries = $queryMeta['params']['countries']))) {
+			sort($countries);
+			$filenameParts[] = implode('-', array_unique($countries)); //Countries if given in the query
+		}
+		if (!empty(($points = $queryMeta['params']['points']))) {
+			$points = array_map(fn($p) => str_replace(['_HYDRO', '_METEO'], '', $p), $points);
+			sort($points);
+			$filenameParts[] = implode('-', array_unique([reset($points), end($points)])); //First and last point code if given in the query
+		}
+		//Start and end times
+		$dateReplacePattern = '/[^0-9]/';
+		$filenameParts[] = preg_replace($dateReplacePattern, '', $queryMeta['startTime']) . '-' . preg_replace($dateReplacePattern, '', $queryMeta['endTime']);
+		$filename = implode('_', $filenameParts);
+
+		return substr($filename, 0, 256 - strlen('.xlsx'));
+	}
+
+
 }

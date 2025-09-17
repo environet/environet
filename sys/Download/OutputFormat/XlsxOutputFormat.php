@@ -103,15 +103,12 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 
 
 	public function outputResults(array $results, array $queryMeta): Response {
-		$exportTitle = $exportAuthor = '';
 		if (is_string($this->globalConfig->getExportTitle()) && !empty($this->globalConfig->getExportTitle())) {
-			$exportTitle = $this->globalConfig->getExportTitle();
+			$this->writer->setTitle($this->globalConfig->getExportTitle());
 		}
 		if (is_string($this->globalConfig->getExportAuthor()) && !empty($this->globalConfig->getExportAuthor())) {
-			$exportAuthor = $this->globalConfig->getExportAuthor();
+			$this->writer->setAuthor($this->globalConfig->getExportAuthor());
 		}
-		$this->writer->setTitle($exportTitle);
-		$this->writer->setAuthor($exportAuthor);
 
 		//Determine the eucd field based on the type of query
 		switch ($queryMeta['type']) {
@@ -215,27 +212,7 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 			}
 		}
 
-
-		// Generate export filename
-		$filenameParts = [];
-		if ($exportTitle) {
-			$filenameParts[] = str_replace(' ', '_', preg_replace('/\W+/iu', '_', $exportTitle)); //Use export title if given
-		} //Base name
-		$filenameParts[] = implode('-', array_unique([reset($propertySymbols), end($propertySymbols)])); //First and last property symbol
-		if (!empty(($countries = $queryMeta['params']['countries']))) {
-			sort($countries);
-			$filenameParts[] = implode('-', array_unique($countries)); //Countries if given in the query
-		}
-		if (!empty(($points = $queryMeta['params']['points']))) {
-			$points = array_map(fn($p) => str_replace(['_HYDRO', '_METEO'], '', $p), $points);
-			sort($points);
-			$filenameParts[] = implode('-', array_unique([reset($points), end($points)])); //First and last point code if given in the query
-		}
-		//Start and end times
-		$dateReplacePattern = '/[^0-9]/';
-		$filenameParts[] = preg_replace($dateReplacePattern, '', $queryMeta['startTime']) . '-' . preg_replace($dateReplacePattern, '', $queryMeta['endTime']);
-		$filename = implode('_', $filenameParts);
-		$filename = substr($filename, 0, 256 - strlen('.xlsx'));
+		$filename = $this->generateFilename($propertySymbols, $queryMeta);
 
 		//Write the file to a string, and send it as a response
 		$content = $this->writer->writeToString();
