@@ -84,8 +84,7 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 			'widths' => [20, 24, 8, 40]
 		],
 
-		'max_sheet_rows'      => 1048576, // Fixed limit of MS Excel
-		'max_filename_length' => 256
+		'max_sheet_rows' => 1048576, // Fixed limit of MS Excel
 	];
 
 	protected array $options = [
@@ -203,7 +202,7 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 			foreach ($stationResults as $stationResult) {
 				//Add the result row to the current sheet
 				$this->writer->writeSheetRow($sheetName, $stationResult);
-				$rowCount ++;
+				$rowCount++;
 
 				//Check if row count exceeds the maximum limit. If it does, create a new sheet with a number suffix. New data rows will be written to the new sheet.
 				if ($rowCount >= $this->config['max_sheet_rows']) {
