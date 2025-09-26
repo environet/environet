@@ -26,6 +26,8 @@ use Environet\Sys\General\Exceptions\InvalidConfigurationException;
  * @method string getDatabasePass
  * @method string|null getExportTitle
  * @method string|null getExportAuthor
+ * @method string getExportPropertyTypeLabelRealTime
+ * @method string getExportPropertyTypeLabelProcessed
  *
  * @package Environet\Sys
  * @author  SRG Group <dev@srg.hu>

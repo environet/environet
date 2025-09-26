@@ -59,8 +59,8 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 		//Data (enum) mapping
 		'label_map'               => [
 			'property_type' => [
-				1 => 'Raw near-real-time data',
-				2 => 'Validated processed data'
+				PROPERTY_TYPE_REALTIME => '',
+				PROPERTY_TYPE_PROCESSED => ''
 			]
 		],
 
@@ -99,6 +99,8 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 	public function __construct() {
 		parent::__construct();
 		$this->writer = new XLSXWriter();
+		$this->config['label_map']['property_type'][PROPERTY_TYPE_REALTIME] = $this->globalConfig->getExportPropertyTypeLabelRealTime();
+		$this->config['label_map']['property_type'][PROPERTY_TYPE_PROCESSED] = $this->globalConfig->getExportPropertyTypeLabelProcessed();
 	}
 
 
