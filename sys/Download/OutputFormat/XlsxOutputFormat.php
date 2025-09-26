@@ -40,6 +40,7 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 				['select' => 'point.name station_name', 'label' => 'Name', 'type' => 'string'],
 				['select' => 'point.lat', 'label' => 'Latitude', 'type' => '0.0000'],
 				['select' => 'point.long', 'label' => 'Longitude', 'type' => '0.0000'],
+				['select' => 'point.vertical_reference as vertical_reference', 'label' => 'Vertical reference', 'type' => 'string'],
 				['select' => 'point.altitude', 'label' => 'Altitude', 'type' => '0.0'],
 				['select' => 'river_basin.name as subbasin', 'label' => 'Sub-basin', 'type' => 'string'],
 				['select' => 'operator.name as operator_name', 'label' => 'Operator', 'type' => 'string'],
