@@ -309,9 +309,10 @@ class DownloadHandler extends ApiHandler {
 				'params'          => $params
 			];
 
-			$results = $queryBuilder->getResults();
+			//Build the select query, and fetch results
+			$select = $queryBuilder->getSelect();
 
-			$response = $outputFormat->outputResults($results, $queryMeta);
+			$response = $outputFormat->outputResults($select, $queryMeta);
 
 			$this->saveDownloadLog($response);
 

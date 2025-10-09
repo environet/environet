@@ -19,7 +19,7 @@ abstract class AbstractOutputFormat {
 	protected Config $globalConfig;
 
 
-	abstract public function outputResults(array $results, array $queryMeta): Response;
+	abstract public function outputResults(Select $select, array $queryMeta): Response;
 
 
 	public function __construct() {
@@ -93,16 +93,22 @@ abstract class AbstractOutputFormat {
 
 
 	/**
-	 * Fetch station data from the database based on restuls
+	 * Fetch station data from the database based on built select query
 	 *
-	 * @param array      $results   Results from the query
-	 * @param array      $queryMeta Metadata about the query
-	 * @param array|null $columns   Columns to select from the database
-	 *
-	 * @return array
+	 * @param Select $select      Prebuilt select query
+	 * @param array $queryMeta    Metadata about the query
+	 * @param array|null $columns Columns to select from the database
 	 * @throws QueryException
 	 */
-	protected function getStationData(array $results, array $queryMeta, array $columns = null): array {
+	protected function getStationData(Select $select, array $queryMeta, ?array $columns = null): array {
+		//Create a new select based on the given one, but only selecting the mpoint ids
+		$type = $queryMeta['type'];
+		$select = clone $select;
+		$select->clearGroupBy()->groupBy('mpoint_id'); //Group by mpoint id to avoid duplicates
+		$select->clearOrderBy()->orderBy($queryMeta['type'] === 'hydro' ? 'eucd_wgst' : 'eucd_pst'); //Order by eucd code
+		$select->clearSelects()->select("{$type}point.id as mpoint_id"); //Select only the mpoint ids
+		$results = $select->run();
+
 		$ids = array_values(array_unique(array_column($results, 'mpoint_id'))); //Find unique mpoint ids
 		if (empty($ids)) {
 			return [];
@@ -132,16 +138,29 @@ abstract class AbstractOutputFormat {
 
 
 	/**
-	 * Fetch property data from the database based on results
+	 * Fetch property data from the database based on built select query
 	 *
-	 * @param array      $results   Results from the query
-	 * @param array      $queryMeta Metadata about the query
-	 * @param array|null $columns   Columns to select from the database
-	 *
-	 * @return array
+	 * @param Select $select      Prebuilt select query
+	 * @param array $queryMeta    Metadata about the query
+	 * @param array|null $columns Columns to select from the database
 	 * @throws QueryException
 	 */
-	protected function getPropertyData(array $results, array $queryMeta, array $columns = null): array {
+	protected function getPropertyData(Select $select, array $queryMeta, ?array $columns = null): array {
+		$type = $queryMeta['type'];
+		$select = clone $select;
+
+		//Group by property id to avoid duplicates
+		$select->clearGroupBy()->groupBy('property_id');
+
+		//Order by property symbol
+		$select->clearOrderBy()->orderBy('property_symbol');
+
+		//Select only the property ids and symbols
+		$select->clearSelects()
+			->select("{$type}_observed_property.symbol as property_symbol")
+			->select("{$type}_observed_property.id as property_id");
+		$results = $select->run();
+
 		$ids = array_values(array_unique(array_column($results, 'property_id'))); //Find unique property ids
 		if (empty($ids)) {
 			return [];
