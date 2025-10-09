@@ -1,72 +1,49 @@
 <?php
 
-
 namespace Environet\Sys\Xml\Model;
 
-use Environet\Sys\Xml\XmlRenderable;
+use DOMDocument;
 use Exception;
-use SimpleXMLElement;
 
 /**
- * Class OutputXmlObservationMember
- *
  * Wrapper class for handling WML observationMember data structure
- *
- * @package Environet\Sys\Xml\Model
- * @author  SRG Group <dev@srg.hu>
  */
-class OutputXmlObservationMember implements XmlRenderable {
+class OutputXmlObservationMember {
+
 
 	protected array $queryMeta;
 
-	/**
-	 * @var true
-	 */
+	/** @var array Property data for the current observation member. It is set when rendering value rows. */
+	protected array $propertyData = [];
+
+	/** @var true */
 	private bool $intervalLimited = false;
 
-	/**
-	 * @var array
-	 */
-	private $propertyData;
 
-	/**
-	 * @var array
-	 */
-	private $valueRows;
-
-
-	/**
-	 * OutputXmlObservationMember constructor.
-	 *
-	 * @param array $propertyData
-	 * @param array $valueRows
-	 */
-	public function __construct(array $propertyData, array $valueRows, array $queryMeta) {
-		$this->propertyData = $propertyData;
-		$this->valueRows = $valueRows;
+	public function __construct(array $queryMeta) {
 		$this->queryMeta = $queryMeta;
-		foreach ($valueRows as $valueRow) {
-			if (isset($valueRow['interval_limited']) && $valueRow['interval_limited'] === 1) {
-				$this->intervalLimited = true;
-				break;
-			}
-		}
 	}
 
 
 	/**
 	 * Render the observation member's metadata.
 	 *
-	 * @param SimpleXMLElement $container
-	 *
 	 * @throws Exception
-	 * @uses \Environet\Sys\Xml\Model\OutputXmlData::dateToISO()
 	 */
-	protected function renderMeta(SimpleXMLElement &$container) {
-		if ($this->intervalLimited) {
-			$container->addChild('gml:description', 'Start of time series was automatically limited to available data', 'om');
+	public function renderObservationMember(): string {
+		if (empty($this->propertyData)) {
+			throw new Exception('Property data not set for observation member rendering. Render value rows first.');
 		}
-		$timePeriod = $container->addChild('om:phenomenonTime', null, 'om')->addChild('gml:TimePeriod', null, 'gml');
+
+		$doc = new DOMDocument('1.0', 'UTF-8');
+		$observation = $doc->appendChild($doc->createElement('wml2:observationMember'));
+		$observation = $observation->appendChild($doc->createElement('om:OM_Observation'));
+		if ($this->intervalLimited) {
+			$observation->appendChild($doc->createElement('gml:description', 'Start of time series was automatically limited to available data'));
+		}
+		$observation
+			->appendChild($doc->createElement('om:phenomenonTime'))
+			->appendChild($timePeriod = $doc->createElement('gml:TimePeriod'));
 
 		$startTimeRequest = $this->queryMeta['startTime'] ?? null;
 		$endTimeRequest = $this->queryMeta['endTime'] ?? null;
@@ -76,104 +53,106 @@ class OutputXmlObservationMember implements XmlRenderable {
 		$startTime = $startTimeRequest && strtotime($startTimeRequest) > strtotime($startTimeSeries) ? $startTimeRequest : $startTimeSeries;
 		$endTime = $endTimeRequest && strtotime($endTimeRequest) < strtotime($endTimeSeries) ? $endTimeRequest : $endTimeSeries;
 
-		$timePeriod->addChild('gml:beginPosition', $startTime ? OutputXmlData::dateToISO($startTime) : '', 'gml');
-		$timePeriod->addChild('gml:endPosition', $endTime ? OutputXmlData::dateToISO($endTime) : '', 'gml');
+		$timePeriod->appendChild($doc->createElement('gml:beginPosition', $startTime ? dateToISO($startTime) : ''));
+		$timePeriod->appendChild($doc->createElement('gml:endPosition', $endTime ? dateToISO($endTime) : ''));
 
-		$resultTime = $endTime ? OutputXmlData::dateToISO($endTime) : '';
-		$container
-			->addChild('om:resultTime', null, 'om')
-			->addChild('gml:TimeInstant', null, 'gml')
-			->addChild('gml:timePosition', $resultTime, 'gml');
+		$resultTime = $endTime ? dateToISO($endTime) : '';
+		$observation
+			->appendChild($doc->createElement('om:resultTime'))
+			->appendChild($doc->createElement('gml:TimeInstant'))
+			->appendChild($doc->createElement('gml:timePosition', $resultTime));
 
-		$processType = $container->addChild('om:procedure', null, 'om')
-			->addChild('wml2:ObservationProcess', null, 'wml2')
-			->addChild('wml2:processType', null, 'wml2');
-		$processType->addAttribute('xlink:href', 'http://www.opengis.net/def/processType/WaterML/2.0/Sensor', 'xlink');
-		$processType->addAttribute('xlink:title', 'Sensor', 'xlink');
+		$observation
+			->appendChild($doc->createElement('om:procedure'))
+			->appendChild($doc->createElement('wml2:ObservationProcess'))
+			->appendChild($processType = $doc->createElement('wml2:processType'));
+		$processType->setAttribute('xlink:href', 'http://www.opengis.net/def/processType/WaterML/2.0/Sensor');
+		$processType->setAttribute('xlink:title', 'Sensor');
 
-		$symbol = $container->addChild('om:observedProperty', null, 'om');
-		$symbol->addAttribute('xlink:href', $this->propertyData['property_symbol'] ?? '', 'xlink');
-		$symbol->addAttribute('xlink:title', $this->propertyData['property_description'] ?? '', 'xlink');
+		$observation->appendChild($symbol = $doc->createElement('om:observedProperty'));
+		$symbol->setAttribute('xlink:href', $this->propertyData['property_symbol'] ?? '');
+		$symbol->setAttribute('xlink:title', $this->propertyData['property_description'] ?? '');
 
-		$monitoringPoint = $container->addChild('om:featureOfInterest', null, 'om')
-			->addChild('wml2:MonitoringPoint', null, 'wml2');
-		$monitoringPoint->addChild('gml:description', $this->propertyData['mpoint_location'] ?? '', 'gml');
+		$observation->appendChild($doc->createElement('om:featureOfInterest'))
+			->appendChild($monitoringPoint = $doc->createElement('wml2:MonitoringPoint'));
+		$monitoringPoint->appendChild($doc->createElement('gml:description', $this->propertyData['mpoint_location'] ?? ''));
+
+		$identifier = $doc->createElement('gml:identifier', $this->propertyData['eucd_wgst'] ?? $this->propertyData['eucd_pst'] ?? '');
+		$identifier->setAttribute('codeSpace', 'https://www.icpdr.org/DanubeHIS/monitoringPoint');
+		$monitoringPoint->appendChild($identifier);
+
+		$monitoringPoint->appendChild($doc->createElement('gml:name', $this->propertyData['mpoint_name'] ?? ''));
+
+		$sampledFeature = $doc->createElement('sa:sampledFeature');
+		$sampledFeature->setAttribute('xlink:title', $this->propertyData['mpoint_name'] ?? '');
+		$monitoringPoint->appendChild($sampledFeature);
+
+		$pos = $doc->createElement('gml:pos', "{$this->propertyData['lat']} {$this->propertyData['long']}");
+		$pos->setAttribute('srsName', 'urn:ogc:def:crs:EPSG::4326');
 		$monitoringPoint
-			->addChild('gml:identifier', $this->propertyData['eucd_wgst'] ?? $this->propertyData['eucd_pst'] ?? '', 'gml')
-			->addAttribute('codeSpace', 'https://www.icpdr.org/DanubeHIS/monitoringPoint');
-		$monitoringPoint->addChild('gml:name', $this->propertyData['mpoint_name'] ?? '', 'gml');
-		$monitoringPoint->addChild('sa:sampledFeature', null, 'sa')
-			->addAttribute('xlink:title', $this->propertyData['mpoint_name'] ?? '', 'xlink');
+			->appendChild($doc->createElement('sams:shape'))
+			->appendChild($doc->createElement('gml:Point'))
+			->appendChild($pos);
+
 		$monitoringPoint
-			->addChild('sams:shape', null, 'sams')
-			->addChild('gml:Point', null, 'gml')
-			->addChild('gml:pos', "{$this->propertyData['lat']} {$this->propertyData['long']}", 'gml')
-			->addAttribute('srsName', 'urn:ogc:def:crs:EPSG::4326');
-		$monitoringPoint
-			->addChild('wml2:timeZone', null, 'wml2')
-			->addChild('wml2:TimeZone', null, 'wml2')
-			->addChild('wml2:zoneOffset', $this->propertyData['mpoint_utc_offset'] ?? 0, 'wml2');
+			->appendChild($doc->createElement('wml2:timeZone'))
+			->appendChild($doc->createElement('wml2:TimeZone'))
+			->appendChild($doc->createElement('wml2:zoneOffset', $this->propertyData['mpoint_utc_offset'] ?? 0));
+
+		$observation->appendChild($doc->createElement('tmp:result'));
+
+		return $doc->saveXML();
 	}
 
 
 	/**
 	 * Render the measurement members results.
 	 *
-	 * @param SimpleXMLElement $container
-	 *
 	 * @throws Exception
-	 * @uses \Environet\Sys\Xml\Model\OutputXmlObservationMember::renderValues()
 	 */
-	protected function renderMeasurementResult(SimpleXMLElement &$container) {
-		$timeSeries = $container->addChild('om:result', null, 'om')
-			->addChild('wml2:MeasurementTimeseries', null, 'wml2');
+	public function renderMeasurementResult(): string {
+		$doc = new DOMDocument('1.0', 'UTF-8');
+		$doc->appendChild($doc->createElement('om:result'))
+			->appendChild($timeSeries = $doc->createElement('wml2:MeasurementTimeseries'));
 
 		// Metadata
-		$measurementMeta = $timeSeries->addChild('wml2:defaultPointMetadata', null, 'wml2')
-			->addChild('wml2:DefaultTVPMeasurementMetadata', null, 'wml2');
-		$measurementMeta->addChild('wml2:uom', null, 'wml2')->addAttribute('code', $this->propertyData['property_unit'] ?? '');
+		$timeSeries->appendChild($doc->createElement('wml2:defaultPointMetadata'))
+			->appendChild($measurementMeta = $doc->createElement('wml2:DefaultTVPMeasurementMetadata'));
 
-		$interpolationType = $measurementMeta->addChild('wml2:interpolationType', null, 'wml2');
-		$interpolationType->addAttribute('xlink:href', 'http://www.opengis.net/def/waterml/2.0/interpolationType/Continuous', 'xlink');
-		$interpolationType->addAttribute('xlink:title', 'Instantaneous', 'xlink');
+		$uom = $doc->createElement('wml2:uom');
+		$uom->setAttribute('code', $this->propertyData['property_unit'] ?? '');
+		$measurementMeta->appendChild($uom);
 
-		$this->renderValues($timeSeries);
+		$interpolationType = $doc->createElement('wml2:interpolationType');
+		$interpolationType->setAttribute('xlink:href', 'http://www.opengis.net/def/waterml/2.0/interpolationType/Continuous');
+		$interpolationType->setAttribute('xlink:title', 'Instantaneous');
+		$measurementMeta->appendChild($interpolationType);
+
+		$timeSeries->appendChild($doc->createElement('tmp:values'));
+
+		return $doc->saveXML();
 	}
 
 
 	/**
 	 * Render Value points.
 	 *
-	 * @param SimpleXMLElement $timeSeries
-	 *
 	 * @throws Exception
-	 * @uses \Environet\Sys\Xml\Model\OutputXmlData::dateToISO()
 	 */
-	protected function renderValues(SimpleXMLElement &$timeSeries) {
-		// TVP Point
-		foreach ($this->valueRows as $valueRow) {
-			$tvp = $timeSeries->addChild('wml2:point', null, 'wml2')->addChild('wml2:MeasurementTVP', null, 'wml2');
-			$resultTime = !empty($valueRow['result_time']) ? OutputXmlData::dateToISO($valueRow['result_time']) : '';
-			$tvp->addChild('wml2:time', $resultTime, 'wml2');
-			$tvp->addChild('wml2:value', $valueRow['result_value'] ?? '', 'wml2');
+	public function renderValue(array $valueRow): string {
+		$this->propertyData = $valueRow;
+		if (isset($valueRow['interval_limited']) && $valueRow['interval_limited'] === 1) {
+			$this->intervalLimited = true;
 		}
-	}
+		$resultTime = !empty($valueRow['result_time']) ? dateToISO($valueRow['result_time']) : '';
 
+		$doc = new DOMDocument('1.0', 'UTF-8');
+		$doc->appendChild($doc->createElement('wml2:point'))
+			->appendChild($tvp = $doc->createElement('wml2:MeasurementTVP'));
+		$tvp->appendChild($doc->createElement('wml2:time', $resultTime));
+		$tvp->appendChild($doc->createElement('wml2:value', $valueRow['result_value'] ?? ''));
 
-	/**
-	 * Render one observation member.
-	 *
-	 * @param SimpleXMLElement $parent
-	 * @param array            $headers
-	 *
-	 * @throws Exception
-	 * @uses \Environet\Sys\Xml\Model\OutputXmlObservationMember::renderMeta()
-	 * @uses \Environet\Sys\Xml\Model\OutputXmlObservationMember::renderMeasurementResult()
-	 */
-	public function render(SimpleXMLElement &$parent, array &$headers): void {
-		$observation = $parent->addChild('wml2:observationMember', null, 'wml2')->addChild('om:OM_Observation', null, 'om');
-		$this->renderMeta($observation);
-		$this->renderMeasurementResult($observation);
+		return $doc->saveXML();
 	}
 
 
