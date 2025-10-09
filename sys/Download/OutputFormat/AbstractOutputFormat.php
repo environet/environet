@@ -11,10 +11,8 @@ use Environet\Sys\General\Request;
 use Environet\Sys\General\Response;
 use Exception;
 
-/**
- * Class AbstractOutputFormat
- */
 abstract class AbstractOutputFormat {
+
 
 	protected array $options = [];
 
@@ -32,10 +30,6 @@ abstract class AbstractOutputFormat {
 	/**
 	 * Should throw a DownloadException if the request is invalid
 	 *
-	 * @param Request $request
-	 * @param array   $formatOptions
-	 *
-	 * @return void
 	 * @throws DownloadException
 	 */
 	public function validateRequest(Request $request, array $formatOptions): void {
@@ -52,9 +46,6 @@ abstract class AbstractOutputFormat {
 	/**
 	 * Set options with type checking of default values, and casting
 	 *
-	 * @param array $options
-	 *
-	 * @return AbstractOutputFormat
 	 * @throws Exception
 	 */
 	public function setOptions(array $options): AbstractOutputFormat {
@@ -63,15 +54,19 @@ abstract class AbstractOutputFormat {
 			switch ($type) {
 				case 'boolean':
 					$this->options[$key] = (bool) $value;
+
 					break;
 				case 'integer':
 					$this->options[$key] = (int) $value;
+
 					break;
 				case 'double':
 					$this->options[$key] = (float) $value;
+
 					break;
 				case 'string':
 					$this->options[$key] = (string) $value;
+
 					break;
 				default:
 					//Other options formats are not supported
@@ -85,9 +80,6 @@ abstract class AbstractOutputFormat {
 
 	/**
 	 * Add headers to the response
-	 *
-	 * @param Response $response
-	 * @param array    $headers
 	 *
 	 * @return $this
 	 */
@@ -133,8 +125,8 @@ abstract class AbstractOutputFormat {
 
 		//Map the results to use the _keyid as the key, and remove the _keyid from the values
 		return array_combine(
-			array_map(fn($item) => $item['_keyid'], $results),
-			array_map(fn($item) => array_diff_key($item, ['_keyid' => null]), $results),
+			array_map(static fn($item) => $item['_keyid'], $results),
+			array_map(static fn($item) => array_diff_key($item, ['_keyid' => null]), $results),
 		);
 	}
 
@@ -166,8 +158,8 @@ abstract class AbstractOutputFormat {
 
 		//Map the results to use the _keyid as the key, and remove the _keyid from the values
 		return array_combine(
-			array_map(fn($item) => $item['_keyid'], $results),
-			array_map(fn($item) => array_diff_key($item, ['_keyid' => null]), $results),
+			array_map(static fn($item) => $item['_keyid'], $results),
+			array_map(static fn($item) => array_diff_key($item, ['_keyid' => null]), $results),
 		);
 	}
 
@@ -177,7 +169,7 @@ abstract class AbstractOutputFormat {
 		$filenameParts = [];
 		if (is_string($this->globalConfig->getExportTitle()) && !empty($this->globalConfig->getExportTitle())) {
 			$filenameParts[] = str_replace(' ', '_', preg_replace('/\W+/iu', '_', $this->globalConfig->getExportTitle())); //Use export title if given
-		} //Base name
+		}
 
 		if ($propertySymbols) {
 			$filenameParts[] = implode('-', array_unique([reset($propertySymbols), end($propertySymbols)])); //First and last property symbol
@@ -187,7 +179,7 @@ abstract class AbstractOutputFormat {
 			$filenameParts[] = implode('-', array_unique($countries)); //Countries if given in the query
 		}
 		if (!empty(($points = $queryMeta['params']['points']))) {
-			$points = array_map(fn($p) => str_replace(['_HYDRO', '_METEO'], '', $p), $points);
+			$points = array_map(static fn($p) => str_replace(['_HYDRO', '_METEO'], '', $p), $points);
 			sort($points);
 			$filenameParts[] = implode('-', array_unique([reset($points), end($points)])); //First and last point code if given in the query
 		}

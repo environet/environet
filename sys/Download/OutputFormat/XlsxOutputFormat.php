@@ -6,11 +6,10 @@ use Environet\Sys\General\Response;
 use XLSXWriter;
 
 /**
- * Class XlsxOutputFormat
- *
  * This class is responsible for generating an XLSX file from the given results and query metadata.
  */
 class XlsxOutputFormat extends AbstractOutputFormat {
+
 
 	protected array $config = [
 		'default_data_sheet_name' => 'Results', //Default sheet name
@@ -44,7 +43,7 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 				['select' => 'point.altitude', 'label' => 'Altitude', 'type' => '0.0'],
 				['select' => 'river_basin.name as subbasin', 'label' => 'Sub-basin', 'type' => 'string'],
 				['select' => 'operator.name as operator_name', 'label' => 'Operator', 'type' => 'string'],
-			]
+			],
 		],
 		'data_header_types'       => [
 			'Station code' => 'string',
@@ -54,15 +53,15 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 			'Symbol'      => 'string',
 			'Type'        => 'string',
 			'Unit'        => 'string',
-			'Description' => 'string'
+			'Description' => 'string',
 		],
 
 		//Data (enum) mapping
-		'label_map'               => [
+		'label_map' => [
 			'property_type' => [
-				PROPERTY_TYPE_REALTIME => '',
-				PROPERTY_TYPE_PROCESSED => ''
-			]
+				PROPERTY_TYPE_REALTIME  => '',
+				PROPERTY_TYPE_PROCESSED => '',
+			],
 		],
 
 		'data_column_type'         => '0.00',
@@ -73,16 +72,16 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 			'freeze_rows'    => 1,
 			'freeze_columns' => 1,
 			'auto_filter'    => false,
-			'widths'         => [22, 8, 15, 25, 10, 10, 15, 10, 10, 10, 15, 24, 80]
+			'widths'         => [22, 8, 15, 25, 10, 10, 15, 10, 10, 10, 15, 24, 80],
 		],
 		'data_sheet_options'       => [
 			'freeze_rows'    => 1,
 			'freeze_columns' => 1,
 			'auto_filter'    => false,
-			'widths'         => [22, 20]
+			'widths'         => [22, 20],
 		],
 		'properties_sheet_options' => [
-			'widths' => [20, 24, 8, 40]
+			'widths' => [20, 24, 8, 40],
 		],
 
 		'max_sheet_rows' => 1048576, // Fixed limit of MS Excel
@@ -117,9 +116,11 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 		switch ($queryMeta['type']) {
 			case 'hydro':
 				$stationCodeField = 'eucd_wgst';
+
 				break;
 			case 'meteo':
 				$stationCodeField = 'eucd_pst';
+
 				break;
 		}
 
