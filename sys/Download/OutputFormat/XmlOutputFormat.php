@@ -17,14 +17,18 @@ class XmlOutputFormat extends AbstractOutputFormat {
 	 */
 	public function outputResults(Select $select, array $queryMeta): Response {
 		$headers = [];
+
+		$propertyData = $this->getPropertyData($select, $queryMeta, ['observed_property.symbol']);
+		$propertySymbols = array_column($propertyData, 'symbol');
+
 		$response = new Response((new CreateOutputXml())->generateXml($select, $queryMeta, $headers));
 		$this->addResponseHeaders($response, $headers);
 
-		$filename = $this->generateFilename([], $queryMeta);
+		$filename = $this->generateFilename($propertySymbols, $queryMeta);
 
 		$response->addHeader('Content-Type: application/xml')
 			->addHeader('Content-Length: ' . $response->getSize())
-			->addHeader('Content-Disposition: inline; filename="' . $filename . '.xlsx"')
+			->addHeader('Content-Disposition: inline; filename="' . $filename . '.xml"')
 			->addHeader('Cache-Control: must-revalidate')
 			->addHeader('Pragma: public');
 
