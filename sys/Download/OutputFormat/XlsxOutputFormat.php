@@ -182,7 +182,7 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 				$sheets[$station['station_code']] = [
 					'baseName'           => $station['station_code'],
 					'name'               => $station['station_code'],
-					'rowCount'           => 0,
+					'rowCount'           => 1, //Start at 1 because of header row
 					'timePointer'        => null,
 					'stationCodePointer' => null,
 				];
@@ -194,7 +194,7 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 				$defaultDataSheetName => [
 					'baseName'           => $defaultDataSheetName,
 					'name'               => $defaultDataSheetName,
-					'rowCount'           => 0,
+					'rowCount'           => 1, //Start at 1 because of header row
 					'timePointer'        => null,
 					'stationCodePointer' => null,
 				],
@@ -230,7 +230,7 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 					$sheet['name'] = $sheet['baseName'] . '_' . ($currentNumber + 1);
 
 					$this->writer->writeSheetHeader($sheet['name'], $dataHeaderType, $dataSheetOptions);
-					$sheet['rowCount'] = 0;
+					$sheet['rowCount'] = 1; //Reset row count for new sheet (calculate from 1 because of header row)
 				}
 
 				//Reset the row data to default values
