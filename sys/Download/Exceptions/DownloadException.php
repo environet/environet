@@ -32,6 +32,8 @@ class DownloadException extends ApiException {
 			303 => 'Observation point type is invalid',
 			304 => 'Start time filter value is invalid',
 			305 => 'End time filter value is invalid',
+			306 => 'Invalid output format',
+			307 => 'Invalid output format options parameter',
 
 			//Process error
 			401 => 'Unauthorized request of monitoring point data!',

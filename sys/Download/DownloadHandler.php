@@ -7,6 +7,9 @@ use DateInterval;
 use DateTime;
 use DateTimeZone;
 use Environet\Sys\Download\Exceptions\DownloadException;
+use Environet\Sys\Download\OutputFormat\AbstractOutputFormat;
+use Environet\Sys\Download\OutputFormat\XlsxOutputFormat;
+use Environet\Sys\Download\OutputFormat\XmlOutputFormat;
 use Environet\Sys\General\Db\DownloadLogQueries;
 use Environet\Sys\General\Db\MonitoringPointQueries;
 use Environet\Sys\General\Db\Query\Select;
@@ -45,6 +48,11 @@ class DownloadHandler extends ApiHandler {
 	 * @var array
 	 */
 	protected array $downloadLog;
+
+	protected array $formats = [
+		'xml'  => ['class' => XmlOutputFormat::class],
+		'xlsx' => ['class' => XlsxOutputFormat::class],
+	];
 
 
 	/**
@@ -204,10 +212,29 @@ class DownloadHandler extends ApiHandler {
 				'param_symbol'       => $this->request->getQueryParam('symbol'),
 				'param_point'        => $this->request->getQueryParam('point'),
 				'request_attributes' => ($extraParams = $this->request->getExtraParams()) ? json_encode($extraParams) : null,
-				'request_ip'         => $this->request->getClientIp()
+				'request_ip'         => $this->request->getClientIp(),
 			];
 
 			$this->authorizeRequest();
+
+			//Find the requested output format, default is XML
+			$format = $this->request->getQueryParam('format', 'xml');
+			if (!array_key_exists($format, $this->formats)) {
+				//Invalid format
+				throw new DownloadException(306);
+			}
+			//Get format options from query
+			$formatOptions = $this->request->getQueryParam('format_options', []);
+			if (!is_array($formatOptions)) {
+				throw new DownloadException(307);
+			}
+			/** @var AbstractOutputFormat $outputFormat */
+			$outputFormat = new $this->formats[$format]['class']();
+			$outputFormat->validateRequest($this->request, $formatOptions); //Validate the request in format's context
+			$outputFormat->setOptions($formatOptions); //Set the options for the format
+			$this->downloadLog['format'] = $format;
+			$this->downloadLog['format_options'] = json_encode($formatOptions);
+
 
 			// Observation point type check
 			$type = $this->request->getQueryParam('type', false);
@@ -275,17 +302,16 @@ class DownloadHandler extends ApiHandler {
 			$queryBuilder->setCountries($params['countries']);
 
 			$queryMeta = [
+				'type'            => $type,
 				'startTime'       => $startTime,
 				'endTime'         => $endTime,
-				'intervalLimited' => $intervalLimited ?? false
+				'intervalLimited' => $intervalLimited ?? false,
+				'params'          => $params
 			];
-			$headers = [
-				'Content-type' => 'application/xml'
-			];
-			$response = (new Response((new CreateOutputXml())->generateXml($queryBuilder->getResults(), $queryMeta, $headers)));
 
-			$headers = array_map(fn ($key, $value) => "$key: $value", array_keys($headers), $headers);
-			$response->setHeaders($headers);
+			$results = $queryBuilder->getResults();
+
+			$response = $outputFormat->outputResults($results, $queryMeta);
 
 			$this->saveDownloadLog($response);
 

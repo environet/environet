@@ -53,7 +53,9 @@ class DownloadLogQueries extends BaseQueries {
 			'param_end'          => !empty($data['param_end']) ? $sanitizeDate($data['param_end']) : null,
 			'param_country'      => !empty($data['param_country']) ? '{' . implode(',', $data['param_country']) . '}' : null,
 			'param_symbol'       => !empty($data['param_symbol']) ? '{' . implode(',', $data['param_symbol']) . '}' : null,
-			'param_point'        => !empty($data['param_point']) ? '{' . implode(',', $data['param_point']) . '}' : null
+			'param_point'        => !empty($data['param_point']) ? '{' . implode(',', $data['param_point']) . '}' : null,
+			'format'             => !empty($data['format']) ? $data['format'] : null,
+			'format_options'     => !empty($data['format_options']) ? $data['format_options'] : null,
 		];
 	}
 
