@@ -30,7 +30,7 @@ class XmlOutputFormat extends AbstractOutputFormat {
 
 		$response->addHeader('Content-Type: application/xml')
 			->addHeader('Content-Length: ' . $response->getSize())
-			->addHeader('Content-Disposition: inline; filename="' . $filename . '.xlsx"')
+			->addHeader('Content-Disposition: inline; filename="' . $filename . '.xml"')
 			->addHeader('Cache-Control: must-revalidate')
 			->addHeader('Pragma: public');
 
