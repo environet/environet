@@ -215,6 +215,22 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 		$defaultRowArray = array_fill_keys(['station_code', 'time', ...array_map(static fn($p) => $p['symbol'], $propertyData)], null);
 		$rowData = $defaultRowArray;
 		while ($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			//Reset the row data to default values
+			$rowData = $defaultRowArray;
+
+			if ($groupByStation) {
+				//If data is grouped by station, get the correct sheet for the current station
+				$sheet = &$sheets[$result[$stationCodeField]];
+			} else {
+				//Otherwise, use the single default sheet
+				$sheet = &$sheets[$defaultDataSheetName];
+			}
+
+			//Update the row data with the current result
+			$rowData['time'] = $result['result_time'];
+			$rowData['station_code'] = $result[$stationCodeField];
+			$rowData[$result['property_symbol']] = $result['result_value'];
+
 			if (
 				isset($sheet)
 				&& isset($rowData)
@@ -232,27 +248,11 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 					$this->writer->writeSheetHeader($sheet['name'], $dataHeaderType, $dataSheetOptions);
 					$sheet['rowCount'] = 1; //Reset row count for new sheet (calculate from 1 because of header row)
 				}
-
-				//Reset the row data to default values
-				$rowData = $defaultRowArray;
-			}
-
-			if ($groupByStation) {
-				//If data is grouped by station, get the correct sheet for the current station
-				$sheet = &$sheets[$result[$stationCodeField]];
-			} else {
-				//Otherwise, use the single default sheet
-				$sheet = &$sheets[$defaultDataSheetName];
 			}
 
 			//Update the time and station code pointers for the current sheet
 			$sheet['timePointer'] = $result['result_time'];
 			$sheet['stationCodePointer'] = $result[$stationCodeField];
-
-			//Update the row data with the current result
-			$rowData['time'] = $result['result_time'];
-			$rowData['station_code'] = $result[$stationCodeField];
-			$rowData[$result['property_symbol']] = $result['result_value'];
 		}
 
 		$filename = $this->generateFilename($propertySymbols, $queryMeta);
