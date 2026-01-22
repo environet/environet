@@ -104,6 +104,7 @@ abstract class AbstractOutputFormat {
 		//Create a new select based on the given one, but only selecting the mpoint ids
 		$type = $queryMeta['type'];
 		$select = clone $select;
+		$select->clearUnions(); //Clear unions to avoid conflicts
 		$select->clearGroupBy()->groupBy('mpoint_id'); //Group by mpoint id to avoid duplicates
 		$select->clearOrderBy()->orderBy($queryMeta['type'] === 'hydro' ? 'eucd_wgst' : 'eucd_pst'); //Order by eucd code
 		$select->clearSelects()->select("{$type}point.id as mpoint_id"); //Select only the mpoint ids
@@ -148,6 +149,9 @@ abstract class AbstractOutputFormat {
 	protected function getPropertyData(Select $select, array $queryMeta, ?array $columns = null): array {
 		$type = $queryMeta['type'];
 		$select = clone $select;
+
+		//Clear unions to avoid conflicts
+		$select->clearUnions();
 
 		//Group by property id to avoid duplicates
 		$select->clearGroupBy()->groupBy('property_id');

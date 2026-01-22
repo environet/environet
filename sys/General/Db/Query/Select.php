@@ -112,6 +112,13 @@ class Select extends Query {
 	}
 
 
+	public function clearUnions() {
+		$this->unions = [];
+
+		return $this;
+	}
+
+
 	/**
 	 * Add an order-by condition
 	 *
