@@ -67,6 +67,9 @@ class DownloadHandler extends ApiHandler {
 	 */
 	protected function getRequestedSubsets($rules, $params): array {
 		$subsets = [];
+		/**
+		 * @var array{array{points: MonitoringPointSelector, props: ObservedPropertySelector, interval: DateInterval|null}} $rules
+		 */
 		foreach ($rules as $rule) {
 			$subset = [
 				'points'           => !empty($params['points']) ? array_intersect($params['points'], $rule['points']->getEUCD()) : $rule['points']->getEUCD(),
@@ -142,7 +145,7 @@ class DownloadHandler extends ApiHandler {
 		$availableProps = [];
 		foreach ($rules as &$rule) {
 			$rule['points'] = new MonitoringPointSelector($rule['points'], $params['type'], $rule['operator_id'], $params['countries']);
-			$rule['props'] = new ObservedPropertySelector($rule['props'], $params['type'], $rule['operator_id']);
+			$rule['props'] = new ObservedPropertySelector($rule['props'], $params['type'], $rule['operator_id'], $rule['points']->getValues());
 			try {
 				$rule['interval'] = $rule['interval'] !== null ? new DateInterval($rule['interval']) : null;
 			} catch (Exception $e) {

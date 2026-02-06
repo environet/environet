@@ -18,6 +18,12 @@ use Exception;
  */
 class ObservedPropertySelector extends BaseAccessSelector {
 
+
+	/**
+	 * @var array Monitoring points to which the selector is related, used for symbol resolution
+	 */
+	protected $points;
+
 	/**
 	 * @var array
 	 */
@@ -33,8 +39,9 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	 *
 	 * @throws QueryException
 	 */
-	public function __construct(string $values, $type, int $operatorId = 0) {
+	public function __construct(string $values, $type, int $operatorId = 0, array $points) {
 		$this->symbols = null;
+		$this->points = $points;
 
 		parent::__construct($values, $type, $operatorId);
 	}
@@ -110,17 +117,20 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	 * @uses \Environet\Sys\General\Db\Query\Select
 	 */
 	protected function getHydroPropertiesByOperator(): string {
+		$properties = null;
 		if ($this->isOperatorAdmin()) {
 			$properties = (new Select())
 				->select('string_agg(hydro_observed_property.id::text, \',\') as properties')
 				->from('hydro_observed_property')
 				->run(Query::FETCH_FIRST);
-		} else {
+		} elseif (!empty($this->points)) {
+			//Find all properties, but only for the points that are related to the found monitoring points
 			$properties = (new Select())
 				->select('string_agg(hydro_observed_property.id::text, \',\') as properties')
 				->from('hydro_observed_property')
 				->join('hydropoint_observed_property', 'hydropoint_observed_property.observed_propertyid = hydro_observed_property.id')
 				->join('hydropoint', 'hydropoint.id = hydropoint_observed_property.mpointid')
+				->whereIn('hydropoint_observed_property.mpointid', $this->points, 'point')
 				->where("hydropoint.operatorid = {$this->operatorId}")
 				->run(Query::FETCH_FIRST);
 		}
@@ -135,17 +145,20 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	 * @uses \Environet\Sys\General\Db\Query\Select
 	 */
 	protected function getMeteoPropertiesByOperator(): string {
+		$properties = null;
 		if ($this->isOperatorAdmin()) {
 			$properties = (new Select())
 				->select('string_agg(meteo_observed_property.id::text, \',\') as properties')
 				->from('meteo_observed_property')
 				->run(Query::FETCH_FIRST);
-		} else {
+		} elseif (!empty($this->points)) {
+			//Find all properties, but only for the points that are related to the found monitoring points
 			$properties = (new Select())
 				->select('string_agg(meteo_observed_property.id::text, \',\') as properties')
 				->from('meteo_observed_property')
 				->join('meteopoint_observed_property', 'meteopoint_observed_property.observed_propertyid = meteo_observed_property.id')
 				->join('meteopoint', 'meteopoint.id = meteopoint_observed_property.mpointid')
+				->whereIn('meteopoint_observed_property.mpointid', $this->points, 'point')
 				->where("meteopoint.operatorid = {$this->operatorId}")
 				->run(Query::FETCH_FIRST);
 		}
@@ -207,17 +220,28 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	 * @throws Exception
 	 */
 	public function unserialize($serialized) {
-		if ($serialized === '*') {
-			if ($this->type === MPOINT_TYPE_HYDRO) {
-				$serialized = $this->getHydroPropertiesByOperator();
-			} elseif ($this->type === MPOINT_TYPE_METEO) {
-				$serialized = $this->getMeteoPropertiesByOperator();
-			} else {
-				throw new Exception('Invalid monitoring point type!');
-			}
+		//Get all properties that are related to the operator and the monitoring points
+		if ($this->type === MPOINT_TYPE_HYDRO) {
+			$allPropertiesSerialized = $this->getHydroPropertiesByOperator();
+		} elseif ($this->type === MPOINT_TYPE_METEO) {
+			$allPropertiesSerialized = $this->getMeteoPropertiesByOperator();
+		} else {
+			throw new Exception('Invalid monitoring point type!');
 		}
 
-		parent::unserialize($serialized);
+		if ($serialized === '*') {
+			//Use all properties of the operator and the related monitoring points if the selector is set to wildcard
+			parent::unserialize($allPropertiesSerialized);
+		} else {
+			//Unserialize the provided values
+			parent::unserialize($serialized);
+		}
+
+		//Filter fetched values with the ones that are related to the operator and the monitoring points. Allow only the values that are present in both sets.
+		$this->values = array_intersect($this->values, array_map(
+			fn ($id) => (int) $id,
+			array_filter(explode(',', $allPropertiesSerialized))
+		));
 	}
 
 
