@@ -268,6 +268,7 @@ class DownloadHandler extends ApiHandler {
 				}
 			} else {
 				$params['start'] = (new DateTime())->modify('today');
+				$startTime = $params['start']->format('c');
 			}
 
 			$endTime = $this->request->getQueryParam('end', false);
@@ -279,6 +280,7 @@ class DownloadHandler extends ApiHandler {
 				}
 			} else {
 				$params['end'] = (new DateTime())->modify('+1 day')->modify('today');
+				$endTime = $params['end']->format('c');
 			}
 
 			$params['points'] = $this->parseArrayParam('point');
