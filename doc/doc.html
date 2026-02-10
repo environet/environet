@@ -1202,9 +1202,17 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
             &lt;/environet:Point&gt;
         &lt;/environet:TimeSeries&gt;
     &lt;/environet:Property&gt;
+    &lt;environet:UploadOptions&gt;
+        &lt;environet:IgnoreUndefinedPoints&gt;0&lt;/environet:IgnoreUndefinedPoints&gt;
+    &lt;/environet:UploadOptions&gt;
 &lt;/environet:UploadData&gt;</code></pre>
 <hr />
-<h2 id="repsonses">Repsonses</h2>
+<h3 id="upload-options">Upload options</h3>
+<p>The <code>environet:UploadOptions</code> element is optional. If it present, it can contain the following elements:</p>
+<ul>
+<li><code>environet:IgnoreUndefinedPoints</code> - If it is set to 1, the upload process will not throw an error if the monitoring point is not found, but will return an empty statistic response instead. Default value is 0.</li>
+</ul>
+<h2 id="responses">Responses</h2>
 <h3 id="success">Success</h3>
 <ul>
 <li><strong>Status code</strong>: 200</li>
@@ -1243,6 +1251,10 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <li><code>402</code>: Monitoring point not found with the given identifier</li>
 <li><code>403</code>: Property for the selected monitoring point not found, or not allowed</li>
 <li><code>404</code>: Could not initialize time series for monitoring point and property</li>
+<li><code>405</code>: Monitoring point is inactive</li>
+<li><code>406</code>: Can’t detect type of monitoring point based on observed properties. There are mixed type of properties</li>
+<li><code>407</code>: Can’t detect type of monitoring point based on observed properties. There aren’t any valid property</li>
+<li><code>408</code>: Invalid upload option: %s</li>
 </ul></li>
 </ul>
 <h3 id="server-error">Server error</h3>
@@ -1276,7 +1288,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <h2 id="body-1">Body</h2>
 <p>Same as in <a href="#23_api_upload">Upload API</a></p>
 <hr />
-<h2 id="responses">Responses</h2>
+<h2 id="responses-1">Responses</h2>
 <h3 id="success-1">Success</h3>
 <ul>
 <li><strong>Status code</strong>: 200</li>
@@ -1305,7 +1317,19 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <li><strong>country[]</strong>: Query time series only for monitoring points from the given countries. Country code format: <a href="https://www.iso.org/iso-3166-country-codes.html">ISO 3166-1 - alpha-2</a></li>
 <li><strong>symbol[]</strong>: Query time series only of the given observed properties.</li>
 <li><strong>point[]</strong>: Query time series only of the given points.</li>
+<li><strong>format</strong>: The format of the response. The value must be one of the following: <code>xml</code> | <code>xlsx</code>. Default value is <code>xml</code>.</li>
+<li><strong>format_options[]</strong>: Extra options for the <code>format</code> parameter. It depends on the <code>format</code> parameter.
+<ul>
+<li><code>xml</code>: No options</li>
+<li><code>xlsx</code>:
+<ul>
+<li><code>format_options[group_by_station]</code> <code>bool</code>: If the value is <code>1</code>, every station’s data will be in a separate sheet. If the value is <code>0</code>, all data will be in one ‘Results’ sheet. Default value is <code>0</code>.</li>
+<li><code>format_options[add_stations_sheet]</code> <code>bool</code>: If value is <code>1</code>, a separate sheet will be added to the xlsx file with the list of stations and it’s data. Default value is <code>1</code>.</li>
+<li><code>format_options[add_properties_sheet]</code> <code>bool</code>: If value is <code>1</code>, a separate sheet will be added to the xlsx file with the list of observed properties and it’s data. Default value is <code>1</code>.</li>
+</ul></li>
+</ul></li>
 </ul>
+<p>If any of the date parameters (<code>start</code> and <code>end</code>) is missing, the default interval will be the last 24 hours. If both of the date parameters are missing, the default interval will be the last 24 hours.</p>
 <h2 id="headers-2">Headers</h2>
 <table>
 <thead>
@@ -1331,10 +1355,13 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <h3 id="request-attributes-header">Request attributes header</h3>
 <p><code>X-Request-Attr</code> header can contain some extra metadata related to the download request. The header value format is: <code>key1 value1;key2 value2</code> keys and values (key1, key2, value1, value2 in the above example) are base64 encoded strings. Keys and values are separated by a ` <code>(space), and each part is separated by</code>;`</p>
 <p>Example: Data in json format</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb4-1" title="1"><span class="fu">{</span><span class="dt">&quot;foo&quot;</span><span class="fu">:</span> <span class="st">&quot;bar&quot;</span><span class="fu">,</span> <span class="dt">&quot;test&quot;</span><span class="fu">:</span> <span class="st">&quot;1234&quot;</span><span class="fu">}</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode json"><code class="sourceCode json"><a class="sourceLine" id="cb4-1" title="1"><span class="fu">{</span></a>
+<a class="sourceLine" id="cb4-2" title="2">    <span class="dt">&quot;foo&quot;</span><span class="fu">:</span> <span class="st">&quot;bar&quot;</span><span class="fu">,</span></a>
+<a class="sourceLine" id="cb4-3" title="3">    <span class="dt">&quot;test&quot;</span><span class="fu">:</span> <span class="st">&quot;1234&quot;</span></a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="fu">}</span></a></code></pre></div>
 <p>Data in header value:</p>
 <pre class="text"><code>Zm9v YmFy;dGVzdA== MTIzNA==</code></pre>
-<h2 id="repsonses-1">Repsonses</h2>
+<h2 id="repsonses">Repsonses</h2>
 <h3 id="success-2">Success</h3>
 <ul>
 <li><strong>Status code</strong>: 200</li>
@@ -1419,7 +1446,7 @@ The public url of this schema is: <code>https://distribution-node.com/schemas/en
 <h3 id="signature-header-3">Signature header:</h3>
 <p>The pattern of the header: <code>Signature keyId=&quot;[username]&quot;,algorithm=&quot;rsa-sha256&quot;,signature=&quot;[signature]&quot;</code></p>
 <p>The <code>keyId</code> is the username of the user who wants to query data. The <code>signature</code> part is the base64 encoded openssl signature which was created with the user’s private key from the token in the query parameters.</p>
-<h2 id="repsonses-2">Repsonses</h2>
+<h2 id="repsonses-1">Repsonses</h2>
 <h3 id="success-3">Success</h3>
 <ul>
 <li><strong>Status code</strong>: 200</li>
@@ -1924,7 +1951,8 @@ properties[] = &quot;h;5&quot;
 className = Environet\Sys\Plugins\ApiClient 
 apiAddress = https://xxx.xxx.xx/ 
 apiUsername = username 
-privateKeyPath = username_private_key.pem</code></pre>
+privateKeyPath = username_private_key.pem
+ignoreUndefinedPoints = 0</code></pre>
 <p>For a web API which uses data files in XML format a typical example is:</p>
 <pre><code>[transport] 
 className = Environet\Sys\Plugins\Transports\HttpTransport 
@@ -1943,7 +1971,8 @@ formatsFilename = &quot;ABC-formats.json&quot;
 className = Environet\Sys\Plugins\ApiClient 
 apiAddress = https://xxx.xxx.xx 
 apiUsername = username2 
-privateKeyPath = username2_private_key.pem</code></pre>
+privateKeyPath = username2_private_key.pem
+ignoreUndefinedPoints = 0</code></pre>
 <p>In this case, additional JSON configuration files are needed and referred to for accessing the web API and to specify the XML format. In the following sections the properties of the three sections of the basic configuration files are de-scribed in detail.</p>
 <h4 id="transport-layer-properties">Transport layer properties</h4>
 <p>Common properties:</p>
@@ -2059,6 +2088,7 @@ privateKeyPath = username2_private_key.pem</code></pre>
 <li><em>apiAddress</em> (required): Host of distribution node</li>
 <li><em>apiUsername</em> (required): Username for upload to distribution node</li>
 <li><em>privateKeyPath</em> (required): Path to private key</li>
+<li><em>ignoreUndefinedPoints</em> (optional): If 1, and upload option will be set, and the distribution node will not throw an error if the monitoring point is not defined on the distribution node.</li>
 </ul>
 <h3 id="json-configuration-files">JSON configuration files</h3>
 <p>In the FORMATS json file the format specifications for XML data files are defined. The observed property names used in it refer to the variable definitions specified in the CONVERSIONS json file. The CONVERSIONS json file defines the variables for monitoring point, observed property or time intervals for use in the URL, file names and/or in the data file itself. The CONVERSIONS json file is required if there is a complex structure of the URL to access data files, filenames containing variable parts, or zipped data. For example, if the identifier of the monitoring point is coded within the filename or the URL, a CONVERSIONS json file is required.</p>

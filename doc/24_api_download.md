@@ -24,6 +24,8 @@
         * `format_options[add_stations_sheet]` `bool`: If value is `1`, a separate sheet will be added to the xlsx file with the list of stations and it's data. Default value is `1`.
         * `format_options[add_properties_sheet]` `bool`: If value is `1`, a separate sheet will be added to the xlsx file with the list of observed properties and it's data. Default value is `1`.
 
+If any of the date parameters (`start` and `end`) is missing, the default interval will be the last 24 hours. If both of the date parameters are missing, the default interval will be the last 24 hours.
+
 ## Headers
 
 | Header name    | Content                              |

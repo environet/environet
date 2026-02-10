@@ -266,9 +266,6 @@ class DownloadHandler extends ApiHandler {
 				} catch (Throwable $e) {
 					throw new DownloadException(304);
 				}
-			} else {
-				$params['start'] = (new DateTime())->modify('today');
-				$startTime = $params['start']->format('c');
 			}
 
 			$endTime = $this->request->getQueryParam('end', false);
@@ -278,10 +275,18 @@ class DownloadHandler extends ApiHandler {
 				} catch (Throwable $e) {
 					throw new DownloadException(305);
 				}
-			} else {
-				$params['end'] = (new DateTime())->modify('+1 day')->modify('today');
-				$endTime = $params['end']->format('c');
 			}
+
+			if (!isset($params['start']) && isset($params['end'])) {
+				$params['start'] = (clone $params['end'])->modify('-24 hours');
+			} elseif (!isset($params['end']) && isset($params['start'])) {
+				$params['end'] = (clone $params['start'])->modify('+24 hours');
+			} elseif (!isset($params['start']) && !isset($params['end'])) {
+				$params['start'] = (new DateTime())->modify('-24 hours');
+				$params['end'] = new DateTime();
+			}
+			$startTime = $params['start']->format('c');
+			$endTime = $params['end']->format('c');
 
 			$params['points'] = $this->parseArrayParam('point');
 			$params['symbols'] = $this->parseArrayParam('symbol');

@@ -222,17 +222,17 @@ After updating your deployment, you need to run `./environet dist database migra
 
 ## Headers
 
-| Header name | Content |
-| --- | --- |
+| Header name   | Content               |
+|---------------|-----------------------|
 | Authorization | Signature (See below) |
-| Content-Type | application/xml |
+| Content-Type  | application/xml       |
 
 ### Signature header:
 
 The pattern of the header: `Signature keyId="[username]",algorithm="rsa-sha256",signature="[signature]"`
 
 The `keyId` is the username of the uploader user.
-The `signature` part is the base64 encoded openssl signature which was created with the user's private key 
+The `signature` part is the base64 encoded openssl signature which was created with the user's private key
 from the from the body of the response, which is the XML data.
 
 ---
@@ -266,12 +266,21 @@ Sample input XML:
 			</environet:Point>
 		</environet:TimeSeries>
 	</environet:Property>
+	<environet:UploadOptions>
+		<environet:IgnoreUndefinedPoints>0</environet:IgnoreUndefinedPoints>
+	</environet:UploadOptions>
 </environet:UploadData>
 ```
 
 --- 
 
-## Repsonses
+### Upload options
+
+The `environet:UploadOptions` element is optional. If it present, it can contain the following elements:
+
+* `environet:IgnoreUndefinedPoints` - If it is set to 1, the upload process will not throw an error if the monitoring point is not found, but will return an empty statistic response instead. Default value is 0.
+
+## Responses
 
 ### Success
 
@@ -287,34 +296,37 @@ Sample input XML:
 * **Body**: XML: `environet:ErrorResponse`
 * **Description**: Input or processing error during the upload process. The response in an error xml which is valid against environet's upload api schema: [environet.xsd](resources/environet.xsd)
 * **Body example**:
-	 
-	```xml
-	<?xml version="1.0" encoding="UTF-8"?>
-	<environet:ErrorResponse xmlns:environet="environet">
-		<environet:Error>
-			<environet:ErrorCode>101</environet:ErrorCode>
-			<environet:ErrorMessage>Error</environet:ErrorMessage>
-		</environet:Error>
-	</environet:ErrorResponse>
-	```
+
+  ```xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <environet:ErrorResponse xmlns:environet="environet">
+      <environet:Error>
+          <environet:ErrorCode>101</environet:ErrorCode>
+          <environet:ErrorMessage>Error</environet:ErrorMessage>
+      </environet:Error>
+  </environet:ErrorResponse>
+  ```
 * **Error codes**
-    * `101`: Unknown error 
-	* `102`: Server error
-	* `201`: Authorization header is missing
-	* `202`: Username is empty
-	* `203`: User not found with username
-	* `204`: Invalid Authorization header
-	* `205`: Action not permitted
-	* `206`: Public key for user not found
-	* `301`: Signature is invalid
-	* `302`: Xml syntax is invalid
-	* `303`: Xml is invalid against schema
-	* `401`: Error during processing data
-	* `402`: Monitoring point not found with the given identifier
-	* `403`: Property for the selected monitoring point not found, or not allowed
-	* `404`: Could not initialize time series for monitoring point and property
-	
-	
+    * `101`: Unknown error
+    * `102`: Server error
+    * `201`: Authorization header is missing
+    * `202`: Username is empty
+    * `203`: User not found with username
+    * `204`: Invalid Authorization header
+    * `205`: Action not permitted
+    * `206`: Public key for user not found
+    * `301`: Signature is invalid
+    * `302`: Xml syntax is invalid
+    * `303`: Xml is invalid against schema
+    * `401`: Error during processing data
+    * `402`: Monitoring point not found with the given identifier
+    * `403`: Property for the selected monitoring point not found, or not allowed
+    * `404`: Could not initialize time series for monitoring point and property
+    * `405`: Monitoring point is inactive
+    * `406`: Can't detect type of monitoring point based on observed properties. There are mixed type of properties
+    * `407`: Can't detect type of monitoring point based on observed properties. There aren't any valid property
+    * `408`: Invalid upload option: %s
+
 ### Server error
 
 * **Status code**: 500
@@ -322,16 +334,16 @@ Sample input XML:
 * **Body**: XML: `environet:ErrorResponse`
 * **Description**: Unidentified error during request. The response is an xml which is valid agains environet's upload api schema: [environet.xsd](resources/environet.xsd)
 * **Body example**:
-	 
-	```xml
-	<?xml version="1.0" encoding="UTF-8"?>
-	<environet:ErrorResponse xmlns:environet="environet">
-		<environet:Error>
-			<environet:ErrorCode>500</environet:ErrorCode>
-			<environet:ErrorMessage>Error</environet:ErrorMessage>
-		</environet:Error>
-	</environet:ErrorResponse>
-	```
+
+  ```xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <environet:ErrorResponse xmlns:environet="environet">
+      <environet:Error>
+          <environet:ErrorCode>500</environet:ErrorCode>
+          <environet:ErrorMessage>Error</environet:ErrorMessage>
+      </environet:Error>
+  </environet:ErrorResponse>
+  ```
 
 <a name="23_api_upload_statistics"></a>
 
@@ -398,6 +410,15 @@ Same as in [Upload API](#23_api_upload)
 * **country[]**: Query time series only for monitoring points from the given countries. Country code format: [ISO 3166-1 - alpha-2](https://www.iso.org/iso-3166-country-codes.html)
 * **symbol[]**: Query time series only of the given observed properties.
 * **point[]**: Query time series only of the given points.
+* **format**: The format of the response. The value must be one of the following: `xml` | `xlsx`. Default value is `xml`.
+* **format_options[]**: Extra options for the `format` parameter. It depends on the `format` parameter.
+    * `xml`: No options
+    * `xlsx`:
+        * `format_options[group_by_station]` `bool`: If the value is `1`, every station's data will be in a separate sheet. If the value is `0`, all data will be in one 'Results' sheet. Default value is `0`.
+        * `format_options[add_stations_sheet]` `bool`: If value is `1`, a separate sheet will be added to the xlsx file with the list of stations and it's data. Default value is `1`.
+        * `format_options[add_properties_sheet]` `bool`: If value is `1`, a separate sheet will be added to the xlsx file with the list of observed properties and it's data. Default value is `1`.
+
+If any of the date parameters (`start` and `end`) is missing, the default interval will be the last 24 hours. If both of the date parameters are missing, the default interval will be the last 24 hours.
 
 ## Headers
 
@@ -415,78 +436,85 @@ The `signature` part is the base64 encoded openssl signature which was created w
 
 ### Request attributes header
 
-`X-Request-Attr` header can contain some extra metadata related to the download request. The header value format is: 
+`X-Request-Attr` header can contain some extra metadata related to the download request. The header value format is:
 `key1 value1;key2 value2`
 keys and values (key1, key2, value1, value2 in the above example) are base64 encoded strings. Keys and values are separated by a ` ` (space), and each part is separated by `;`
 
 Example:
 Data in json format
+
 ```json
-{"foo": "bar", "test": "1234"}
+{
+	"foo": "bar",
+	"test": "1234"
+}
 ```
+
 Data in header value:
+
 ```text
 Zm9v YmFy;dGVzdA== MTIzNA==
 ```
 
-
-
 ## Repsonses
 
 ### Success
+
 * **Status code**: 200
 * **Content-type**: application/xml
 * **Body**: XML: `wml2:Collection`
 * **Description**: Measurement data in WaterML2.0 comaptible XML format: http://www.opengis.net/waterml/2.0
 
 ### Invalid request
+
 * **Status code**: 400
 * **Content-type**: application/xml
 * **Body**: XML: `environet:ErrorResponse`
 * **Description**: The query request is invalid. The response is an xml which is valid agains environet's api schema: [environet.xsd](resources/environet.xsd)
 * **Body example**:
-	 
-	```xml
-	<?xml version="1.0" encoding="UTF-8"?>
-	<environet:ErrorResponse xmlns:environet="environet">
-		<environet:Error>
-			<environet:ErrorCode>101</environet:ErrorCode>
-			<environet:ErrorMessage>Error</environet:ErrorMessage>
-		</environet:Error>
-	</environet:ErrorResponse>
-	```
+
+  ```xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <environet:ErrorResponse xmlns:environet="environet">
+      <environet:Error>
+          <environet:ErrorCode>101</environet:ErrorCode>
+          <environet:ErrorMessage>Error</environet:ErrorMessage>
+      </environet:Error>
+  </environet:ErrorResponse>
+  ```
 * **Error codes**
-	* `101`: Unknown error 
-	* `102`: Server error
-	* `201`: Authorization header is missing
-	* `202`: Username is empty
-	* `203`: User not found with username
-	* `204`: Invalid Authorization header
-	* `205`: Action not permitted
-	* `206`: Public key for user not found
-	* `207`: Request token not found
-	* `301`: Signature is invalid
-	* `302`: Observation point type is missing
-	* `303`: Observation point type is invalid
-	* `304`: Start time filter value is invalid
-	* `305`: End time filter value is invalid
+    * `101`: Unknown error
+    * `102`: Server error
+    * `201`: Authorization header is missing
+    * `202`: Username is empty
+    * `203`: User not found with username
+    * `204`: Invalid Authorization header
+    * `205`: Action not permitted
+    * `206`: Public key for user not found
+    * `207`: Request token not found
+    * `301`: Signature is invalid
+    * `302`: Observation point type is missing
+    * `303`: Observation point type is invalid
+    * `304`: Start time filter value is invalid
+    * `305`: End time filter value is invalid
 
 ### Server error
+
 * **Status code**: 500
 * **Content-type**: application/xml
 * **Body**: XML: `environet:ErrorResponse`
 * **Description**: Unidentified error during request. The response is an xml which is valid agains environet's api schema: [environet.xsd](resources/environet.xsd)
 * **Body example**:
-	 
-	```xml
-	<?xml version="1.0" encoding="UTF-8"?>
-	<environet:ErrorResponse xmlns:environet="environet">
-		<environet:Error>
-			<environet:ErrorCode>500</environet:ErrorCode>
-			<environet:ErrorMessage>Error</environet:ErrorMessage>
-		</environet:Error>
-	</environet:ErrorResponse>
-	```
+
+  ```xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <environet:ErrorResponse xmlns:environet="environet">
+      <environet:Error>
+          <environet:ErrorCode>500</environet:ErrorCode>
+          <environet:ErrorMessage>Error</environet:ErrorMessage>
+      </environet:Error>
+  </environet:ErrorResponse>
+  ```
 
 
 <a name="24_api_monitoring_points"></a>
@@ -1330,6 +1358,7 @@ className = Environet\Sys\Plugins\ApiClient
 apiAddress = https://xxx.xxx.xx/ 
 apiUsername = username 
 privateKeyPath = username_private_key.pem
+ignoreUndefinedPoints = 0
 ```
 For a web API which uses data files in XML format a typical example is:
 ```
@@ -1351,6 +1380,7 @@ className = Environet\Sys\Plugins\ApiClient
 apiAddress = https://xxx.xxx.xx 
 apiUsername = username2 
 privateKeyPath = username2_private_key.pem
+ignoreUndefinedPoints = 0
 ```
 In this case, additional JSON configuration files are needed and referred to for accessing the web API and to specify the XML format.
 In the following sections the properties of the three sections of the basic configuration files are de-scribed in detail.
@@ -1482,6 +1512,7 @@ Data of target distribution node
 * _apiAddress_ (required): Host of distribution node
 * _apiUsername_ (required): Username for upload to distribution node
 * _privateKeyPath_ (required): Path to private key
+* _ignoreUndefinedPoints_ (optional): If 1, and upload option will be set, and the distribution node will not throw an error if the monitoring point is not defined on the distribution node.
 
 ### JSON configuration files
 
