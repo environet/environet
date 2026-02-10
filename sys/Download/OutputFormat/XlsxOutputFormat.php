@@ -49,7 +49,7 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 		],
 		'data_header_types'       => [
 			'Station code' => 'string',
-			'Time'         => 'YYYY-MM-DD HH:MM',
+			'Time (UTC)'   => 'YYYY-MM-DD HH:MM',
 		],
 		'properties_header_types' => [
 			'Symbol'      => 'string',
@@ -59,15 +59,15 @@ class XlsxOutputFormat extends AbstractOutputFormat {
 		],
 
 		//Data (enum) mapping
-		'label_map' => [
+		'label_map'               => [
 			'property_type' => [
 				PROPERTY_TYPE_REALTIME  => '',
 				PROPERTY_TYPE_PROCESSED => '',
 			],
 		],
 
-		'data_column_type'  => '0.00',
-		'data_column_width' => 14,
+		'data_column_type'         => '0.00',
+		'data_column_width'        => 14,
 
 		// Excel options
 		'station_sheet_options'    => [
