@@ -133,7 +133,7 @@ class Response {
 	 * @return int
 	 */
 	public function getSize(): int {
-		return mb_strlen($this->getContent());
+		return mb_strlen($this->getContent(), '8bit');
 	}
 
 

@@ -469,12 +469,12 @@ class MonitoringPointQueries {
 	/**
 	 * Compile and execute the query.
 	 *
-	 * @return array|int
+	 * @return Select
 	 * @throws QueryException
 	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::applyFilters()
 	 * @uses \Environet\Sys\General\Db\Query\Select::run()
 	 */
-	public function getResults() {
+	public function getSelect(): Select {
 		if ($this->type === null) {
 			throw new QueryException('Missing measurement point type!');
 		}
@@ -500,7 +500,7 @@ class MonitoringPointQueries {
 		$this->select = $this->buildQuery($this->select, false, $main ?? null);
 		$this->applyFilters();
 
-		return $this->select->run();
+		return $this->select;
 	}
 
 

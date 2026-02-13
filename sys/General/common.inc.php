@@ -448,3 +448,15 @@ function createAtomDateTime(string $timeString) {
 
 	return $time;
 }
+
+
+/**
+ * Formats a valid date string to ISO 8601 date sting.
+ */
+function dateToISO(string $string): string {
+	try {
+		return (new DateTime($string, new DateTimeZone('UTC')))->format('c');
+	} catch (Exception $e) {
+		return $string;
+	}
+}

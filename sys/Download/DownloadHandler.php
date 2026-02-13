@@ -67,6 +67,9 @@ class DownloadHandler extends ApiHandler {
 	 */
 	protected function getRequestedSubsets($rules, $params): array {
 		$subsets = [];
+		/**
+		 * @var array{array{points: MonitoringPointSelector, props: ObservedPropertySelector, interval: DateInterval|null}} $rules
+		 */
 		foreach ($rules as $rule) {
 			$subset = [
 				'points'           => !empty($params['points']) ? array_intersect($params['points'], $rule['points']->getEUCD()) : $rule['points']->getEUCD(),
@@ -142,7 +145,7 @@ class DownloadHandler extends ApiHandler {
 		$availableProps = [];
 		foreach ($rules as &$rule) {
 			$rule['points'] = new MonitoringPointSelector($rule['points'], $params['type'], $rule['operator_id'], $params['countries']);
-			$rule['props'] = new ObservedPropertySelector($rule['props'], $params['type'], $rule['operator_id']);
+			$rule['props'] = new ObservedPropertySelector($rule['props'], $params['type'], $rule['operator_id'], $rule['points']->getValues());
 			try {
 				$rule['interval'] = $rule['interval'] !== null ? new DateInterval($rule['interval']) : null;
 			} catch (Exception $e) {
@@ -263,8 +266,6 @@ class DownloadHandler extends ApiHandler {
 				} catch (Throwable $e) {
 					throw new DownloadException(304);
 				}
-			} else {
-				$params['start'] = (new DateTime())->modify('today');
 			}
 
 			$endTime = $this->request->getQueryParam('end', false);
@@ -274,9 +275,18 @@ class DownloadHandler extends ApiHandler {
 				} catch (Throwable $e) {
 					throw new DownloadException(305);
 				}
-			} else {
-				$params['end'] = (new DateTime())->modify('+1 day')->modify('today');
 			}
+
+			if (!isset($params['start']) && isset($params['end'])) {
+				$params['start'] = (clone $params['end'])->modify('-24 hours');
+			} elseif (!isset($params['end']) && isset($params['start'])) {
+				$params['end'] = (clone $params['start'])->modify('+24 hours');
+			} elseif (!isset($params['start']) && !isset($params['end'])) {
+				$params['start'] = (new DateTime())->modify('-24 hours');
+				$params['end'] = new DateTime();
+			}
+			$startTime = $params['start']->format('Y-m-d\TH:i:s');
+			$endTime = $params['end']->format('Y-m-d\TH:i:s');
 
 			$params['points'] = $this->parseArrayParam('point');
 			$params['symbols'] = $this->parseArrayParam('symbol');
@@ -309,9 +319,10 @@ class DownloadHandler extends ApiHandler {
 				'params'          => $params
 			];
 
-			$results = $queryBuilder->getResults();
+			//Build the select query, and fetch results
+			$select = $queryBuilder->getSelect();
 
-			$response = $outputFormat->outputResults($results, $queryMeta);
+			$response = $outputFormat->outputResults($select, $queryMeta);
 
 			$this->saveDownloadLog($response);
 

@@ -6,6 +6,7 @@ namespace Environet\Sys\General\Db\Query;
 use Environet\Sys\General\Db\Connection;
 use Environet\Sys\General\Exceptions\QueryException;
 use PDO;
+use PDOStatement;
 
 /**
  * Class Query
@@ -151,6 +152,23 @@ class Query {
 
 
 	/**
+	 * Create the PDO statement of the query, don't run it.
+	 *
+	 * @return PDOStatement
+	 * @throws QueryException
+	 */
+	public function createStatement(): PDOStatement {
+		if (!$this->validateQuery()) {
+			throw new QueryException('Invalid query properties');
+		}
+
+		$this->connection->runQuery("SET intervalstyle = 'iso_8601'", []);
+
+		return $this->connection->runQuery($this->buildQuery(), $this->parameters);
+	}
+
+
+	/**
 	 * Run the query.
 	 *
 	 * First it runs some easy check on the properties, and if is there any error, it won't run the query, but throws and exception
@@ -166,13 +184,7 @@ class Query {
 	 * @uses \Environet\Sys\General\Db\Connection::runQuery()
 	 */
 	public function run($flags = null) {
-		if (!$this->validateQuery()) {
-			throw new QueryException('Invalid query properties');
-		}
-
-		$this->connection->runQuery("SET intervalstyle = 'iso_8601'", []);
-
-		$statement = $this->connection->runQuery($this->buildQuery(), $this->parameters);
+		$statement = $this->createStatement();
 
 		if ($flags & self::RETURN_BOOL) {
 			// First we've to check the bool flag, because the last insert id is not always defined, and it can cause errors
