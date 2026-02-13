@@ -285,8 +285,8 @@ class DownloadHandler extends ApiHandler {
 				$params['start'] = (new DateTime())->modify('-24 hours');
 				$params['end'] = new DateTime();
 			}
-			$startTime = $params['start']->format('c');
-			$endTime = $params['end']->format('c');
+			$startTime = $params['start']->format('Y-m-d\TH:i:s');
+			$endTime = $params['end']->format('Y-m-d\TH:i:s');
 
 			$params['points'] = $this->parseArrayParam('point');
 			$params['symbols'] = $this->parseArrayParam('symbol');

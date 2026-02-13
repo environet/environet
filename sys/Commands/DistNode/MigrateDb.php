@@ -55,7 +55,6 @@ class MigrateDb extends DbCommand {
 			'createDataAclTables',
 			'createUploadPermissions',
 			'createRiverbankPermissions',
-			'createResultUniqueIndexesDeleteDuplicates',
 			'renameDataProviderPermissions',
 			'addIsActiveColumns',
 			'removeMeteoPrefixes',
@@ -206,6 +205,8 @@ class MigrateDb extends DbCommand {
 
 
 	/**
+	 * @deprecated This migration has been removed, because the migration is unnecessary, and can cause conflicts in case of newer databases
+	 *
 	 * @param array $output
 	 *
 	 * @return int
