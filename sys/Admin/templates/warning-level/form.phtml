@@ -5,10 +5,10 @@
 		<form action="" method="POST">
 			<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
 
-            <fieldset class="form-group">
+            <fieldset class="mb-3">
                 <div class="field">
                     <legend><?=__('Operator');?></legend>
-                    <select name="operatorid">
+                    <select name="operatorid" class="form-select">
 	                    <?=selectOptions($operators, formFieldValue('operatorid', $record));?>
                     </select>
 					<div class="invalid-feedback">
@@ -17,10 +17,10 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form-group">
+            <fieldset class="mb-3">
                 <div class="field">
                     <legend><?=__('Threshold level group');?></legend>
-                    <select name="warning_level_groupid">
+                    <select name="warning_level_groupid" class="form-select">
 						<?=selectOptions($groups, formFieldValue('warning_level_groupid', $record));?>
                     </select>
 					<div class="invalid-feedback">
@@ -29,12 +29,10 @@
                 </div>
             </fieldset>
 
-			<div class="form-group">
-				<label for="color">Color</label>
+			<div class="mb-3">
+				<label for="color" class="form-label">Color</label>
 				<div class="input-group mb-3 colorPreviewGroup">
-					<div class="input-group-prepend">
-						<span class="input-group-text colorPreview" id="basic-addon1">&nbsp;&nbsp;</span>
-					</div>
+					<span class="input-group-text colorPreview" id="basic-addon1">&nbsp;&nbsp;</span>
 					<input type="text" name="color" id="color" class="form-control <?=isFieldInvalidClass('color', get_defined_vars());?>"  value="<?=formFieldValue('color', $record);?>" />
 					<div class="invalid-feedback">
 						<?=getFieldInvalidMessage('color', get_defined_vars());?>
@@ -42,23 +40,23 @@
 				</div>
 			</div>
 
-			<div class="form-group">
-				<label for="shortDescription">Short description</label>
+			<div class="mb-3">
+				<label for="shortDescription" class="form-label">Short description</label>
 				<input type="text" name="short_description" id="shortDescription" class="form-control <?=isFieldInvalidClass('short_description', get_defined_vars());?>"  value="<?=formFieldValue('short_description', $record);?>" />
 				<div class="invalid-feedback">
 					<?=getFieldInvalidMessage('short_description', get_defined_vars());?>
 				</div>
 			</div>
 
-			<div class="form-group">
-				<label for="longDescription"><?=__('Long description');?></label>
+			<div class="mb-3">
+				<label for="longDescription" class="form-label"><?=__('Long description');?></label>
 				<textarea name="long_description" id="longDescription" class="form-control"><?=formFieldValue('long_description', $record);?></textarea>
 			</div>
 
-			<div class="form-check">
+			<div class="form-check mb-3">
 				<input type="hidden" name="is_inclusive" value="0"/>
 				<input type="checkbox" name="is_inclusive" id="is_inclusive" value="1" class="form-check-input" <?=formFieldValue('is_inclusive', $record) ? 'checked' : '';?>/>
-				<label for="is_inclusive">Is inclusive <small class="help-block text-muted">(ON, if the related interval includes the exact threshold level value)</small></label>
+				<label for="is_inclusive" class="form-check-label">Is inclusive <small class="form-text text-muted">(ON, if the related interval includes the exact threshold level value)</small></label>
 
 			</div>
 

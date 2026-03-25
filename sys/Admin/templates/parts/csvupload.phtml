@@ -8,7 +8,7 @@
 
 	<form action="" enctype="multipart/form-data" method="post" class="file-upload-form d-inline-block">
 		<input type="file" style="display: none;" name="csv">
-		<div class="form-group">
+		<div class="mb-3">
 			<input type="submit" class="btn btn-primary" value="Upload csv"/>
 		</div>
 	</form>
@@ -36,7 +36,7 @@
 			<h5 class="card-title">Columns in CSV</h5>
 			<dl class="row">
 				<?php foreach ($csvColumns ?? [] as $id => $value) {?>
-					<dt class="col-3 text-right small"><?=$id;?></dt>
+					<dt class="col-3 text-end small"><?=$id;?></dt>
 					<dd class="col-9 small"><?=$value;?></dd>
 				<?php } ?>
 			</dl>
@@ -51,7 +51,7 @@
 				<h5 class="card-title"><?=$enum['title'] ?? null;?></h5>
 				<dl class="row">
 					<?php foreach ($enum['options'] ?? [] as $id => $value) {?>
-						<dt class="col-1 text-right small"><?=$id;?></dt>
+						<dt class="col-1 text-end small"><?=$id;?></dt>
 						<dd class="col-11 small"><?=$value;?></dd>
 					<?php } ?>
 				</dl>

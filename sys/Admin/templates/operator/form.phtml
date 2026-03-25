@@ -7,63 +7,63 @@
 
 		<fieldset>
 			<legend><?=__('Operator data');?></legend>
-			<div class="form-group">
-				<label for="operatorName"><?=__('Name');?></label>
+			<div class="mb-3">
+				<label for="operatorName" class="form-label"><?=__('Name');?></label>
 				<input type="text" name="name" id="operatorName" class="form-control <?=isFieldInvalidClass('name', get_defined_vars());?>" value="<?=formFieldValue('name', $record);?>" />
 				<div class="invalid-feedback">
 					<?=getFieldInvalidMessage('name', get_defined_vars());?>
 				</div>
 			</div>
-			<div class="form-group">
-				<label for="operatorAddress"><?=__('Address');?></label>
+			<div class="mb-3">
+				<label for="operatorAddress" class="form-label"><?=__('Address');?></label>
 				<textarea name="address" id="operatorAddress" class="form-control"><?=formFieldValue('address', $record);?></textarea>
 			</div>
-			<div class="form-group">
-				<label for="operatorPhone"><?=__('Phone');?></label>
+			<div class="mb-3">
+				<label for="operatorPhone" class="form-label"><?=__('Phone');?></label>
 				<input type="tel" name="phone" id="operatorPhone" class="form-control <?=isFieldInvalidClass('phone', get_defined_vars());?>" value="<?=formFieldValue('phone', $record);?>" />
 				<div class="invalid-feedback">
 					<?=getFieldInvalidMessage('phone', get_defined_vars());?>
 				</div>
 			</div>
-			<div class="form-group">
-				<label for="operatorEmail"><?=__('E-mail');?></label>
+			<div class="mb-3">
+				<label for="operatorEmail" class="form-label"><?=__('E-mail');?></label>
 				<input type="email" name="email" id="operatorEmail" class="form-control <?=isFieldInvalidClass('email', get_defined_vars());?>" value="<?=formFieldValue('email', $record);?>" />
 				<div class="invalid-feedback">
 					<?=getFieldInvalidMessage('email', get_defined_vars());?>
 				</div>
 			</div>
-			<div class="form-group">
-				<label for="operatorUrl"><?=__('URL');?></label>
+			<div class="mb-3">
+				<label for="operatorUrl" class="form-label"><?=__('URL');?></label>
 				<input type="url" name="url" id="operatorUrl" class="form-control <?=isFieldInvalidClass('url', get_defined_vars());?>" value="<?=formFieldValue('url', $record);?>" />
-				<small class="help-block text-muted">Full url, e.g. https://example.com</small>
+				<small class="form-text text-muted">Full url, e.g. https://example.com</small>
 				<div class="invalid-feedback">
 					<?=getFieldInvalidMessage('url', get_defined_vars());?>
 				</div>
 			</div>
-			<div class="form-group">
-				<label for="operatorOtherInfo"><?=__('Other info');?></label>
+			<div class="mb-3">
+				<label for="operatorOtherInfo" class="form-label"><?=__('Other info');?></label>
 				<textarea name="other_info" id="operatorOtherInfo" class="form-control"><?=formFieldValue('other_info', $record);?></textarea>
 			</div>
 		</fieldset>
 
-		<fieldset class="form-group">
+		<fieldset class="mb-3">
 			<legend><?=__('Users');?></legend>
 			<?php $selectedUsers = array_filter(formFieldValue('form_users', $record) ?: []); ?>
 			<?php for ($i = 0; $i <= count($selectedUsers); $i ++) { ?>
 				<div class="field">
-					<select name="form_users[]">
+					<select name="form_users[]" class="form-select">
 						<?=selectOptions($users, $selectedUsers[$i] ?? null, ' - ' . __('No user') . ' - ');?>
 					</select>
 				</div>
 			<?php } ?>
 		</fieldset>
 
-		<fieldset class="form-group">
+		<fieldset class="mb-3">
 			<legend><?=__('Groups');?></legend>
 			<?php $selectedGroups = array_filter(formFieldValue('form_groups', $record) ?: []); ?>
 			<?php for ($i = 0; $i <= count($selectedGroups); $i ++) { ?>
 				<div class="field">
-					<select name="form_groups[]">
+					<select name="form_groups[]" class="form-select">
 						<?=selectOptions($groups, $selectedGroups[$i] ?? null, ' - ' . __('No group') . ' - ');?>
 					</select>
 				</div>

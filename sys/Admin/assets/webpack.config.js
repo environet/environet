@@ -9,7 +9,7 @@ module.exports = (env, argv) => {
         output: {
             filename: 'js/app.js',
             path: path.resolve(__dirname, '../../../public'),
-            publicPath: argv.mode === 'production' ? '/' : 'http://localhost:8080/',
+            publicPath: '/',
         },
         devServer: {
             hot: true,
@@ -34,14 +34,14 @@ module.exports = (env, argv) => {
                 {
                     test: /\.(css)$/,
                     use: [
-                        argv.mode === 'production' ? MiniCssExtractPlugin.loader : 'style-loader',
+                        MiniCssExtractPlugin.loader,
                         'css-loader'
                     ]
                 },
                 {
                     test: /\.(scss)$/,
                     use: [
-                        argv.mode === 'production' ? MiniCssExtractPlugin.loader : 'style-loader',
+                        MiniCssExtractPlugin.loader,
                         'css-loader',
                         {
                             loader: 'postcss-loader',
@@ -55,7 +55,14 @@ module.exports = (env, argv) => {
                                 }
                             }
                         },
-                        'sass-loader'
+                        {
+                            loader: 'sass-loader',
+                            options: {
+                                sassOptions: {
+                                    quietDeps: true
+                                }
+                            }
+                        }
                     ]
                 },
                 {
@@ -68,16 +75,11 @@ module.exports = (env, argv) => {
                 },
                 {
                     test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-                    use: [
-                        {
-                            loader: 'file-loader',
-                            options: {
-                                name: '[name].[ext]',
-                                outputPath: 'fonts/',
-                                publicPath: '/fonts/'
-                            }
-                        }
-                    ]
+										type: 'asset/resource',
+										generator: {
+											filename: 'fonts/[name][ext]',
+											publicPath: '/'
+										}
                 }
             ]
         }

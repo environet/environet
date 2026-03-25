@@ -1,35 +1,23 @@
-//@import '~bootstrap/scss/functions.scss';
-//@import '~bootstrap/scss/mixins.scss';
-//@import '~bootstrap/scss/variables.scss';
+@use "sass:map";
+@use 'variables' as *;
 
-@import 'variables';
-@import 'colors';
+@use '~bootstrap/scss/bootstrap' as * with (
+	$primary: $primary-color,
+	$danger: $error-color,
+	$blue: $accent-color
+);
 
-//@import "~bootstrap/scss/utilities/text";
-//@import '~bootstrap/scss/root';
-//@import "~bootstrap/scss/reboot";
-//@import '~bootstrap/scss/card';
-//@import '~bootstrap/scss/tables';
-//@import '~bootstrap/scss/grid';
-//@import '~bootstrap/scss/forms';
-//@import '~bootstrap/scss/pagination';
-//@import '~bootstrap/scss/buttons';
-//@import '~bootstrap/scss/dropdown';
-//@import '~bootstrap/scss/utilities/flex';
-//@import '~bootstrap/scss/mixins/grid';
-//@import '~bootstrap/scss/mixins/grid-framework';
+@use '~@fortawesome/fontawesome-free/scss/variables' as fa-vars with (
+  $font-path: '~@fortawesome/fontawesome-free/webfonts'
+);
+@use '~@fortawesome/fontawesome-free/scss/fontawesome' as *;
+@use '~@fortawesome/fontawesome-free/scss/solid' as *;
 
-@import '~bootstrap';
-
-$fa-font-path: '~@fortawesome/fontawesome-free/webfonts';
-@import '~@fortawesome/fontawesome-free/scss/fontawesome';
-@import '~@fortawesome/fontawesome-free/scss/solid';
-
-@import 'mixins';
-@import 'layout';
-@import 'login';
-@import 'sidebar';
-@import 'identity-dropdown';
+@use 'mixins' as *;
+@use 'layout' as *;
+@use 'login' as *;
+@use 'sidebar' as *;
+@use 'identity-dropdown' as *;
 
 dl.row {
 	width: 100%;
@@ -102,6 +90,7 @@ section#main-content {
 		.logos {
 			display: flex;
 			padding-left: 1em;
+
 			img {
 				max-height: 60px;
 			}
@@ -124,15 +113,19 @@ section#main-content {
 	}
 
 	&.message-error li {
-		background-color: map_get($theme-colors, 'danger');
+		background-color: map.get($theme-colors, 'danger');
+	}
+
+	&.message-info li {
+		background-color: map.get($theme-colors, 'info');
 	}
 
 	&.message-success li {
-		background-color: map_get($theme-colors, 'success');
+		background-color: map.get($theme-colors, 'success');
 	}
 
 	&.message-warning li {
-		background-color: map_get($theme-colors, 'warning');
+		background-color: map.get($theme-colors, 'warning');
 	}
 }
 
@@ -199,6 +192,7 @@ section#main-content {
 	.list-group-item ul li {
 		list-style-type: disc;
 	}
+
 	.list-group {
 		margin-bottom: 1em
 	}

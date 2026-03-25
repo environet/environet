@@ -17,66 +17,72 @@
 	<form id="uploadTestForm" action="" method="POST">
 		<?php include __DIR__ . '/parts/messages.phtml'; //Render flash messages?>
 		<h1><?=__('Test download with filters');?></h1>
-		<div class="form-group">
-			<label><?=__('Type');?>:</label>
-			<input type="radio" name="type" id="hydro" value="hydro" checked onclick="switchType('hydro')"><label for="hydro"><?=__('Hydro')?></label>
-			<input type="radio" name="type" id="meteo" value="meteo" onclick="switchType('meteo')"><label for="meteo"><?=__('Meteo')?></label>
+		<div class="mb-3">
+			<label class="form-label"><?=__('Type');?>:</label>
+			<div class="form-check form-check-inline">
+				<input type="radio" name="type" id="hydro" value="hydro" class="form-check-input" checked onclick="switchType('hydro')">
+				<label for="hydro" class="form-check-label"><?=__('Hydro')?></label>
+			</div>
+			<div class="form-check form-check-inline">
+				<input type="radio" name="type" id="meteo" value="meteo" class="form-check-input" onclick="switchType('meteo')">
+				<label for="meteo" class="form-check-label"><?=__('Meteo')?></label>
+			</div>
 		</div>
 		<div id="hydro-options">
-			<div class="form-group">
-				<label for="hydro-country"><?=__('Available countries');?>: </label>
-				<select name="hydro-country[]" id="hydro-country" multiple>
+			<div class="mb-3">
+				<label for="hydro-country" class="form-label"><?=__('Available countries');?>: </label>
+				<select name="hydro-country[]" id="hydro-country" class="form-select" multiple>
 					<?=selectOptions($hydro['countries'], formFieldValue('hydro-country'));?>
 				</select>
 			</div>
-			<div class="form-group">
-				<label for="hydro-point"><?=__('Available monitoring points');?>: </label>
-				<select name="hydro-point[]" id="hydro-point" multiple>
+			<div class="mb-3">
+				<label for="hydro-point" class="form-label"><?=__('Available monitoring points');?>: </label>
+				<select name="hydro-point[]" id="hydro-point" class="form-select" multiple>
 					<?=selectOptions($hydro['points'], formFieldValue('hydro-point'));?>
 				</select>
 			</div>
-			<div class="form-group">
-				<label for="hydro-symbol"><?=__('Available observed property symbols');?>: </label>
-				<select name="hydro-symbol[]" id="hydro-symbol" multiple>
+			<div class="mb-3">
+				<label for="hydro-symbol" class="form-label"><?=__('Available observed property symbols');?>: </label>
+				<select name="hydro-symbol[]" id="hydro-symbol" class="form-select" multiple>
 					<?=selectOptions($hydro['symbols'], formFieldValue('hydro-symbol'));?>
 				</select>
 			</div>
 		</div>
 		<div id="meteo-options" style="display: none">
-			<div class="form-group">
-				<label for="meteo-country"><?=__('Available countries');?>: </label>
-				<select name="meteo-country[]" id="meteo-country" multiple>
+			<div class="mb-3">
+				<label for="meteo-country" class="form-label"><?=__('Available countries');?>: </label>
+				<select name="meteo-country[]" id="meteo-country" class="form-select" multiple>
 					<?=selectOptions($meteo['countries'], formFieldValue('meteo-country'));?>
 				</select>
 			</div>
-			<div class="form-group">
-				<label for="meteo-point"><?=__('Available monitoring points');?>: </label>
-				<select name="meteo-point[]" id="meteo-point" multiple>
+			<div class="mb-3">
+				<label for="meteo-point" class="form-label"><?=__('Available monitoring points');?>: </label>
+				<select name="meteo-point[]" id="meteo-point" class="form-select" multiple>
 					<?=selectOptions($meteo['points'], formFieldValue('meteo-point'));?>
 				</select>
 			</div>
-			<div class="form-group">
-				<label for="meteo-symbol"><?=__('Available observed property symbols');?>: </label>
-				<select name="meteo-symbol[]" id="meteo-symbol" multiple>
+			<div class="mb-3">
+				<label for="meteo-symbol" class="form-label"><?=__('Available observed property symbols');?>: </label>
+				<select name="meteo-symbol[]" id="meteo-symbol" class="form-select" multiple>
 					<?=selectOptions($meteo['symbols'], formFieldValue('meteo-symbol'));?>
 				</select>
 			</div>
 		</div>
 
 
-		<div class="form-group">
-			<label for="username"><?=__('User');?></label>
-			<select name="username" id="username">
+		<div class="mb-3">
+			<label for="username" class="form-label"><?=__('User');?></label>
+			<select name="username" id="username" class="form-select">
 				<?=selectOptions($users, formFieldValue('username'));?>
 			</select>
 		</div>
-		<div class="form-group">
-			<label for="start"><?=__('Start time');?></label><br />
-			<input type="datetime-local" name="start" id="start">
+		<div class="mb-3">
+			<label for="start" class="form-label"><?=__('Start time');?></label><br />
+			<input type="datetime-local" name="start" id="start" class="form-control">
 		</div>
-		<div class="form-group">
-			<label for="end"><?=__('End time');?></label><br />
-			<input type="datetime-local" name="end" id="end">
+		<div class="mb-3">
+			<label for="end" class="form-label"><?=__('End time');?></label><br />
+			<input type="datetime-local" name="end" id="end" class="form-control">
 		</div>
 		<input type="hidden" name="__csrf" value="<?=$csrf;?>" />
 		<input type="submit" class="btn btn-primary" value="Send">

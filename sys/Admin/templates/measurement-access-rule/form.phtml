@@ -5,10 +5,10 @@
 		<form action="" method="POST" id="accessRuleForm">
 			<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
 
-            <fieldset class="form-group">
+            <fieldset class="mb-3">
                 <div class="field">
                     <legend><?=__('Operator');?></legend>
-                    <select name="operator" id="accessRuleOperatorSelect">
+                    <select name="operator" id="accessRuleOperatorSelect" class="form-select">
 						<?=selectOptions($operators, formFieldValue('operator_id', $record, 'operator'));?>
                     </select>
 	                <div class="invalid-feedback">
@@ -17,9 +17,9 @@
                 </div>
             </fieldset>
 
-			<div class="form-group" id="pointSelect">
+			<div class="mb-3" id="pointSelect">
 				<div class="field">
-					<label for="monitoringpoint_selector">Monitoring point selector</label>
+					<label for="monitoringpoint_selector" class="form-label">Monitoring point selector</label>
 					<select name="monitoringpoint_selector[]" id="accessRulePointSelect"
 					        class="<?=isFieldInvalidClass('monitoringpoint_selector', get_defined_vars());?>"
 							data-ajaxdefault="/admin/ajax/select/operator-points"
@@ -31,8 +31,8 @@
 				</div>
 			</div>
 
-            <div class="form-group" id="propertySelect">
-                <label for="observed_property_selector">Observed property selector</label>
+            <div class="mb-3" id="propertySelect">
+                <label for="observed_property_selector" class="form-label">Observed property selector</label>
 				<select name="observed_property_selector[]" id="accessRulePropertySelect"
 				        class="<?=isFieldInvalidClass('observed_property_selector', get_defined_vars());?>"
 						data-ajaxdefault="/admin/ajax/select/operator-properties"
@@ -44,11 +44,11 @@
 	            </div>
             </div>
 
-            <fieldset class="form-group">
+            <fieldset class="mb-3">
                 <div class="field">
                     <legend><?=__('Groups');?></legend>
                     <select name="groups[]"
-                            class="<?=isFieldInvalidClass('groups', get_defined_vars());?>"
+                            class="form-select <?=isFieldInvalidClass('groups', get_defined_vars());?>"
                             multiple>
 						<?php foreach ($groups as $id => $name): ?>
                             <option value="<?= $id; ?>" <?=in_array($id, formFieldValue('groups', $record) ?? []) ? 'selected' : '' ?>>
@@ -62,7 +62,7 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form-group">
+            <fieldset class="mb-3">
                 <h4>Time interval</h4>
 	            <?php if(isFieldInvalidClass('intervals', get_defined_vars())) { ?>
 		            <div class="invalid-feedback" style="display: inline-block">
@@ -71,8 +71,8 @@
 				<?php } ?>
 
 
-                <div class="form-group">
-                    <label for="interval_years">Years</label>
+                <div class="mb-3">
+                    <label for="interval_years" class="form-label">Years</label>
                     <input type="number" name="interval_years" id="interval_years" class="form-control <?=isFieldInvalidClass('interval_years', get_defined_vars());?>"
 						   value="<?=(!empty($_POST) && $_POST['interval_years']) ? $_POST['interval_years'] : (isset($record['interval']) ? (new DateInterval($record['interval']))->y : '') ?>" />
 	                <div class="invalid-feedback">
@@ -80,8 +80,8 @@
 	                </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="interval_months">Months</label>
+                <div class="mb-3">
+                    <label for="interval_months" class="form-label">Months</label>
                     <input type="number" name="interval_months" id="interval_months" class="form-control <?=isFieldInvalidClass('interval_months', get_defined_vars());?>"
                            value="<?=(!empty($_POST) && $_POST['interval_months']) ? $_POST['interval_months'] : (isset($record['interval']) ? (new DateInterval($record['interval']))->m : '') ?>" />
 	                <div class="invalid-feedback">
@@ -89,8 +89,8 @@
 	                </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="interval_days">Days</label>
+                <div class="mb-3">
+                    <label for="interval_days" class="form-label">Days</label>
                     <input type="number" name="interval_days" id="interval_days" class="form-control <?=isFieldInvalidClass('interval_days', get_defined_vars());?>"
 						   value="<?=(!empty($_POST) && $_POST['interval_days']) ? $_POST['interval_days'] : (isset($record['interval']) ? (new DateInterval($record['interval']))->d : '') ?>" />
 	                <div class="invalid-feedback">

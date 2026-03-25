@@ -1,14 +1,13 @@
-@use 'colors';
-@use 'variables';
+@use 'variables' as *;
 
 $sidebar-breakpoint: 45em;
 
 aside#sidebar {
-	background-color: colors.$sidebar-bg-color;
+	background-color: $sidebar-bg-color;
 	padding: 0;
-	color: colors.$gray221;
+	color: $gray221;
 	font-weight: 600;
-	box-shadow: 0 0 10px colors.$gray33;
+	box-shadow: 0 0 10px $gray33;
 	flex-basis: 300px;
 	flex-direction: column;
 	justify-content: space-between;
@@ -22,13 +21,13 @@ aside#sidebar {
 			border-bottom: 1px solid white;
 
 			a {
-				padding: .8em variables.$content-padding-horizontal;
+				padding: .8em $content-padding-horizontal;
 			}
 		}
 
 		li {
 			a {
-				padding: .5em 1.5em .5em variables.$content-padding-horizontal;
+				padding: .5em 1.5em .5em $content-padding-horizontal;
 				transition: background-color .2s;
 
 				&.selected, &:hover, &:active, &:focus {
@@ -36,7 +35,7 @@ aside#sidebar {
 					color: white;
 
 					i {
-						color: colors.$accent-color;
+						color: $accent-color;
 					}
 				}
 			}

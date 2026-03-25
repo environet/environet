@@ -1,14 +1,14 @@
-<form method="get" class="form-inline filterForm">
+<form method="get" class="d-flex flex-wrap align-items-end filterForm">
 	<?php if (isset($listFilters) && !is_null($listFilters)) { ?>
 		<?php foreach ($listFilters as $name => $listFilter) { ?>
-			<div class="form-group listFilter mr-3">
+			<div class="listFilter me-3 mb-2">
 				<?php if (!empty($listFilter['type']) && $listFilter['type'] === 'date') {?>
-					<label for="filter<?=$name;?>"><?=$listFilter['label'];?></label>
+					<label for="filter<?=$name;?>" class="form-label"><?=$listFilter['label'];?></label>
 					<input type="date" name="<?=$name;?>" id="filter<?=$name;?>" class="form-control form-control-sm" value="<?=$listFilter['selected'] ?? '';?>" />
 				<?php } elseif (!empty($listFilter['type']) && $listFilter['type'] === 'hidden') { ?>
 					<input type="hidden" name="<?=$name;?>" value="<?=$listFilter['selected'] ?? '';?>" />
 				<?php } else { ?>
-					<select name="<?=$name;?>" class="form-control form-control-sm">
+					<select name="<?=$name;?>" class="form-select form-select-sm">
 						<option value=""> - <?=$listFilter['label'];?> - </option>
 						<?php foreach ($listFilter['options'] as $value => $label) { ?>
 							<option value="<?=$value;?>" <?=(!empty($listFilter['selected']) && $listFilter['selected'] == $value) ? 'selected' : '';?>>
@@ -20,17 +20,17 @@
 			</div>
 		<?php } ?>
 	<?php } ?>
-	<div class="form-group listSearch mr-3">
+	<div class="listSearch me-3 mb-2">
 		<input type="search" name="search" class="form-control form-control-sm" placeholder="<?=__('Search')?>" value="<?=htmlspecialchars(urldecode($searchString))?>">
 	</div>
-	<div class="form-group filterSubmit">
+	<div class="filterSubmit mb-2">
 		<?php if (getCurrentOrderBy()) {?>
 			<input type="hidden" name="order_by" value="<?=getCurrentOrderBy();?>" />
 		<?php } ?>
 		<?php if (getCurrentOrderDir()) {?>
 			<input type="hidden" name="order_dir" value="<?=getCurrentOrderDir();?>" />
 		<?php } ?>
-		<input type="submit" class="btn btn-sm btn-primary mr-2" value="<?=__('Filter');?>"/>
+		<input type="submit" class="btn btn-sm btn-primary me-2" value="<?=__('Filter');?>"/>
 		<input type="reset" class="btn btn-sm btn-secondary" value="<?=__('Clear');?>"/>
 	</div>
 </form>

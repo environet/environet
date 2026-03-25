@@ -16,27 +16,27 @@
 	<form id="uploadTestForm" action="" method="POST">
 		<?php include __DIR__.'/parts/messages.phtml'; //Render flash messages?>
 		<h1><?=__('Test upload with data');?></h1>
-		<div class="form-group">
-			<label for="mpoint"><?=__('Hydro monitoring point');?></label>
-			<select name="mpoint" id="mpoint">
+		<div class="mb-3">
+			<label for="mpoint" class="form-label"><?=__('Hydro monitoring point');?></label>
+			<select name="mpoint" id="mpoint" class="form-select">
 				<?=selectOptions($mpoints, formFieldValue('mpoint'));?>
 			</select>
 		</div>
-		<div class="form-group">
-			<label for="property"><?=__('Hydro observed property');?></label>
-			<select name="property" id="property">
+		<div class="mb-3">
+			<label for="property" class="form-label"><?=__('Hydro observed property');?></label>
+			<select name="property" id="property" class="form-select">
 				<?=selectOptions($properties, formFieldValue('property'));?>
 			</select>
 		</div>
-		<div class="form-group">
-			<label for="username"><?=__('User');?></label>
-			<select name="username" id="username">
+		<div class="mb-3">
+			<label for="username" class="form-label"><?=__('User');?></label>
+			<select name="username" id="username" class="form-select">
 				<?=selectOptions($users, formFieldValue('username'));?>
 			</select>
 		</div>
-		<div class="form-group">
-			<label for="mpoint"><?=__('Time,value');?></label><br />
-			<textarea name="values" id="values" cols="30" rows="10"><?=formFieldValue('values') ?: date('c').',1';?></textarea>
+		<div class="mb-3">
+			<label for="mpoint" class="form-label"><?=__('Time,value');?></label><br />
+			<textarea name="values" id="values" class="form-control" cols="30" rows="10"><?=formFieldValue('values') ?: date('c').',1';?></textarea>
 		</div>
 		<input type="hidden" name="__csrf" value="<?=$csrf;?>"/>
 		<input type="submit" class="btn btn-primary" value="Send">

@@ -1,3 +1,6 @@
+@use 'variables' as *;
+@use '~bootstrap' as *;
+
 .login-page {
 	align-items: center;
 	display: flex;

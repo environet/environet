@@ -1,1 +1,13 @@
+@use "sass:color";
+
 $content-padding-horizontal: 1em;
+
+$error-color: #d33;
+$primary-color: color.adjust(#0085ff, $lightness: -15%);
+$accent-color: orange;
+$header-background-color: color.adjust($primary-color, $lightness: -20%);
+$sidebar-bg-color: color.adjust($primary-color, $lightness: -15%);
+$gray33: #1d2124;
+$gray69: #454545;
+$gray221: #ddd;
+$gray238: #eee;
