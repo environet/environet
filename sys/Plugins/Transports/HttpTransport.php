@@ -157,7 +157,18 @@ class HttpTransport extends AbstractTransport {
 			$resources = $this->buildConversionsUrls();
 		} elseif ($this->isIndex) {
 			//Fetch files based on HTML source
-			$indexPageContents = (new HttpClient())->sendRequest(new Request($this->url))->getBody();
+			$httpClient = new HttpClient();
+			$response = $httpClient->sendRequest(new Request($this->url), [
+				'follow_redirects' => true,
+				'max_redirects' => 5
+			]);
+			$indexPageContents = $response->getBody();
+
+			// Check if redirects occurred
+			if ($response->hasRedirects()) {
+				$console->writeLine('WARNING: ' . $response->getRedirectCount() . ' redirect(s) occurred while fetching data', Console::COLOR_YELLOW);
+			}
+
 			$hasMatches = preg_match_all($this->indexRegexPattern, $indexPageContents, $matches);
 			if ($hasMatches && !empty($matches['relativePath'])) {
 				$urls = array_map(function ($match) {
@@ -176,8 +187,17 @@ class HttpTransport extends AbstractTransport {
 			} else {
 				//Url is a simple manual url
 				$resource->setName(basename($resource->getUrl())); //Filename
-				$resource->setContents((new HttpClient())->sendRequest(new Request($resource->getUrl()))->getBody());
+				$response = (new HttpClient())->sendRequest(new Request($resource->getUrl()), [
+					'follow_redirects' => true,
+					'max_redirects' => 5
+				]);
+				$resource->setContents($response->getBody());
 				$console->writeLine('File downloaded from url: ' . $resource->getUrl() . ' (' . strlen($resource->getContents()) . ' bytes)');
+
+				// Check if redirects occurred
+				if ($response->hasRedirects()) {
+					$console->writeLine('WARNING: ' . $response->getRedirectCount() . ' redirect(s) occurred during the request', Console::COLOR_YELLOW);
+				}
 			}
 		}
 

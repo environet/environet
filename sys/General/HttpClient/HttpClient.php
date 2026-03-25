@@ -22,12 +22,16 @@ class HttpClient {
 	 * Available options:
 	 *  - timeout: timeout in milliseconds. If 0, it's unlimited
 	 *  - verify: boolean value to control verify-peer and verify-host curl options
+	 *  - follow_redirects: boolean value to enable/disable following redirects (default: false)
+	 *  - max_redirects: maximum number of redirects to follow (default: 5)
 	 *  - curl: an array of other standard curl options
 	 * @var array
 	 */
 	private $options = [
-		'timeout' => 0,
-		'verify'  => true
+		'timeout'          => 0,
+		'verify'           => true,
+		'follow_redirects' => false,
+		'max_redirects'    => 5
 	];
 
 
@@ -63,6 +67,12 @@ class HttpClient {
 
 		// Create exceptions from curl error
 		$this->parseError(curl_errno($curl), $curl);
+
+		// Get redirect count if follow_redirects was enabled
+		if (!empty($this->options['follow_redirects'])) {
+			$redirectCount = curl_getinfo($curl, CURLINFO_REDIRECT_COUNT);
+			$response->setRedirectCount($redirectCount);
+		}
 
 		// Destroy resource
 		curl_close($curl);
@@ -124,7 +134,7 @@ class HttpClient {
 		// Callback which writes body to response object
 		curl_setopt($curl, CURLOPT_WRITEFUNCTION, function ($ch, $data) use ($response) {
 			$response->appendBody($data);
-			
+
 			return strlen($data);
 		});
 
@@ -189,6 +199,16 @@ class HttpClient {
 		// Set timeout
 		if (!empty($options['timeout'])) {
 			curl_setopt($curl, CURLOPT_TIMEOUT, $options['timeout']);
+		}
+
+		// Follow redirects
+		$followRedirects = $options['follow_redirects'] ?? false;
+		if ($followRedirects) {
+			curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+			$maxRedirects = $options['max_redirects'] ?? 5;
+			curl_setopt($curl, CURLOPT_MAXREDIRS, $maxRedirects);
+		} else {
+			curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
 		}
 	}
 

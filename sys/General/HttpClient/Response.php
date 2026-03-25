@@ -28,6 +28,11 @@ class Response {
 	 */
 	private $headers;
 
+	/**
+	 * @var int Number of redirects that occurred
+	 */
+	private $redirectCount = 0;
+
 
 	/**
 	 * Response constructor.
@@ -122,8 +127,8 @@ class Response {
 
 		return $this;
 	}
-	
-	
+
+
 	/**
 	 * Append to raw body string
 	 *
@@ -133,7 +138,7 @@ class Response {
 	 */
 	public function appendBody(string $data): string {
 		$this->body .= $data;
-		
+
 		return $this->body;
 	}
 
@@ -165,6 +170,40 @@ class Response {
 		}
 
 		return $this;
+	}
+
+
+	/**
+	 * Get the number of redirects that occurred
+	 *
+	 * @return int
+	 */
+	public function getRedirectCount(): int {
+		return $this->redirectCount;
+	}
+
+
+	/**
+	 * Set the number of redirects that occurred
+	 *
+	 * @param int $redirectCount
+	 *
+	 * @return Response
+	 */
+	public function setRedirectCount(int $redirectCount): Response {
+		$this->redirectCount = $redirectCount;
+
+		return $this;
+	}
+
+
+	/**
+	 * Check if any redirects occurred
+	 *
+	 * @return bool
+	 */
+	public function hasRedirects(): bool {
+		return $this->redirectCount > 0;
 	}
 
 
