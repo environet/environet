@@ -2,6 +2,8 @@
 
 namespace Environet\Sys;
 
+use Exception;
+
 /**
  * Class Loader
  *

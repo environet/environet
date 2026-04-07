@@ -10,7 +10,7 @@ $resultCount = isset($results) && is_array($results) ? count($results) : null;
 $pageSize = BasePage::PAGE_SIZE;
 
 //Max page can be null if calculation of count is disabled
-$maxPage = $maxPage ?? null;
+$maxPage ??= null;
 
 //Find out if it can have more pages (important in case of undefined maxPage)
 $hasMorePages = isset($resultCount) && $resultCount >= $pageSize;

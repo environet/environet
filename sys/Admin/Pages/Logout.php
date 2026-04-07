@@ -32,7 +32,7 @@ class Logout extends BasePage {
 
 		if ($this->request->isPost()) {
 			if (!$this->checkCsrf()) {
-				return new HttpBadRequestException();
+				throw new HttpBadRequestException();
 			}
 
 			try {

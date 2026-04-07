@@ -76,9 +76,9 @@ class ObservedPropertyValueParameter extends AbstractFormatParameter {
 	public function convertValueUnit(float $value): float {
 		if ($this->valueConversion && preg_match('/^([\/*])(\d+)$/', $this->valueConversion, $match)) {
 			if ($match[1] === '/') {
-				$value = $value / $match[2];
+				$value /= $match[2];
 			} elseif ($match[1] === '*') {
-				$value = $value * $match[2];
+				$value *= $match[2];
 			}
 		}
 

@@ -15,7 +15,6 @@ use Environet\Sys\General\Response;
 use Environet\Sys\General\SysIdentity;
 use Environet\Sys\Upload\Exceptions\UploadException;
 use Environet\Sys\Xml\CreateErrorXml;
-use Environet\Sys\Xml\CreateUploadStatisticsXml;
 use Environet\Sys\Xml\Exceptions\InputXmlProcessException;
 use Environet\Sys\Xml\Exceptions\SchemaInvalidException;
 use Environet\Sys\Xml\InputProcessor\AbstractInputXmlProcessor;

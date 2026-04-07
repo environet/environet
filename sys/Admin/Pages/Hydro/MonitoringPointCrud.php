@@ -266,18 +266,18 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 		$observedProperties = array_flip(HydroObservedPropertyQueries::getRealTimeOptionList());
 		$warningLevelIds = array_keys(WarningLevelQueries::getOptionListForOperator($operatorId));
 		$saveWarningLevels = [];
-		foreach ($data as $key => $value) {
+		foreach ($data as $dataKey => $value) {
 			if ($value === '') {
 				continue;
 			}
-			if (preg_match('/^warning_level_(.*)$/i', $key, $match)) {
+			if (preg_match('/^warning_level_(.*)$/i', $dataKey, $match)) {
 				if (array_key_exists($match[1], $observedProperties)) {
 					$warningLevelThresholds = explode(',', $value);
-					foreach ($warningLevelThresholds as $key => $threshold) {
-						if (!isset($warningLevelIds[$key])) {
+					foreach ($warningLevelThresholds as $thKey => $threshold) {
+						if (!isset($warningLevelIds[$thKey])) {
 							continue;
 						}
-						$saveWarningLevels[$observedProperties[$match[1]] . '_' . $warningLevelIds[$key]] = floatval($threshold);
+						$saveWarningLevels[$observedProperties[$match[1]] . '_' . $warningLevelIds[$thKey]] = floatval($threshold);
 					}
 				}
 			}

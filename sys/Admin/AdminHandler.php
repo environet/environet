@@ -120,7 +120,7 @@ class AdminHandler extends BaseHandler {
 			}
 
 
-			/** @var BasePage $routeHandlerClass */
+			/** @var class-string<BasePage> $routeHandlerClass */
 			$routeHandlerClass = $foundRoute[0];
 			$handlerMethodName = $foundRoute[1];
 			$requiredPermissions = $foundRoute[2] ?? [];

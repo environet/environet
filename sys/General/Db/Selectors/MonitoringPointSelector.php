@@ -167,7 +167,7 @@ class MonitoringPointSelector extends BaseAccessSelector {
 	 * @throws QueryException
 	 * @throws Exception
 	 */
-	public function unserialize($serialized) {
+	public function unserialize($serialized): void {
 		if ($serialized === '*') {
 			if ($this->type === MPOINT_TYPE_HYDRO) {
 				$serialized = $this->getHydroPointsByOperator();

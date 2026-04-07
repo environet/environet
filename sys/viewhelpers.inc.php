@@ -15,7 +15,7 @@ function getPaginatorParts(int $currentPage, ?int $maxPage, bool $addMoreToEnd =
 	$parts = [];
 	$skipState = false;
 
-	$maxPage = $maxPage ?? ($addMoreToEnd ? $currentPage + 3 : $currentPage);
+	$maxPage ??= ($addMoreToEnd ? $currentPage + 3 : $currentPage);
 	for ($i = 1; $i <= $maxPage; $i ++) {
 		//Skip numbers is not 1, not the last, and not near current page
 		$skip = ($i > 1 && $i < $currentPage - 1 && $currentPage > 3) ||

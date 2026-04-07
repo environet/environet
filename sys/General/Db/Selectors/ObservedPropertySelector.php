@@ -36,7 +36,7 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	 *
 	 * @throws QueryException
 	 */
-	public function __construct(string $values, $type, int $operatorId = 0, array $points) {
+	public function __construct(string $values, $type, int $operatorId, array $points) {
 		$this->symbols = null;
 		$this->points = $points;
 
@@ -206,7 +206,7 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	 * @throws QueryException
 	 * @throws Exception
 	 */
-	public function unserialize($serialized) {
+	public function unserialize($serialized): void {
 		//Get all properties that are related to the operator and the monitoring points
 		if ($this->type === MPOINT_TYPE_HYDRO) {
 			$allPropertiesSerialized = $this->getHydroPropertiesByOperator();
