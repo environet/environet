@@ -52,7 +52,7 @@ class UserQueries extends BaseQueries {
 	 * @uses UserQueries::saveGroups
 	 * @uses UserQueries::savePermissions
 	 */
-	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
+	public static function save(array $data, $id = null, string $primaryKey = 'id', ?array $record = null) {
 		if ($id) {
 			// Update user
 			if ($data['public_key'] !== "") {

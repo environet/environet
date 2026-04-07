@@ -162,14 +162,14 @@ function httpRedirect(string $url, $code = 302) {
 /**
  * Validate a data with some pre-defined rules, and regex patterns
  *
- * @param array  $array    Array of fields
- * @param string $field    Field's name
- * @param string $pattern  Regex pattern for validation
- * @param bool   $required If true, the data will be required, empty value not allowed
+ * @param array  $array        Array of fields
+ * @param string $field        Field's name
+ * @param string|null $pattern Regex pattern for validation
+ * @param bool   $required     If true, the data will be required, empty value not allowed
  *
  * @return bool
  */
-function validate(array $array, string $field, string $pattern = null, bool $required = false): bool {
+function validate(array $array, string $field, ?string $pattern = null, bool $required = false): bool {
 	$isEmpty = empty($array[$field]);
 	if ($required && $isEmpty) {
 		//Empty value not allowed
@@ -191,13 +191,13 @@ function validate(array $array, string $field, string $pattern = null, bool $req
 /**
  * Get a form field's value from post, or from pre-populated data
  *
- * @param string      $field           The field's slug
- * @param array|null  $data            The optional data which can containe the field's vale
+ * @param string      $field The field's slug
+ * @param array|null $data   The optional data which can containe the field's vale
  * @param string|null $customPostField
  *
  * @return mixed|null
  */
-function formFieldValue(string $field, array $data = null, ?string $customPostField = null) {
+function formFieldValue(string $field, ?array $data = null, ?string $customPostField = null) {
 	if (!empty($_POST)) {
 		$postField = $customPostField ?? $field;
 

@@ -76,13 +76,13 @@ class EventLogger {
 	 *
 	 * @param string       $evenType
 	 * @param array|string $data
-	 * @param int|null     $operatorId
-	 * @param string|null  $date
+	 * @param int|null $operatorId
+	 * @param string|null $date
 	 *
 	 * @throws QueryException
 	 * @uses Insert::run
 	 */
-	public static function log(string $evenType, $data, int $operatorId = null, string $date = null) {
+	public static function log(string $evenType, $data, ?int $operatorId = null, ?string $date = null) {
 		$data = is_array($data) ? json_encode($data) : $data;
 		$userId = $_SESSION[Request::AUTH_SESSION_KEY] ?? null;
 

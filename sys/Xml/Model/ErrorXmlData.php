@@ -26,13 +26,13 @@ class ErrorXmlData {
 	/**
 	 * ErrorXmlData constructor.
 	 *
-	 * @param int|null    $code
+	 * @param int|null $code
 	 * @param string|null $message
 	 *
 	 * @uses ErrorXmlData::setCode
 	 * @uses ErrorXmlData::setMessage
 	 */
-	public function __construct(int $code = null, string $message = null) {
+	public function __construct(?int $code = null, ?string $message = null) {
 		if (!is_null($code)) {
 			$this->setCode($code);
 		}

@@ -47,7 +47,7 @@ class Request {
 	 * @param string      $uri    Request uri
 	 * @param string|null $method HTTP method
 	 */
-	public function __construct(string $uri, string $method = null) {
+	public function __construct(string $uri, ?string $method = null) {
 		$this->uri = $uri;
 		if (!is_null($method)) {
 			$this->method = $method;

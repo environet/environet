@@ -376,7 +376,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 *
 	 * @throws QueryException
 	 */
-	protected function saveWarningLevels(int $mpointId, array $data, array $existingDataByKey = null) {
+	protected function saveWarningLevels(int $mpointId, array $data, ?array $existingDataByKey = null) {
 		$existingDataByKey = $existingDataByKey ?: $this->getExistingWarningLevelData($mpointId);
 
 		foreach ($data as $key => $value) {

@@ -11,8 +11,6 @@ use Exception;
 class OutputXmlObservationMember {
 
 
-	protected array $queryMeta;
-
 	/** @var array Property data for the current observation member. It is set when rendering value rows. */
 	protected array $propertyData = [];
 
@@ -20,8 +18,7 @@ class OutputXmlObservationMember {
 	private bool $intervalLimited = false;
 
 
-	public function __construct(array $queryMeta) {
-		$this->queryMeta = $queryMeta;
+	public function __construct(protected array $queryMeta) {
 	}
 
 

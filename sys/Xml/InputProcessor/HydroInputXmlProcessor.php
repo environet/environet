@@ -31,7 +31,7 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 	 * @throws ApiException
 	 * @uses Select::run
 	 */
-	protected function findMonitoringPoint(string $identifier, Identity $identity = null, bool $activeOnly = false): ?array {
+	protected function findMonitoringPoint(string $identifier, ?Identity $identity = null, bool $activeOnly = false): ?array {
 		try {
 			// Find hydro monitoring point
 			$mPointQuery = new Select()

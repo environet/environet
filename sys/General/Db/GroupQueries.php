@@ -48,7 +48,7 @@ class GroupQueries extends BaseQueries {
 	 * @uses EventLogger::log
 	 * @uses GroupQueries::savePermissions
 	 */
-	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
+	public static function save(array $data, $id = null, string $primaryKey = 'id', ?array $record = null) {
 		$dataToRun = [
 			'name' => $data['name']
 		];

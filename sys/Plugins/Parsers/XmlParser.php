@@ -96,8 +96,8 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		SimpleXMLElement $xml,
 		?ResolvedGroup $parentGroup = null,
 		int $hierarchyCounter = 0,
-		string $parentPath = null,
-		array $parametersOnly = null
+		?string $parentPath = null,
+		?array $parametersOnly = null
 	): void {
 		//Get formats configuration
 		$formatsConfig = $this->getFormatsConfig();
@@ -203,7 +203,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 *
 	 * @return array The common elements of tag hierarchy, if any
 	 */
-	private function getCommonElements(?string $underPath = null, array $parametersOnly = null): array {
+	private function getCommonElements(?string $underPath = null, ?array $parametersOnly = null): array {
 		$underPath = $underPath ? explode('/', trim($underPath, '/')) : [];
 
 		//Collect parameters where the common elements are searched. If $parametersOnly is set, only these parameters are considered.

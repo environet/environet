@@ -28,13 +28,13 @@ class InputXmlPropertyData {
 	/**
 	 * InputXmlPropertyData constructor.
 	 *
-	 * @param string $propertySymbol
-	 * @param array  $values
+	 * @param string|null $propertySymbol
+	 * @param array|null $values
 	 *
 	 * @uses InputXmlPropertyData::setPropertySymbol
 	 * @uses InputXmlPropertyData::setValues
 	 */
-	public function __construct(string $propertySymbol = null, array $values = null) {
+	public function __construct(?string $propertySymbol = null, ?array $values = null) {
 		if (!is_null($propertySymbol)) {
 			$this->setPropertySymbol($propertySymbol);
 		}

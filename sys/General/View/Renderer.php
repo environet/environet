@@ -40,14 +40,14 @@ class Renderer {
 	 * Set template, variables, and add global variables
 	 *
 	 * @param string|null $template
-	 * @param array|null  $vars
+	 * @param array|null $vars
 	 *
 	 * @throws RenderException
 	 * @uses Renderer::setTemplate
 	 * @uses Renderer::setVars
 	 * @uses Renderer::addVar
 	 */
-	public function __construct(string $template = null, array $vars = null) {
+	public function __construct(?string $template = null, ?array $vars = null) {
 		if (!is_null($template)) {
 			//Set template path
 			$this->setTemplate($template);

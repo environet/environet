@@ -528,7 +528,7 @@ class Statistics {
 	 * Get messages, or messages of a specific type
 	 * @return array|array[]
 	 */
-	public function getMessages(string $type = null): array {
+	public function getMessages(?string $type = null): array {
 		if (isset($type)) {
 			return $this->messages[$type] ?? [];
 		}
@@ -649,8 +649,8 @@ class Statistics {
 			$statistics->setPropertyInserts($symbol, (int) $property->xpath('environet:Inserts')[0] ?? 0);
 			$statistics->setPropertyUpdates($symbol, (int) $property->xpath('environet:Updates')[0] ?? 0);
 			$statistics->setPropertyNoChanges($symbol, (int) $property->xpath('environet:NoChanges')[0] ?? 0);
-			$statistics->setPropertyMinTime($symbol, $minTime ? DateTime::createFromFormat(DateTimeInterface::ISO8601, $minTime) : null);
-			$statistics->setPropertyMaxTime($symbol, $maxTime ? DateTime::createFromFormat(DateTimeInterface::ISO8601, $maxTime) : null);
+			$statistics->setPropertyMinTime($symbol, $minTime ? DateTime::createFromFormat(DateTimeInterface::ATOM, $minTime) : null);
+			$statistics->setPropertyMaxTime($symbol, $maxTime ? DateTime::createFromFormat(DateTimeInterface::ATOM, $maxTime) : null);
 		}
 
 		return $statistics;

@@ -373,7 +373,7 @@ abstract class CrudPage extends BasePage {
 	 * @return Response
 	 * @throws RenderException
 	 */
-	protected function renderForm(array $record = null): Response {
+	protected function renderForm(?array $record = null): Response {
 		$pageTitle = $this->getTitle($record ? self::PAGE_EDIT : self::PAGE_ADD, $record);
 
 		$context = array_merge([

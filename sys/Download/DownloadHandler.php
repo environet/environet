@@ -247,7 +247,7 @@ class DownloadHandler extends ApiHandler {
 				// Missing type
 				throw new DownloadException(302);
 			}
-			$type = filter_var($type, FILTER_SANITIZE_STRING);
+			$type = htmlspecialchars($type);
 			if (!in_array($type, [MonitoringPointQueries::TYPE_HYDRO, MonitoringPointQueries::TYPE_METEO])) {
 				// Invalid type
 				throw new DownloadException(303);
@@ -264,7 +264,7 @@ class DownloadHandler extends ApiHandler {
 			$startTime = $this->request->getQueryParam('start', false);
 			if ($startTime) {
 				try {
-					$params['start'] = createValidDate(filter_var($startTime, FILTER_SANITIZE_STRING));
+					$params['start'] = createValidDate(htmlspecialchars($startTime));
 				} catch (Throwable $e) {
 					throw new DownloadException(304);
 				}
@@ -273,7 +273,7 @@ class DownloadHandler extends ApiHandler {
 			$endTime = $this->request->getQueryParam('end', false);
 			if ($endTime) {
 				try {
-					$params['end'] = createValidDate(filter_var($endTime, FILTER_SANITIZE_STRING));
+					$params['end'] = createValidDate(htmlspecialchars($endTime));
 				} catch (Throwable $e) {
 					throw new DownloadException(305);
 				}

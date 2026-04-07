@@ -24,14 +24,11 @@ class UploadFileResponse {
 
 	protected array $successMessages = [];
 
-	protected string $originalFileName;
-
 
 	/**
 	 * @param string $originalFileName
 	 */
-	public function __construct(string $originalFileName) {
-		$this->originalFileName = $originalFileName;
+	public function __construct(protected string $originalFileName) {
 	}
 
 

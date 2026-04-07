@@ -138,7 +138,7 @@ class MeasurementAccessRuleCrud extends CrudPage {
 	 * @return Response
 	 * @throws RenderException
 	 */
-	protected function renderForm(array $record = null): Response {
+	protected function renderForm(?array $record = null): Response {
 		if ($this->request->isPost()) {
 			$_POST['monitoringpoint_selector'] = implode(',', $_POST['monitoringpoint_selector']);
 			$_POST['observed_property_selector'] = implode(',', $_POST['observed_property_selector']);

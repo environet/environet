@@ -54,7 +54,7 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 	 * @return array
 	 * @throws QueryException
 	 */
-	public static function all(array $operatorIds = null, bool $activeOnly = false, $withWarningLevels = false) {
+	public static function all(?array $operatorIds = null, bool $activeOnly = false, $withWarningLevels = false) {
 		$query = new Select()
 			->select(static::$tableName . '.*')
 			->from(static::$tableName);
@@ -235,7 +235,7 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 	 * @uses EventLogger::log
 	 * @uses BaseQueries::saveConnections
 	 */
-	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
+	public static function save(array $data, $id = null, string $primaryKey = 'id', ?array $record = null) {
 		$dataToSave = static::prepareData($data);
 
 		$changes = [];

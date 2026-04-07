@@ -74,8 +74,8 @@ class Console {
 	 */
 	public function write(
 		string $string,
-		string $color = null,
-		string $bgColor = null,
+		?string $color = null,
+		?string $bgColor = null,
 		bool $outError = false,
 		bool $outBoth = false,
 		?bool $datePrefix = null
@@ -121,8 +121,8 @@ class Console {
 	 */
 	public function writeLine(
 		string $string,
-		string $color = null,
-		string $bgColor = null,
+		?string $color = null,
+		?string $bgColor = null,
 		bool $outError = false,
 		bool $outBoth = false,
 		?bool $datePrefix = null
@@ -141,7 +141,7 @@ class Console {
 	 * @param bool        $outError
 	 * @param bool        $outBoth
 	 */
-	public function writeLineDp(string $string, string $color = null, string $bgColor = null, bool $outError = false, bool $outBoth = false) {
+	public function writeLineDp(string $string, ?string $color = null, ?string $bgColor = null, bool $outError = false, bool $outBoth = false) {
 		$this->write($string, $color, $bgColor, $outError, $outBoth, true);
 		$this->writeLineBreak();
 	}
@@ -313,7 +313,7 @@ class Console {
 	 *
 	 * @return string
 	 */
-	protected function buildColorPrefix(string $color = null, string $bgColor = null): string {
+	protected function buildColorPrefix(?string $color = null, ?string $bgColor = null): string {
 		if (!$color && !$bgColor) {
 			return '';
 		}

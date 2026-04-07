@@ -52,7 +52,7 @@ class MeteoMonitoringPointQueries extends AbstractMonitoringPointQueries {
 	 * @return array
 	 * @throws QueryException
 	 */
-	public static function all(array $operatorIds = null, bool $activeOnly = false) {
+	public static function all(?array $operatorIds = null, bool $activeOnly = false) {
 		$query = new Select()
 			->select(static::$tableName . '.*')
 			->from(static::$tableName);
@@ -134,7 +134,7 @@ class MeteoMonitoringPointQueries extends AbstractMonitoringPointQueries {
 	 * @uses MeteoMonitoringPointQueries::prepareData
 	 * @uses BaseQueries::saveConnections
 	 */
-	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
+	public static function save(array $data, $id = null, string $primaryKey = 'id', ?array $record = null) {
 		$dataToSave = static::prepareData($data);
 
 		$changes = [];

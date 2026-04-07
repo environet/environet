@@ -21,7 +21,7 @@ class MessageCodes {
 	 *
 	 * @return string|null
 	 */
-	public static function getMessage(int $code, array $messageParams = null): ?string {
+	public static function getMessage(int $code, ?array $messageParams = null): ?string {
 		switch ($code) {
 			case self::UPLOAD_WARNING_POINT_NOT_FOUND:
 				$message = 'Monitoring point not found with the given identifier, nothing was uploaded';

@@ -63,7 +63,7 @@ abstract class AbstractInputXmlProcessor {
 	 * @return mixed
 	 * @throws UploadException
 	 */
-	abstract protected function findMonitoringPoint(string $identifier, Identity $identity = null, bool $activeOnly = false): ?array;
+	abstract protected function findMonitoringPoint(string $identifier, ?Identity $identity = null, bool $activeOnly = false): ?array;
 
 
 	/**

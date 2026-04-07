@@ -43,11 +43,11 @@ class Response {
 	/**
 	 * Response constructor.
 	 *
-	 * @param int $statusCode HTTP status code
-	 * @param string $body    Raw body
-	 * @param array $headers  Array of HTTP headers
+	 * @param int|null $statusCode HTTP status code
+	 * @param string|null $body    Raw body
+	 * @param array|null $headers  Array of HTTP headers
 	 */
-	public function __construct(int $statusCode = null, string $body = null, array $headers = null) {
+	public function __construct(?int $statusCode = null, ?string $body = null, ?array $headers = null) {
 		if (!is_null($statusCode)) {
 			$this->statusCode = $statusCode;
 		}

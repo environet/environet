@@ -164,13 +164,13 @@ function userGroupConnectionType(string $type) {
 /**
  * Create select options based on an array, and the selected value
  *
- * @param array        $options     Array of options (key => value)
- * @param string|array $selected    Selected value(s)
- * @param string|null  $emptyOption Label for empty option
+ * @param array        $options    Array of options (key => value)
+ * @param string|array $selected   Selected value(s)
+ * @param string|null $emptyOption Label for empty option
  *
  * @return string
  */
-function selectOptions(array $options, $selected = null, string $emptyOption = null) {
+function selectOptions(array $options, $selected = null, ?string $emptyOption = null) {
 	//Selected must be an array
 	if (is_null($selected)) {
 		$selected = [];

@@ -17,10 +17,6 @@ use Environet\Sys\General\Identity;
  */
 abstract class BaseAccessSelector extends Selector {
 
-	/**
-	 * @var int
-	 */
-	protected $type;
 
 	/**
 	 * @var Identity|null
@@ -48,8 +44,7 @@ abstract class BaseAccessSelector extends Selector {
 	 *
 	 * @throws QueryException
 	 */
-	public function __construct(string $values, $type, int $operatorId, ?array $countries = null) {
-		$this->type = $type;
+	public function __construct(string $values, protected $type, int $operatorId, ?array $countries = null) {
 		$this->operatorIdentity = $operatorId ? $this->getOperatorIdentity($operatorId) : null;
 		$this->operatorId = $operatorId;
 		$this->countries = $countries;

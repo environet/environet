@@ -84,7 +84,7 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 	/**
 	 * @inheritDoc
 	 */
-	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
+	public static function save(array $data, $id = null, string $primaryKey = 'id', ?array $record = null) {
 		$dataToSave = static::prepareData($data);
 
 		$changes = [];

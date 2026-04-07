@@ -45,7 +45,7 @@ class OperatorQueries extends BaseQueries {
 	 * @throws QueryException
 	 * @uses Select::run
 	 */
-	public static function getDirectUsers(int $operatorId, array $fieldsOnly = null) {
+	public static function getDirectUsers(int $operatorId, ?array $fieldsOnly = null) {
 		$select = new Select()->from('users');
 
 		if ($fieldsOnly) {
@@ -167,7 +167,7 @@ class OperatorQueries extends BaseQueries {
 	 * @uses OperatorQueries::saveGroups
 	 * @uses OperatorQueries::saveUsers
 	 */
-	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
+	public static function save(array $data, $id = null, string $primaryKey = 'id', ?array $record = null) {
 		$operatorData = [
 			'name'       => $data['name'] ?? null,
 			'address'    => $data['address'] ?? null,

@@ -43,19 +43,19 @@ class BaseQueries {
 	 * Save values in a connection table.
 	 * It needs an array of ids, and some configuration attributes. Deletes old connection values, and re-creates every connection.
 	 *
-	 * @param array  $values           Array of ids
-	 * @param string $connectionTable  The connection table to fill with values
-	 * @param string $colLeft          Name of the column to where the ids from $values will be saved
-	 * @param string $colRight         Name of the column to where the $idRight saved
-	 * @param int    $idRight          A single id for the right side of the connection
-	 * @param bool   $truncate         If true, will delete existing connections first
-	 * @param array  $connectionValues Column name => value map of additional values to save to the connection table
+	 * @param array  $values               Array of ids
+	 * @param string $connectionTable      The connection table to fill with values
+	 * @param string $colLeft              Name of the column to where the ids from $values will be saved
+	 * @param string $colRight             Name of the column to where the $idRight saved
+	 * @param int    $idRight              A single id for the right side of the connection
+	 * @param bool   $truncate             If true, will delete existing connections first
+	 * @param array|null $connectionValues Column name => value map of additional values to save to the connection table
 	 *
 	 * @throws QueryException
 	 * @uses Delete::run
 	 * @uses Insert::run
 	 */
-	public static function saveConnections($values, string $connectionTable, string $colLeft, string $colRight, int $idRight, bool $truncate = false, array $connectionValues = null) {
+	public static function saveConnections($values, string $connectionTable, string $colLeft, string $colRight, int $idRight, bool $truncate = false, ?array $connectionValues = null) {
 		$ids = array_unique(array_filter($values ?? []));
 		if ($truncate) {
 			// Delete all connections
@@ -198,7 +198,7 @@ class BaseQueries {
 	 * @uses EventLogger::log
 	 * @see  Connection
 	 */
-	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
+	public static function save(array $data, $id = null, string $primaryKey = 'id', ?array $record = null) {
 		$connection = Connection::getInstance();
 		$connection->pdo->beginTransaction();
 

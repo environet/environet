@@ -322,13 +322,13 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	 * Parse one line of the CSV input string.
 	 *
 	 * @param                        $line
-	 * @param DateTimeInterface|null $time     A global time for the whole file
-	 * @param string|null            $mPointId A pre-defined, fixed mpoint id
+	 * @param DateTimeInterface|null $time A global time for the whole file
+	 * @param string|null $mPointId        A pre-defined, fixed mpoint id
 	 *
 	 * @return array
 	 * @throws Exception
 	 */
-	private function parseResultLine($line, ?DateTimeInterface $time = null, string $mPointId = null): array {
+	private function parseResultLine($line, ?DateTimeInterface $time = null, ?string $mPointId = null): array {
 		$values = array_map('trim', explode($this->csvDelimiter, $line));
 
 		if (!$time) {

@@ -14,18 +14,12 @@ use Environet\Sys\General\Model\Configuration\Type\Parameters\AbstractFormatPara
  */
 class ResolvedItem {
 
-	protected AbstractFormatParameter $parameter;
-
-	protected $value;
-
 
 	/**
 	 * @param AbstractFormatParameter $parameter
 	 * @param mixed                   $value
 	 */
-	public function __construct(AbstractFormatParameter $parameter, $value) {
-		$this->parameter = $parameter;
-		$this->value = $value;
+	public function __construct(protected AbstractFormatParameter $parameter, protected $value) {
 	}
 
 

@@ -36,7 +36,7 @@ class Response {
 	 *
 	 * @uses Response::setContent
 	 */
-	public function __construct(string $content = null) {
+	public function __construct(?string $content = null) {
 		if (!is_null($content)) {
 			$this->setContent($content);
 		}

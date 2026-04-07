@@ -320,7 +320,7 @@ class Select extends Query {
 	 *
 	 * @uses Select::orderBy
 	 */
-	public function sort(string $orderBy = null, string $orderDir = null) {
+	public function sort(?string $orderBy = null, ?string $orderDir = null) {
 		if (!is_null($orderBy) && !is_null($orderDir)) {
 			$this->orderBy($orderBy, $orderDir);
 		}

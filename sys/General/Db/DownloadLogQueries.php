@@ -28,7 +28,7 @@ class DownloadLogQueries extends BaseQueries {
 		$sanitizeDate = function ($data) {
 			if ($data) {
 				try {
-					$date = createValidDate(filter_var($data, FILTER_SANITIZE_STRING));
+					$date = createValidDate(htmlspecialchars($data));
 
 					return $date->format('Y-m-d H:i:s');
 				} catch (Exception $e) {

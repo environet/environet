@@ -28,13 +28,13 @@ class InputXmlData {
 	/**
 	 * InputXmlData constructor.
 	 *
-	 * @param string     $pointId
+	 * @param string|null $pointId
 	 * @param array|null $properties
 	 *
 	 * @uses InputXmlData::setPointId
 	 * @uses InputXmlData::addProperty
 	 */
-	public function __construct(string $pointId = null, array $properties = null) {
+	public function __construct(?string $pointId = null, ?array $properties = null) {
 		if (!is_null($pointId)) {
 			$this->setPointId($pointId);
 		}
