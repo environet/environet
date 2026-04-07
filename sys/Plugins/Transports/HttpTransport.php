@@ -23,6 +23,7 @@ use ZipArchive;
  */
 class HttpTransport extends AbstractTransport {
 
+
 	use WithConversionsConfigTrait;
 
 	const TYPE_MANUAL = 1;
@@ -160,13 +161,17 @@ class HttpTransport extends AbstractTransport {
 			$httpClient = new HttpClient();
 			$response = $httpClient->sendRequest(new Request($this->url), [
 				'follow_redirects' => true,
-				'max_redirects' => 5
+				'max_redirects'    => 5
 			]);
 			$indexPageContents = $response->getBody();
 
 			// Check if redirects occurred
 			if ($response->hasRedirects()) {
-				$console->writeLine('WARNING: ' . $response->getRedirectCount() . ' redirect(s) occurred while fetching data', Console::COLOR_YELLOW);
+				$console->writeLine(sprintf(
+					"WARNING: %s redirect(s) occurred during the request. Final url: %s",
+					$response->getRedirectCount(),
+					$response->getEffectiveUrl() ?? ''
+				), Console::COLOR_YELLOW);
 			}
 
 			$hasMatches = preg_match_all($this->indexRegexPattern, $indexPageContents, $matches);
@@ -189,14 +194,18 @@ class HttpTransport extends AbstractTransport {
 				$resource->setName(basename($resource->getUrl())); //Filename
 				$response = (new HttpClient())->sendRequest(new Request($resource->getUrl()), [
 					'follow_redirects' => true,
-					'max_redirects' => 5
+					'max_redirects'    => 5
 				]);
 				$resource->setContents($response->getBody());
 				$console->writeLine('File downloaded from url: ' . $resource->getUrl() . ' (' . strlen($resource->getContents()) . ' bytes)');
 
 				// Check if redirects occurred
 				if ($response->hasRedirects()) {
-					$console->writeLine('WARNING: ' . $response->getRedirectCount() . ' redirect(s) occurred during the request', Console::COLOR_YELLOW);
+					$console->writeLine(sprintf(
+						"WARNING: %s redirect(s) occurred during the request. Final url: %s",
+						$response->getRedirectCount(),
+						$response->getEffectiveUrl() ?? ''
+					), Console::COLOR_YELLOW);
 				}
 			}
 		}
@@ -224,7 +233,7 @@ class HttpTransport extends AbstractTransport {
 	/**
 	 * Get a zip file, and find files based on sub-file pattern in zip file's contents
 	 *
-	 * @param Console  $console
+	 * @param Console $console
 	 * @param Resource $resource
 	 *
 	 * @return void
@@ -249,7 +258,7 @@ class HttpTransport extends AbstractTransport {
 		$zip = new ZipArchive;
 		$zip->open($temp);
 		//Iterate over files in zip, and find the matching one.
-		for ($i = 0; $i < $zip->numFiles; ++ $i) {
+		for ($i = 0; $i < $zip->numFiles; ++$i) {
 			$name = $zip->getNameIndex($i);
 			if (fnmatch($subFile, $name)) {
 				$resource->setContents($zip->getFromName($name));
@@ -386,10 +395,10 @@ class HttpTransport extends AbstractTransport {
 	 * Return list of variables from definitions for a certain monitoring point and a certain observed property
 	 *
 	 * @param string $ncd
-	 * @param string $observedProperty            internal name of observed property for which variable preparation should be done
+	 * @param string $observedProperty internal name of observed property for which variable preparation should be done
 	 *
-	 * @param array  $monitoringPointConversions
-	 * @param array  $observedPropertyConversions
+	 * @param array $monitoringPointConversions
+	 * @param array $observedPropertyConversions
 	 *
 	 * @return array|null Null if variable preparation is not possible, otherwise an array of variables
 	 */

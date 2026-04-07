@@ -74,6 +74,9 @@ class HttpClient {
 			$response->setRedirectCount($redirectCount);
 		}
 
+		$effectiveUrl = curl_getinfo($curl, CURLINFO_EFFECTIVE_URL);
+		$response->setEffectiveUrl($effectiveUrl);
+
 		// Destroy resource
 		curl_close($curl);
 

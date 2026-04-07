@@ -13,6 +13,7 @@ namespace Environet\Sys\General\HttpClient;
  */
 class Response {
 
+
 	/**
 	 * @var int HTTP Status code
 	 */
@@ -33,13 +34,18 @@ class Response {
 	 */
 	private $redirectCount = 0;
 
+	/**
+	 * @var string The effective URL after all redirects.
+	 */
+	private $effectiveUrl = null;
+
 
 	/**
 	 * Response constructor.
 	 *
-	 * @param int    $statusCode HTTP status code
-	 * @param string $body       Raw body
-	 * @param array  $headers    Array of HTTP headers
+	 * @param int $statusCode HTTP status code
+	 * @param string $body    Raw body
+	 * @param array $headers  Array of HTTP headers
 	 */
 	public function __construct(int $statusCode = null, string $body = null, array $headers = null) {
 		if (!is_null($statusCode)) {
@@ -204,6 +210,25 @@ class Response {
 	 */
 	public function hasRedirects(): bool {
 		return $this->redirectCount > 0;
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getEffectiveUrl(): ?string {
+		return $this->effectiveUrl;
+	}
+
+
+	/**
+	 * @param string|null $effectiveUrl
+	 * @return Response
+	 */
+	public function setEffectiveUrl(?string $effectiveUrl): Response {
+		$this->effectiveUrl = $effectiveUrl;
+
+		return $this;
 	}
 
 
