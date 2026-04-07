@@ -58,11 +58,6 @@ class WarningLevelGroupCrud extends CrudPage {
 	protected $successEditMessage = 'Threshold level group successfully saved';
 
 
-	/**
-	 * @param bool $plural
-	 *
-	 * @return string
-	 */
 	protected function getEntityName(bool $plural = false): string {
 		return $plural ? 'threshold level groups' : 'threshold level group';
 	}

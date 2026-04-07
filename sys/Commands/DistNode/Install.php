@@ -27,7 +27,6 @@ class Install extends BaseCommand {
 	 * @param array $arguments
 	 * @param array $options
 	 *
-	 * @return int
 	 */
 	public function run($arguments, $options): int {
 

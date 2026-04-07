@@ -20,33 +20,20 @@ use Environet\Sys\General\Response;
 abstract class MonitoringPointResultsCrud extends CrudPage {
 
 
-	/**
-	 * @return Select
-	 */
 	abstract protected function getBaseQuery(): Select;
 
 
-	/**
-	 * @return string
-	 */
 	abstract protected function getTemplate(): string;
 
 
-	/**
-	 * @return array
-	 */
 	abstract protected function getCountries(): array;
 
 
-	/**
-	 * @return array
-	 */
 	abstract protected function getObservedProperties(): array;
 
 
 	/**
 	 * Add addition custom fields for search
-	 * @return array
 	 */
 	abstract protected function getSearchFields(): array;
 
@@ -54,7 +41,6 @@ abstract class MonitoringPointResultsCrud extends CrudPage {
 	/**
 	 * List page action for hydropoint and meteopoint measurement results.
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 */
 	public function list(): Response {
@@ -138,7 +124,6 @@ abstract class MonitoringPointResultsCrud extends CrudPage {
 
 	/**
 	 * @return array[]|null
-	 * @throws QueryException
 	 */
 	protected function getListFilters(): ?array {
 		$countries = $this->getCountries();

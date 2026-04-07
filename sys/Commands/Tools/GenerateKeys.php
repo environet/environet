@@ -33,7 +33,6 @@ class GenerateKeys extends BaseCommand {
 	 * @param array $arguments
 	 * @param array $options
 	 *
-	 * @return int
 	 */
 	public function run($arguments, $options): int {
 		$keyDefaultLocation = SRC_PATH . '/conf/plugins/credentials/';

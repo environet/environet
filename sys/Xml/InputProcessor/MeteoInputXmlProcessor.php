@@ -145,9 +145,6 @@ class MeteoInputXmlProcessor extends AbstractInputXmlProcessor {
 	}
 
 
-	/**
-	 * @return Query
-	 */
 	protected function createResultStatisticsSelect(): Query {
 		return new Select()->select('*')
 			->from('meteo_result')
@@ -158,9 +155,6 @@ class MeteoInputXmlProcessor extends AbstractInputXmlProcessor {
 	}
 
 
-	/**
-	 * @return string
-	 */
 	protected function getPointQueriesClass(): string {
 		return MeteoMonitoringPointQueries::class;
 	}

@@ -38,8 +38,6 @@ abstract class Selector {
 	/**
 	 * Selector constructor.
 	 *
-	 * @param string $values
-	 * @param string $valueType
 	 *
 	 * @uses Selector::unserialize
 	 */
@@ -52,9 +50,7 @@ abstract class Selector {
 	/**
 	 * Find the user, and create a new Identity based on the operator id
 	 *
-	 * @param $operatorId
 	 *
-	 * @return Identity
 	 * @throws QueryException
 	 * @uses Select::run
 	 * @see  Identity|null
@@ -85,7 +81,6 @@ abstract class Selector {
 	/**
 	 * Unserialize the selector data from a comma separated string.
 	 *
-	 * @param $serialized
 	 */
 	public function unserialize($serialized) {
 		if (is_string($serialized)) {
@@ -105,7 +100,6 @@ abstract class Selector {
 	/**
 	 * Get selector values.
 	 *
-	 * @return array
 	 */
 	public function getValues(): array {
 		return $this->values;
@@ -116,9 +110,7 @@ abstract class Selector {
 	 * Add one value to the selector.
 	 * The value is filtered for uniqueness, it's not possible to add a value more than one time.
 	 *
-	 * @param $value
 	 *
-	 * @return Selector
 	 */
 	public function addValue($value): Selector {
 		$this->values[] = match ($this->valueType) {
@@ -137,9 +129,7 @@ abstract class Selector {
 	 * Remove a value from the selector.
 	 * If the value isn't included, doesn't do anything.
 	 *
-	 * @param $value
 	 *
-	 * @return Selector
 	 */
 	public function removeValue($value): Selector {
 		if (($key = array_search($value, $this->values)) !== false) {
@@ -153,9 +143,7 @@ abstract class Selector {
 	/**
 	 * Overwrite all selector values with a new set.
 	 *
-	 * @param array $values
 	 *
-	 * @return Selector
 	 */
 	public function setValues(array $values): Selector {
 		$this->values = $values;

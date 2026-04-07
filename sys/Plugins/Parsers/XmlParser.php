@@ -64,7 +64,6 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * XMLParser constructor.
 	 *
-	 * @param array $config
 	 *
 	 * @throws Exception
 	 */
@@ -89,7 +88,6 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 * @param string|null $parentPath         Parent common path in case of nested groups
 	 * @param array|null $parametersOnly      If set, only parameters in this array will be parsed - used for recursive calls
 	 *
-	 * @return void
 	 * @throws Exception
 	 */
 	private function parseIntoHierarchy(
@@ -239,7 +237,6 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Convert value parameters in group: Remove thousands separator, change decimal separator to ".", convert value to float and convert to unit if needed by valueConversion parameter.
 	 *
-	 * @param ResolvedGroup $resolvedGroup
 	 *
 	 * @return bool returns true, if value is valid. Value may be empty string if not available. In this case value is invalid.
 	 */
@@ -274,7 +271,6 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 * Assembles date from components like day, month, year, hour and minute. If these components are present in resolved group, they are joined to a "DateTime" item and deleted from $entry.
 	 * The "DateTime" item has time format as given by API_TIME_FORMAT_STRING
 	 *
-	 * @param ResolvedGroup $resolvedGroup
 	 *
 	 * @throws Exception
 	 */

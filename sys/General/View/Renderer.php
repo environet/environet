@@ -39,8 +39,6 @@ class Renderer {
 	 *
 	 * Set template, variables, and add global variables
 	 *
-	 * @param string|null $template
-	 * @param array|null $vars
 	 *
 	 * @throws RenderException
 	 * @uses Renderer::setTemplate
@@ -66,7 +64,6 @@ class Renderer {
 	/**
 	 * Add a template root path as a static property
 	 *
-	 * @param string $rootPath
 	 */
 	public static function addRootPath(string $rootPath) {
 		self::$rootPaths[] = $rootPath;
@@ -77,7 +74,6 @@ class Renderer {
 	/**
 	 * Get template path
 	 *
-	 * @return string
 	 */
 	public function getTemplate(): string {
 		return $this->template;
@@ -91,7 +87,6 @@ class Renderer {
 	 *
 	 * @param string $template Absolute or root-relative path
 	 *
-	 * @return Renderer
 	 * @throws RenderException
 	 */
 	public function setTemplate(string $template): Renderer {
@@ -127,7 +122,6 @@ class Renderer {
 	/**
 	 * Get template variables
 	 *
-	 * @return array
 	 */
 	public function getVars(): array {
 		return $this->vars;
@@ -137,9 +131,7 @@ class Renderer {
 	/**
 	 * Set array of template variables (variablename => value)
 	 *
-	 * @param array $vars
 	 *
-	 * @return Renderer
 	 */
 	public function setVars(array $vars): Renderer {
 		$this->vars = $vars;
@@ -151,10 +143,8 @@ class Renderer {
 	/**
 	 * Add a template variable by key and value
 	 *
-	 * @param string $key
 	 * @param mixed  $value
 	 *
-	 * @return Renderer
 	 */
 	public function addVar(string $key, $value): Renderer {
 		$this->vars[$key] = $value;
@@ -167,7 +157,6 @@ class Renderer {
 	 * Render a template, and return the rendered contents.
 	 * It throws and exception if the template is not found.
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 */
 	public function render(): Response {
@@ -190,7 +179,6 @@ class Renderer {
 	/**
 	 * With Invoke the render method is called
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 * @uses Renderer::render
 	 */

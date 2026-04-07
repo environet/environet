@@ -54,9 +54,6 @@ class Console {
 	}
 
 
-	/**
-	 * @return Console
-	 */
 	public static function getInstance(): Console {
 		return self::$instance;
 	}
@@ -65,12 +62,6 @@ class Console {
 	/**
 	 * Write to output without a line break
 	 *
-	 * @param string      $string
-	 * @param string|null $color
-	 * @param string|null $bgColor
-	 * @param bool        $outError
-	 * @param bool        $outBoth
-	 * @param bool        $datePrefix
 	 */
 	public function write(
 		string $string,
@@ -112,12 +103,6 @@ class Console {
 	/**
 	 * Write to output with a line break
 	 *
-	 * @param string      $string
-	 * @param string|null $color
-	 * @param string|null $bgColor
-	 * @param bool        $outError
-	 * @param bool        $outBoth
-	 * @param bool|null   $datePrefix
 	 */
 	public function writeLine(
 		string $string,
@@ -135,11 +120,6 @@ class Console {
 	/**
 	 * Write with date prefix
 	 *
-	 * @param string      $string
-	 * @param string|null $color
-	 * @param string|null $bgColor
-	 * @param bool        $outError
-	 * @param bool        $outBoth
 	 */
 	public function writeLineDp(string $string, ?string $color = null, ?string $bgColor = null, bool $outError = false, bool $outBoth = false) {
 		$this->write($string, $color, $bgColor, $outError, $outBoth, true);
@@ -150,7 +130,6 @@ class Console {
 	/**
 	 * Ask for an answer.
 	 *
-	 * @param string $string
 	 *
 	 * @return mixed
 	 */
@@ -168,10 +147,7 @@ class Console {
 	/**
 	 * Ask for an answer, with default value.
 	 *
-	 * @param string $string
-	 * @param mixed  $defaultValue
-	 * @param int    $length
-	 *
+	 * @param mixed $defaultValue
 	 * @return mixed
 	 */
 	public function askWithDefault(string $string, $defaultValue) {
@@ -193,9 +169,6 @@ class Console {
 	/**
 	 * Ask for an answer, and hide answer (for password prompts)
 	 *
-	 * @param string $string
-	 * @param int    $length
-	 *
 	 * @return mixed
 	 */
 	public function askHidden(string $string) {
@@ -215,9 +188,7 @@ class Console {
 	/**
 	 * Ask for a numeric option and get an answer
 	 *
-	 * @param string $string
 	 *
-	 * @return int
 	 */
 	public function askOption(string $string = "Your choice:"): int {
 		while (true) {
@@ -236,10 +207,7 @@ class Console {
 	/**
 	 * Ask for a numeric option with options array and get an answer
 	 *
-	 * @param string $question
-	 * @param array  $options
 	 *
-	 * @return int
 	 */
 	public function askOptions(string $question, array $options): int {
 		$this->writeLine($question);
@@ -266,10 +234,7 @@ class Console {
 	/**
 	 * Ask a yes-no question with default answer
 	 *
-	 * @param string $string
-	 * @param bool   $default
 	 *
-	 * @return bool
 	 */
 	public function askYesNo(string $string, bool $default = true): bool {
 		$answer = $this->ask($string . ' ' . ($default ? '(Y/n)' : '(y/N)'));
@@ -308,10 +273,7 @@ class Console {
 	/**
 	 * Get a color (and/or background color) format to display in the console.
 	 *
-	 * @param string|null $color
-	 * @param string|null $bgColor
 	 *
-	 * @return string
 	 */
 	protected function buildColorPrefix(?string $color = null, ?string $bgColor = null): string {
 		if (!$color && !$bgColor) {

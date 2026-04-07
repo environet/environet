@@ -73,19 +73,12 @@ abstract class CrudPage extends BasePage {
 	protected $listPagePath;
 
 
-	/**
-	 * @param bool $plural
-	 *
-	 * @return string|null
-	 */
 	abstract protected function getEntityName(bool $plural = false): string;
 
 
 	/**
 	 * Build the title of the page
 	 *
-	 * @param string     $pageType
-	 * @param array|null $record
 	 *
 	 * @return string
 	 */
@@ -120,7 +113,6 @@ abstract class CrudPage extends BasePage {
 	/**
 	 * Common function to render the list page.
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 */
 	protected function renderListPage(): Response {
@@ -180,7 +172,6 @@ abstract class CrudPage extends BasePage {
 	/**
 	 * List page action.
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 */
 	public function list(): Response {
@@ -191,7 +182,6 @@ abstract class CrudPage extends BasePage {
 	/**
 	 * Common function to render the show page.
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 * @throws HttpNotFoundException
 	 * @throws PermissionException
@@ -217,7 +207,6 @@ abstract class CrudPage extends BasePage {
 	 * @param null $id
 	 * @param null $record
 	 *
-	 * @return Response
 	 * @throws HttpBadRequestException
 	 * @throws QueryException
 	 * @throws RenderException
@@ -257,7 +246,6 @@ abstract class CrudPage extends BasePage {
 	/**
 	 * Common function to handle add method.
 	 *
-	 * @return Response
 	 * @throws HttpBadRequestException
 	 * @throws QueryException
 	 * @throws RenderException
@@ -276,7 +264,6 @@ abstract class CrudPage extends BasePage {
 	/**
 	 * Common function to handle edit method.
 	 *
-	 * @return Response
 	 * @throws HttpBadRequestException
 	 * @throws HttpNotFoundException
 	 * @throws InvalidConfigurationException
@@ -304,7 +291,6 @@ abstract class CrudPage extends BasePage {
 	/**
 	 * Common function to handle show method.
 	 *
-	 * @return Response
 	 * @throws HttpNotFoundException
 	 * @throws RenderException
 	 * @throws PermissionException
@@ -315,7 +301,6 @@ abstract class CrudPage extends BasePage {
 
 
 	/**
-	 * @return string
 	 * @throws HttpNotFoundException
 	 */
 	protected function getIdParam(): string {
@@ -330,7 +315,6 @@ abstract class CrudPage extends BasePage {
 
 
 	/**
-	 * @param $id
 	 *
 	 * @return array|null
 	 * @throws HttpNotFoundException
@@ -368,9 +352,7 @@ abstract class CrudPage extends BasePage {
 	/**
 	 * If we have to render a form page, we can add more variables to the template with FormContext.
 	 *
-	 * @param array|null $record
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 */
 	protected function renderForm(?array $record = null): Response {
@@ -443,7 +425,6 @@ abstract class CrudPage extends BasePage {
 	/**
 	 * Override to add context variables to be used in the form template
 	 *
-	 * @return array
 	 */
 	protected function formContext(): array {
 		return [];
@@ -454,7 +435,6 @@ abstract class CrudPage extends BasePage {
 	 * Validate the form's data, return a boolean response
 	 *
 	 * @param array      $data Form's data
-	 * @param array|null $editedRecord
 	 *
 	 * @return bool Valid state
 	 */
@@ -488,7 +468,6 @@ abstract class CrudPage extends BasePage {
 
 
 	/**
-	 * @param array $records
 	 *
 	 * @return void
 	 */
@@ -497,7 +476,6 @@ abstract class CrudPage extends BasePage {
 
 
 	/**
-	 * @param Select $query
 	 *
 	 * @return bool
 	 */
@@ -508,7 +486,6 @@ abstract class CrudPage extends BasePage {
 
 	/**
 	 * Get array of filter configirations for list page
-	 * @return array|null
 	 */
 	protected function getListFilters(): ?array {
 		return null;

@@ -207,7 +207,6 @@ class SftpTransport extends AbstractTransport {
 	/**
 	 * FtpDirectoryTransport constructor.
 	 *
-	 * @param array $config
 	 */
 	public function __construct(array $config) {
 		$this->host = $config['host'];

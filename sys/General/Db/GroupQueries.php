@@ -36,10 +36,7 @@ class GroupQueries extends BaseQueries {
 	 * Save group's data.
 	 * If the id exists, update the record, otherwise insert new record.
 	 *
-	 * @param array      $data
 	 * @param mixed      $id
-	 * @param string     $primaryKey
-	 * @param array|null $record
 	 *
 	 * @return array
 	 * @throws QueryException
@@ -87,8 +84,6 @@ class GroupQueries extends BaseQueries {
 	/**
 	 * Save permissions to specified user.
 	 *
-	 * @param $values
-	 * @param $idRight
 	 *
 	 * @throws QueryException
 	 * @uses BaseQueries::saveConnections

@@ -18,7 +18,6 @@ interface ParserInterface {
 
 
 	/**
-	 * @param Resource $resource
 	 * @return SimpleXMLElement[]
 	 */
 	public function parse(Resource $resource): array;

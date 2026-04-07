@@ -60,7 +60,6 @@ class ApiException extends Exception {
 	 *
 	 * @param int        $code          The error code
 	 * @param array      $errorMessages Optional additional error messages
-	 * @param array|null $identityData
 	 */
 	public function __construct(int $code = 101, array $errorMessages = [], ?array $identityData = null) {
 		// Add the default error message of code first
@@ -94,9 +93,6 @@ class ApiException extends Exception {
 	}
 
 
-	/**
-	 * @return array
-	 */
 	public function getErrorMessages(): array {
 		return $this->errorMessages;
 	}
@@ -104,7 +100,6 @@ class ApiException extends Exception {
 
 	/**
 	 * Shortcut function for server errors
-	 * @return self
 	 */
 	public static function serverError(): self {
 		return new static(102);
@@ -113,7 +108,6 @@ class ApiException extends Exception {
 
 	/**
 	 * Shortcut function for unknown errors
-	 * @return self
 	 */
 	public static function unknownError(): self {
 		return new static(101);

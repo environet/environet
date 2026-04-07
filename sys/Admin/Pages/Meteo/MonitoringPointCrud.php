@@ -79,7 +79,6 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	/**
 	 * @inheritDoc
 	 *
-	 * @return array
 	 * @throws QueryException
 	 */
 	protected function formContext(): array {
@@ -129,9 +128,6 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	}
 
 
-	/**
-	 * @return array
-	 */
 	public function getCsvColumns(): array {
 		$columns = parent::getCsvColumns();
 
@@ -148,9 +144,6 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	}
 
 
-	/**
-	 * @return array
-	 */
 	protected function getCsvEnums(): array {
 		return [
 			['title' => 'Station classifications', 'options' => MeteoStationClassificationQueries::getOptionList('value')],

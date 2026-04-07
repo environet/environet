@@ -52,7 +52,6 @@ trait JoinTrait {
 
 	/**
 	 * Clear join parts
-	 * @return self
 	 */
 	public function clearJoins(): self {
 		$this->joins = [];

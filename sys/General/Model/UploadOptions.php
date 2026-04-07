@@ -55,19 +55,11 @@ class UploadOptions {
 	}
 
 
-	/**
-	 * @return bool
-	 */
 	public function isIgnoreUndefinedPoints(): bool {
 		return $this->ignoreUndefinedPoints;
 	}
 
 
-	/**
-	 * @param bool $ignoreUndefinedPoints
-	 *
-	 * @return UploadOptions
-	 */
 	public function setIgnoreUndefinedPoints(bool $ignoreUndefinedPoints): UploadOptions {
 		$this->ignoreUndefinedPoints = $ignoreUndefinedPoints;
 

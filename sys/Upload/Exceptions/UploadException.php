@@ -21,9 +21,6 @@ class UploadException extends ApiException {
 	 *
 	 * Merges error codes and messages unique for this exception with {@see ApiException::$errors}.
 	 *
-	 * @param int        $code
-	 * @param array      $errorMessages
-	 * @param array|null $identityData
 	 */
 	public function __construct(int $code = 101, array $errorMessages = [], ?array $identityData = null) {
 		$this->errors += [
@@ -48,10 +45,7 @@ class UploadException extends ApiException {
 	/**
 	 * Shortcut function for schema errors. Validation messages added as custom error messages
 	 *
-	 * @param array      $errors
-	 * @param array|null $identityData
 	 *
-	 * @return self
 	 */
 	public static function schemaErrors(array $errors, ?array $identityData = null): self {
 		return new static(303, $errors, $identityData);

@@ -39,7 +39,6 @@ class Insert extends Query {
 	/**
 	 * Set columns array. It overwrites all previous value.
 	 *
-	 * @param array $columns
 	 *
 	 * @return $this
 	 */
@@ -55,9 +54,7 @@ class Insert extends Query {
 	 *
 	 * It resets the {@see Insert::$values} property.
 	 *
-	 * @param array $valueRows
 	 *
-	 * @return Insert
 	 * @throws QueryException
 	 * @uses Insert::addValueRow
 	 */
@@ -77,9 +74,7 @@ class Insert extends Query {
 	 * It represents a row in the database. The count and the order must be the same as in the columns property.
 	 * Values in the array must be PDO-parameters.
 	 *
-	 * @param array $valueRow
 	 *
-	 * @return Insert
 	 * @throws QueryException
 	 * @uses \checkDbInputValues()
 	 */
@@ -96,7 +91,6 @@ class Insert extends Query {
 	 *
 	 * Values in the array must be PDO-parameters
 	 *
-	 * @param array $data
 	 *
 	 * @return $this
 	 * @throws QueryException
@@ -125,9 +119,7 @@ class Insert extends Query {
 	/**
 	 * Add on conflict statement
 	 *
-	 * @param array $fields
 	 *
-	 * @return Insert
 	 */
 	public function ignoreConflict(array $fields): self {
 		$this->ignoreConflictFields = $fields;
@@ -139,7 +131,6 @@ class Insert extends Query {
 	 * Validates the query properties.
 	 * It's invalid if no columns and values has been set, or if there are any count-mismatch
 	 *
-	 * @return bool
 	 * @see Query::validateQuery()
 	 */
 	protected function validateQuery(): bool {

@@ -57,11 +57,6 @@ class OperatorCrud extends CrudPage {
 	protected $successEditMessage = 'Operator successfully saved';
 
 
-	/**
-	 * @param bool $plural
-	 *
-	 * @return string
-	 */
 	protected function getEntityName(bool $plural = false): string {
 		return $plural ? 'operators' : 'operator';
 	}
@@ -70,7 +65,6 @@ class OperatorCrud extends CrudPage {
 	/**
 	 * List page action for operators.
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 */
 	public function list(): Response {
@@ -150,7 +144,6 @@ class OperatorCrud extends CrudPage {
 	 * Check if the currenty authenticated user belongs to an operator
 	 *
 	 * @param int $id Operator point id
-	 * @return bool
 	 * @throws QueryException
 	 */
 	private function userIsOperator(int $id): bool {

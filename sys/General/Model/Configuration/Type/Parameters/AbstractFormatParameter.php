@@ -27,7 +27,6 @@ abstract class AbstractFormatParameter {
 
 
 	/**
-	 * @param array $config
 	 *
 	 * @return static
 	 * @throws Exception
@@ -48,7 +47,6 @@ abstract class AbstractFormatParameter {
 
 
 	/**
-	 * @param array $config
 	 *
 	 * @return $this
 	 */
@@ -69,33 +67,21 @@ abstract class AbstractFormatParameter {
 	}
 
 
-	/**
-	 * @return string|null
-	 */
 	public function getAttribute(): ?string {
 		return $this->attribute;
 	}
 
 
-	/**
-	 * @return array
-	 */
 	public function getTagHierarchy(): array {
 		return $this->tagHierarchy;
 	}
 
 
-	/**
-	 * @return bool
-	 */
 	public function isOptional(): bool {
 		return $this->optional;
 	}
 
 
-	/**
-	 * @return string|null
-	 */
 	public function getLastTag(): ?string {
 		return $this->tagHierarchy[array_key_last($this->tagHierarchy)] ?? null;
 	}
@@ -104,10 +90,7 @@ abstract class AbstractFormatParameter {
 	/**
 	 * Get the XPath of the parameter, optionally under a given path.
 	 *
-	 * @param string   $underPath
-	 * @param int|null $i
 	 *
-	 * @return string
 	 */
 	public function getXPath(string $underPath = '', ?int $i = null): string {
 		$underPath = explode('/', trim($underPath, '/'));
@@ -126,10 +109,7 @@ abstract class AbstractFormatParameter {
 	/**
 	 * Get the value of the parameter from the given XML element. If the parameter is an attribute, the attribute value is returned, otherwise the element's value.
 	 *
-	 * @param SimpleXMLElement $element
-	 * @param bool             $skipEmptyValueTag
 	 *
-	 * @return string
 	 */
 	public function getXmlValue(SimpleXMLElement $element, bool $skipEmptyValueTag = false): string {
 		if ($this->getAttribute()) {
@@ -143,7 +123,6 @@ abstract class AbstractFormatParameter {
 	/**
 	 * Check if the parameter is iterable, and set the iteration boundaries if it is.
 	 * Iterable if the tag hierarchy ends with [i:start-end]
-	 * @return bool
 	 */
 	public function isIterable(): bool {
 		if ($this->iterationStart !== null && $this->iterationEnd !== null) {
@@ -163,7 +142,6 @@ abstract class AbstractFormatParameter {
 
 	/**
 	 * Return the iteration boundaries if the parameter is iterable.
-	 * @return array{int, int}
 	 */
 	public function getIterationBoundaries(): ?array {
 		return $this->isIterable() ? [$this->iterationStart, $this->iterationEnd] : null;

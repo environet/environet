@@ -25,7 +25,6 @@ abstract class DbCommand extends BaseCommand {
 	 * @param string $file   SQL file
 	 * @param array  $output Collect the output in this array
 	 *
-	 * @return int
 	 */
 	protected function runSqlFile(string $file, array &$output): int {
 		// Get database parameters

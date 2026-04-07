@@ -16,10 +16,7 @@ class MessageCodes {
 	/**
 	 * Get a human readable message for a given code. Optionally replace placeholders in the message with the given parameters.
 	 *
-	 * @param int        $code
-	 * @param array|null $messageParams
 	 *
-	 * @return string|null
 	 */
 	public static function getMessage(int $code, ?array $messageParams = null): ?string {
 		switch ($code) {

@@ -40,10 +40,7 @@ class UserQueries extends BaseQueries {
 	 * If id exists, update the record, otherwise insert new record.
 	 * Also saves the user's permissions and groups.
 	 *
-	 * @param array      $data
 	 * @param mixed      $id
-	 * @param string     $primaryKey
-	 * @param array|null $record
 	 *
 	 * @throws QueryException
 	 * @uses Insert::run
@@ -185,9 +182,7 @@ class UserQueries extends BaseQueries {
 	/**
 	 * Get user permissions (both individually set and group inherited ones)
 	 *
-	 * @param int $userId
 	 *
-	 * @return array
 	 * @throws QueryException
 	 * @uses Select::run
 	 */
@@ -246,7 +241,6 @@ class UserQueries extends BaseQueries {
 	 *
 	 * @param int $userId Id of user
 	 *
-	 * @return bool
 	 * @throws QueryException
 	 * @uses Select::run
 	 */
@@ -256,7 +250,6 @@ class UserQueries extends BaseQueries {
 
 
 	/**
-	 * @param int $userId
 	 *
 	 * @return array
 	 * @throws QueryException
@@ -269,7 +262,6 @@ class UserQueries extends BaseQueries {
 
 
 	/**
-	 * @param int $userId
 	 *
 	 * @return array
 	 * @throws QueryException
@@ -286,7 +278,6 @@ class UserQueries extends BaseQueries {
 	 *
 	 * @param int $userId Id of user
 	 *
-	 * @return array
 	 * @throws QueryException
 	 * @uses Select::run
 	 */
@@ -303,8 +294,6 @@ class UserQueries extends BaseQueries {
 	/**
 	 * Save permissions to specified user.
 	 *
-	 * @param $values
-	 * @param $idRight
 	 *
 	 * @throws QueryException
 	 * @uses BaseQueries::saveConnections
@@ -317,8 +306,6 @@ class UserQueries extends BaseQueries {
 	/**
 	 * Save groups to specified user.
 	 *
-	 * @param $values
-	 * @param $idRight
 	 *
 	 * @throws QueryException
 	 * @uses BaseQueries::saveConnections
@@ -331,9 +318,6 @@ class UserQueries extends BaseQueries {
 	/**
 	 * Soft delete.
 	 *
-	 * @param int    $id
-	 * @param bool   $soft
-	 * @param string $primaryKey
 	 *
 	 * @throws QueryException
 	 * @throws MissingEventTypeException

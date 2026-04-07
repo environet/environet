@@ -122,7 +122,6 @@ class DownloadTest extends BasePage {
 	 * If it's a GET request, renders the download test page
 	 * If it's a POST request, it forwards the request parameters to the download API via {@see DownloadTest::sendData()}.
 	 *
-	 * @return Response|null
 	 * @throws HttpBadRequestException
 	 * @throws QueryException
 	 * @throws RenderException
@@ -259,7 +258,6 @@ class DownloadTest extends BasePage {
 	 *
 	 * @param string $username
 	 *
-	 * @return string
 	 * @throws InvalidArgumentException
 	 * @throws PKIException
 	 * @throws Exception

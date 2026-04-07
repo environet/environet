@@ -49,8 +49,6 @@ class Identity {
 	/**
 	 * Identity constructor.
 	 *
-	 * @param int   $id
-	 * @param array $data
 	 */
 	public function __construct(int $id, array $data) {
 		$this->id = $id;
@@ -81,9 +79,7 @@ class Identity {
 	/**
 	 * Create an identity from a user.
 	 *
-	 * @param int $userId
 	 *
-	 * @return Identity|null
 	 * @uses Select::run
 	 */
 	public static function createFromUser(int $userId): ?Identity {
@@ -109,7 +105,6 @@ class Identity {
 
 	/**
 	 * Get the identity's attached public key
-	 * @return string|null
 	 */
 	public function getPublicKey(): ?string {
 		return $this->publicKey;
@@ -119,9 +114,7 @@ class Identity {
 	/**
 	 * Set a public key string
 	 *
-	 * @param string $publicKey
 	 *
-	 * @return Identity
 	 */
 	public function setPublicKey(string $publicKey): Identity {
 		$this->publicKey = $publicKey;
@@ -133,7 +126,6 @@ class Identity {
 	/**
 	 * Gets and stores a given user's permissions (on the instance).
 	 *
-	 * @return array
 	 * @throws Exceptions\QueryException
 	 * @uses UserQueries::getUserPermissions
 	 */
@@ -147,7 +139,6 @@ class Identity {
 
 
 	/**
-	 * @return bool
 	 * @throws Exceptions\QueryException
 	 */
 	protected function isSuperAdmin(): bool {
@@ -158,9 +149,7 @@ class Identity {
 	/**
 	 * Checks the identity against a list of permissions
 	 *
-	 * @param array $permissions
 	 *
-	 * @return bool
 	 * @throws Exceptions\QueryException
 	 */
 	public function hasPermissions(array $permissions): bool {
@@ -173,9 +162,7 @@ class Identity {
 
 
 	/**
-	 * @param array $permissions
 	 *
-	 * @return bool
 	 * @throws Exceptions\QueryException
 	 */
 	public function hasPermissionsAnyOf(array $permissions): bool {

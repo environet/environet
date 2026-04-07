@@ -29,7 +29,6 @@ class MigrateConfig extends BaseCommand {
 	 * @param array $arguments
 	 * @param array $options
 	 *
-	 * @return int
 	 */
 	public function run($arguments, $options): int {
 		$selectedConfigFile = $arguments[3] ?? null;
@@ -73,10 +72,7 @@ class MigrateConfig extends BaseCommand {
 	/**
 	 * Remove urlPattern from config, and move it to ini config
 	 *
-	 * @param array $output
-	 * @param string|null $selectedConfigFile
 	 *
-	 * @return int
 	 */
 	private function removeUrlPattern(array &$output, ?string $selectedConfigFile = null): int {
 		$return = -1;
@@ -109,10 +105,7 @@ class MigrateConfig extends BaseCommand {
 	/**
 	 * Remove generalInformation from config
 	 *
-	 * @param array $output
-	 * @param string|null $selectedConfigFile
 	 *
-	 * @return int
 	 */
 	private function removeGeneralInformation(array &$output, ?string $selectedConfigFile = null): int {
 		$return = -1;
@@ -138,10 +131,7 @@ class MigrateConfig extends BaseCommand {
 	/**
 	 * Move monitoringPointType from conversions to ini
 	 *
-	 * @param array $output
-	 * @param string|null $selectedConfigFile
 	 *
-	 * @return int
 	 */
 	private function moveMonitoringPointType(array &$output, ?string $selectedConfigFile = null): int {
 		$return = -1;
@@ -173,10 +163,7 @@ class MigrateConfig extends BaseCommand {
 	/**
 	 * Move monitoringPointType from conversions to ini
 	 *
-	 * @param array $output
-	 * @param string|null $selectedConfigFile
 	 *
-	 * @return int
 	 */
 	private function changeMonitoringPointConversions(array &$output, ?string $selectedConfigFile = null): int {
 		$return = -1;
@@ -212,10 +199,7 @@ class MigrateConfig extends BaseCommand {
 	/**
 	 * Move monitoringPointType from conversions to ini
 	 *
-	 * @param array $output
-	 * @param string|null $selectedConfigFile
 	 *
-	 * @return int
 	 */
 	private function simplifyFormats(array &$output, ?string $selectedConfigFile = null): int {
 		$return = -1;
@@ -278,11 +262,6 @@ class MigrateConfig extends BaseCommand {
 	}
 
 
-	/**
-	 * @param string|null $selectedConfigFile
-	 *
-	 * @return array
-	 */
 	private function getConfigurations(?string $selectedConfigFile = null): array {
 		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(CONFIGURATION_PATH), RecursiveIteratorIterator::LEAVES_ONLY);
 		$configurations = [];
@@ -333,8 +312,6 @@ class MigrateConfig extends BaseCommand {
 
 
 	/**
-	 * @param array $iniContent
-	 * @param string $targetFile
 	 *
 	 * @return void
 	 */
@@ -360,8 +337,6 @@ class MigrateConfig extends BaseCommand {
 
 
 	/**
-	 * @param array $jsonContent
-	 * @param string $targetFile
 	 *
 	 * @return void
 	 */
@@ -374,8 +349,6 @@ class MigrateConfig extends BaseCommand {
 
 
 	/**
-	 * @param string $contents
-	 * @param string $targetFile
 	 *
 	 * @return void
 	 */

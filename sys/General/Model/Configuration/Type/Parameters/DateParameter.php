@@ -15,11 +15,6 @@ class DateParameter extends AbstractFormatParameter {
 	protected ?string $dateType = null;
 
 
-	/**
-	 * @param array $config
-	 *
-	 * @return AbstractFormatParameter
-	 */
 	public function setOptions(array $config): AbstractFormatParameter {
 		parent::setOptions($config);
 
@@ -39,17 +34,11 @@ class DateParameter extends AbstractFormatParameter {
 	}
 
 
-	/**
-	 * @return string|null
-	 */
 	public function getFormat(): ?string {
 		return $this->format;
 	}
 
 
-	/**
-	 * @return string|null
-	 */
 	public function getDateType(): ?string {
 		return $this->dateType;
 	}

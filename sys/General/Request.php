@@ -119,7 +119,6 @@ class Request {
 	/**
 	 * Get path string of the request
 	 *
-	 * @return string|null
 	 */
 	public function getPath(): ?string {
 		return $this->path;
@@ -129,7 +128,6 @@ class Request {
 	/**
 	 * Get the query part of the request
 	 *
-	 * @return string|null
 	 */
 	public function getQuery(): ?string {
 		return $this->query;
@@ -139,7 +137,6 @@ class Request {
 	/**
 	 * Get value of a query string param
 	 *
-	 * @param string $paramName
 	 * @param null $default
 	 *
 	 * @return mixed|null
@@ -161,7 +158,6 @@ class Request {
 
 	/**
 	 * Get and parse extra parameters from header (x-request-attr)
-	 * @return array
 	 */
 	public function getExtraParams(): array {
 		$header = $_SERVER['HTTP_X_REQUEST_ATTR'] ?? null;
@@ -183,7 +179,6 @@ class Request {
 
 	/**
 	 * Get client IP address
-	 * @return string|null
 	 */
 	public function getClientIp(): ?string {
 		if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -209,7 +204,6 @@ class Request {
 	/**
 	 * Get exploded path string
 	 *
-	 * @return array
 	 */
 	public function getPathParts(): array {
 		return $this->pathParts;
@@ -219,7 +213,6 @@ class Request {
 	/**
 	 * Get the identity attached to this request
 	 *
-	 * @return Identity|null
 	 */
 	public function getIdentity(): ?Identity {
 		if (!$this->identity) {
@@ -236,9 +229,7 @@ class Request {
 	/**
 	 * Sets and identity instance
 	 *
-	 * @param Identity|null $identity
 	 *
-	 * @return self
 	 */
 	public function setIdentity(?Identity $identity): self {
 		$this->identity = $identity;
@@ -266,7 +257,6 @@ class Request {
 	/**
 	 * Return the trimmed post data.
 	 *
-	 * @return array
 	 * @uses \arrayMapRecursive()
 	 */
 	public function getCleanData(): array {
@@ -282,7 +272,6 @@ class Request {
 	/**
 	 * Return the referer URL.
 	 *
-	 * @return string|null
 	 */
 	public function getReferer(): ?string {
 		return $_SERVER['HTTP_REFERER'] ?? null;

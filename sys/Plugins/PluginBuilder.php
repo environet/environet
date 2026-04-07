@@ -59,9 +59,7 @@ class PluginBuilder {
 	/**
 	 * Create a new plugin and set it's layers' configuration.
 	 *
-	 * @param Console $console
 	 *
-	 * @return Plugin
 	 * @uses PluginLayer::createConfiguration
 	 */
 	public function createConfiguration(Console $console): Plugin {
@@ -80,9 +78,7 @@ class PluginBuilder {
 	/**
 	 * Create a new plugin from an existing configuration.
 	 *
-	 * @param $config
 	 *
-	 * @return Plugin
 	 * @uses PluginLayer::getName
 	 */
 	public function loadFromConfiguration($config): Plugin {
@@ -103,7 +99,6 @@ class PluginBuilder {
 	 * - The class of the layer implementation
 	 * - The serialized configuration object of the layer
 	 *
-	 * @return string
 	 * @uses BuilderLayerInterface::getName
 	 * @uses BuilderLayerInterface::serializeConfiguration
 	 */

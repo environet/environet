@@ -73,18 +73,12 @@ class WarningLevelCrud extends CrudPage {
 	protected $createOwnPermissionName = 'admin.warninglevels.createown';
 
 
-	/**
-	 * @param bool $plural
-	 *
-	 * @return string
-	 */
 	protected function getEntityName(bool $plural = false): string {
 		return $plural ? 'threshold levels' : 'threshold level';
 	}
 
 
 	/**
-	 * @param Select $query
 	 *
 	 * @return bool|void
 	 * @throws QueryException

@@ -38,9 +38,6 @@ abstract class BaseAccessSelector extends Selector {
 	/**
 	 * BaseAccessSelector constructor.
 	 *
-	 * @param string $values
-	 * @param        $type
-	 * @param int    $operatorId
 	 *
 	 * @throws QueryException
 	 */
@@ -56,7 +53,6 @@ abstract class BaseAccessSelector extends Selector {
 	/**
 	 * Determine if the currently stored identity is an admin.
 	 *
-	 * @return bool
 	 * @throws QueryException
 	 * @uses Identity::hasPermissions
 	 */
@@ -65,10 +61,7 @@ abstract class BaseAccessSelector extends Selector {
 	}
 
 
-	/**
-	 * @param $serialized
-	 */
-	public function unserialize($serialized) {
+	public function unserialize($serialized): void {
 		if (is_string($serialized)) {
 			$strType = $this->type === MPOINT_TYPE_HYDRO ? 'hydro' : 'meteo';
 			$this->values = array_filter(array_map(function ($value) use ($strType) {

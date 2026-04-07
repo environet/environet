@@ -32,7 +32,6 @@ class Response {
 	 * Response constructor.
 	 * Sets the content if available.
 	 *
-	 * @param string|null $content
 	 *
 	 * @uses Response::setContent
 	 */
@@ -46,7 +45,6 @@ class Response {
 	/**
 	 * Get the response body content
 	 *
-	 * @return string|null
 	 */
 	public function getContent(): ?string {
 		return $this->content;
@@ -56,7 +54,6 @@ class Response {
 	/**
 	 * Set the body content
 	 *
-	 * @param string|null $content
 	 *
 	 * @return Response
 	 */
@@ -69,7 +66,6 @@ class Response {
 
 	/**
 	 * Get the HTTP status code
-	 * @return int
 	 */
 	public function getStatusCode(): int {
 		return $this->statusCode;
@@ -79,9 +75,7 @@ class Response {
 	/**
 	 * Set the HTTP status code
 	 *
-	 * @param int $statusCode
 	 *
-	 * @return Response
 	 */
 	public function setStatusCode(int $statusCode): Response {
 		$this->statusCode = $statusCode;
@@ -93,7 +87,6 @@ class Response {
 	/**
 	 * Add a HTTP header as string
 	 *
-	 * @param string $header
 	 *
 	 * @return Response
 	 */
@@ -107,9 +100,7 @@ class Response {
 	/**
 	 * Set all headers with an array of strings. It resets all old headers
 	 *
-	 * @param array $headers
 	 *
-	 * @return Response
 	 */
 	public function setHeaders(array $headers): Response {
 		$this->headers = $headers;
@@ -121,7 +112,6 @@ class Response {
 	/**
 	 * Get array of headers
 	 *
-	 * @return array
 	 */
 	public function getHeaders(): array {
 		return $this->headers;
@@ -130,7 +120,6 @@ class Response {
 
 	/**
 	 * Get size of response
-	 * @return int
 	 */
 	public function getSize(): int {
 		return mb_strlen($this->getContent(), '8bit');
@@ -153,8 +142,6 @@ class Response {
 	/**
 	 * Creates a http redirect response with the given url
 	 *
-	 * @param string $to
-	 * @param int    $statusCode
 	 *
 	 * @return Response
 	 * @uses Response::addHeader

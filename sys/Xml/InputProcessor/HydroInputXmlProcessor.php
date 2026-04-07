@@ -146,9 +146,6 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 	}
 
 
-	/**
-	 * @return Query
-	 */
 	protected function createResultStatisticsSelect(): Query {
 		return new Select()->select('*')
 			->from('hydro_result')
@@ -159,9 +156,6 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 	}
 
 
-	/**
-	 * @return string
-	 */
 	protected function getPointQueriesClass(): string {
 		return HydroMonitoringPointQueries::class;
 	}

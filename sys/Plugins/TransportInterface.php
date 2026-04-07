@@ -19,8 +19,6 @@ interface TransportInterface {
 	/**
 	 * Get a list of resources
 	 *
-	 * @param Console $console
-	 * @param string  $configFile
 	 *
 	 * @return Resource[]
 	 */

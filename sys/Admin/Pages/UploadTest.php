@@ -39,11 +39,10 @@ class UploadTest extends BasePage {
 	 * If GET, it displays the form with some pre-selected date.
 	 * If POST, it creates an XML based on the form's data, and post it to the upload API via {@see UploadTest::sendData()}.
 	 *
-	 * @return mixed|void
 	 * @throws HttpBadRequestException
+	 * @throws PKIException
 	 * @throws QueryException
 	 * @throws RenderException
-	 * @throws PKIException
 	 * @uses UploadTest::render
 	 * @uses UploadTest::sendData
 	 */
@@ -91,7 +90,6 @@ class UploadTest extends BasePage {
 	/**
 	 * Create an input-XML based on the form's data, and send it to the API with the HTTP client
 	 *
-	 * @return HttpClientResponse
 	 * @throws CreateInputXmlException
 	 * @throws HttpClientException
 	 * @throws PKIException
@@ -144,7 +142,6 @@ class UploadTest extends BasePage {
 	 * @param string $xml
 	 * @param string $username
 	 *
-	 * @return string
 	 * @throws InvalidArgumentException
 	 * @throws PKIException
 	 * @throws Exception

@@ -160,9 +160,7 @@ class UploadHandler extends ApiHandler {
 	 * Create input processor based on the mpoint type. Type is detected with finding it in the type's database table
 	 *
 	 * @param SimpleXMLElement $xml Parsed XML
-	 * @param UploadOptions $options
 	 *
-	 * @return AbstractInputXmlProcessor
 	 * @throws ApiException
 	 * @throws UploadException
 	 * @see MeteoInputXmlProcessor
@@ -226,7 +224,6 @@ class UploadHandler extends ApiHandler {
 	/**
 	 * Store raw input XML data.
 	 *
-	 * @param string $content
 	 */
 	protected function storeInputData(string $content): void {
 		$config = Config::getInstance();

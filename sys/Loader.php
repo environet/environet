@@ -209,7 +209,6 @@ class Loader {
 	/**
 	 * Load a single file
 	 *
-	 * @param string $file
 	 *
 	 * @throws Exception
 	 */
@@ -222,7 +221,6 @@ class Loader {
 
 
 	/**
-	 * @param array $files
 	 *
 	 * @throws Exception
 	 */

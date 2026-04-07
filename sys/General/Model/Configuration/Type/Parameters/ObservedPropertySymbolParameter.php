@@ -15,11 +15,6 @@ class ObservedPropertySymbolParameter extends AbstractFormatParameter {
 	protected ?string $variable = null;
 
 
-	/**
-	 * @param array $config
-	 *
-	 * @return AbstractFormatParameter
-	 */
 	public function setOptions(array $config): AbstractFormatParameter {
 		parent::setOptions($config);
 
@@ -34,9 +29,6 @@ class ObservedPropertySymbolParameter extends AbstractFormatParameter {
 	}
 
 
-	/**
-	 * @return string|null
-	 */
 	public function getVariable(): ?string {
 		return $this->variable;
 	}

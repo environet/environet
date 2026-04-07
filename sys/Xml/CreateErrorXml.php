@@ -21,7 +21,6 @@ class CreateErrorXml {
 	 *
 	 * @param array|ErrorXmlData[] $errors
 	 *
-	 * @return SimpleXMLElement
 	 */
 	public function generateXml(array $errors): SimpleXMLElement {
 		// Create xml root

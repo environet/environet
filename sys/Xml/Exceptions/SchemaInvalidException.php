@@ -50,7 +50,6 @@ class SchemaInvalidException extends Exception {
 
 	/**
 	 * Get array of validation error messages
-	 * @return array
 	 */
 	public function getErrorMessages(): array {
 		return $this->errorMessages;

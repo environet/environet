@@ -19,11 +19,6 @@ class DownloadLogQueries extends BaseQueries {
 	public static $tableName = 'download_logs';
 
 
-	/**
-	 * @param array $data
-	 *
-	 * @return array
-	 */
 	public static function prepareData(array $data): array {
 		$sanitizeDate = function ($data) {
 			if ($data) {
@@ -87,7 +82,6 @@ class DownloadLogQueries extends BaseQueries {
 	/**
 	 * Do not log events for this model
 	 *
-	 * @return bool
 	 */
 	public static function isEventsEnabled(): bool {
 		return false;

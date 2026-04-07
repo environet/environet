@@ -33,9 +33,6 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	/**
 	 * ObservedPropertySelector constructor.
 	 *
-	 * @param string $values
-	 * @param int    $operatorId
-	 * @param        $type
 	 *
 	 * @throws QueryException
 	 */
@@ -50,7 +47,6 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	/**
 	 * Get the associated symbols of this selector
 	 *
-	 * @return array
 	 * @throws QueryException
 	 */
 	public function getSymbols(): array {
@@ -80,10 +76,7 @@ class ObservedPropertySelector extends BaseAccessSelector {
 
 
 	/**
-	 * @param       $type
-	 * @param array $points
 	 *
-	 * @return ObservedPropertySelector
 	 * @throws QueryException
 	 * @throws Exception
 	 * @uses Select
@@ -112,7 +105,6 @@ class ObservedPropertySelector extends BaseAccessSelector {
 
 
 	/**
-	 * @return string
 	 * @throws QueryException
 	 * @uses Select
 	 */
@@ -140,7 +132,6 @@ class ObservedPropertySelector extends BaseAccessSelector {
 
 
 	/**
-	 * @return string
 	 * @throws QueryException
 	 * @uses Select
 	 */
@@ -170,11 +161,7 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	/**
 	 * Checks if the provided values are permitted
 	 *
-	 * @param       $type
-	 * @param array $symbols
-	 * @param array $availableValues
 	 *
-	 * @return array
 	 * @throws QueryException
 	 * @throws Exception
 	 */

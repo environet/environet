@@ -28,8 +28,6 @@ class InputXmlPropertyData {
 	/**
 	 * InputXmlPropertyData constructor.
 	 *
-	 * @param string|null $propertySymbol
-	 * @param array|null $values
 	 *
 	 * @uses InputXmlPropertyData::setPropertySymbol
 	 * @uses InputXmlPropertyData::setValues
@@ -47,7 +45,6 @@ class InputXmlPropertyData {
 	/**
 	 * Get property's symbol
 	 *
-	 * @return string|null
 	 */
 	public function getPropertySymbol(): ?string {
 		return $this->propertySymbol;
@@ -57,9 +54,7 @@ class InputXmlPropertyData {
 	/**
 	 * Set property's symbol
 	 *
-	 * @param string $propertySymbol
 	 *
-	 * @return InputXmlPropertyData
 	 */
 	public function setPropertySymbol(string $propertySymbol): InputXmlPropertyData {
 		$this->propertySymbol = $propertySymbol;
@@ -71,7 +66,6 @@ class InputXmlPropertyData {
 	/**
 	 * Get values
 	 *
-	 * @return array
 	 */
 	public function getValues(): array {
 		return $this->values;
@@ -81,9 +75,7 @@ class InputXmlPropertyData {
 	/**
 	 * Set values
 	 *
-	 * @param array $values
 	 *
-	 * @return InputXmlPropertyData
 	 */
 	public function setValues(array $values): InputXmlPropertyData {
 		$this->values = $values;

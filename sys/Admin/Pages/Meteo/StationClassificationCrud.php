@@ -51,11 +51,6 @@ class StationClassificationCrud extends CrudPage {
 	protected $successEditMessage = 'Station classification successfully saved';
 
 
-	/**
-	 * @param bool $plural
-	 *
-	 * @return string
-	 */
 	protected function getEntityName(bool $plural = false): string {
 		return $plural ? 'meteo station classifications' : 'meteo station classification';
 	}

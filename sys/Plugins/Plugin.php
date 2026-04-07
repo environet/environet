@@ -30,8 +30,6 @@ class Plugin {
 	/**
 	 * Run the plugin console command.
 	 *
-	 * @param Console $console
-	 * @param string  $configFile
 	 */
 	public function run(Console $console, string $configFile) {
 		$console->setDatePrefix();
@@ -191,8 +189,6 @@ class Plugin {
 	/**
 	 * Give a preview of a string (example of an xml file)
 	 *
-	 * @param string $data
-	 * @param int    $lengthOfPreview
 	 */
 	public function previewString(string $data, int $lengthOfPreview) {
 		$a = str_replace(["\r", "\n"], "\\n", $data);

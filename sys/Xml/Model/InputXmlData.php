@@ -28,8 +28,6 @@ class InputXmlData {
 	/**
 	 * InputXmlData constructor.
 	 *
-	 * @param string|null $pointId
-	 * @param array|null $properties
 	 *
 	 * @uses InputXmlData::setPointId
 	 * @uses InputXmlData::addProperty
@@ -49,7 +47,6 @@ class InputXmlData {
 	/**
 	 * Get monitoring point id
 	 *
-	 * @return string|null
 	 */
 	public function getPointId(): ?string {
 		return $this->pointId;
@@ -59,9 +56,7 @@ class InputXmlData {
 	/**
 	 * Set monitoring point id
 	 *
-	 * @param string $pointId
 	 *
-	 * @return InputXmlData
 	 */
 	public function setPointId(string $pointId): InputXmlData {
 		$this->pointId = $pointId;
@@ -83,7 +78,6 @@ class InputXmlData {
 	/**
 	 * Add a property data to properties array
 	 *
-	 * @param InputXmlPropertyData $inputXmlPropertyData
 	 *
 	 * @return $this
 	 */

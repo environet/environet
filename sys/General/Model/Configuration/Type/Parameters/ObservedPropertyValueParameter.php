@@ -17,11 +17,6 @@ class ObservedPropertyValueParameter extends AbstractFormatParameter {
 	protected ?string $valueConversion = null;
 
 
-	/**
-	 * @param array $config
-	 *
-	 * @return AbstractFormatParameter
-	 */
 	public function setOptions(array $config): AbstractFormatParameter {
 		parent::setOptions($config);
 
@@ -47,17 +42,11 @@ class ObservedPropertyValueParameter extends AbstractFormatParameter {
 	}
 
 
-	/**
-	 * @return string|null
-	 */
 	public function getSymbol(): ?string {
 		return $this->symbol;
 	}
 
 
-	/**
-	 * @return string|null
-	 */
 	public function getValueConversion(): ?string {
 		return $this->valueConversion;
 	}
@@ -66,10 +55,7 @@ class ObservedPropertyValueParameter extends AbstractFormatParameter {
 	/**
 	 * Handle skipEmptyValueTag option for value paramters
 	 *
-	 * @param SimpleXMLElement $element
-	 * @param bool             $skipEmptyValueTag
 	 *
-	 * @return string
 	 */
 	public function getXmlValue(SimpleXMLElement $element, bool $skipEmptyValueTag = false): string {
 		$value = parent::getXmlValue($element);
@@ -85,9 +71,7 @@ class ObservedPropertyValueParameter extends AbstractFormatParameter {
 	/**
 	 * Handle value conversion for value parameters
 	 *
-	 * @param float $value
 	 *
-	 * @return float
 	 */
 	public function convertValueUnit(float $value): float {
 		if ($this->valueConversion && preg_match('/^([\/*])(\d+)$/', $this->valueConversion, $match)) {

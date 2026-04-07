@@ -63,7 +63,6 @@ class Response {
 	/**
 	 * Get HTTP Status code
 	 *
-	 * @return int
 	 */
 	public function getStatusCode(): int {
 		return $this->statusCode;
@@ -73,9 +72,7 @@ class Response {
 	/**
 	 * Set HTTP status code of response
 	 *
-	 * @param int $statusCode
 	 *
-	 * @return Response
 	 */
 	public function setStatusCode(int $statusCode): Response {
 		$this->statusCode = $statusCode;
@@ -87,7 +84,6 @@ class Response {
 	/**
 	 * Parse the raw HTTP status header, and set the numberic status code
 	 *
-	 * @param string $status
 	 *
 	 * @return $this
 	 * @uses Response::setStatusCode
@@ -104,7 +100,6 @@ class Response {
 	/**
 	 * Does the response have a body?
 	 *
-	 * @return bool
 	 */
 	public function hasBody(): bool {
 		return (bool) $this->body;
@@ -114,7 +109,6 @@ class Response {
 	/**
 	 * Get raw body string
 	 *
-	 * @return string
 	 */
 	public function getBody(): ?string {
 		return $this->body;
@@ -124,9 +118,7 @@ class Response {
 	/**
 	 * Set raw body string
 	 *
-	 * @param string $body
 	 *
-	 * @return Response
 	 */
 	public function setBody(string $body): Response {
 		$this->body = $body;
@@ -138,9 +130,6 @@ class Response {
 	/**
 	 * Append to raw body string
 	 *
-	 * @param string $body
-	 *
-	 * @return Response
 	 */
 	public function appendBody(string $data): string {
 		$this->body .= $data;
@@ -152,7 +141,6 @@ class Response {
 	/**
 	 * Get array of headers.
 	 *
-	 * @return array
 	 * @see Response::$headers
 	 */
 	public function getHeaders(): array {
@@ -163,9 +151,7 @@ class Response {
 	/**
 	 * Add a raw header the headers array as key => value pair
 	 *
-	 * @param string $header
 	 *
-	 * @return Response
 	 * @see Response::$headers
 	 */
 	public function addRawHeader(string $header): Response {
@@ -182,7 +168,6 @@ class Response {
 	/**
 	 * Get the number of redirects that occurred
 	 *
-	 * @return int
 	 */
 	public function getRedirectCount(): int {
 		return $this->redirectCount;
@@ -192,9 +177,7 @@ class Response {
 	/**
 	 * Set the number of redirects that occurred
 	 *
-	 * @param int $redirectCount
 	 *
-	 * @return Response
 	 */
 	public function setRedirectCount(int $redirectCount): Response {
 		$this->redirectCount = $redirectCount;
@@ -206,25 +189,17 @@ class Response {
 	/**
 	 * Check if any redirects occurred
 	 *
-	 * @return bool
 	 */
 	public function hasRedirects(): bool {
 		return $this->redirectCount > 0;
 	}
 
 
-	/**
-	 * @return string|null
-	 */
 	public function getEffectiveUrl(): ?string {
 		return $this->effectiveUrl;
 	}
 
 
-	/**
-	 * @param string|null $effectiveUrl
-	 * @return Response
-	 */
 	public function setEffectiveUrl(?string $effectiveUrl): Response {
 		$this->effectiveUrl = $effectiveUrl;
 

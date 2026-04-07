@@ -59,24 +59,15 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 */
 	protected $observedPropertiesCsvColumn = 'observed_properties';
 
-	/**
-	 * @inheritdoc
-	 */
 	protected $csvUploadTemplate = '/parts/csvupload.phtml';
 
 
 	/**
 	 * Get enums for CSV upload page
-	 * @return array
 	 */
 	abstract protected function getCsvEnums(): array;
 
 
-	/**
-	 * @param bool $plural
-	 *
-	 * @return string
-	 */
 	protected function getEntityName(bool $plural = false): string {
 		$typePrefix = ($this instanceof \Environet\Sys\Admin\Pages\Meteo\MonitoringPointCrud) ? 'meteo' : 'hydro';
 
@@ -87,7 +78,6 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	/**
 	 * Get allowe operator ids of the user
 	 *
-	 * @return array|null
 	 * @throws QueryException
 	 */
 	protected function getAllowedOperatorIds(): ?array {
@@ -105,7 +95,6 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 
 
 	/**
-	 * @param Select $query
 	 *
 	 * @return bool|void
 	 * @throws QueryException
@@ -157,7 +146,6 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	/**
 	 * @param int $id Monitoring point id
 	 *
-	 * @return bool
 	 * @throws QueryException
 	 */
 	private function userIsOperatorOfMonitoringPoint(int $id): bool {
@@ -186,7 +174,6 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 
 
 	/**
-	 * @return array
 	 * @throws QueryException
 	 */
 	protected function getOperatorList(): array {
@@ -202,9 +189,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	/**
 	 * Get the observed property ids from the input string.
 	 *
-	 * @param string $value
 	 *
-	 * @return array
 	 * @uses MonitoringPointCSVMapInterface::getObservedPropertyQueriesClass
 	 */
 	protected function parseObservedPropertyIdsFromString(string $value): array {
@@ -228,9 +213,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 *
 	 * If the line has information about the observed property ids, parse those as well via {@see MonitoringPointCrud::parseObservedPropertyIdsFromString()}.
 	 *
-	 * @param array $line
 	 *
-	 * @return array
 	 * @throws Exception
 	 * @uses MonitoringPointCSVMapInterface::getObservedPropertiesCsvColumn
 	 * @uses MonitoringPointCrud::parseObservedPropertyIdsFromString
@@ -287,7 +270,6 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	/**
 	 * Parse and save data from an input CSV file.
 	 *
-	 * @return string
 	 * @throws QueryException
 	 * @throws RenderException
 	 * @uses MonitoringPointCrud::dataFromCsvLine
@@ -379,8 +361,6 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	/**
 	 * Possibility to save some other data after records is saved after upload
 	 *
-	 * @param $data
-	 * @param $mpointId
 	 */
 	protected function csvUploadAfterSave($data, $mpointId) {
 	}

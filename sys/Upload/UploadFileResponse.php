@@ -25,18 +25,12 @@ class UploadFileResponse {
 	protected array $successMessages = [];
 
 
-	/**
-	 * @param string $originalFileName
-	 */
 	public function __construct(protected string $originalFileName) {
 	}
 
 
 	/**
-	 * @param Response $response
-	 * @param Request $request
 	 *
-	 * @return UploadFileResponse
 	 * @throws Exception
 	 */
 	public function setFromResponse(Response $response, Request $request): UploadFileResponse {
@@ -63,11 +57,6 @@ class UploadFileResponse {
 	}
 
 
-	/**
-	 * @param array $errorMessages
-	 *
-	 * @return UploadFileResponse
-	 */
 	public function setFromErrors(array $errorMessages): UploadFileResponse {
 		$this->errorMessages = $errorMessages;
 
@@ -75,40 +64,27 @@ class UploadFileResponse {
 	}
 
 
-	/**
-	 * @return bool
-	 */
 	public function hasErrors(): bool {
 		return !empty($this->errorMessages);
 	}
 
 
-	/**
-	 * @return string
-	 */
 	public function getOriginalFileName(): string {
 		return $this->originalFileName;
 	}
 
 
-	/**
-	 * @return Statistics
-	 */
 	public function getStatistics(): Statistics {
 		return $this->statistics;
 	}
 
 
-	/**
-	 * @return array
-	 */
 	public function getErrorMessages(): array {
 		return $this->errorMessages;
 	}
 
 
 	/**
-	 * @param string $message
 	 *
 	 * @return $this
 	 */
@@ -119,16 +95,12 @@ class UploadFileResponse {
 	}
 
 
-	/**
-	 * @return array
-	 */
 	public function getSuccessMessages(): array {
 		return $this->successMessages;
 	}
 
 
 	/**
-	 * @param string $message
 	 *
 	 * @return $this
 	 */
@@ -139,16 +111,12 @@ class UploadFileResponse {
 	}
 
 
-	/**
-	 * @return array
-	 */
 	public function getWarningMessages(): array {
 		return $this->warningMessages;
 	}
 
 
 	/**
-	 * @param string $message
 	 *
 	 * @return $this
 	 */
@@ -160,7 +128,6 @@ class UploadFileResponse {
 
 
 	/**
-	 * @param array $messages
 	 *
 	 * @return $this
 	 */

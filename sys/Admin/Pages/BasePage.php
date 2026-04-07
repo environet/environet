@@ -54,7 +54,6 @@ class BasePage {
 	 *
 	 * Request is a required parameter for page handlers
 	 *
-	 * @param Request $request
 	 *
 	 * @uses BasePage::readMessagesFromSession
 	 */
@@ -69,10 +68,7 @@ class BasePage {
 	 *
 	 * Render template with global variables extended by extra supplied ones
 	 *
-	 * @param string     $template
-	 * @param array|null $vars
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 * @uses Request::getIdentity
 	 * @uses \Environet\Sys\General\Identity::getData()
@@ -91,9 +87,7 @@ class BasePage {
 	/**
 	 * Redirect user to a specified uri.
 	 *
-	 * @param string $uri
 	 *
-	 * @return Response
 	 * @uses BasePage::messagesToSession
 	 * @uses \httpRedirect()
 	 */
@@ -107,7 +101,6 @@ class BasePage {
 	/**
 	 * Redirect user back
 	 *
-	 * @param string $defaultUri
 	 *
 	 * @return Response
 	 * @uses Request::getReferer
@@ -145,7 +138,6 @@ class BasePage {
 	/**
 	 * Generate a CSRF token and store it in session
 	 *
-	 * @return string
 	 * @uses \NCSRandStr()
 	 */
 	protected function generateCsrf(): string {
@@ -158,7 +150,6 @@ class BasePage {
 
 	/**
 	 * Check CSRF token in post body. Request is valid only if the value in the body is the same as in session
-	 * @return bool
 	 */
 	protected function checkCsrf(): bool {
 		return (
@@ -183,7 +174,6 @@ class BasePage {
 	/**
 	 * Add an error, warning, info or success message for a form field
 	 *
-	 * @param string $field
 	 * @param string $message Message string
 	 * @param string $type    Type of the message
 	 */

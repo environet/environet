@@ -43,12 +43,12 @@ class BaseQueries {
 	 * Save values in a connection table.
 	 * It needs an array of ids, and some configuration attributes. Deletes old connection values, and re-creates every connection.
 	 *
-	 * @param array  $values               Array of ids
+	 * @param array $values                Array of ids
 	 * @param string $connectionTable      The connection table to fill with values
 	 * @param string $colLeft              Name of the column to where the ids from $values will be saved
 	 * @param string $colRight             Name of the column to where the $idRight saved
-	 * @param int    $idRight              A single id for the right side of the connection
-	 * @param bool   $truncate             If true, will delete existing connections first
+	 * @param int $idRight                 A single id for the right side of the connection
+	 * @param bool $truncate               If true, will delete existing connections first
 	 * @param array|null $connectionValues Column name => value map of additional values to save to the connection table
 	 *
 	 * @throws QueryException
@@ -108,7 +108,6 @@ class BaseQueries {
 	 * @param mixed  $id         Item's identifier to query it.
 	 * @param string $primaryKey The primary key of the specified table.
 	 *
-	 * @return array|null
 	 * @uses Select::run
 	 */
 	public static function getById($id, string $primaryKey = 'id'): ?array {
@@ -131,7 +130,6 @@ class BaseQueries {
 	 * @param string $column Column name.
 	 * @param mixed  $value  Column value.
 	 *
-	 * @return array|null
 	 */
 	public static function getByColumn(string $column, $value): ?array {
 		try {
@@ -278,7 +276,6 @@ class BaseQueries {
 	 * @param string $labelField The name field of the table.
 	 * @param string $primaryKey The primary key of the specified table.
 	 *
-	 * @return array|null
 	 * @uses Select::run
 	 * @uses \exception_logger()
 	 */
@@ -303,21 +300,13 @@ class BaseQueries {
 	/**
 	 * Preparing data before saving it.
 	 *
-	 * @param array $data
 	 *
-	 * @return array
 	 */
 	public static function prepareData(array $data): array {
 		return [];
 	}
 
 
-	/**
-	 * @param array $originalData
-	 * @param array $newData
-	 *
-	 * @return array
-	 */
 	public static function calculateChanges(array $originalData, array $newData): array {
 		$changes = [];
 		foreach (array_keys($newData) as $key) {
@@ -343,9 +332,6 @@ class BaseQueries {
 	}
 
 
-	/**
-	 * @return bool
-	 */
 	public static function isEventsEnabled(): bool {
 		return true;
 	}

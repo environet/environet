@@ -81,7 +81,6 @@ class LocalFileTransport extends AbstractTransport {
 	/**
 	 * LocalFileTransport constructor.
 	 *
-	 * @param array $config
 	 */
 	public function __construct(array $config) {
 		$this->path = $config['path'];

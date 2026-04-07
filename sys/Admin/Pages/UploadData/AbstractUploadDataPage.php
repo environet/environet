@@ -43,7 +43,6 @@ abstract class AbstractUploadDataPage extends BasePage {
 	/**
 	 * Get directory path where upload files will be stored before processing
 	 *
-	 * @return string
 	 */
 	abstract protected function getCsvFileDir(): string;
 
@@ -51,7 +50,6 @@ abstract class AbstractUploadDataPage extends BasePage {
 	/**
 	 * Get directory path where xml files will be stored before sending
 	 *
-	 * @return string
 	 */
 	abstract protected function getXmlFileDir(): string;
 
@@ -59,7 +57,6 @@ abstract class AbstractUploadDataPage extends BasePage {
 	/**
 	 * Get file input field's name
 	 *
-	 * @return string
 	 */
 	abstract protected function getFileInputName(): string;
 
@@ -67,7 +64,6 @@ abstract class AbstractUploadDataPage extends BasePage {
 	/**
 	 * Get permission of upload-to-all functionality
 	 *
-	 * @return string
 	 */
 	abstract protected function getUploadAllPermission(): string;
 
@@ -100,7 +96,6 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 * Pre-process data with sending the conbverted xml files to the statistics endpoint of distribution node.
 	 * After getting statistic responses for each file, this statistics or errors can be displayed on the confirmation page
 	 *
-	 * @return array
 	 * @throws Exception
 	 */
 	protected function preProcessData(): array {
@@ -148,9 +143,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 	/**
 	 * Send the pre-processed and stored XMLs to the upload endpoint
 	 *
-	 * @param array $xmlFiles
 	 *
-	 * @return array
 	 * @throws HttpClientException
 	 * @throws PKIException
 	 * @throws Exception
@@ -194,7 +187,6 @@ abstract class AbstractUploadDataPage extends BasePage {
 	/**
 	 * Store uploaded csv files in data folder, and validate the sizer of it
 	 *
-	 * @return array
 	 * @throws Exception
 	 */
 	protected function storeFiles(): array {
@@ -238,11 +230,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 	/**
 	 * Convert uploaded csv files to XMLs
 	 *
-	 * @param array  $files
-	 * @param string $selectedTimezoneOption
-	 * @param array  $warnings
 	 *
-	 * @return array
 	 */
 	protected function convertFilesToXml(array $files, string $selectedTimezoneOption, array &$warnings): array {
 		//Iterate over files, and convert each to xml
@@ -269,11 +257,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 	/**
 	 * Convert a csv file to xml
 	 *
-	 * @param string $file
-	 * @param string $selectedTimezoneOption
-	 * @param array  $warnings
 	 *
-	 * @return string
 	 * @throws CreateInputXmlException
 	 * @throws QueryException
 	 */
@@ -345,7 +329,6 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 * Find a hyro or meteo point by ID and by operator ids. So if a point not allowed for user, response will be empty.
 	 *
 	 * @param string $mPointId
-	 * @param array  $operatorIds
 	 *
 	 * @return array|bool|int|null
 	 * @throws QueryException
@@ -387,7 +370,6 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 * @param string $xml
 	 * @param string $username
 	 *
-	 * @return string
 	 * @throws InvalidArgumentException
 	 * @throws PKIException
 	 * @throws Exception
@@ -425,8 +407,6 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 * Map the CSV file, parse monitoring point id, and values for multiple properties.
 	 *
 	 * @param resource $fileHandle File handle of csv file
-	 * @param string   $selectedTimezoneOption
-	 * @param array    $warnings
 	 *
 	 * @return array Array of processed data. First item must be the monitoring point id, second is the property data, grouped by property symbol
 	 * @throws Exception
@@ -488,10 +468,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 	/**
 	 * Make an upload, or statistic request
 	 *
-	 * @param string $path
-	 * @param string $bodyFile
 	 *
-	 * @return Response
 	 * @throws HttpClientException
 	 * @throws PKIException
 	 */
@@ -526,11 +503,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 	/**
 	 * Generate filename for uploaded files
 	 *
-	 * @param string $originalName
-	 * @param array  $filenames
-	 * @param int    $i
 	 *
-	 * @return string
 	 */
 	protected function generateFilename(string $originalName, array &$filenames, int $i): string {
 		//Remove extension

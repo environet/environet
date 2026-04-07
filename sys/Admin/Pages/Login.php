@@ -35,10 +35,9 @@ class Login extends BasePage {
 	 * Updates last login time and creates log entry if the authentication is successful.
 	 * Renders the login page otherwise.
 	 *
-	 * @return mixed|void
-	 * @throws RenderException
 	 * @throws HttpBadRequestException
 	 * @throws QueryException
+	 * @throws RenderException
 	 * @uses Login::checkCsrf
 	 * @uses Login::handleLogin
 	 * @uses Login::logLoginDetails
@@ -149,7 +148,6 @@ class Login extends BasePage {
 	/**
 	 * Log login event data.
 	 *
-	 * @param string $status
 	 *
 	 * @throws QueryException
 	 * @uses EventLogger::log

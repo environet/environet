@@ -68,8 +68,6 @@ class HttpTransport extends AbstractTransport {
 	/**
 	 * HttpTransport constructor.
 	 *
-	 * @param array $config
-	 * @param array $pluginConfig
 	 */
 	public function __construct(array $config, array $pluginConfig = []) {
 		$this->url = $config['url'];
@@ -233,10 +231,7 @@ class HttpTransport extends AbstractTransport {
 	/**
 	 * Get a zip file, and find files based on sub-file pattern in zip file's contents
 	 *
-	 * @param Console $console
-	 * @param Resource $resource
 	 *
-	 * @return void
 	 * @throws Exception
 	 */
 	protected function getFromZipFile(Console $console, Resource $resource): void {
@@ -273,7 +268,6 @@ class HttpTransport extends AbstractTransport {
 	/**
 	 * Get an api client if given plugin config contains all required informations
 	 *
-	 * @return ApiClient
 	 * @throws Exception
 	 */
 	protected function getApiClient(): ApiClient {
@@ -394,11 +388,8 @@ class HttpTransport extends AbstractTransport {
 	/**
 	 * Return list of variables from definitions for a certain monitoring point and a certain observed property
 	 *
-	 * @param string $ncd
 	 * @param string $observedProperty internal name of observed property for which variable preparation should be done
 	 *
-	 * @param array $monitoringPointConversions
-	 * @param array $observedPropertyConversions
 	 *
 	 * @return array|null Null if variable preparation is not possible, otherwise an array of variables
 	 */

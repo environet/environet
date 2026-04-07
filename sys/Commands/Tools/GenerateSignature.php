@@ -31,7 +31,6 @@ class GenerateSignature extends BaseCommand {
 	 * @param array $arguments
 	 * @param array $options
 	 *
-	 * @return int
 	 * @throws PKIException
 	 * @uses PKI::generateSignature
 	 */

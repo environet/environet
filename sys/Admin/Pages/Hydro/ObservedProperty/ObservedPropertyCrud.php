@@ -51,11 +51,6 @@ class ObservedPropertyCrud extends CrudPage {
 	protected $successEditMessage = 'Observed property successfully saved';
 
 
-	/**
-	 * @param bool $plural
-	 *
-	 * @return string
-	 */
 	protected function getEntityName(bool $plural = false): string {
 		return $plural ? 'hydro observed properties' : 'hydro observed property';
 	}

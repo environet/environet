@@ -20,7 +20,6 @@ class Dashboard extends BasePage {
 	/**
 	 * Render the dashboard page
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 */
 	public function handle(): Response {

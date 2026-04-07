@@ -27,8 +27,6 @@ class MonitoringPointSelector extends BaseAccessSelector {
 	/**
 	 * MonitoringPointSelector constructor.
 	 *
-	 * @param string $values
-	 * @param int    $operatorId
 	 * @param int    $type
 	 *
 	 * @throws QueryException
@@ -42,7 +40,6 @@ class MonitoringPointSelector extends BaseAccessSelector {
 	/**
 	 * Get EUCD values of the selected monitoring points
 	 *
-	 * @return array|string
 	 * @throws QueryException
 	 */
 	public function getEUCD(): array {
@@ -71,7 +68,6 @@ class MonitoringPointSelector extends BaseAccessSelector {
 
 
 	/**
-	 * @return string
 	 * @throws QueryException
 	 * @uses Select
 	 */
@@ -94,7 +90,6 @@ class MonitoringPointSelector extends BaseAccessSelector {
 
 
 	/**
-	 * @return string
 	 * @throws QueryException
 	 * @uses Select
 	 */
@@ -117,12 +112,7 @@ class MonitoringPointSelector extends BaseAccessSelector {
 
 
 	/**
-	 * @param       $type
-	 * @param array $eucdValues
-	 * @param array $availableValues
-	 * @param array $countries
 	 *
-	 * @return array
 	 * @throws QueryException
 	 */
 	public static function checkAgainstEUCD($type, array $eucdValues, array $availableValues, array $countries): array {

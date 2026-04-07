@@ -73,9 +73,7 @@ class Query {
 	/**
 	 * Set the table on where the query will run
 	 *
-	 * @param string $table
 	 *
-	 * @return self
 	 */
 	public function table(string $table): self {
 		$this->table = $table;
@@ -87,7 +85,6 @@ class Query {
 	/**
 	 * Get parameter bindings
 	 *
-	 * @return array
 	 */
 	public function getParameters(): array {
 		return $this->parameters;
@@ -97,9 +94,7 @@ class Query {
 	/**
 	 * Set multiple parameter bindings. It clear all previously attached data in parameters array
 	 *
-	 * @param array $parameters
 	 *
-	 * @return self
 	 */
 	public function setParameters(array $parameters = []): self {
 		$this->parameters = $parameters;
@@ -111,7 +106,6 @@ class Query {
 	/**
 	 * Reset the array of parameters bindings
 	 *
-	 * @return self
 	 */
 	public function resetParameters(): self {
 		$this->parameters = [];
@@ -126,7 +120,6 @@ class Query {
 	 * @param string $key   The name of the parameter
 	 * @param mixed  $value The value of the parameter
 	 *
-	 * @return self
 	 */
 	public function addParameter($key, $value): self {
 		$this->parameters[$key] = $value;
@@ -138,9 +131,7 @@ class Query {
 	/**
 	 * Add multiple parameters. It does'nt reset the parameters array before adding the new ones
 	 *
-	 * @param array $parameters
 	 *
-	 * @return self
 	 * @uses Query::addParameter
 	 */
 	public function addParameters(array $parameters = []): self {
@@ -155,7 +146,6 @@ class Query {
 	/**
 	 * Create the PDO statement of the query, don't run it.
 	 *
-	 * @return PDOStatement
 	 * @throws QueryException
 	 */
 	public function createStatement(): PDOStatement {
@@ -237,7 +227,6 @@ class Query {
 	 * Validate the query properties.
 	 * The base query only checks if the table is set.
 	 *
-	 * @return bool
 	 */
 	protected function validateQuery(): bool {
 		return !empty($this->table);
@@ -248,9 +237,7 @@ class Query {
 	 * Set a raw query, if the query classes can't build it.
 	 * It will be executed without any check and parsing.
 	 *
-	 * @param string $rawQuery
 	 *
-	 * @return self
 	 */
 	public function setRawQuery(string $rawQuery): self {
 		$this->rawQuery = $rawQuery;

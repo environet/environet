@@ -17,7 +17,6 @@ interface MonitoringPointCSVMapInterface {
 	/**
 	 * Get the name of the related observed properties query class.
 	 *
-	 * @return string
 	 */
 	public function getObservedPropertyQueriesClass(): string;
 
@@ -25,7 +24,6 @@ interface MonitoringPointCSVMapInterface {
 	/**
 	 * Get the international identification key's name.
 	 *
-	 * @return string
 	 */
 	public function getGlobalIdName(): string;
 

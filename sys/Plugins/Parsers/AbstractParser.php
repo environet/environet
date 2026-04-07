@@ -47,7 +47,6 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 	/**
 	 * AbstractParser constructor.
 	 *
-	 * @param array $config
 	 */
 	public function __construct(array $config) {
 		$this->configArray = $config;
@@ -58,16 +57,12 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 	}
 
 
-	/**
-	 * @return array
-	 */
 	public function getConfigArray(): array {
 		return $this->configArray;
 	}
 
 
 	/**
-	 * @param Console $console
 	 *
 	 * @return mixed
 	 */
@@ -86,7 +81,6 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 
 
 	/**
-	 * @param Console $console
 	 *
 	 * @return ?string
 	 */
@@ -112,9 +106,7 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 	/**
 	 * Create settings for dates in file's name
 	 *
-	 * @param Console $console
 	 *
-	 * @return mixed
 	 */
 	public static function createTimeInFilenameConfig(Console $console): ?string {
 		$console->writeLine('Is the time of measurement presented in filename?', Console::COLOR_YELLOW);
@@ -133,7 +125,6 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 
 	/**
 	 * Get timezone of plugin
-	 * @return DateTimeZone
 	 */
 	protected function getTimeZone(): DateTimeZone {
 		return new DateTimeZone($this->timeZone ?: 'UTC');
@@ -142,7 +133,6 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 
 	/**
 	 * Get onlyTimes of plugin
-	 * @return string|null
 	 */
 	protected function getOnlyTimes(): ?string {
 		return $this->onlyTimes;
@@ -152,7 +142,6 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 	/**
 	 * Get the configuration from formats.json, and build a FormatsConfig object from it
 	 *
-	 * @return FormatsConfig|null
 	 * @throws Exception
 	 */
 	protected function getFormatsConfig(): ?FormatsConfig {
@@ -175,9 +164,7 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 	/**
 	 * Check if a time is allowed by the onlyTimes configuration
 	 *
-	 * @param string $timeValue
 	 *
-	 * @return bool
 	 */
 	protected function isAllowedByOnlyTimes(string $timeValue): bool {
 		try {

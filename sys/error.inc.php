@@ -57,7 +57,6 @@ function en_debug($string = "") {
 /**
  * Log an exception to file
  *
- * @param Throwable $exception
  */
 function exception_logger(Throwable $exception) {
 	file_put_contents(
@@ -71,7 +70,6 @@ function exception_logger(Throwable $exception) {
 /**
  * Global exception handler
  *
- * @param Throwable $exception
  *
  * @throws Throwable
  */

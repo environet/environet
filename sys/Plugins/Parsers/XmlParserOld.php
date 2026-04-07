@@ -63,7 +63,6 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * XMLParser constructor.
 	 *
-	 * @param array $config
 	 *
 	 * @throws Exception
 	 */
@@ -195,7 +194,6 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 	 * Get internal symbol for observed property from external symbol. Conversion between symbols is given by
 	 * variable conversion information.
 	 *
-	 * @param array $observedPropertyConversions
 	 * @param string $variableName name of variable definition for observed property. E.g. "OBS"
 	 * @param string $symbol       external symbol for observed property
 	 *
@@ -291,8 +289,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 	 *
 	 * @param array $formats format information, including tag hierarchies for different parameters, which should be read from xml
 	 *
-	 * @return string The first common element of tag hierarchy, if any. If there is none, "" is returned.
-	 * @throws Exception
+	 * @return string|null The first common element of tag hierarchy, if any. If there is none, "" is returned.
 	 */
 	private function getAndStripOneCommonElement(array &$formats): ?string {
 		if (empty($formats) || empty($formats[0]['TagHierarchy'])) {
@@ -468,7 +465,6 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Create XML data from the monitoring point input array.
 	 *
-	 * @param array $mPointsArray
 	 *
 	 * @return SimpleXMLElement[]
 	 * @throws CreateInputXmlException
@@ -491,7 +487,6 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 
 
 	/**
-	 * @return array|false|mixed|string
 	 * @throws Exception
 	 */
 	protected function getFormatsConfigArray(): array {

@@ -30,7 +30,6 @@ defined('REGEX_RIVERBASINCODE') || define('REGEX_RIVERBASINCODE', '/^\d+$/i');
 /**
  * Translate a string.
  *
- * @param $str
  *
  * @return mixed
  */
@@ -113,7 +112,6 @@ function snakeToCamelCase($string, $capitalizeFirstCharacter = false, $separator
  * Convert a string from camel case to snake case.
  * The separator character is _ by default.
  *
- * @param string $string
  * @param string $separator
  *
  * @return string
@@ -162,12 +160,11 @@ function httpRedirect(string $url, $code = 302) {
 /**
  * Validate a data with some pre-defined rules, and regex patterns
  *
- * @param array  $array        Array of fields
+ * @param array $array         Array of fields
  * @param string $field        Field's name
  * @param string|null $pattern Regex pattern for validation
- * @param bool   $required     If true, the data will be required, empty value not allowed
+ * @param bool $required       If true, the data will be required, empty value not allowed
  *
- * @return bool
  */
 function validate(array $array, string $field, ?string $pattern = null, bool $required = false): bool {
 	$isEmpty = empty($array[$field]);
@@ -193,7 +190,6 @@ function validate(array $array, string $field, ?string $pattern = null, bool $re
  *
  * @param string      $field The field's slug
  * @param array|null $data   The optional data which can containe the field's vale
- * @param string|null $customPostField
  *
  * @return mixed|null
  */
@@ -213,24 +209,11 @@ function formFieldValue(string $field, ?array $data = null, ?string $customPostF
 }
 
 
-/**
- * @param string $field
- * @param        $vars
- *
- * @return string
- */
 function isFieldInvalidClass(string $field, $vars): string {
 	return !empty($vars['fieldMessages'][$field][BasePage::MESSAGE_ERROR]) ? 'is-invalid' : '';
 }
 
 
-/**
- * @param string      $field
- * @param             $vars
- * @param string|null $default
- *
- * @return string|null
- */
 function getFieldInvalidMessage(string $field, $vars, ?string $default = null): ?string {
 	return isset($vars['fieldMessages'][$field][BasePage::MESSAGE_ERROR]) ? implode("<br/>", $vars['fieldMessages'][$field][BasePage::MESSAGE_ERROR]) : $default;
 }
@@ -239,8 +222,6 @@ function getFieldInvalidMessage(string $field, $vars, ?string $default = null): 
 /**
  * Call a specified function recursively each item in an array.
  *
- * @param array    $data
- * @param callable $function
  *
  * @return array
  */
@@ -260,7 +241,6 @@ function arrayMapRecursive(array $data, callable $function) {
 /**
  * Make strings accent insensitive on db search.
  *
- * @param string $string
  *
  * @return string
  */
@@ -299,7 +279,6 @@ function makeAccentInsensitiveRegex(string $string) {
 /**
  * Build and ini file from a 2-level array
  *
- * @param array $array
  *
  * @return string
  */
@@ -328,9 +307,7 @@ function buildIni(array $array) {
 /**
  * Generate a regex pattern based on date format
  *
- * @param string $dateFormat
  *
- * @return string
  * @throws Exception
  */
 function dateFormatToRegex(string $dateFormat): string {
@@ -376,7 +353,6 @@ function dateFormatToRegex(string $dateFormat): string {
 /**
  * Delete directory recursively
  *
- * @param $dir
  *
  * @codeCoverageIngore
  */
@@ -398,19 +374,14 @@ function rrmdir($dir) {
 }
 
 
-/**
- * @return bool
- */
 function isUploadDryRun(): bool {
 	return defined('UPLOAD_DRY_RUN') && UPLOAD_DRY_RUN === true;
 }
 
 
 /**
- * @param string                   $dateString
- * @param string|DateTimeZone|null $timezone
+ * @param DateTimeZone|string|null $timezone
  *
- * @return DateTime
  * @throws Exception
  */
 function createValidDate(string $dateString, $timezone = null): DateTime {
@@ -434,7 +405,6 @@ function createValidDate(string $dateString, $timezone = null): DateTime {
 /**
  * Create an Atom formatted date time object from a string, with a fallback to a different format
  *
- * @param string $timeString
  *
  * @return DateTime|false
  */

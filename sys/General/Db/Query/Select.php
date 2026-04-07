@@ -63,7 +63,6 @@ class Select extends Query {
 	 *
 	 * @param array|string $selects If an array, all items will be added to the selects array.
 	 *
-	 * @return self
 	 */
 	public function select($selects): self {
 		if (!is_array($selects)) {
@@ -78,7 +77,6 @@ class Select extends Query {
 	/**
 	 * Clear selects property
 	 *
-	 * @return self
 	 */
 	public function clearSelects(): self {
 		$this->selects = [];
@@ -92,7 +90,6 @@ class Select extends Query {
 	 *
 	 * @param string $from Table name
 	 *
-	 * @return self
 	 */
 	public function from(string $from): self {
 		return $this->table($from);
@@ -102,7 +99,6 @@ class Select extends Query {
 	/**
 	 * Add another select to this one, with an union connection
 	 *
-	 * @param Select $other
 	 *
 	 * @return Select
 	 */
@@ -127,7 +123,6 @@ class Select extends Query {
 	 * @param string $column    The column part of the order-by condition
 	 * @param string $direction The direction (ASC or DESC)
 	 *
-	 * @return self
 	 */
 	public function orderBy(string $column, $direction = self::DIR_ASC): self {
 		$this->orders[] = $column . ' ' . $direction;
@@ -139,7 +134,6 @@ class Select extends Query {
 	/**
 	 * Clear order-by part of the query
 	 *
-	 * @return self
 	 */
 	public function clearOrderBy(): self {
 		$this->orders = [];
@@ -153,7 +147,6 @@ class Select extends Query {
 	 *
 	 * @param string $column The column of group by
 	 *
-	 * @return self
 	 */
 	public function groupBy(string $column): self {
 		$this->groupBy[] = $column;
@@ -165,7 +158,6 @@ class Select extends Query {
 	/**
 	 * Clear group-by part of the query
 	 *
-	 * @return self
 	 */
 	public function clearGroupBy(): self {
 		$this->groupBy = [];
@@ -179,7 +171,6 @@ class Select extends Query {
 	 *
 	 * @param int $limit Limit number
 	 *
-	 * @return self
 	 */
 	public function limit(int $limit): self {
 		$this->limit = $limit;
@@ -193,7 +184,6 @@ class Select extends Query {
 	 *
 	 * @param int $offset Offset number
 	 *
-	 * @return self
 	 */
 	public function offset(int $offset): self {
 		$this->offset = $offset;
@@ -274,7 +264,6 @@ class Select extends Query {
 	 * @param int|null $currentPage Reference for storing the number of current page
 	 * @param int|null $totalCount  Reference for storing total count (without pagination)
 	 * @param int|null $maxPage     Reference for storing page count
-	 * @param bool     $countMax
 	 *
 	 * @uses Select::limit
 	 * @uses Select::offset
@@ -315,8 +304,6 @@ class Select extends Query {
 	/**
 	 * Modify query, add order_by part if request has order_by (and order_dir) parameters
 	 *
-	 * @param string|null $orderBy
-	 * @param string|null $orderDir
 	 *
 	 * @uses Select::orderBy
 	 */
@@ -327,9 +314,6 @@ class Select extends Query {
 	}
 
 
-	/**
-	 * @return bool
-	 */
 	public function isSorted(): bool {
 		return count($this->orders) > 0;
 	}

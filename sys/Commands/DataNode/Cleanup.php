@@ -36,7 +36,6 @@ class Cleanup extends BaseCommand {
 	 * @param array $arguments
 	 * @param array $options
 	 *
-	 * @return int
 	 * @uses PluginBuilder::createConfiguration
 	 * @uses PluginBuilder::serializeConfiguration
 	 */

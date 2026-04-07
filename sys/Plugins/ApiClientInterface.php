@@ -20,9 +20,7 @@ interface ApiClientInterface {
 	/**
 	 * Upload an XML file to the distribution node.
 	 *
-	 * @param SimpleXMLElement $payload
 	 *
-	 * @return Response
 	 */
 	public function upload(SimpleXMLElement $payload): Response;
 

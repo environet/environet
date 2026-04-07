@@ -24,7 +24,6 @@ class FormatsConfig {
 
 
 	/**
-	 * @param array $formatsConfig
 	 *
 	 * @throws Exception
 	 */
@@ -36,9 +35,6 @@ class FormatsConfig {
 	}
 
 
-	/**
-	 * @return bool
-	 */
 	public function count(): bool {
 		return count($this->parameters);
 	}
@@ -54,7 +50,6 @@ class FormatsConfig {
 
 	/**
 	 * Get the only one monitoring point parameter (multiple monitoring point parameters are not allowed in the configuration)
-	 * @return MonitoringPointParameter|null
 	 */
 	public function getMonitoringPointParameter(): ?MonitoringPointParameter {
 		return array_find($this->parameters, fn($parameter) => $parameter instanceof MonitoringPointParameter);
@@ -64,7 +59,6 @@ class FormatsConfig {
 
 	/**
 	 * Get the only one observed property symbol parameter (multiple observed property symbol parameters are not allowed in the configuration)
-	 * @return ObservedPropertySymbolParameter|null
 	 */
 	public function getPropertySymbolParameter(): ?ObservedPropertySymbolParameter {
 		return array_find($this->parameters, fn($parameter) => $parameter instanceof ObservedPropertySymbolParameter);

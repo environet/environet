@@ -30,8 +30,6 @@ class ExportDb extends DbCommand {
 	 * @param array $arguments
 	 * @param array $options
 	 *
-	 * @return int
-	 * @throws CommandException
 	 * @uses InitDb::importSchema
 	 * @uses InitDb::importData
 	 */

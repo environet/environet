@@ -60,11 +60,6 @@ class GroupCrud extends CrudPage {
 	protected $successEditMessage = 'Group successfully saved';
 
 
-	/**
-	 * @param bool $plural
-	 *
-	 * @return string
-	 */
 	protected function getEntityName(bool $plural = false): string {
 		return $plural ? 'groups' : 'group';
 	}

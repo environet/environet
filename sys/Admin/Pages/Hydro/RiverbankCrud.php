@@ -52,11 +52,6 @@ class RiverbankCrud extends CrudPage {
 	protected $successEditMessage = 'Riverbank successfully saved';
 
 
-	/**
-	 * @param bool $plural
-	 *
-	 * @return string
-	 */
 	protected function getEntityName(bool $plural = false): string {
 		return $plural ? 'riverbanks' : 'riverbank';
 	}

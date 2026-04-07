@@ -45,9 +45,6 @@ class DownloadHandler extends ApiHandler {
 	 */
 	protected const HANDLER_PERMISSION = 'api.download';
 
-	/**
-	 * @var array
-	 */
 	protected array $downloadLog;
 
 	protected array $formats = [
@@ -60,12 +57,8 @@ class DownloadHandler extends ApiHandler {
 	/**
 	 * Get the queryable monitoring point sets based on the request params and the access rules
 	 *
-	 * @param $rules
-	 * @param $params
 	 *
-	 * @return array
 	 *
-	 * @throws AccessRuleException
 	 */
 	protected function getRequestedSubsets($rules, $params): array {
 		$subsets = [];
@@ -119,10 +112,7 @@ class DownloadHandler extends ApiHandler {
 	 * Process the existing access for the user's group.
 	 * Returns the subsets to be queried.
 	 *
-	 * @param array $params
-	 * @param bool  $intervalLimited
 	 *
-	 * @return array
 	 * @throws AccessRuleException
 	 * @throws ApiException
 	 * @throws DownloadException
@@ -362,8 +352,6 @@ class DownloadHandler extends ApiHandler {
 	/**
 	 * Add some extra parameters to download log, and save it
 	 *
-	 * @param Response $response
-	 * @param int|null $errorCode
 	 *
 	 * @return void
 	 */

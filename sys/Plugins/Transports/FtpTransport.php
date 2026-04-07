@@ -175,7 +175,6 @@ class FtpTransport extends AbstractTransport {
 	/**
 	 * FtpDirectoryTransport constructor.
 	 *
-	 * @param array $config
 	 */
 	public function __construct(array $config) {
 		$this->host = $config['host'];
@@ -306,9 +305,6 @@ class FtpTransport extends AbstractTransport {
 	/**
 	 * Get list of files with MLSD or NLIST
 	 *
-	 * @param         $connection
-	 * @param string     $path
-	 * @param Console    $console
 	 *
 	 * @return array|array[]
 	 */

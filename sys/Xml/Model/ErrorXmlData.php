@@ -26,8 +26,6 @@ class ErrorXmlData {
 	/**
 	 * ErrorXmlData constructor.
 	 *
-	 * @param int|null $code
-	 * @param string|null $message
 	 *
 	 * @uses ErrorXmlData::setCode
 	 * @uses ErrorXmlData::setMessage
@@ -44,7 +42,6 @@ class ErrorXmlData {
 
 	/**
 	 * Get error code
-	 * @return string
 	 */
 	public function getCode(): string {
 		return $this->code;
@@ -54,9 +51,7 @@ class ErrorXmlData {
 	/**
 	 * Set error code
 	 *
-	 * @param string $code
 	 *
-	 * @return ErrorXmlData
 	 */
 	public function setCode(string $code): ErrorXmlData {
 		$this->code = $code;
@@ -68,7 +63,6 @@ class ErrorXmlData {
 	/**
 	 * Get error message
 	 *
-	 * @return string
 	 */
 	public function getMessage(): string {
 		return $this->message;
@@ -78,9 +72,7 @@ class ErrorXmlData {
 	/**
 	 * Set error message
 	 *
-	 * @param string $message
 	 *
-	 * @return ErrorXmlData
 	 */
 	public function setMessage(string $message): ErrorXmlData {
 		$this->message = $message;

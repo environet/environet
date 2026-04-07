@@ -134,8 +134,6 @@ class Config {
 	 * Group points to the keys on 1st level in the config array. Config name is the camelCase version of config variable.
 	 * The default group is 'environet'.
 	 *
-	 * @param $name
-	 * @param $arguments
 	 *
 	 * @return mixed
 	 * @uses \camelCaseToSnake()
@@ -169,7 +167,6 @@ class Config {
 
 	/**
 	 * Check if local config already created
-	 * @return bool
 	 */
 	protected function isLocalConfigCreated(): bool {
 		return file_exists(self::$localIniPath);
@@ -197,7 +194,6 @@ class Config {
 	/**
 	 * Get valid connection string for SQL connection based on the config
 	 *
-	 * @return string
 	 */
 	public function getSqlDsn(): string {
 		$host = $this->config['database']['host'] ?? 'localhost';
@@ -210,17 +206,11 @@ class Config {
 	}
 
 
-	/**
-	 * @return string
-	 */
 	public function getUploadMaxSize(): string {
 		return $this->config['environet']['upload_max_size'] ?? '2M';
 	}
 
 
-	/**
-	 * @return int
-	 */
 	public function getUploadMaxSizeInBytes(): int {
 		$maxSize = $this->getUploadMaxSize();
 		if (preg_match('/^(\d+)([kMG])$/', $maxSize, $match)) {

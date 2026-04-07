@@ -34,8 +34,6 @@ class SchemaValidator {
 	/**
 	 * SchemaValidator constructor.
 	 *
-	 * @param SimpleXMLElement $xml
-	 * @param string           $schemaFile
 	 *
 	 * @throws Exception
 	 */
@@ -53,7 +51,6 @@ class SchemaValidator {
 	/**
 	 * Validate the xml, and throw an exception on error or warning.
 	 *
-	 * @return bool
 	 * @throws SchemaInvalidException
 	 */
 	public function validate(): bool {

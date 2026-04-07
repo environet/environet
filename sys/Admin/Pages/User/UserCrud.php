@@ -58,11 +58,6 @@ class UserCrud extends CrudPage {
 	protected $successEditMessage = 'User successfully saved';
 
 
-	/**
-	 * @param bool $plural
-	 *
-	 * @return string
-	 */
 	protected function getEntityName(bool $plural = false): string {
 		return $plural ? 'users' : 'user';
 	}
@@ -71,7 +66,6 @@ class UserCrud extends CrudPage {
 	/**
 	 * List page action for users.
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 */
 	public function list(): Response {

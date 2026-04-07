@@ -45,7 +45,6 @@ abstract class AbstractInputXmlProcessor {
 	 * InputXmlProcessor constructor.
 	 * Sets the internal SimpleXMLElement object.
 	 *
-	 * @param SimpleXMLElement $xml
 	 */
 	public function __construct(SimpleXMLElement $xml) {
 		$this->xml = $xml;
@@ -56,11 +55,7 @@ abstract class AbstractInputXmlProcessor {
 	/**
 	 * Find monitoring point in database based on identifier, which is the EUCD identifier
 	 *
-	 * @param string        $identifier
-	 * @param Identity|null $identity
-	 * @param bool          $activeOnly
 	 *
-	 * @return mixed
 	 * @throws UploadException
 	 */
 	abstract protected function findMonitoringPoint(string $identifier, ?Identity $identity = null, bool $activeOnly = false): ?array;
@@ -69,10 +64,7 @@ abstract class AbstractInputXmlProcessor {
 	/**
 	 * Get the property id based on the symbol. The id will be return only if the property is "allowed" for the monitoring point
 	 *
-	 * @param int    $mPointId
-	 * @param string $propertySymbol
 	 *
-	 * @return int|null
 	 * @throws UploadException
 	 */
 	abstract protected function getPropertyIdIfAllowed(int $mPointId, string $propertySymbol): ?int;
@@ -86,7 +78,6 @@ abstract class AbstractInputXmlProcessor {
 	 * @param int      $propertyId Observed property id
 	 * @param DateTime $now        This parameter will be the result_time
 	 *
-	 * @return int|null
 	 * @throws UploadException
 	 */
 	abstract protected function getOrCreateTimeSeries(int $mPointId, int $propertyId, DateTime $now): ?int;
@@ -95,21 +86,16 @@ abstract class AbstractInputXmlProcessor {
 	/**
 	 * Create a base insert request for results table
 	 *
-	 * @return Insert
 	 */
 	abstract protected function createResultInsert(): Insert;
 
 
-	/**
-	 * @return Query
-	 */
 	abstract protected function createResultStatisticsSelect(): Query;
 
 
 	/**
 	 * Get class of Queries
 	 *
-	 * @return string
 	 */
 	abstract protected function getPointQueriesClass(): string;
 
@@ -117,9 +103,7 @@ abstract class AbstractInputXmlProcessor {
 	/**
 	 * Check if mpoint found under this type (hydro or meteo)
 	 *
-	 * @param Identity $identity
 	 *
-	 * @return bool
 	 */
 	public function isValidType(Identity $identity): bool {
 		try {
@@ -134,9 +118,6 @@ abstract class AbstractInputXmlProcessor {
 	}
 
 
-	/**
-	 * @return Statistics
-	 */
 	public function getStatistics(): Statistics {
 		return $this->stats;
 	}
@@ -150,9 +131,6 @@ abstract class AbstractInputXmlProcessor {
 	 * 3. Iterates the observed properties in the xml, and updates time series for them.
 	 * 4. Inserts the results in the database. {@see AbstractInputXmlProcessor::insertResults()}
 	 *
-	 * @param Identity      $identity
-	 * @param DateTime      $now
-	 * @param UploadOptions $options
 	 *
 	 * @throws ApiException
 	 * @throws InvalidConfigurationException
@@ -255,9 +233,6 @@ abstract class AbstractInputXmlProcessor {
 	 *
 	 * @param array|SimpleXMLElement[] $timeSeriesPoints array of environet:Point xml elements
 	 * @param int                      $timeSeriesId     Id of time series record
-	 * @param string                   $propertySymbol
-	 * @param DateTime                 $now
-	 * @param array                    $duplicateTimes
 	 *
 	 * @throws ApiException
 	 * @uses AbstractInputXmlProcessor::createResultInsert
@@ -351,9 +326,7 @@ abstract class AbstractInputXmlProcessor {
 
 
 	/**
-	 * @param Identity $identity
 	 *
-	 * @return array
 	 * @throws QueryException
 	 */
 	protected function getOperatorIdsOfIdentity(Identity $identity): array {

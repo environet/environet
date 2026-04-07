@@ -26,7 +26,6 @@ class PluginRun extends BaseCommand {
 	 * @param array $arguments
 	 * @param array $options
 	 *
-	 * @return int
 	 * @uses PluginBuilder::loadFromConfiguration
 	 */
 	public function run($arguments, $options): int {

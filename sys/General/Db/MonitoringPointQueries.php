@@ -96,7 +96,6 @@ class MonitoringPointQueries {
 	/**
 	 * Return all filters which should be applied to all subqueries as well.
 	 *
-	 * @return array
 	 */
 	protected function getGlobalFilters(): array {
 		$globalFilters = [];
@@ -111,9 +110,7 @@ class MonitoringPointQueries {
 	/**
 	 * Set measurement point type.
 	 *
-	 * @param string $type
 	 *
-	 * @return MonitoringPointQueries
 	 */
 	public function setType(string $type): MonitoringPointQueries {
 		$this->type = $type;
@@ -125,7 +122,6 @@ class MonitoringPointQueries {
 	/**
 	 * Set a start time of measurements (inclusive).
 	 *
-	 * @param DateTime $value
 	 *
 	 * @return MonitoringPointQueries
 	 * @uses MonitoringPointQueries::filterBy
@@ -140,7 +136,6 @@ class MonitoringPointQueries {
 	/**
 	 * Set an end time of measurements (inclusive).
 	 *
-	 * @param DateTime $value
 	 *
 	 * @return MonitoringPointQueries
 	 * @uses MonitoringPointQueries::filterBy
@@ -190,7 +185,6 @@ class MonitoringPointQueries {
 	 *
 	 * @param array $points
 	 *
-	 * @return MonitoringPointQueries
 	 */
 	public function setMonitoringPointsById($points = []): MonitoringPointQueries {
 		if (!is_array($points)) {
@@ -210,7 +204,6 @@ class MonitoringPointQueries {
 	 *
 	 * @param array $points
 	 *
-	 * @return MonitoringPointQueries
 	 */
 	public function setMonitoringPointsByEUCD($points = []): MonitoringPointQueries {
 		if (!is_array($points)) {
@@ -230,7 +223,6 @@ class MonitoringPointQueries {
 	 *
 	 * @param array $ids
 	 *
-	 * @return MonitoringPointQueries
 	 * @uses MonitoringPointQueries::filterBy
 	 */
 	public function setObservedPropertiesById($ids = []): MonitoringPointQueries {
@@ -251,7 +243,6 @@ class MonitoringPointQueries {
 	 *
 	 * @param array $symbols
 	 *
-	 * @return MonitoringPointQueries
 	 * @uses MonitoringPointQueries::filterBy
 	 */
 	public function setObservedPropertiesBySymbol($symbols = []): MonitoringPointQueries {
@@ -270,7 +261,6 @@ class MonitoringPointQueries {
 	/**
 	 * Create queries with different restrictions to be queried in union.
 	 *
-	 * @param $sets
 	 *
 	 * @throws QueryException
 	 */
@@ -302,8 +292,6 @@ class MonitoringPointQueries {
 	/**
 	 * Add a pre-made filter to the main select or one of the subset selects
 	 *
-	 * @param stdClass $filter
-	 * @param string   $key
 	 * @param null     $subsetKey
 	 */
 	protected function addFilter(stdClass $filter, string $key, $subsetKey = null) {
@@ -318,9 +306,6 @@ class MonitoringPointQueries {
 	/**
 	 * Internal function to store filters with.
 	 *
-	 * @param string $key
-	 * @param string $queryMethod
-	 * @param array  $queryParams
 	 */
 	protected function filterBy(string $key, string $queryMethod, array $queryParams): void {
 		$filter = new stdClass();
@@ -334,9 +319,6 @@ class MonitoringPointQueries {
 	 * Store a filter for a subset.
 	 *
 	 * @param int|string $subsetKey
-	 * @param string     $key
-	 * @param string     $queryMethod
-	 * @param array      $queryParams
 	 */
 	protected function filterSubsetBy($subsetKey, string $key, string $queryMethod, array $queryParams): void {
 		$filter = new stdClass();
@@ -371,11 +353,7 @@ class MonitoringPointQueries {
 	/**
 	 * Build the main or one of the sub queries.
 	 *
-	 * @param Select      $select
-	 * @param bool        $isSubset
-	 * @param object|null $subsetConfig
 	 *
-	 * @return Select
 	 */
 	protected function buildQuery(Select $select, bool $isSubset = false, ?object $subsetConfig = null): Select {
 		// Sub-select for getting latest value by created at.
@@ -469,7 +447,6 @@ class MonitoringPointQueries {
 	/**
 	 * Compile and execute the query.
 	 *
-	 * @return Select
 	 * @throws QueryException
 	 * @uses MonitoringPointQueries::applyFilters
 	 * @uses Select::run

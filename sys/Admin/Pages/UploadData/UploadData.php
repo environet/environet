@@ -5,7 +5,9 @@ namespace Environet\Sys\Admin\Pages\UploadData;
 
 use Environet\Sys\Config;
 use Environet\Sys\General\Exceptions\HttpBadRequestException;
+use Environet\Sys\General\Exceptions\PKIException;
 use Environet\Sys\General\Exceptions\RenderException;
+use Environet\Sys\General\HttpClient\Exceptions\HttpClientException;
 use Environet\Sys\General\Response;
 
 /**
@@ -25,9 +27,10 @@ class UploadData extends AbstractUploadDataPage {
 	 * If GET, it displays the upload form with some information about size limits
 	 * If POST, it creates an XML based on the files, and post it to the upload API.
 	 *
-	 * @return mixed|void
 	 * @throws HttpBadRequestException
 	 * @throws RenderException
+	 * @throws PKIException
+	 * @throws HttpClientException
 	 */
 	public function handle(): ?Response {
 		//Get limits from config

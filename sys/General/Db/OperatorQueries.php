@@ -37,9 +37,7 @@ class OperatorQueries extends BaseQueries {
 	/**
 	 * Get direct users, with ids as array keys
 	 *
-	 * @param int        $operatorId
 	 *
-	 * @param array|null $fieldsOnly
 	 *
 	 * @return array|null
 	 * @throws QueryException
@@ -112,7 +110,6 @@ class OperatorQueries extends BaseQueries {
 	 *
 	 * @param int $operatorId Id of operator
 	 *
-	 * @return array
 	 * @throws QueryException
 	 */
 	public static function getOperatorGroups(int $operatorId): array {
@@ -128,8 +125,6 @@ class OperatorQueries extends BaseQueries {
 	/**
 	 * Save permissions to specified operator.
 	 *
-	 * @param $values
-	 * @param $idRight
 	 *
 	 * @throws QueryException
 	 * @uses BaseQueries::saveConnections
@@ -142,8 +137,6 @@ class OperatorQueries extends BaseQueries {
 	/**
 	 * Save groups to specified operator.
 	 *
-	 * @param $values
-	 * @param $idRight
 	 *
 	 * @throws QueryException
 	 * @uses BaseQueries::saveConnections

@@ -41,7 +41,6 @@ class HttpClient {
 	 * @param Request $request Request object which container URL, and other options
 	 * @param array   $options Curl, and other request options.
 	 *
-	 * @return Response
 	 * @throws HttpClientException
 	 * @uses \curl_exec()
 	 * @uses HttpClient::prepare
@@ -89,10 +88,8 @@ class HttpClient {
 	 * Prepares a cURL resource to send a request.
 	 *
 	 * @param resource $curl
-	 * @param Request  $request
 	 * @param array    $options See options property
 	 *
-	 * @return Response
 	 * @uses \curl_setopt()
 	 * @uses \curl_setopt_array()
 	 * @uses HttpClient::processOptions
@@ -189,7 +186,6 @@ class HttpClient {
 	 * Set options on a cURL resource based on custom options
 	 *
 	 * @param resource $curl
-	 * @param array    $options
 	 *
 	 * @uses \curl_setopt()
 	 */
@@ -219,7 +215,6 @@ class HttpClient {
 	/**
 	 * Map cURL errors to Exceptions
 	 *
-	 * @param int      $errno
 	 * @param resource $curl
 	 *
 	 * @throws HttpClientException

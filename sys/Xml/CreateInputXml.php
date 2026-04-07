@@ -22,9 +22,7 @@ class CreateInputXml {
 	/**
 	 * Generate Xml based on xml data object
 	 *
-	 * @param InputXmlData $inputXmlData
 	 *
-	 * @return SimpleXMLElement
 	 * @throws CreateInputXmlException
 	 * @uses CreateInputXml::validateValues
 	 */
@@ -84,9 +82,7 @@ class CreateInputXml {
 	 * It must be an array with array items, and each sub-array must have a well-formatted value and time keys ({@see DateTime::ISO8601}).
 	 *
 	 * @param array|array[] $values
-	 * @param int           $propertyKey
 	 *
-	 * @return bool
 	 * @throws CreateInputXmlException
 	 * @uses DateTime
 	 */

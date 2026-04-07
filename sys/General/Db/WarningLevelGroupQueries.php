@@ -23,11 +23,6 @@ class WarningLevelGroupQueries extends BaseQueries {
 	];
 
 
-	/**
-	 * @param array $data
-	 *
-	 * @return array
-	 */
 	public static function prepareData(array $data): array {
 		return [
 			'name' => $data['name'],

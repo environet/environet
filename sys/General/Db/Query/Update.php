@@ -34,7 +34,6 @@ class Update extends Query {
 	 * @param string $column The column name to set
 	 * @param string $value  The value to set. It must be a pdo param definition
 	 *
-	 * @return self
 	 * @throws QueryException
 	 * @uses \checkDbInputValues()
 	 */
@@ -53,7 +52,6 @@ class Update extends Query {
 	 *
 	 * @param array $sets Each item is a string in format "column = value"
 	 *
-	 * @return self
 	 * @throws QueryException
 	 * @uses Update::addSet
 	 */
@@ -72,7 +70,6 @@ class Update extends Query {
 	 * Update with data array.
 	 * This sets the columns from the keys, and the values from the array values.
 	 *
-	 * @param array $data
 	 *
 	 * @return $this
 	 * @throws QueryException
@@ -99,7 +96,6 @@ class Update extends Query {
 	 * Validate the query.
 	 * It's invalid if the sets count is 0.
 	 *
-	 * @return bool
 	 * @uses Query::validateQuery
 	 */
 	protected function validateQuery(): bool {

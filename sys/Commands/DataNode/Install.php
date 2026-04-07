@@ -25,7 +25,6 @@ class Install extends BaseCommand {
 	 * @param array $arguments
 	 * @param array $options
 	 *
-	 * @return int
 	 */
 	public function run($arguments, $options): int {
 		$configFilePath = realpath(SRC_PATH . '/conf/conf.local.ini');

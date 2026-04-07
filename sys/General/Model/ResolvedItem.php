@@ -16,16 +16,12 @@ class ResolvedItem {
 
 
 	/**
-	 * @param AbstractFormatParameter $parameter
 	 * @param mixed                   $value
 	 */
 	public function __construct(protected AbstractFormatParameter $parameter, protected $value) {
 	}
 
 
-	/**
-	 * @return AbstractFormatParameter
-	 */
 	public function getParameter(): AbstractFormatParameter {
 		return $this->parameter;
 	}
@@ -42,7 +38,6 @@ class ResolvedItem {
 	/**
 	 * @param mixed $value
 	 *
-	 * @return ResolvedItem
 	 */
 	public function setValue($value): ResolvedItem {
 		$this->value = $value;

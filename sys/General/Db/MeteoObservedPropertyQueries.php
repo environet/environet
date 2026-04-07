@@ -68,9 +68,7 @@ class MeteoObservedPropertyQueries extends BaseQueries {
 
 
 	/**
-	 * @param int $pointId
 	 *
-	 * @return array
 	 * @throws QueryException
 	 */
 	public static function getSymbolsByPoint(int $pointId): array {

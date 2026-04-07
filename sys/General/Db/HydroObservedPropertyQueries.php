@@ -68,9 +68,7 @@ class HydroObservedPropertyQueries extends BaseQueries {
 
 
 	/**
-	 * @param int $pointId
 	 *
-	 * @return array
 	 * @throws QueryException
 	 */
 	public static function getSymbolsByPoint(int $pointId): array {
@@ -87,7 +85,6 @@ class HydroObservedPropertyQueries extends BaseQueries {
 	/**
 	 * Get list of properties, but only real-time type
 	 *
-	 * @return array|null
 	 * @uses Select::run
 	 * @uses \exception_logger()
 	 */

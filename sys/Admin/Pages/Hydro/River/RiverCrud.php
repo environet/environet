@@ -54,11 +54,6 @@ class RiverCrud extends CrudPage {
 	protected $successEditMessage = 'River successfully saved';
 
 
-	/**
-	 * @param bool $plural
-	 *
-	 * @return string
-	 */
 	protected function getEntityName(bool $plural = false): string {
 		return $plural ? 'rivers' : 'river';
 	}
@@ -67,7 +62,6 @@ class RiverCrud extends CrudPage {
 	/**
 	 * Show page action.
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 * @uses \httpErrorPage()
 	 */
@@ -98,7 +92,6 @@ class RiverCrud extends CrudPage {
 	/**
 	 * Common function to handle edit method.
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 * @uses \httpErrorPage()
 	 */
@@ -131,7 +124,6 @@ class RiverCrud extends CrudPage {
 	 * @param null $id
 	 * @param null $record
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 * @uses \httpErrorPage()
 	 */

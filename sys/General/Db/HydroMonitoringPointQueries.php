@@ -38,17 +38,12 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 	];
 
 
-	/**
-	 * @return string
-	 */
 	protected static function getType(): string {
 		return 'hydro';
 	}
 
 
 	/**
-	 * @param array|null $operatorIds
-	 * @param bool       $activeOnly
 	 * @param bool       $withWarningLevels
 	 *
 	 * @return array
@@ -223,10 +218,7 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 	 * Logs the transaction regardless of updating or inserting.
 	 * Once done, passes id and observed property data to {@see BaseQueries::saveConnections()}.
 	 *
-	 * @param array      $data
 	 * @param null       $id
-	 * @param string     $primaryKey
-	 * @param array|null $record
 	 *
 	 * @return array|array[]
 	 * @throws QueryException

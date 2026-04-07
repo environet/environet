@@ -19,11 +19,6 @@ class WarningLevelQueries extends BaseQueries {
 	public static $tableName = 'warning_levels';
 
 
-	/**
-	 * @param array $data
-	 *
-	 * @return array
-	 */
 	public static function prepareData(array $data): array {
 		return [
 			'operatorid'            => $data['operatorid'],
@@ -63,9 +58,7 @@ class WarningLevelQueries extends BaseQueries {
 	/**
 	 * Get a simple list of records. Keys are the id, label is configurable
 	 *
-	 * @param int $operatorId
 	 *
-	 * @return array|null
 	 * @uses Select::run
 	 * @uses \exception_logger()
 	 */

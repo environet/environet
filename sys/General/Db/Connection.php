@@ -74,7 +74,6 @@ class Connection {
 	/**
 	 * Get the instance from the static property, or create new connection if the property is null.
 	 * @return string|static
-	 * @throws InvalidConfigurationException
 	 */
 	public static function getInstance() {
 		if (is_null(self::$instance)) {
@@ -91,8 +90,6 @@ class Connection {
 	 * @param string $queryString The raw SQL query string, optionally with parameters
 	 * @param array  $parameters  Parameters to replace in query (key => value)
 	 *
-	 * @return PDOStatement
-	 * @throws QueryException
 	 * @uses Connection::parsePDOType
 	 */
 	public function runQuery(string $queryString, array $parameters): PDOStatement {

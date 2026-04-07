@@ -73,9 +73,6 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	}
 
 
-	/**
-	 * @return string
-	 */
 	public function serializeConfiguration(): string {
 		$result = "apiAddress = $this->apiAddress\n";
 		$result .= "apiUsername = $this->apiUsername\n";
@@ -90,7 +87,6 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 * ApiClient constructor.
 	 * Sets API address, username and private key path.
 	 *
-	 * @param array $config
 	 */
 	public function __construct(array $config) {
 		$this->configArray = $config;
@@ -104,9 +100,7 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	/**
 	 * Upload an XML file to the distribution node.
 	 *
-	 * @param SimpleXMLElement $payload
 	 *
-	 * @return Response
 	 * @throws HttpClientException
 	 * @throws Exception
 	 * @uses ApiClient::requestFromPayload
@@ -136,9 +130,7 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	/**
 	 * Create a request with an XML payload.
 	 *
-	 * @param SimpleXMLElement $payload
 	 *
-	 * @return Request
 	 * @throws Exception
 	 * @uses Request
 	 * @uses ApiClient::generateSignatureHeader
@@ -159,10 +151,7 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 * Generate authorization header information.
 	 * The signature is built from the hashed XML data and the given user's private key.
 	 *
-	 * @param SimpleXMLElement $xml
-	 * @param string           $username
 	 *
-	 * @return string
 	 * @throws Exception
 	 * @uses PKI::generateSignature
 	 * @uses PKI::authHeaderWithSignature
@@ -182,7 +171,6 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	/**
 	 * Get monitoring points from distribution node
 	 *
-	 * @return array
 	 * @throws HttpClientException
 	 * @throws Exception
 	 */
@@ -217,10 +205,7 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 * Generate authorization header information.
 	 * The signature is built from the token and the given user's private key.
 	 *
-	 * @param string $token
-	 * @param string $username
 	 *
-	 * @return string
 	 * @throws Exception
 	 * @uses PKI::generateSignature
 	 * @uses PKI::authHeaderWithSignature

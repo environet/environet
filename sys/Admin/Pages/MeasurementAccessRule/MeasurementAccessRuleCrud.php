@@ -80,18 +80,12 @@ class MeasurementAccessRuleCrud extends CrudPage {
 	protected $createOwnPermissionName = 'admin.measurementaccessrules.createown';
 
 
-	/**
-	 * @param bool $plural
-	 *
-	 * @return string
-	 */
 	protected function getEntityName(bool $plural = false): string {
 		return $plural ? 'measurement access rules' : 'measurement access rule';
 	}
 
 
 	/**
-	 * @param Select $query
 	 *
 	 * @return bool|void
 	 * @throws QueryException
@@ -133,9 +127,7 @@ class MeasurementAccessRuleCrud extends CrudPage {
 	/**
 	 * @inheritDoc
 	 *
-	 * @param array|null $record
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 */
 	protected function renderForm(?array $record = null): Response {
@@ -324,7 +316,6 @@ class MeasurementAccessRuleCrud extends CrudPage {
 	/**
 	 * Update points and properties, show the values instead of ids
 	 *
-	 * @param array $records
 	 */
 	protected function modifyRecords(array &$records) {
 		$hydroPoints = HydroMonitoringPointQueries::getOptionList();

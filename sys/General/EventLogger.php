@@ -74,10 +74,7 @@ class EventLogger {
 	/**
 	 * Insert the event and its data to event_logs table.
 	 *
-	 * @param string       $evenType
 	 * @param array|string $data
-	 * @param int|null $operatorId
-	 * @param string|null $date
 	 *
 	 * @throws QueryException
 	 * @uses Insert::run

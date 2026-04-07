@@ -38,7 +38,6 @@ class SysIdentity extends Identity {
 	/**
 	 * Get the identity's attached public key, or it's not set, use the locally stored public key
 	 *
-	 * @return string|null
 	 */
 	public function getPublicKey(): ?string {
 		if (!is_null($this->publicKey)) {
@@ -51,7 +50,6 @@ class SysIdentity extends Identity {
 	/**
 	 * Gets permissions of sys user. It's empty, because it is a superadmin
 	 *
-	 * @return array
 	 * @uses \Environet\Sys\General\Db\UserQueries::getUserPermissions()
 	 */
 	public function getPermissions(): array {
@@ -62,7 +60,6 @@ class SysIdentity extends Identity {
 	/**
 	 * Sys user is a super admin
 	 *
-	 * @return bool
 	 */
 	protected function isSuperAdmin(): bool {
 		return true;

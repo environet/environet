@@ -35,9 +35,6 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	 */
 	private bool $cutMpointLeadingZeros;
 
-	/**
-	 * @var array
-	 */
 	private array $propertyMap = [];
 
 	/**
@@ -87,7 +84,6 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * CsvParser constructor.
 	 *
-	 * @param array $config
 	 */
 	public function __construct(array $config) {
 		$this->zrxpVersion = $config['zrxpVersion'];
@@ -114,7 +110,6 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 
 	/**
 	 * @inheritDoc
-	 * @throws CreateInputXmlException
 	 * @uses CsvParser::mPointDataArrayFromCSV
 	 * @uses CsvParser::meteringPointInputXmlsFromArray
 	 */
@@ -169,11 +164,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Build XML result for each section in a ZRXP file
 	 *
-	 * @param int   $sectionNum
-	 * @param array $meta
-	 * @param array $values
 	 *
-	 * @return SimpleXMLElement
 	 * @throws CreateInputXmlException
 	 */
 	protected function processSection(int $sectionNum, array $meta, array $values): ?SimpleXMLElement {
@@ -300,9 +291,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Check if every required keys are existing in metadata
 	 *
-	 * @param array $metaData
 	 *
-	 * @return array
 	 */
 	protected function checkRequiredMetadataKeys(array $metaData): array {
 		$requiredKeys = ['ZRXPVERSION', 'SANR', 'TZ', 'LAYOUT'];
@@ -320,9 +309,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Parse PHP timezone
 	 *
-	 * @param string $timezone
 	 *
-	 * @return DateTimeZone
 	 */
 	protected function parseTimezone(string $timezone): DateTimeZone {
 		$tzMap = [
@@ -363,9 +350,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Create plugin configuration
 	 *
-	 * @param Console $console
 	 *
-	 * @return ParserInterface
 	 */
 	public static function create(Console $console, PluginBuilder $builder): ParserInterface {
 		$console->writeLine('');
@@ -445,10 +430,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Find a property in the mapping with or without addition metadata parsing
 	 *
-	 * @param string $propertyNameZrxp
-	 * @param array  $metadata
 	 *
-	 * @return string|null
 	 */
 	protected function findProperty(string $propertyNameZrxp, array $metadata): ?string {
 		$propertyNameZrxp = strtoupper($propertyNameZrxp);

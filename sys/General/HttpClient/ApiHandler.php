@@ -34,7 +34,6 @@ abstract class ApiHandler extends BaseHandler {
 	/**
 	 * Fetch and sanitize a request query array parameter.
 	 *
-	 * @param string $key
 	 *
 	 * @return array
 	 */
@@ -60,9 +59,7 @@ abstract class ApiHandler extends BaseHandler {
 	 * Parse auth header which contains the signature, the username (as keyId) and the algorithm of signature.
 	 * Example auth header: keyId="test.user",algorithm="rsa-sha256",signature=""
 	 *
-	 * @param string $authHeader
 	 *
-	 * @return array|null
 	 */
 	protected function parseAuthHeader(string $authHeader): ?array {
 		// Example auth header: keyId="test.user",algorithm="rsa-sha256",signature=""
@@ -86,7 +83,6 @@ abstract class ApiHandler extends BaseHandler {
 	/**
 	 * Prepare and parse the Authorization header
 	 *
-	 * @return array
 	 * @throws ApiException
 	 */
 	protected function getAuthHeaderParts(): array {
@@ -112,7 +108,6 @@ abstract class ApiHandler extends BaseHandler {
 	/**
 	 * Find user based on auth header, and get the attached public key from database
 	 *
-	 * @return Identity
 	 * @throws ApiException
 	 * @uses \Environet\Sys\Upload\UploadHandler::getAuthHeaderParts()
 	 * @uses Select::run
@@ -187,7 +182,6 @@ abstract class ApiHandler extends BaseHandler {
 	 * 1. Gets the user identity and the public key stored with it.
 	 * 2. Validates the signature parsed from the authorization header and validates it with the provided token from the request and the public key.
 	 *
-	 * @param array $requiredPermissions
 	 *
 	 * @throws ApiException
 	 * @throws QueryException

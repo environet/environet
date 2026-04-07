@@ -27,8 +27,6 @@ abstract class AbstractTransport implements TransportInterface, BuilderLayerInte
 	/**
 	 * HttpTransport constructor.
 	 *
-	 * @param array $config
-	 * @param array $pluginConfig
 	 */
 	public function __construct(array $config, array $pluginConfig = []) {
 		$this->configArray = $config;
@@ -36,16 +34,12 @@ abstract class AbstractTransport implements TransportInterface, BuilderLayerInte
 	}
 
 
-	/**
-	 * @return array
-	 */
 	public function getConfigArray(): array {
 		return $this->configArray;
 	}
 
 
 	/**
-	 * @param Console $console
 	 *
 	 * @return mixed
 	 */
@@ -62,9 +56,7 @@ abstract class AbstractTransport implements TransportInterface, BuilderLayerInte
 	/**
 	 * Get files under processed directory
 	 *
-	 * @param string $configuration
 	 *
-	 * @return array
 	 */
 	protected function getProcessedFiles(string $configuration): array {
 		$localFileDir = $this->getLocalFileDir($configuration);
@@ -80,9 +72,7 @@ abstract class AbstractTransport implements TransportInterface, BuilderLayerInte
 	/**
 	 * Get directory of local copy files
 	 *
-	 * @param string $configuration
 	 *
-	 * @return string
 	 */
 	protected function getLocalFileDir(string $configuration): string {
 		return SRC_PATH . '/data/plugin_input_files/' . $configuration . '/';

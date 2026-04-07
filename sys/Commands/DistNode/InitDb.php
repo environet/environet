@@ -31,7 +31,6 @@ class InitDb extends DbCommand {
 	 * @param array $arguments
 	 * @param array $options
 	 *
-	 * @return int
 	 * @throws CommandException
 	 * @uses InitDb::importSchema
 	 * @uses InitDb::importData
@@ -139,9 +138,7 @@ class InitDb extends DbCommand {
 	 *
 	 * Checks if the schema sql file is present and forwards it to {@see InitDb::runSqlFile()} for the actual import process.
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws CommandException
 	 * @uses InitDb::runSqlFile
 	 */
@@ -161,9 +158,7 @@ class InitDb extends DbCommand {
 	 *
 	 * Checks if the sql file containing the clean data is present and forwards it to {@see InitDb::runSqlFile()} for the actual import process.
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws CommandException
 	 * @uses InitDb::runSqlFile
 	 */

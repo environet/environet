@@ -29,7 +29,6 @@ class MigrateDb extends DbCommand {
 	/**
 	 * MigrateDb constructor.
 	 *
-	 * @param Console $console
 	 *
 	 * @throws InvalidConfigurationException
 	 */
@@ -47,7 +46,6 @@ class MigrateDb extends DbCommand {
 	 * @param array $arguments
 	 * @param array $options
 	 *
-	 * @return int
 	 */
 	public function run($arguments, $options): int {
 		$migrations = [
@@ -117,9 +115,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Create CRUD permissions
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function createCrudPermissions(array &$output): int {
@@ -140,9 +136,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Create acl tables
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function createDataAclTables(array &$output): int {
@@ -161,9 +155,7 @@ class MigrateDb extends DbCommand {
 
 
 	/**
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function createUploadPermissions(array &$output): int {
@@ -184,9 +176,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Create riverbank permissions
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function createRiverbankPermissions(array &$output): int {
@@ -207,9 +197,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * @deprecated This migration has been removed, because the migration is unnecessary, and can cause conflicts in case of newer databases
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function createResultUniqueIndexesDeleteDuplicates(array &$output): int {
@@ -269,9 +257,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Create riverbank permissions
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function renameDataProviderPermissions(array &$output): int {
@@ -292,9 +278,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Add is_active column
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function addIsActiveColumns(array &$output): int {
@@ -325,9 +309,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Add is_active column
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function removeMeteoPrefixes(array &$output): int {
@@ -383,9 +365,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Rename waterbody to river
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function renameWaterbody(array &$output): int {
@@ -435,9 +415,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Add some unique indexes, and rename some fields
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function uniqueFieldsAndRenames(array &$output): int {
@@ -522,9 +500,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Rename waterbody to river
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function warningLevels(array &$output): int {
@@ -602,9 +578,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Add some unique indexes, to hydropoint_observed_property and meteopoint_observed_property tables
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function fixIndexesPointProperty(array &$output): int {
@@ -627,9 +601,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Adds a temporary out of order column for hydropoint and meteopoint
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function addOutOfOrderColumns(array &$output): int {
@@ -652,9 +624,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Adds a flag for outdated result data in hydro_result and meteo_result
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function addObsoleteFlagForRecords(array &$output): int {
@@ -677,9 +647,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Update time series table, result time must be nullable
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function resultTimeNullable(array &$output): int {
@@ -700,9 +668,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * River basins crud
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function riverBasins(array &$output): int {
@@ -767,9 +733,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * River basins crud
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function riverBasinNameIndex(array &$output): int {
@@ -788,9 +752,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * River basins crud
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function pointLastUpdated(array &$output): int {
@@ -820,9 +782,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Create download logs table
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function downloadLogs(array &$output): int {
@@ -865,9 +825,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Add some unique indexes, and rename some fields
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function addResultIndexes(array &$output): int {
@@ -914,9 +872,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Add unique indexes for symbol fields
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function addUniqueSymbolIndexes(array &$output): int {
@@ -947,9 +903,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Add unique indexes for symbol fields
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function separateObsoleteResults(array &$output): int {
@@ -1080,9 +1034,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Add unique indexes for symbol fields
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function resultSingleValueIndex(array &$output): int {
@@ -1112,9 +1064,7 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Create format and format_options column in download_logs table
 	 *
-	 * @param array $output
 	 *
-	 * @return int
 	 * @throws QueryException
 	 */
 	private function downloadLogFormat(array &$output): int {
@@ -1135,7 +1085,6 @@ class MigrateDb extends DbCommand {
 
 
 	/**
-	 * @param string $tableName
 	 *
 	 * @return bool
 	 * @throws QueryException
@@ -1151,8 +1100,6 @@ class MigrateDb extends DbCommand {
 
 
 	/**
-	 * @param string $tableName
-	 * @param string $columnName
 	 *
 	 * @return bool
 	 * @throws QueryException
@@ -1168,8 +1115,6 @@ class MigrateDb extends DbCommand {
 
 
 	/**
-	 * @param string $tableName
-	 * @param string $columnName
 	 *
 	 * @return mixed|null
 	 * @throws QueryException
@@ -1187,8 +1132,6 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Check if index exists in table
 	 *
-	 * @param string $tableName
-	 * @param string $indexName
 	 *
 	 * @return bool
 	 * @throws QueryException
@@ -1206,8 +1149,6 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Check if constraint exists in table
 	 *
-	 * @param string $tableName
-	 * @param string $constraintName
 	 *
 	 * @return bool
 	 * @throws QueryException
@@ -1226,7 +1167,6 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Check if constraint exists in table
 	 *
-	 * @param string $triggerName
 	 *
 	 * @return bool
 	 * @throws QueryException
@@ -1246,7 +1186,6 @@ class MigrateDb extends DbCommand {
 	/**
 	 * Check if constraint exists in table
 	 *
-	 * @param string $functionName
 	 *
 	 * @return bool
 	 * @throws QueryException

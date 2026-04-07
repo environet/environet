@@ -91,7 +91,6 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * CsvParser constructor.
 	 *
-	 * @param array $config
 	 */
 	public function __construct(array $config) {
 		$this->csvDelimiter = $config['csvDelimiter'];
@@ -165,9 +164,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	 * Create an associative array from the input CSV string
 	 * Format: [mpointId => [propertySymbol => results]]
 	 *
-	 * @param Resource $resource
 	 *
-	 * @return array
 	 * @throws Exception
 	 * @uses CsvParser::parseResultLine
 	 */
@@ -285,7 +282,6 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Create XML data from the monitoring point input array.
 	 *
-	 * @param array $mPointsArray
 	 *
 	 * @return SimpleXMLElement[]
 	 * @throws CreateInputXmlException
@@ -306,7 +302,6 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Create XML data from the observation properties input array.
 	 *
-	 * @param array $propertiesArray
 	 *
 	 * @return array
 	 * @see InputXmlPropertyData
@@ -321,11 +316,9 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Parse one line of the CSV input string.
 	 *
-	 * @param                        $line
 	 * @param DateTimeInterface|null $time A global time for the whole file
 	 * @param string|null $mPointId        A pre-defined, fixed mpoint id
 	 *
-	 * @return array
 	 * @throws Exception
 	 */
 	private function parseResultLine($line, ?DateTimeInterface $time = null, ?string $mPointId = null): array {
@@ -381,9 +374,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Map symbol name based on conversions config
 	 *
-	 * @param $symbol
 	 *
-	 * @return string
 	 * @throws Exception
 	 */
 	private function mapToDistributionSymbol(string $symbol): string {
@@ -403,9 +394,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Get information from a CSV header row
 	 *
-	 * @param string $keyword
 	 *
-	 * @return string
 	 * @throws Exception
 	 */
 	private function getHeaderKeyword(string $keyword): ?string {
@@ -512,7 +501,6 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Ask for alternative if the current layer has any.
 	 *
-	 * @param Console $console
 	 *
 	 * @return mixed
 	 */
@@ -529,14 +517,6 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	}
 
 
-	/**
-	 * @param array  $resultLine
-	 * @param string $symbol
-	 *
-	 * @param array  $skipValues
-	 *
-	 * @return bool
-	 */
 	private function isSkipValue(array $resultLine, string $symbol, array $skipValues = []): bool {
 		if (!isset($resultLine[$symbol])) {
 			return true;
@@ -554,9 +534,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	 *
 	 * Format: symbol;column
 	 *
-	 * @param $property
 	 *
-	 * @return string
 	 */
 	public static function serializePropertyConfiguration($property): string {
 		return $property['symbol'] . ';' . $property['column'];

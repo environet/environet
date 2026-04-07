@@ -57,7 +57,6 @@ class Request {
 
 	/**
 	 * Set HTTP method
-	 * @return string
 	 */
 	public function getMethod(): string {
 		return $this->method;
@@ -67,9 +66,7 @@ class Request {
 	/**
 	 * Get HTTP method
 	 *
-	 * @param string $method
 	 *
-	 * @return Request
 	 */
 	public function setMethod(string $method): Request {
 		$this->method = $method;
@@ -81,7 +78,6 @@ class Request {
 	/**
 	 * Overwrite the URI
 	 *
-	 * @return string
 	 */
 	public function getUri(): string {
 		return $this->uri;
@@ -91,9 +87,7 @@ class Request {
 	/**
 	 * Get the request URI
 	 *
-	 * @param string $uri
 	 *
-	 * @return Request
 	 */
 	public function setUri(string $uri): Request {
 		$this->uri = $uri;
@@ -106,7 +100,6 @@ class Request {
 	 * Return the array of headers.
 	 * See structure in property definition: {@see Request::$headers}.
 	 *
-	 * @return array
 	 */
 	public function getHeaders(): array {
 		return $this->headers;
@@ -116,7 +109,6 @@ class Request {
 	/**
 	 * Get headers in a cURL-compatible format
 	 *
-	 * @return array
 	 */
 	public function getCurlHeaders(): array {
 		return array_map(function (array $header) {
@@ -146,7 +138,6 @@ class Request {
 	/**
 	 * Get the request body
 	 *
-	 * @return string
 	 */
 	public function getBody(): string {
 		return $this->body;
@@ -156,9 +147,7 @@ class Request {
 	/**
 	 * Set a request body
 	 *
-	 * @param string $body
 	 *
-	 * @return Request
 	 */
 	public function setBody(string $body): Request {
 		$this->body = $body;

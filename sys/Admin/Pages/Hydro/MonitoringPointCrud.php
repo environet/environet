@@ -73,9 +73,6 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 */
 	protected $updateOwnPermissionName = 'admin.hydro.monitoringpoints.updateown';
 
-	/**
-	 * @var
-	 */
 	protected $warningLevelsByPoints = null;
 
 
@@ -98,7 +95,6 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	/**
 	 * @inheritDoc
 	 *
-	 * @return array
 	 * @throws QueryException
 	 */
 	protected function formContext(): array {
@@ -153,7 +149,6 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	/**
 	 * Function to handle warning-levels edit method.
 	 *
-	 * @return Response
 	 * @throws HttpBadRequestException
 	 * @throws HttpNotFoundException
 	 * @throws PermissionException
@@ -213,9 +208,6 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	}
 
 
-	/**
-	 * @return array
-	 */
 	public function getCsvColumns(): array {
 		$columns = parent::getCsvColumns();
 
@@ -241,9 +233,6 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	}
 
 
-	/**
-	 * @return array
-	 */
 	protected function getCsvEnums(): array {
 		return [
 			['title' => 'Station classifications', 'options' => HydroStationClassificationQueries::getOptionList('value')],
@@ -254,9 +243,6 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	}
 
 
-	/**
-	 * @param $field
-	 */
 	protected function getCsvField($mpointId, $field) {
 		if (preg_match('/^warning_level_(.*)$/i', $field, $match)) {
 			if (isset($this->getWarningLevelsByPoints()[$mpointId][$match[1]])) {
@@ -275,10 +261,6 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	}
 
 
-	/**
-	 * @param $data
-	 * @param $mpointId
-	 */
 	protected function csvUploadAfterSave($data, $mpointId) {
 		$operatorId = $data['operator'];
 		$observedProperties = array_flip(HydroObservedPropertyQueries::getRealTimeOptionList());
@@ -307,7 +289,6 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 
 
 	/**
-	 * @return array
 	 * @throws QueryException
 	 */
 	protected function getWarningLevelsByPoints(): array {
@@ -347,7 +328,6 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	/**
 	 * Get all existing data for monitorin point, and organize under keys (property_warninglevel)
 	 *
-	 * @param $mpointId
 	 *
 	 * @return array|bool|int|null
 	 * @throws QueryException
@@ -370,9 +350,6 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 
 
 	/**
-	 * @param int        $mpointId
-	 * @param array      $data
-	 * @param array|null $existingDataByKey
 	 *
 	 * @throws QueryException
 	 */

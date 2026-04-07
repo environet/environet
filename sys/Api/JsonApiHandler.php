@@ -22,9 +22,7 @@ use Exception;
  */
 class JsonApiHandler extends ApiHandler {
 
-	/**
-	 * @return string
-	 */
+
 	private function requestPath(): string {
 		$parts = $this->request->getPathParts();
 		array_shift($parts);
@@ -35,7 +33,6 @@ class JsonApiHandler extends ApiHandler {
 	/**
 	 * Handle the incoming json api request.
 	 *
-	 * @return Response
 	 */
 	public function handleRequest(): Response {
 		try {
@@ -70,12 +67,6 @@ class JsonApiHandler extends ApiHandler {
 	}
 
 
-	/**
-	 * @param $contents
-	 * @param $statusCode
-	 *
-	 * @return Response
-	 */
 	private function jsonResponse($contents, $statusCode): Response {
 		return new Response($contents)
 			->setStatusCode($statusCode)

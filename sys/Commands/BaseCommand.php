@@ -24,7 +24,6 @@ abstract class BaseCommand {
 	/**
 	 * BaseCommand constructor.
 	 *
-	 * @param Console $console
 	 */
 	public function __construct(Console $console) {
 		$this->console = $console;
@@ -37,7 +36,6 @@ abstract class BaseCommand {
 	 * @param array $arguments
 	 * @param array $options
 	 *
-	 * @return int
 	 * @throws CommandException
 	 */
 	abstract public function run($arguments, $options): int;

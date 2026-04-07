@@ -63,19 +63,11 @@ class Resource {
 	protected ?string $localCopyPath = null;
 
 
-	/**
-	 * @return string|null
-	 */
 	public function getUrl(): ?string {
 		return $this->url;
 	}
 
 
-	/**
-	 * @param string|null $url
-	 *
-	 * @return Resource
-	 */
 	public function setUrl(?string $url): Resource {
 		$this->url = $url;
 
@@ -83,19 +75,11 @@ class Resource {
 	}
 
 
-	/**
-	 * @return string|null
-	 */
 	public function getSubFile(): ?string {
 		return $this->subFile;
 	}
 
 
-	/**
-	 * @param string|null $subFile
-	 *
-	 * @return Resource
-	 */
 	public function setSubFile(?string $subFile): Resource {
 		$this->subFile = $subFile;
 
@@ -103,19 +87,11 @@ class Resource {
 	}
 
 
-	/**
-	 * @return string|null
-	 */
 	public function getName(): ?string {
 		return $this->name;
 	}
 
 
-	/**
-	 * @param string|null $name
-	 *
-	 * @return Resource
-	 */
 	public function setName(?string $name): Resource {
 		$this->name = $name;
 
@@ -123,19 +99,11 @@ class Resource {
 	}
 
 
-	/**
-	 * @return string|null
-	 */
 	public function getContents(): ?string {
 		return $this->contents;
 	}
 
 
-	/**
-	 * @param string|null $contents
-	 *
-	 * @return Resource
-	 */
 	public function setContents(?string $contents): Resource {
 		$this->contents = $contents;
 
@@ -143,19 +111,11 @@ class Resource {
 	}
 
 
-	/**
-	 * @return string|null
-	 */
 	public function getSpecificPointNCD(): ?string {
 		return $this->specificPointNCD;
 	}
 
 
-	/**
-	 * @param string|null $specificPointNCD
-	 *
-	 * @return Resource
-	 */
 	public function setSpecificPointNCD(?string $specificPointNCD): Resource {
 		$this->specificPointNCD = $specificPointNCD;
 
@@ -163,19 +123,11 @@ class Resource {
 	}
 
 
-	/**
-	 * @return array
-	 */
 	public function getPointNCDs(): array {
 		return $this->pointNCDs;
 	}
 
 
-	/**
-	 * @param array $pointNCDs
-	 *
-	 * @return Resource
-	 */
 	public function setPointNCDs(array $pointNCDs): Resource {
 		$this->pointNCDs = $pointNCDs;
 
@@ -183,19 +135,11 @@ class Resource {
 	}
 
 
-	/**
-	 * @return string|null
-	 */
 	public function getSpecificPropertySymbol(): ?string {
 		return $this->specificPropertySymbol;
 	}
 
 
-	/**
-	 * @param string|null $specificPropertySymbol
-	 *
-	 * @return Resource
-	 */
 	public function setSpecificPropertySymbol(?string $specificPropertySymbol): Resource {
 		$this->specificPropertySymbol = $specificPropertySymbol;
 
@@ -203,19 +147,11 @@ class Resource {
 	}
 
 
-	/**
-	 * @return array
-	 */
 	public function getPropertySymbols(): array {
 		return $this->propertySymbols;
 	}
 
 
-	/**
-	 * @param array $propertySymbols
-	 *
-	 * @return Resource
-	 */
 	public function setPropertySymbols(array $propertySymbols): Resource {
 		$this->propertySymbols = $propertySymbols;
 
@@ -223,19 +159,11 @@ class Resource {
 	}
 
 
-	/**
-	 * @return array
-	 */
 	public function getObservedPropertyConversions(): array {
 		return $this->observedPropertyConversions;
 	}
 
 
-	/**
-	 * @param array $observedPropertyConversions
-	 *
-	 * @return Resource
-	 */
 	public function setObservedPropertyConversions(array $observedPropertyConversions): Resource {
 		$this->observedPropertyConversions = $observedPropertyConversions;
 
@@ -243,19 +171,11 @@ class Resource {
 	}
 
 
-	/**
-	 * @return bool
-	 */
 	public function isKeepExtraData(): bool {
 		return $this->keepExtraData;
 	}
 
 
-	/**
-	 * @param bool $keepExtraData
-	 *
-	 * @return Resource
-	 */
 	public function setKeepExtraData(bool $keepExtraData): Resource {
 		$this->keepExtraData = $keepExtraData;
 
@@ -263,19 +183,11 @@ class Resource {
 	}
 
 
-	/**
-	 * @return string|null
-	 */
 	public function getLocalCopyPath(): ?string {
 		return $this->localCopyPath;
 	}
 
 
-	/**
-	 * @param string|null $localCopyPath
-	 *
-	 * @return Resource
-	 */
 	public function setLocalCopyPath(?string $localCopyPath): Resource {
 		$this->localCopyPath = $localCopyPath;
 
@@ -286,7 +198,6 @@ class Resource {
 	/**
 	 * Support fir backward compatibility
 	 *
-	 * @param $name
 	 *
 	 * @return array|void
 	 */
@@ -307,8 +218,6 @@ class Resource {
 	/**
 	 * Support fir backward compatibility
 	 *
-	 * @param $name
-	 * @param $value
 	 *
 	 * @return void
 	 */

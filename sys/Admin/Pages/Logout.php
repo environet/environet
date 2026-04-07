@@ -25,7 +25,6 @@ class Logout extends BasePage {
 	 *
 	 * If the CSRF field is valid, logs out the current user, creates log entry with the logout data, then redirects to the login page.
 	 *
-	 * @return mixed|void
 	 * @uses EventLogger::log
 	 * @uses \httpRedirect()
 	 */

@@ -35,9 +35,7 @@ class PluginLayer {
 	 * PluginLayer constructor.
 	 * Sets the name and the alternatives array.
 	 *
-	 * @param string $name
 	 * @param string[] $alternatives
-	 * @param string $helpText
 	 */
 	public function __construct(string $name, array $alternatives, string $helpText) {
 		$this->name = $name;
@@ -69,8 +67,6 @@ class PluginLayer {
 	/**
 	 * Create configuration during install command.
 	 *
-	 * @param Console       $console
-	 * @param PluginBuilder $builder
 	 *
 	 * @return mixed
 	 * @uses PluginLayer::chooseAlternative
@@ -86,7 +82,6 @@ class PluginLayer {
 	/**
 	 * Ask for alternative if the current layer has any.
 	 *
-	 * @param Console $console
 	 *
 	 * @return mixed
 	 */

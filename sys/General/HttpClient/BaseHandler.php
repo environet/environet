@@ -34,7 +34,6 @@ abstract class BaseHandler implements RequestHandlerInterface {
 	 *
 	 * Sets the internal request property.
 	 *
-	 * @param Request $request
 	 */
 	public function __construct(Request $request) {
 		$this->request = $request;
@@ -44,7 +43,6 @@ abstract class BaseHandler implements RequestHandlerInterface {
 	/**
 	 * Base method to get the Identity object, which contains the current user's information.
 	 *
-	 * @return Identity|null
 	 */
 	abstract protected function getIdentity(): ?Identity;
 
@@ -52,7 +50,6 @@ abstract class BaseHandler implements RequestHandlerInterface {
 	/**
 	 * Base method for checking user and group permissions against the current action.
 	 *
-	 * @param array $requiredPermissions
 	 */
 	abstract protected function authorizeRequest(array $requiredPermissions = []);
 

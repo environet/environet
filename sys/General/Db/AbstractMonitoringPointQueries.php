@@ -22,7 +22,6 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 
 	/**
 	 * Get type (hydro / meteo)
-	 * @return string
 	 */
 	abstract protected static function getType(): string;
 
@@ -30,7 +29,6 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 	/**
 	 * Update *_time_series tables with result_time value based on result table created_at
 	 *
-	 * @param int $timeSeriesId
 	 *
 	 * @throws QueryException
 	 */
@@ -49,7 +47,6 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 	/**
 	 * Update point_observed_property tables with min/max values and times, for a single time series.
 	 *
-	 * @param int $timeSeriesId
 	 *
 	 * @throws QueryException
 	 */
@@ -85,7 +82,6 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 	/**
 	 * Update time_series tables with phenomnon begin/end values and times, for a single time series.
 	 *
-	 * @param int $timeSeriesId
 	 *
 	 * @throws QueryException
 	 */
@@ -112,9 +108,6 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 	/**
 	 * Update point_observed_property tables last_update value.
 	 *
-	 * @param int      $mpointId
-	 * @param int      $propertyId
-	 * @param DateTime $now
 	 *
 	 * @throws QueryException
 	 */
@@ -138,9 +131,6 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 	/**
 	 * Get a point by NCD code, and operator
 	 *
-	 * @param $ncdField
-	 * @param $ncdId
-	 * @param $operatorId
 	 *
 	 * @return array|bool|int|null
 	 */
@@ -163,10 +153,7 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 	/**
 	 * Generate eucd, prefix with country code (if not yet prefixes), and append type (if not yet appended)
 	 *
-	 * @param string $ncd
-	 * @param string $country
 	 *
-	 * @return string
 	 */
 	public static function generateEUCD(string $ncd, string $country): ?string {
 		$typeSuffix = '_' . strtoupper(static::getType());
@@ -197,9 +184,6 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 
 
 	/**
-	 * @param int|null $userId
-	 * @param int      $recordId
-	 * @param array    $changes
 	 *
 	 * @return void
 	 * @throws QueryException

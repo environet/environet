@@ -84,7 +84,6 @@ class JsonParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * JsonParser constructor.
 	 *
-	 * @param array $config
 	 */
 	public function __construct(array $config) {
 		$this->monitoringPointId = $config['monitoringPointId'];

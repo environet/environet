@@ -19,7 +19,6 @@ trait WithConversionsConfigTrait {
 	/**
 	 * Get conversions from the JSON config
 	 *
-	 * @return array
 	 * @throws Exception
 	 */
 	protected function getConversionsConfig(): array {

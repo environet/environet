@@ -8,7 +8,6 @@ use Environet\Sys\General\Request;
  *
  * @param int      $currentPage  Number of current page
  * @param int|null $maxPage      Page count
- * @param bool     $addMoreToEnd
  *
  * @return array Array of numbers, and '...' items
  */
@@ -74,18 +73,12 @@ function sortableColumn(string $label, string $name, array $definedVars = []) {
 
 }
 
-/**
- * @return string|null
- */
 function getCurrentOrderBy(): ?string {
 	global $request;
 
 	return $request->getQueryParam('order_by');
 }
 
-/**
- * @return string|null
- */
 function getCurrentOrderDir(): ?string {
 	global $request;
 
@@ -100,7 +93,6 @@ function getCurrentOrderDir(): ?string {
  * @return string
  */
 function hrefWithParams(array $params) {
-	/** @var Request $request */
 	global $request;
 
 	$originalParams = $request->getQueryParams();
@@ -125,7 +117,6 @@ function hrefWithParams(array $params) {
  * @param mixed  $date   DateTime object or string
  * @param string $format The output format of datetime
  *
- * @return string|null
  */
 function dateFormat($date, $format = 'Y. m. d. H:i:s'): ?string {
 	if ($date instanceof DateTimeInterface) {
@@ -147,7 +138,6 @@ function dateFormat($date, $format = 'Y. m. d. H:i:s'): ?string {
 /**
  * Convert connection type to a human-readable string
  *
- * @param string $type
  *
  * @return mixed|null
  */
@@ -221,7 +211,6 @@ function includeTemplatePart($templatePath, $vars = []) {
  * @param string $path
  * @param int    $matchExtra
  *
- * @return bool
  */
 function isRoute($path, $matchExtra): bool {
 	global $request;

@@ -54,11 +54,6 @@ class RiverBasinCrud extends CrudPage {
 	protected $successEditMessage = 'Sub-basin successfully saved';
 
 
-	/**
-	 * @param bool $plural
-	 *
-	 * @return string
-	 */
 	protected function getEntityName(bool $plural = false): string {
 		return $plural ? 'sub-basins' : 'sub-basin';
 	}
@@ -67,7 +62,6 @@ class RiverBasinCrud extends CrudPage {
 	/**
 	 * Show page action.
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 * @uses \httpErrorPage()
 	 */
@@ -95,7 +89,6 @@ class RiverBasinCrud extends CrudPage {
 	/**
 	 * Common function to handle edit method.
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 * @uses \httpErrorPage()
 	 */
@@ -125,7 +118,6 @@ class RiverBasinCrud extends CrudPage {
 	 * @param null $id
 	 * @param null $record
 	 *
-	 * @return Response
 	 * @throws RenderException
 	 * @uses \httpErrorPage()
 	 */

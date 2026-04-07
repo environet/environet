@@ -69,7 +69,6 @@ trait WhereTrait {
 	 * @param array|string $whereCondition String for single condition, multidimensional array for more complex logical structures
 	 * @param string       $operator       The root operator of the added condition
 	 *
-	 * @return WhereTrait|Select|Update|Delete
 	 */
 	public function where($whereCondition, $operator = Query::OPERATOR_AND): self {
 		if (!isset($this->wheres[$operator])) {
@@ -90,7 +89,6 @@ trait WhereTrait {
 	 * @param string $paramPrefix Parameters will start with this prefix
 	 * @param string $operator    The root operator of the added condition
 	 *
-	 * @return WhereTrait|Select|Update|Delete
 	 * @uses WhereTrait::where
 	 * @uses Query::addParameter
 	 */
@@ -119,7 +117,6 @@ trait WhereTrait {
 	 * @param array|string $havingCondition String for single condition, multidimensional array for more complex logical structures
 	 * @param string       $operator        The root operator of the added condition
 	 *
-	 * @return WhereTrait|Select|Update|Delete
 	 */
 	public function having($havingCondition, $operator = Query::OPERATOR_AND): self {
 		if (!isset($this->havings[$operator])) {
@@ -136,7 +133,6 @@ trait WhereTrait {
 	 * It's a recursive function, which calls itself walking on the multidimensional array
 	 *
 	 * @param array  $conditions The array-structure of conditions
-	 * @param string $operator
 	 *
 	 * @return string
 	 */
@@ -161,7 +157,6 @@ trait WhereTrait {
 	/**
 	 * Build the condition string for WHERE clause, and append it to the $queryString reference
 	 *
-	 * @param array $queryString
 	 *
 	 * @return void
 	 * @uses WhereTrait::buildConditions
@@ -176,7 +171,6 @@ trait WhereTrait {
 	/**
 	 * Build the condition string for HAVING clause, and append it to the $queryString reference
 	 *
-	 * @param array $queryString
 	 *
 	 * @return void
 	 * @uses WhereTrait::buildConditions
@@ -191,9 +185,6 @@ trait WhereTrait {
 	/**
 	 * Prepare search part on a query.
 	 *
-	 * @param array $needle
-	 * @param array $searchableFields
-	 * @param array $searchableFieldSubSelects
 	 *
 	 * @return WhereTrait|Select|Update|Delete
 	 * @uses \makeAccentInsensitiveRegex()

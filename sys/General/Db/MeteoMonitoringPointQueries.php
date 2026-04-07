@@ -37,17 +37,12 @@ class MeteoMonitoringPointQueries extends AbstractMonitoringPointQueries {
 	];
 
 
-	/**
-	 * @return string
-	 */
 	protected static function getType(): string {
 		return 'meteo';
 	}
 
 
 	/**
-	 * @param array|null $operatorIds
-	 * @param bool       $activeOnly
 	 *
 	 * @return array
 	 * @throws QueryException
@@ -121,10 +116,7 @@ class MeteoMonitoringPointQueries extends AbstractMonitoringPointQueries {
 	 * Logs the transaction regardless of updating or inserting.
 	 * Once done, passes id and observed property data to {@see BaseQueries::saveConnections()}.
 	 *
-	 * @param array      $data
 	 * @param null       $id
-	 * @param string     $primaryKey
-	 * @param array|null $record
 	 *
 	 * @return array|array[]
 	 * @throws QueryException

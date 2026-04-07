@@ -18,19 +18,11 @@ use Environet\Sys\General\Exceptions\QueryException;
 class ResultsCrud extends MonitoringPointResultsCrud {
 
 
-	/**
-	 * @param bool $plural
-	 *
-	 * @return string
-	 */
 	protected function getEntityName(bool $plural = false): string {
 		return $plural ? 'meteo results' : 'meteo result';
 	}
 
 
-	/**
-	 * @return Select
-	 */
 	protected function getBaseQuery(): Select {
 		return new Select()->from('meteo_result r')
 			->join('meteo_time_series ts', 'ts.id = r.time_seriesid', Query::JOIN_LEFT)
@@ -51,16 +43,12 @@ class ResultsCrud extends MonitoringPointResultsCrud {
 	}
 
 
-	/**
-	 * @return string
-	 */
 	protected function getTemplate(): string {
 		return '/meteo/results/index.phtml';
 	}
 
 
 	/**
-	 * @return array
 	 * @throws QueryException
 	 */
 	protected function getCountries(): array {
@@ -73,7 +61,6 @@ class ResultsCrud extends MonitoringPointResultsCrud {
 
 
 	/**
-	 * @return array
 	 * @throws QueryException
 	 */
 	protected function getObservedProperties(): array {
