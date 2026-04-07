@@ -16,13 +16,17 @@
 * **country[]**: Query time series only for monitoring points from the given countries. Country code format: [ISO 3166-1 - alpha-2](https://www.iso.org/iso-3166-country-codes.html)
 * **symbol[]**: Query time series only of the given observed properties.
 * **point[]**: Query time series only of the given points.
-* **format**: The format of the response. The value must be one of the following: `xml` | `xlsx`. Default value is `xml`.
+* **format**: The format of the response. The value must be one of the following: `xml` | `xlsx` | `csv`. Default value is `xml`.
 * **format_options[]**: Extra options for the `format` parameter. It depends on the `format` parameter.
     * `xml`: No options
     * `xlsx`:
         * `format_options[group_by_station]` `bool`: If the value is `1`, every station's data will be in a separate sheet. If the value is `0`, all data will be in one 'Results' sheet. Default value is `0`.
         * `format_options[add_stations_sheet]` `bool`: If value is `1`, a separate sheet will be added to the xlsx file with the list of stations and it's data. Default value is `1`.
         * `format_options[add_properties_sheet]` `bool`: If value is `1`, a separate sheet will be added to the xlsx file with the list of observed properties and it's data. Default value is `1`.
+    * `csv`:
+        * `format_options[group_by_station]` `bool`: If the value is `1`, every station's data will be in a separate CSV file. If the value is `0`, all data will be in one 'Results.csv' file. Default value is `0`.
+        * `format_options[add_stations_file]` `bool`: If value is `1`, a 'Stations.csv' file will be added to the zip archive with the list of stations and it's data. Default value is `1`.
+        * `format_options[add_properties_file]` `bool`: If value is `1`, a 'Properties.csv' file will be added to the zip archive with the list of observed properties and it's data. Default value is `1`.
 
 If any of the date parameters (`start` and `end`) is missing, the default interval will be the last 24 hours. If both of the date parameters are missing, the default interval will be the last 24 hours.
 

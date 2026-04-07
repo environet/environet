@@ -8,6 +8,7 @@ use DateTime;
 use DateTimeZone;
 use Environet\Sys\Download\Exceptions\DownloadException;
 use Environet\Sys\Download\OutputFormat\AbstractOutputFormat;
+use Environet\Sys\Download\OutputFormat\CsvOutputFormat;
 use Environet\Sys\Download\OutputFormat\XlsxOutputFormat;
 use Environet\Sys\Download\OutputFormat\XmlOutputFormat;
 use Environet\Sys\General\Db\DownloadLogQueries;
@@ -52,6 +53,7 @@ class DownloadHandler extends ApiHandler {
 	protected array $formats = [
 		'xml'  => ['class' => XmlOutputFormat::class],
 		'xlsx' => ['class' => XlsxOutputFormat::class],
+		'csv'  => ['class' => CsvOutputFormat::class],
 	];
 
 
