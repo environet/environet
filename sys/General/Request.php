@@ -22,12 +22,12 @@ class Request {
 
 
 	/** Session key of admin auth */
-	const AUTH_SESSION_KEY = 'adminauth';
+	public const AUTH_SESSION_KEY = 'adminauth';
 
-	const PREFIX_ADMIN    = 'admin';
-	const PREFIX_UPLOAD   = 'upload';
-	const PREFIX_DOWNLOAD = 'download';
-	const PREFIX_JSONAPI  = 'api';
+	public const PREFIX_ADMIN = 'admin';
+	public const PREFIX_UPLOAD = 'upload';
+	public const PREFIX_DOWNLOAD = 'download';
+	public const PREFIX_JSONAPI  = 'api';
 
 	/**
 	 * Request URI path
@@ -252,7 +252,7 @@ class Request {
 	 *
 	 * @param string $name     Name of the method
 	 * @param mixed $arguments Arguments
-	 * @uses \Environet\Sys\General\Request::getMethod()
+	 * @uses Request::getMethod
 	 */
 	public function __call($name, $arguments) {
 		if (preg_match('/^is([a-zA-Z]+)$/', $name, $match)) {

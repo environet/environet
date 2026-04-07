@@ -24,10 +24,11 @@ use Exception;
  */
 abstract class CrudPage extends BasePage {
 
-	const PAGE_LIST = 'list';
-	const PAGE_ADD  = 'add';
-	const PAGE_EDIT = 'edit';
-	const PAGE_SHOW = 'show';
+
+	public const PAGE_LIST = 'list';
+	public const PAGE_ADD  = 'add';
+	public const PAGE_EDIT = 'edit';
+	public const PAGE_SHOW = 'show';
 
 	/**
 	 * Relative path to the index template file.
@@ -128,7 +129,7 @@ abstract class CrudPage extends BasePage {
 			$searchString = $this->request->getQueryParam('search');
 
 			//Base query with joins and conditions
-			$query = (new Select())
+			$query = new Select()
 				->select($this->queriesClass::$tableName . '.*')
 				->from($this->queriesClass::$tableName);
 
@@ -428,7 +429,7 @@ abstract class CrudPage extends BasePage {
 	protected function getListPageLinkWithState(): string {
 		$path = $this->listPagePath;
 		if (($listPageState = $this->getListPageState())) {
-			$separator = strpos($path, '?') !== false ? '&' : '?';
+			$separator = str_contains($path, '?') ? '&' : '?';
 			$listPageState = array_filter(array_map(function ($item) {
 				return urlencode($item);
 			}, $listPageState));

@@ -71,14 +71,14 @@ class RiverQueries extends BaseQueries {
 	 *
 	 * @throws MissingEventTypeException
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\BaseQueries::getDeleteEventType()
-	 * @uses \Environet\Sys\General\Db\Query\Delete::run()
+	 * @uses BaseQueries::getDeleteEventType
+	 * @uses Delete::run
 	 */
 	public static function delete($id, bool $soft = false, string $primaryKey = 'id') {
 		EventLogger::log(static::getDeleteEventType(), ['id' => $id]);
 
 		if ($soft) {
-			(new Update())
+			new Update()
 				->table(static::$tableName)
 				->where(static::$tableName . '.' . 'eucd_riv' . ' = :id')
 				->addSet('deleted_at', ':deletedAt')
@@ -88,7 +88,7 @@ class RiverQueries extends BaseQueries {
 				])
 				->run();
 		} else {
-			(new Delete())->table(static::$tableName)->where('eucd_riv' . ' = :id')->addParameter(':id', $id)->run();
+			new Delete()->table(static::$tableName)->where('eucd_riv' . ' = :id')->addParameter(':id', $id)->run();
 		}
 	}
 

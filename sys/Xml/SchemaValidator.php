@@ -44,7 +44,7 @@ class SchemaValidator {
 
 		// Check if schema exists
 		if (!file_exists($schemaFile)) {
-			throw new Exception("File doesn't exist: {$schemaFile}");
+			throw new Exception("File doesn't exist: $schemaFile");
 		}
 		$this->schemaFile = $schemaFile;
 	}

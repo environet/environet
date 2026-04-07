@@ -29,12 +29,12 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 	/**
 	 * @inheritDoc
 	 * @throws ApiException
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses Select::run
 	 */
 	protected function findMonitoringPoint(string $identifier, Identity $identity = null, bool $activeOnly = false): ?array {
 		try {
 			// Find hydro monitoring point
-			$mPointQuery = (new Select())
+			$mPointQuery = new Select()
 				->from('hydropoint')
 				->where('ncd_wgst = :id')
 				->addParameter('id', $identifier);
@@ -60,12 +60,12 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 	/**
 	 * @inheritDoc
 	 * @throws ApiException
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses Select::run
 	 */
 	protected function getPropertyIdIfAllowed(int $mPointId, string $propertySymbol): ?int {
 		try {
 			// Get the property id with an inner join to hydropoint_observed_property, to get only allowed property id
-			$propertyId = (new Select())
+			$propertyId = new Select()
 				->from('hydro_observed_property as property')
 				->select('property.id')
 				->join(
@@ -92,14 +92,14 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 	 * @inheritDoc
 	 * @throws ApiException
 	 * @throws Exception
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
-	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
-	 * @uses \Environet\Sys\General\Db\Query\Update::run()
+	 * @uses Select::run
+	 * @uses Insert::run
+	 * @uses Update::run
 	 */
 	protected function getOrCreateTimeSeries(int $mPointId, int $propertyId, DateTime $now): ?int {
 		try {
 			// Find time series by id
-			$timeSeriesId = (new Select())
+			$timeSeriesId = new Select()
 				->from('hydro_time_series as time_series')
 				->select('time_series.id')
 				->where('time_series.observed_propertyid = :propertyId')
@@ -118,7 +118,7 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 					return 0;
 				}
 				// Time series for property and monitoring point not found, create a new one
-				$timeSeriesId = (new Insert())
+				$timeSeriesId = new Insert()
 					->table('hydro_time_series')
 					->columns(['observed_propertyid', 'mpointid'])
 					->addValueRow([':propertyId', ':mPointId'])
@@ -142,7 +142,7 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 	 * @inheritDoc
 	 */
 	protected function createResultInsert(): Insert {
-		return (new Insert())->table('hydro_result')->columns(['time_seriesid', 'time', 'value', 'is_forecast', 'created_at']);
+		return new Insert()->table('hydro_result')->columns(['time_seriesid', 'time', 'value', 'is_forecast', 'created_at']);
 	}
 
 
@@ -150,7 +150,7 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 	 * @return Query
 	 */
 	protected function createResultStatisticsSelect(): Query {
-		return (new Select())->select('*')
+		return new Select()->select('*')
 			->from('hydro_result')
 			->where('time_seriesid = :tsid')
 			->where('time = :time')

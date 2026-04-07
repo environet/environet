@@ -177,9 +177,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 			if (!$fileResponse->hasErrors()) {
 				$fileResponse->addSuccessMessage(sprintf('File imported successfully: %s', $fileResponse->getOriginalFileName()));
 				$logDate = $fileResponse->getStatistics()->getDate();
-				if ($logDate) {
-					$logDate->setTimezone(new DateTimeZone(Config::getInstance()->getTimezone()));
-				}
+				$logDate?->setTimezone(new DateTimeZone(Config::getInstance()->getTimezone()));
 				EventLogger::log(
 					EventLogger::EVENT_TYPE_UPLOAD_DATA,
 					$fileResponse->getStatistics()->getLogData(),
@@ -354,7 +352,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 */
 	protected function getMonitoringPoint($mPointId, array $operatorIds) {
 		//Find hydro point
-		$hydroSelect = (new Select())
+		$hydroSelect = new Select()
 			->select(HydroMonitoringPointQueries::$tableName . '.*')
 			->from(HydroMonitoringPointQueries::$tableName)
 			->where(HydroMonitoringPointQueries::$tableName . '.ncd_wgst = :id')
@@ -366,7 +364,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 			return $hydro;
 		}
 		//Find meteo point
-		$meteoSelect = (new Select())
+		$meteoSelect = new Select()
 			->select(MeteoMonitoringPointQueries::$tableName . '.*')
 			->from(MeteoMonitoringPointQueries::$tableName)
 			->where(MeteoMonitoringPointQueries::$tableName . '.ncd_pst = :id')
@@ -393,9 +391,9 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 * @throws InvalidArgumentException
 	 * @throws PKIException
 	 * @throws Exception
-	 * @uses \Environet\Sys\General\PKI::generateSignature()
-	 * @uses \Environet\Sys\General\PKI::generateKeyPair()
-	 * @uses \Environet\Sys\General\PKI::authHeaderWithSignature()
+	 * @uses PKI::generateSignature
+	 * @uses PKI::generateKeyPair
+	 * @uses PKI::authHeaderWithSignature
 	 */
 	protected function generateSignatureHeader($xml, $username): string {
 		$pkiLib = new PKI();

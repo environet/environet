@@ -17,7 +17,9 @@ use Environet\Sys\General\Exceptions\QueryException;
  */
 class Update extends Query {
 
-	use WhereTrait, JoinTrait;
+
+	use JoinTrait;
+	use WhereTrait;
 
 	/**
 	 * Set operations. Each item must be a string, e.g.: "column = value"
@@ -53,7 +55,7 @@ class Update extends Query {
 	 *
 	 * @return self
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Update::addSet()
+	 * @uses Update::addSet
 	 */
 	public function setSets(array $sets): self {
 		$this->sets = [];
@@ -74,8 +76,8 @@ class Update extends Query {
 	 *
 	 * @return $this
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Update::setParameters()
-	 * @uses \Environet\Sys\General\Db\Query\Update::setSets()
+	 * @uses Update::setParameters
+	 * @uses Update::setSets
 	 */
 	public function updateData(array $data): self {
 		// Process data, convert it to PDO-compatible parameters and parameter names
@@ -98,7 +100,7 @@ class Update extends Query {
 	 * It's invalid if the sets count is 0.
 	 *
 	 * @return bool
-	 * @uses \Environet\Sys\General\Db\Query\Query::validateQuery()
+	 * @uses Query::validateQuery
 	 */
 	protected function validateQuery(): bool {
 		$setCount = count($this->sets);
@@ -114,9 +116,9 @@ class Update extends Query {
 	 * Build a update operation query with conditions and setters
 	 *
 	 * @return mixed|string
-	 * @uses \Environet\Sys\General\Db\Query\Update::buildWhereClause()
-	 * @uses \Environet\Sys\General\Db\Query\Update::buildJoinClause()
-	 * @uses \Environet\Sys\General\Db\Query\Update::buildHavingClause()
+	 * @uses Update::buildWhereClause
+	 * @uses Update::buildJoinClause
+	 * @uses Update::buildHavingClause
 	 */
 	public function buildQuery() {
 		// Build UPDATE table
@@ -153,7 +155,7 @@ class Update extends Query {
 	 *
 	 * @return int|null
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Query::run()
+	 * @uses Query::run
 	 */
 	public function run($flags = null) {
 		$flags |= self::RETURN_BOOL;

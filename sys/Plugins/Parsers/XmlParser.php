@@ -32,7 +32,8 @@ use SimpleXMLElement;
  */
 class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
-	const API_TIME_FORMAT_STRING = 'Y-m-d\TH:i:sP';
+
+	public const API_TIME_FORMAT_STRING = 'Y-m-d\TH:i:sP';
 
 	/**
 	 * @var string Separator to group thousands in values. May be ""
@@ -82,11 +83,11 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 * Recursive function to parse a xml tree to acquire values for given parameters from xml tree
 	 * List of information gathered from xml stored in $this->flatList
 	 *
-	 * @param SimpleXMLElement   $xml              Xml element to parse
-	 * @param ResolvedGroup|null $parentGroup      Parent group in case of nested groups. This group can contain some already parsed parameters
-	 * @param int                $hierarchyCounter Level of hierarchy, initially 0
-	 * @param string|null        $parentPath       Parent common path in case of nested groups
-	 * @param array|null         $parametersOnly   If set, only parameters in this array will be parsed - used for recursive calls
+	 * @param SimpleXMLElement $xml           Xml element to parse
+	 * @param ResolvedGroup|null $parentGroup Parent group in case of nested groups. This group can contain some already parsed parameters
+	 * @param int $hierarchyCounter           Level of hierarchy, initially 0
+	 * @param string|null $parentPath         Parent common path in case of nested groups
+	 * @param array|null $parametersOnly      If set, only parameters in this array will be parsed - used for recursive calls
 	 *
 	 * @return void
 	 * @throws Exception
@@ -140,7 +141,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		$start = $iterationsBoundaries[0] ?? 1;
 		$end = $iterationsBoundaries[1] ?? 1;
 
-		for ($i = $start; $i <= $end; $i ++) {
+		for ($i = $start; $i <= $end; $i++) {
 			//Iterate over groups, parse parameters and recurse if needed
 			foreach ($groups as $groupKey => $group) {
 				//The group where the parameters will be stored can be a new group or a clone of the parent group in case of nested calls.
@@ -172,14 +173,12 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 					if ($targetElement instanceof SimpleXMLElement && !empty($parameter->getAttribute()) && $targetElement->getName() === end($commonElements)) {
 						//Desired information is attribute of group-defining tag
 						$resolvedGroup->addItem(new ResolvedItem($parameter, $parameter->getXmlValue($targetElement, $this->skipEmptyValueTag)));
+					} elseif (count($targetElement) === 1) {
+						//Target element is a single element, value can be parsed
+						$resolvedGroup->addItem(new ResolvedItem($parameter, $parameter->getXmlValue($targetElement[0], $this->skipEmptyValueTag)));
 					} else {
-						if (count($targetElement) === 1) {
-							//Target element is a single element, value can be parsed
-							$resolvedGroup->addItem(new ResolvedItem($parameter, $parameter->getXmlValue($targetElement[0], $this->skipEmptyValueTag)));
-						} else {
-							//Target element is a collection of elements, recursion is needed
-							$subParameters[] = $parameter;
-						}
+						//Target element is a collection of elements, recursion is needed
+						$subParameters[] = $parameter;
 					}
 				}
 
@@ -199,8 +198,8 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Returns common elements from xml tag hierarchy
 	 *
-	 * @param string|null $underPath      If set, common elements are searched under this path
-	 * @param array|null  $parametersOnly If set, only parameters in this array will be parsed
+	 * @param string|null $underPath     If set, common elements are searched under this path
+	 * @param array|null $parametersOnly If set, only parameters in this array will be parsed
 	 *
 	 * @return array The common elements of tag hierarchy, if any
 	 */
@@ -227,7 +226,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 			$elements = array_values(array_unique(array_filter($elements, fn($element) => $element !== null)));
 			if (count($elements) === 1) {
 				$commonElements[] = $elements[0];
-				$i ++;
+				$i++;
 				continue;
 			}
 			break;
@@ -295,7 +294,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 				//Atomic date components are stored in $dateParams
 				$dateParams[$type] = $value;
 			}
-			if (strpos($type, 'Date') !== false) { //In case of Date or DateTime
+			if (str_contains($type, 'Date')) { //In case of Date or DateTime
 				//In case of Date or DateTime, the date components are stored in $dateParams
 				$date = DateTime::createFromFormat($format, $value);
 				if (!$date) {
@@ -305,7 +304,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 				$dateParams['Month'] = preg_match('/[mMnF]/', $format) ? $date->format('m') : '01';
 				$dateParams['Day'] = preg_match('/[dD]/', $format) ? $date->format('d') : '01';
 			}
-			if (strpos($type, 'Time') !== false) { //In case of Time or DateTime
+			if (str_contains($type, 'Time')) { //In case of Time or DateTime
 				//In case of Time or DateTime, the time components are stored in $dateParams
 				$time = DateTime::createFromFormat($format, $value);
 				if (!$time) {
@@ -328,7 +327,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 		//Add DateTime item to resolved group with API_TIME_FORMAT_STRING format
 		$resolvedGroup->addItem(new ResolvedItem(
-			(new DateParameter())->setOptions(['Type' => 'DateTime', 'Format' => self::API_TIME_FORMAT_STRING]),
+			new DateParameter()->setOptions(['Type' => 'DateTime', 'Format' => self::API_TIME_FORMAT_STRING]),
 			$date->format(self::API_TIME_FORMAT_STRING)
 		));
 	}
@@ -442,7 +441,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 				if (!$symbolItem) {
 					//Add property symbol from Resource, it is not present in resolved item
 					$resolvedGroup->addItem(new ResolvedItem(
-						new ObservedPropertySymbolParameter,
+						new ObservedPropertySymbolParameter(),
 						$resource->getSpecificPropertySymbol()
 					));
 				}
@@ -466,7 +465,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		foreach ($this->flatList as $key => $resolvedGroup) {
 			try {
 				$this->assembleDate($resolvedGroup);
-			} catch (\Exception $e) {
+			} catch (Exception $e) {
 				unset($this->flatList[$key]);
 			}
 		}
@@ -511,7 +510,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * @inheritDoc
 	 * @throws Exception
-	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::serializePropertyConfiguration()
+	 * @uses CsvParser::serializePropertyConfiguration
 	 */
 	public static function create(Console $console, PluginBuilder $builder): ParserInterface {
 		$console->writeLine('');
@@ -547,7 +546,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 	/**
 	 * @inheritDoc
-	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::serializePropertyConfiguration()
+	 * @uses CsvParser::serializePropertyConfiguration
 	 */
 	public function serializeConfiguration(): string {
 		$config = 'separatorThousands = "' . $this->separatorThousands . "\"\n";

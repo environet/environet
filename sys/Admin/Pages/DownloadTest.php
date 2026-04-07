@@ -57,12 +57,12 @@ class DownloadTest extends BasePage {
 	 * Get the available countries and EUCD identifiers per monitoring point types.
 	 *
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Select
+	 * @uses Select
 	 */
 	protected function fetchCountriesAndEUCD() {
 		$this->countries = ['hydro' => [], 'meteo' => []];
 		$this->points = ['hydro' => [], 'meteo' => []];
-		$countries = (new Select())
+		$countries = new Select()
 			->from('hydropoint')
 			->select('country, eucd_wgst')
 			->run();
@@ -73,7 +73,7 @@ class DownloadTest extends BasePage {
 		}
 		$this->countries['hydro'] = array_unique($this->countries['hydro']);
 
-		$countries = (new Select())
+		$countries = new Select()
 			->from('meteopoint')
 			->select('country, eucd_pst')
 			->run();
@@ -90,11 +90,11 @@ class DownloadTest extends BasePage {
 	 * Get the available observed property symbols per monitoring point types.
 	 *
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Select
+	 * @uses Select
 	 */
 	protected function fetchSymbols() {
 		$this->symbols = ['hydro' => [], 'meteo' => []];
-		$symbols = (new Select())
+		$symbols = new Select()
 			->from('hydro_observed_property')
 			->select('symbol')
 			->groupBy('symbol')
@@ -104,7 +104,7 @@ class DownloadTest extends BasePage {
 			$this->symbols['hydro'][$symbol['symbol']] = $symbol['symbol'];
 		}
 
-		$symbols = (new Select())
+		$symbols = new Select()
 			->from('meteo_observed_property')
 			->select('symbol')
 			->groupBy('symbol')
@@ -126,7 +126,7 @@ class DownloadTest extends BasePage {
 	 * @throws HttpBadRequestException
 	 * @throws QueryException
 	 * @throws RenderException
-	 * @uses \Environet\Sys\Admin\Pages\DownloadTest::sendData()
+	 * @uses DownloadTest::sendData
 	 */
 	public function handle(): ?Response {
 		// Get available countries and monitoring point identifiers
@@ -136,7 +136,7 @@ class DownloadTest extends BasePage {
 		$this->fetchSymbols();
 
 		// Create observed property options
-		$this->users = (new Select())->from('users')->run();
+		$this->users = new Select()->from('users')->run();
 		$this->users = array_combine(array_column($this->users, 'username'), array_column($this->users, 'username'));
 
 		$response = $error = null;
@@ -185,8 +185,8 @@ class DownloadTest extends BasePage {
 	 * Generates a signature header based on the current user's private key and the test token ({@see DownloadTest::$token}).
 	 *
 	 * @throws Exception
-	 * @uses \Environet\Sys\Admin\Pages\DownloadTest::generateSignatureHeader()
-	 * @uses \Environet\Sys\General\HttpClient\HttpClient::sendRequest()
+	 * @uses DownloadTest::generateSignatureHeader
+	 * @uses HttpClient::sendRequest
 	 */
 	protected function sendData() {
 		$type = $_POST['type'];
@@ -202,7 +202,7 @@ class DownloadTest extends BasePage {
 			if (is_array($countries)) {
 				$params .= '&country[]=' . implode('&country[]=', $countries);
 			} else {
-				$params .= "&country[]={$countries}";
+				$params .= "&country[]=$countries";
 			}
 		}
 
@@ -210,7 +210,7 @@ class DownloadTest extends BasePage {
 			if (is_array($points)) {
 				$params .= '&point[]=' . implode('&point[]=', $points);
 			} else {
-				$params .= "&point[]={$points}";
+				$params .= "&point[]=$points";
 			}
 		}
 
@@ -218,16 +218,16 @@ class DownloadTest extends BasePage {
 			if (is_array($symbols)) {
 				$params .= '&symbol[]=' . implode('&symbol[]=', $symbols);
 			} else {
-				$params .= "&symbol[]={$symbols}";
+				$params .= "&symbol[]=$symbols";
 			}
 		}
 
 		if ($start) {
-			$params .= '&start=' . urlencode((new DateTime($start))->format('c'));
+			$params .= '&start=' . urlencode(new DateTime($start)->format('c'));
 		}
 
 		if ($end) {
-			$params .= '&end=' . urlencode((new DateTime($end))->format('c'));
+			$params .= '&end=' . urlencode(new DateTime($end)->format('c'));
 		}
 
 		$apiHost = Config::getInstance()->getDatanodeDistHost();
@@ -263,8 +263,8 @@ class DownloadTest extends BasePage {
 	 * @throws InvalidArgumentException
 	 * @throws PKIException
 	 * @throws Exception
-	 * @uses \Environet\Sys\General\PKI::authHeaderWithSignature()
-	 * @uses \Environet\Sys\General\PKI::generateSignature()
+	 * @uses PKI::authHeaderWithSignature
+	 * @uses PKI::generateSignature
 	 */
 	protected function generateSignatureHeader($username): string {
 		$privateKeyFile = SRC_PATH . '/data/test_private_keys/' . $username . '.key';

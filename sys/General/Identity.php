@@ -17,7 +17,8 @@ use Environet\Sys\General\Db\UserQueries;
  */
 class Identity {
 
-	const ADMIN_PERMISSION = 'admin.all';
+
+	public const ADMIN_PERMISSION = 'admin.all';
 
 	/**
 	 * @var int Id of the identity
@@ -83,12 +84,12 @@ class Identity {
 	 * @param int $userId
 	 *
 	 * @return Identity|null
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses Select::run
 	 */
 	public static function createFromUser(int $userId): ?Identity {
 		try {
 			// Find the user, and create a new Identity with it
-			$user = (new Select())
+			$user = new Select()
 				->from('users')
 				->where('id = :userId')
 				->limit(1)
@@ -134,7 +135,7 @@ class Identity {
 	 *
 	 * @return array
 	 * @throws Exceptions\QueryException
-	 * @uses \Environet\Sys\General\Db\UserQueries::getUserPermissions()
+	 * @uses UserQueries::getUserPermissions
 	 */
 	public function getPermissions(): array {
 		if ($this->permissions === null) {

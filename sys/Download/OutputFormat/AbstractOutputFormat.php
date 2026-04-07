@@ -51,27 +51,13 @@ abstract class AbstractOutputFormat {
 	public function setOptions(array $options): AbstractOutputFormat {
 		foreach ($options as $key => $value) {
 			$type = gettype($this->options[$key]);
-			switch ($type) {
-				case 'boolean':
-					$this->options[$key] = (bool) $value;
-
-					break;
-				case 'integer':
-					$this->options[$key] = (int) $value;
-
-					break;
-				case 'double':
-					$this->options[$key] = (float) $value;
-
-					break;
-				case 'string':
-					$this->options[$key] = (string) $value;
-
-					break;
-				default:
-					//Other options formats are not supported
-					throw new Exception('Format option type is not supported');
-			}
+			$this->options[$key] = match ($type) {
+				'boolean' => (bool) $value,
+				'integer' => (int) $value,
+				'double' => (float) $value,
+				'string' => (string) $value,
+				default => throw new Exception('Format option type is not supported'),
+			};
 		}
 
 		return $this;
@@ -121,7 +107,7 @@ abstract class AbstractOutputFormat {
 		$columns[] = 'point.id as _keyid';
 
 		//Build and run the query
-		$query = (new Select())->from("$tableName as point");
+		$query = new Select()->from("$tableName as point");
 		$query->join('operator', 'point.operatorid = operator.id');
 		if ($queryMeta['type'] === 'hydro') {
 			$query->join('river', 'point.eucd_riv = river.eucd_riv', Query::JOIN_LEFT);
@@ -176,7 +162,7 @@ abstract class AbstractOutputFormat {
 		$columns[] = 'observed_property.id as _keyid';
 
 		//Build and run the query
-		$query = (new Select())->from("$tableName as observed_property")->select($columns);
+		$query = new Select()->from("$tableName as observed_property")->select($columns);
 		$results = $query->whereIn('observed_property.id', $ids, 'propertyId')->orderBy('UPPER(observed_property.symbol)')->run();
 
 		//Map the results to use the _keyid as the key, and remove the _keyid from the values

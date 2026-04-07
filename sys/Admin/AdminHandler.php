@@ -54,7 +54,7 @@ use Exception;
 class AdminHandler extends BaseHandler {
 
 	/** @inheritDoc */
-	const HANDLER_PERMISSION = 'admin.login';
+	public const HANDLER_PERMISSION = 'admin.login';
 
 	/**
 	 * @var string Base path for templates
@@ -93,9 +93,9 @@ class AdminHandler extends BaseHandler {
 	 *
 	 * @throws RenderException
 	 * @uses \httpRedirect()
-	 * @uses \Environet\Sys\Admin\AdminHandler::getIdentity()
-	 * @uses \Environet\Sys\Admin\AdminHandler::authorizeRequest()
-	 * @uses \Environet\Sys\Admin\AdminHandler::getAdminPath()
+	 * @uses AdminHandler::getIdentity
+	 * @uses AdminHandler::authorizeRequest
+	 * @uses AdminHandler::getAdminPath
 	 */
 	public function handleRequest() {
 
@@ -123,7 +123,7 @@ class AdminHandler extends BaseHandler {
 			/** @var BasePage $routeHandlerClass */
 			$routeHandlerClass = $foundRoute[0];
 			$handlerMethodName = $foundRoute[1];
-			$requiredPermissions = isset($foundRoute[2]) ? $foundRoute[2] : [];
+			$requiredPermissions = $foundRoute[2] ?? [];
 
 
 			// Allow only login page without identity
@@ -147,14 +147,14 @@ class AdminHandler extends BaseHandler {
 			// Page found, create the handler, and call the handle function, and return it's response
 			return call_user_func([new $routeHandlerClass($this->request), $handlerMethodName]);
 		} catch (PermissionException $e) {
-			return (new Renderer('/error_403.phtml', ['exception' => $e]))();
+			return new Renderer('/error_403.phtml', ['exception' => $e])();
 		} catch (HttpNotFoundException $e) {
-			return (new Renderer('/error_404.phtml', ['exception' => $e]))();
+			return new Renderer('/error_404.phtml', ['exception' => $e])();
 		} catch (HttpBadRequestException $e) {
-			return (new Renderer('/error_400.phtml', ['exception' => $e]))();
+			return new Renderer('/error_400.phtml', ['exception' => $e])();
 		} catch (Exception $e) {
 			exception_logger($e);
-			return (new Renderer('/error_500.phtml', ['exception' => $e]))();
+			return new Renderer('/error_500.phtml', ['exception' => $e])();
 		}
 	}
 

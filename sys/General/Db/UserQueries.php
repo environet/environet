@@ -46,18 +46,18 @@ class UserQueries extends BaseQueries {
 	 * @param array|null $record
 	 *
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
-	 * @uses \Environet\Sys\General\Db\Query\Update::run()
-	 * @uses \Environet\Sys\General\EventLogger::log()
-	 * @uses \Environet\Sys\General\Db\UserQueries::saveGroups()
-	 * @uses \Environet\Sys\General\Db\UserQueries::savePermissions()
+	 * @uses Insert::run
+	 * @uses Update::run
+	 * @uses EventLogger::log
+	 * @uses UserQueries::saveGroups
+	 * @uses UserQueries::savePermissions
 	 */
 	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
 		if ($id) {
 			// Update user
 			if ($data['public_key'] !== "") {
 				// Revoke the previous keys
-				(new Update())
+				new Update()
 					->table('public_keys')
 					->where('usersid = :userId')
 					->updateData([
@@ -68,7 +68,7 @@ class UserQueries extends BaseQueries {
 					->run();
 
 				// Add new
-				(new Insert())
+				new Insert()
 					->table('public_keys')
 					->addSingleData([
 						'usersId'    => $id,
@@ -95,7 +95,7 @@ class UserQueries extends BaseQueries {
 			}
 
 			// If data is valid, update user
-			(new Update())
+			new Update()
 				->table('users')
 				->where('id = :userId')
 				->updateData($userUpdateData)
@@ -106,7 +106,7 @@ class UserQueries extends BaseQueries {
 			self::saveGroups($data['form_groups'], $id);
 		} else {
 			// Add new user
-			$id = (new Insert())
+			$id = new Insert()
 				->table('users')
 				->addSingleData([
 					'name'     => $data['name'],
@@ -116,7 +116,7 @@ class UserQueries extends BaseQueries {
 				])
 				->run();
 			// Add new public_key
-			(new Insert())
+			new Insert()
 				->table('public_keys')
 				->addSingleData([
 					'usersId'    => $id,
@@ -150,11 +150,11 @@ class UserQueries extends BaseQueries {
 	 *
 	 * @return array Array of merged operators
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses Select::run
 	 */
 	public static function getMergedOperatorsOfUser(int $userId, array $groupIds = []) {
 		// Get direct operators, with ids as array keys
-		$operators = (new Select())
+		$operators = new Select()
 			->select(['operator.*', '\'direct\' as connection_type'])
 			->from('operator')
 			->join('operator_users', 'operator_users.operatorid = operator.id', Query::JOIN_LEFT)
@@ -164,7 +164,7 @@ class UserQueries extends BaseQueries {
 
 		if ($groupIds) {
 			// Get inherited group operators with ids as array keys
-			$groupOperators = (new Select())
+			$groupOperators = new Select()
 				->from('operator')
 				->select(['operator.*', '\'group\' as connection_type'])
 				->join('operator_groups', 'operator_groups.operatorid = operator.id', Query::JOIN_LEFT)
@@ -193,24 +193,24 @@ class UserQueries extends BaseQueries {
 	 *
 	 * @return array
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses Select::run
 	 */
 	public static function getUserPermissions(int $userId): array {
 		$result = [];
-		$rows = (new Select())
+		$rows = new Select()
 			->select('permissions.name as permission')
 			->from('permissions')
 			->join('group_permissions gp', 'permissions.id = gp.permissionsid')
 			->join('users_groups ug', 'gp.groupsid = ug.groupsid')
 			->join('users u', 'ug.usersid = u.id')
-			->where("u.id = {$userId}")
+			->where("u.id = $userId")
 			->union(
-				(new Select())
+				new Select()
 					->select('permissions.name as permission')
 					->from('permissions')
 					->join('user_permissions up', 'permissions.id = up.permissionsid')
 					->join('users u2', 'up.usersid = u2.id')
-					->where("u2.id = {$userId}")
+					->where("u2.id = $userId")
 			)
 			->run();
 
@@ -252,7 +252,7 @@ class UserQueries extends BaseQueries {
 	 *
 	 * @return bool
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses Select::run
 	 */
 	public static function isOperatorUser(int $userId): bool {
 		return count(static::getOperatorsOfUser($userId));
@@ -292,10 +292,10 @@ class UserQueries extends BaseQueries {
 	 *
 	 * @return array
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses Select::run
 	 */
 	public static function getUserGroups(int $userId): array {
-		return (new Select())
+		return new Select()
 			->from('groups')
 			->join('users_groups', 'users_groups.groupsid = groups.id', Query::JOIN_LEFT)
 			->where('users_groups.usersid = :userId')
@@ -311,7 +311,7 @@ class UserQueries extends BaseQueries {
 	 * @param $idRight
 	 *
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\BaseQueries::saveConnections()
+	 * @uses BaseQueries::saveConnections
 	 */
 	public static function savePermissions($values, $idRight) {
 		parent::saveConnections($values, "user_permissions", "permissionsid", "usersid", $idRight, true);
@@ -325,7 +325,7 @@ class UserQueries extends BaseQueries {
 	 * @param $idRight
 	 *
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\BaseQueries::saveConnections()
+	 * @uses BaseQueries::saveConnections
 	 */
 	public static function saveGroups($values, $idRight) {
 		parent::saveConnections($values, "users_groups", "groupsid", "usersid", $idRight, true);
@@ -341,7 +341,7 @@ class UserQueries extends BaseQueries {
 	 *
 	 * @throws QueryException
 	 * @throws MissingEventTypeException
-	 * @uses \Environet\Sys\General\Db\BaseQueries::delete()
+	 * @uses BaseQueries::delete
 	 */
 	public static function delete(int $id, bool $soft = false, string $primaryKey = 'id') {
 		parent::delete($id, true);
@@ -351,8 +351,8 @@ class UserQueries extends BaseQueries {
 	/**
 	 * @inheritDoc
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\UserQueries::getUserGroups()
-	 * @uses \Environet\Sys\General\Db\UserQueries::getMergedOperatorsOfUser()
+	 * @uses UserQueries::getUserGroups
+	 * @uses UserQueries::getMergedOperatorsOfUser
 	 */
 	public static function getById($id, string $primaryKey = 'id'): ?array {
 		$record = parent::getById($id, $primaryKey);
@@ -368,21 +368,21 @@ class UserQueries extends BaseQueries {
 		$record['show_operators'] = UserQueries::getMergedOperatorsOfUser($record['id'], array_column($record['show_groups'], 'id'));
 
 		// Get a list of public keys
-		$record['show_publicKeys'] = (new Select())
+		$record['show_publicKeys'] = new Select()
 			->from('public_keys')
 			->where('usersid = :userId')
 			->where('revoked = FALSE')
 			->addParameter(':userId', $record['id'])
 			->run();
 
-		$record['form_permissions'] = (new Select())
+		$record['form_permissions'] = new Select()
 			->select('permissionsid')
 			->from('user_permissions')
 			->where('usersid = :userId')
 			->addParameter(':userId', $record['id'])
 			->run(Query::FETCH_COLUMN);
 
-		$record['form_groups'] = (new Select())
+		$record['form_groups'] = new Select()
 			->select('groupsid')
 			->from('users_groups')
 			->where('usersid = :userId')

@@ -32,8 +32,8 @@ class ExportDb extends DbCommand {
 	 *
 	 * @return int
 	 * @throws CommandException
-	 * @uses \Environet\Sys\Commands\DistNode\InitDb::importSchema()
-	 * @uses \Environet\Sys\Commands\DistNode\InitDb::importData()
+	 * @uses InitDb::importSchema
+	 * @uses InitDb::importData
 	 */
 	public function run($arguments, $options): int {
 		$output = [];

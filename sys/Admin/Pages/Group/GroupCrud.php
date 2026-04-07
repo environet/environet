@@ -119,14 +119,14 @@ class GroupCrud extends CrudPage {
 		}
 
 		// we have to check the requested group's relations
-		$userGroupCount = (new Select())
+		$userGroupCount = new Select()
 			->select('COUNT(*)')
 			->from('users_groups')
 			->where('groupsid = :groupId')
 			->addParameter(':groupId', $groupId)
 			->run(Query::FETCH_COUNT);
 
-		$operatorGroupCount = (new Select())
+		$operatorGroupCount = new Select()
 			->select('COUNT(*)')
 			->from('operator_groups')
 			->where('groupsid = :groupId')
@@ -138,8 +138,8 @@ class GroupCrud extends CrudPage {
 			$this->addMessage('The requested group isn\'t deletable because it has active relation with operators or/and users!');
 		} else {
 			// otherwise delete the groups and the relations under the group
-			(new Delete())->table('group_permissions')->where('groupsid = :groupId')->addParameter(':groupId', $groupId)->run();
-			(new Delete())->table('groups')->where('id = :groupId')->addParameter(':groupId', $groupId)->run();
+			new Delete()->table('group_permissions')->where('groupsid = :groupId')->addParameter(':groupId', $groupId)->run();
+			new Delete()->table('groups')->where('id = :groupId')->addParameter(':groupId', $groupId)->run();
 
 			$this->addMessage('The requested group has been deleted!');
 			// log group deleting event

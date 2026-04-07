@@ -7,6 +7,7 @@ use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\Identity;
+use TypeError;
 
 /**
  * Class Selector
@@ -18,9 +19,10 @@ use Environet\Sys\General\Identity;
  */
 abstract class Selector {
 
-	const SELECTOR_TYPE_INT    = 'int';
-	const SELECTOR_TYPE_FLOAT  = 'float';
-	const SELECTOR_TYPE_STRING = 'string';
+
+	public const SELECTOR_TYPE_INT = 'int';
+	public const SELECTOR_TYPE_FLOAT = 'float';
+	public const SELECTOR_TYPE_STRING = 'string';
 
 	/**
 	 * @var array Selector values (eg.: ids)
@@ -39,7 +41,7 @@ abstract class Selector {
 	 * @param string $values
 	 * @param string $valueType
 	 *
-	 * @uses \Environet\Sys\General\Db\Selectors\Selector::unserialize()
+	 * @uses Selector::unserialize
 	 */
 	public function __construct(string $values, string $valueType = self::SELECTOR_TYPE_INT) {
 		$this->valueType = $valueType;
@@ -54,11 +56,11 @@ abstract class Selector {
 	 *
 	 * @return Identity
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses Select::run
 	 * @see  Identity|null
 	 */
 	protected function getOperatorIdentity($operatorId): ?Identity {
-		$user = (new Select())
+		$user = new Select()
 			->select('users.*')
 			->from('users')
 			->join('operator_users', 'operator_users.usersid = users.id')
@@ -87,23 +89,16 @@ abstract class Selector {
 	 */
 	public function unserialize($serialized) {
 		if (is_string($serialized)) {
-			switch ($this->valueType) {
-				case self::SELECTOR_TYPE_INT:
-					$this->values = array_filter(array_map('intval', explode(',', $serialized)));
-					break;
-				case self::SELECTOR_TYPE_FLOAT:
-					$this->values = array_filter(array_map('floatval', explode(',', $serialized)));
-					break;
-				case self::SELECTOR_TYPE_STRING:
-				default:
-					$this->values = array_filter(explode(',', $serialized));
-					break;
-			}
+			$this->values = match ($this->valueType) {
+				self::SELECTOR_TYPE_INT => array_filter(array_map('intval', explode(',', $serialized))),
+				self::SELECTOR_TYPE_FLOAT => array_filter(array_map('floatval', explode(',', $serialized))),
+				default => array_filter(explode(',', $serialized)),
+			};
 
 			return;
 		}
 
-		throw new \TypeError('The serialized data must be a string!');
+		throw new TypeError('The serialized data must be a string!');
 	}
 
 
@@ -126,18 +121,11 @@ abstract class Selector {
 	 * @return Selector
 	 */
 	public function addValue($value): Selector {
-		switch ($this->valueType) {
-			case self::SELECTOR_TYPE_INT:
-				$this->values[] = (int) $value;
-				break;
-			case self::SELECTOR_TYPE_FLOAT:
-				$this->values[] = (float) $value;
-				break;
-			case self::SELECTOR_TYPE_STRING:
-			default:
-				$this->values[] = "$value";
-				break;
-		}
+		$this->values[] = match ($this->valueType) {
+			self::SELECTOR_TYPE_INT => (int) $value,
+			self::SELECTOR_TYPE_FLOAT => (float) $value,
+			default => "$value",
+		};
 
 		$this->values = array_unique($this->values);
 

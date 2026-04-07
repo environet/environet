@@ -115,8 +115,8 @@ abstract class ApiHandler extends BaseHandler {
 	 * @return Identity
 	 * @throws ApiException
 	 * @uses \Environet\Sys\Upload\UploadHandler::getAuthHeaderParts()
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
-	 * @uses \Environet\Sys\General\Identity::createFromUser()
+	 * @uses Select::run
+	 * @uses Identity::createFromUser
 	 */
 	protected function getIdentity(): Identity {
 		if ($this->identity === null) {
@@ -134,7 +134,7 @@ abstract class ApiHandler extends BaseHandler {
 				//Get identity from auth header, it will be a standard user
 				try {
 					// Find user in database
-					$user = (new Select())
+					$user = new Select()
 						->from('users')
 						->where('username = :username')
 						->addParameter('username', $username)
@@ -151,7 +151,7 @@ abstract class ApiHandler extends BaseHandler {
 
 				try {
 					// Find public key for user
-					$publicKey = (new Select())
+					$publicKey = new Select()
 						->from('public_keys')
 						->where('usersid = :userId')
 						->where('revoked = :revoked')

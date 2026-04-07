@@ -32,7 +32,7 @@ class ResultsCrud extends MonitoringPointResultsCrud {
 	 * @return Select
 	 */
 	protected function getBaseQuery(): Select {
-		return (new Select())->from('meteo_result r')
+		return new Select()->from('meteo_result r')
 			->join('meteo_time_series ts', 'ts.id = r.time_seriesid', Query::JOIN_LEFT)
 			->join('meteopoint p', 'p.id = ts.mpointid', Query::JOIN_LEFT)
 			->join('meteo_observed_property op', 'op.id = ts.observed_propertyid', Query::JOIN_LEFT)
@@ -64,7 +64,7 @@ class ResultsCrud extends MonitoringPointResultsCrud {
 	 * @throws QueryException
 	 */
 	protected function getCountries(): array {
-		return array_filter((new Select())
+		return array_filter(new Select()
 			->select('DISTINCT(country)')
 			->from('meteopoint')
 			->orderBy('country', 'ASC')
@@ -77,7 +77,7 @@ class ResultsCrud extends MonitoringPointResultsCrud {
 	 * @throws QueryException
 	 */
 	protected function getObservedProperties(): array {
-		return array_filter((new Select())
+		return array_filter(new Select()
 			->select(['id', 'symbol as label'])
 			->from('meteo_observed_property')
 			->orderBy('symbol', 'ASC')

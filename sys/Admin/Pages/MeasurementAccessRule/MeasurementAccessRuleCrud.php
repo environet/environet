@@ -164,7 +164,7 @@ class MeasurementAccessRuleCrud extends CrudPage {
 			|| in_array($this->updateOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())) {
 			$operatorIds = UserQueries::getOperatorsOfUser($this->request->getIdentity()->getId());
 
-			$records = (new Select())
+			$records = new Select()
 				->from('operator')
 				->select(['operator.id', 'operator.name'])
 				->whereIn('id', array_column($operatorIds, 'id'), 'operatorId')
@@ -233,8 +233,8 @@ class MeasurementAccessRuleCrud extends CrudPage {
 	public function operatorPoints() {
 		$search = trim($this->request->getQueryParam('search'));
 		$operator = trim($this->request->getQueryParam('operator'));
-		$hydroQuery = (new Select())->select(['name', 'id'])->from(HydroMonitoringPointQueries::$tableName);
-		$meteoQuery = (new Select())->select(['name', 'id'])->from(MeteoMonitoringPointQueries::$tableName);
+		$hydroQuery = new Select()->select(['name', 'id'])->from(HydroMonitoringPointQueries::$tableName);
+		$meteoQuery = new Select()->select(['name', 'id'])->from(MeteoMonitoringPointQueries::$tableName);
 		if ($operator) {
 			$hydroQuery->where('operatorid = :operatorid')->addParameter('operatorid', $operator);
 			$meteoQuery->where('operatorid = :operatorid')->addParameter('operatorid', $operator);
@@ -281,7 +281,7 @@ class MeasurementAccessRuleCrud extends CrudPage {
 		$results = [];
 
 		if ($type === false || $type === 'hydro') {
-			$hydroQuery = (new Select())->select(['DISTINCT(symbol)', 'hydro_observed_property.id'])->from('hydro_observed_property')
+			$hydroQuery = new Select()->select(['DISTINCT(symbol)', 'hydro_observed_property.id'])->from('hydro_observed_property')
 				->join('hydropoint_observed_property', 'hydropoint_observed_property.observed_propertyid = hydro_observed_property.id')
 				->join('hydropoint', 'hydropoint.id = hydropoint_observed_property.mpointid');
 			if ($operator) {
@@ -297,7 +297,7 @@ class MeasurementAccessRuleCrud extends CrudPage {
 		}
 
 		if ($type === false || $type === 'meteo') {
-			$meteoQuery = (new Select())->select(['DISTINCT(symbol)', 'meteo_observed_property.id'])->from('meteo_observed_property')
+			$meteoQuery = new Select()->select(['DISTINCT(symbol)', 'meteo_observed_property.id'])->from('meteo_observed_property')
 				->join('meteopoint_observed_property', 'meteopoint_observed_property.observed_propertyid = meteo_observed_property.id')
 				->join('meteopoint', 'meteopoint.id = meteopoint_observed_property.mpointid');
 			if ($operator) {

@@ -33,8 +33,8 @@ class InitDb extends DbCommand {
 	 *
 	 * @return int
 	 * @throws CommandException
-	 * @uses \Environet\Sys\Commands\DistNode\InitDb::importSchema()
-	 * @uses \Environet\Sys\Commands\DistNode\InitDb::importData()
+	 * @uses InitDb::importSchema
+	 * @uses InitDb::importData
 	 */
 	public function run($arguments, $options): int {
 		$output = [];
@@ -56,7 +56,7 @@ class InitDb extends DbCommand {
 		}
 		$this->console->writeLine('Database content successfully imported', Console::COLOR_GREEN);
 
-		(new MigrateDb($this->console))->run([]);
+		new MigrateDb($this->console)->run([]);
 
 		/**
 		 * Ask for admin user parameters, and create this user
@@ -110,7 +110,7 @@ class InitDb extends DbCommand {
 
 		try {
 			// Insert user to database
-			$id = (new Insert())->table('users')->addSingleData([
+			$id = new Insert()->table('users')->addSingleData([
 				'username' => $adminUser,
 				'password' => password_hash($adminPass1, PASSWORD_DEFAULT),
 				'email'    => $adminEmail
@@ -119,7 +119,7 @@ class InitDb extends DbCommand {
 				throw new QueryException("Insert user failed");
 			}
 			// If user is created, attach the admin permission to it
-			(new Insert())->table('user_permissions')->addSingleData([
+			new Insert()->table('user_permissions')->addSingleData([
 				'permissionsid' => 1,
 				'usersid'       => $id
 			])->run();
@@ -143,7 +143,7 @@ class InitDb extends DbCommand {
 	 *
 	 * @return int
 	 * @throws CommandException
-	 * @uses \Environet\Sys\Commands\DistNode\InitDb::runSqlFile()
+	 * @uses InitDb::runSqlFile
 	 */
 	protected function importSchema(array &$output): int {
 		$schemaPath = SRC_PATH . '/database/schema.sql';
@@ -165,7 +165,7 @@ class InitDb extends DbCommand {
 	 *
 	 * @return int
 	 * @throws CommandException
-	 * @uses \Environet\Sys\Commands\DistNode\InitDb::runSqlFile()
+	 * @uses InitDb::runSqlFile
 	 */
 	protected function importData(array &$output): int {
 		$dataP1th = SRC_PATH . '/database/clean_data.sql';

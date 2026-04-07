@@ -115,8 +115,8 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * @inheritDoc
 	 * @throws CreateInputXmlException
-	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::mPointDataArrayFromCSV()
-	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::meteringPointInputXmlsFromArray()
+	 * @uses CsvParser::mPointDataArrayFromCSV
+	 * @uses CsvParser::meteringPointInputXmlsFromArray
 	 */
 	public function parse(Resource $resource): array {
 		$lines = preg_split('/\n/', $resource->getContents());
@@ -293,7 +293,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		}
 
 		//Build XML
-		return (new CreateInputXml())->generateXml(new InputXmlData($mPointId, [new InputXmlPropertyData($propertyNameDb, $propertyValues)]));
+		return new CreateInputXml()->generateXml(new InputXmlData($mPointId, [new InputXmlPropertyData($propertyNameDb, $propertyValues)]));
 	}
 
 
@@ -408,7 +408,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 
 	/**
 	 * @inheritDoc
-	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::serializePropertyConfiguration()
+	 * @uses CsvParser::serializePropertyConfiguration
 	 */
 	public function serializeConfiguration(): string {
 		$config = 'zrxpVersion = ' . $this->zrxpVersion . "\n";
@@ -461,7 +461,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 			$mdValue = $propertyConfig['additionalMetadataValue'] ? strtoupper($propertyConfig['additionalMetadataValue']) : null;
 			if (!empty($mdKey) && //Has additional metadata config
 				!empty($mdValue) && //Additional metadata value not empty
-				(empty($metadata[$mdKey]) || strpos(strtoupper($metadata[$mdKey]), $mdValue) === false) //Metadata value of file empty, or not matching with the pattern
+				(empty($metadata[$mdKey]) || !str_contains(strtoupper($metadata[$mdKey]), $mdValue)) //Metadata value of file empty, or not matching with the pattern
 			) {
 				//Metadata not matched
 				continue;

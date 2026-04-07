@@ -134,7 +134,7 @@ class WarningLevelCrud extends CrudPage {
 			|| in_array($this->updateOwnPermissionName, $this->request->getIdentity()->getAuthorizedPermissions())) {
 			$operatorIds = UserQueries::getOperatorsOfUser($this->request->getIdentity()->getId());
 
-			$records = (new Select())
+			$records = new Select()
 				->from('operator')
 				->select(['operator.id', 'operator.name'])
 				->whereIn('id', array_column($operatorIds, 'id'), 'operatorId')

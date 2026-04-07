@@ -34,7 +34,7 @@ class Response {
 	 *
 	 * @param string|null $content
 	 *
-	 * @uses \Environet\Sys\General\Response::setContent()
+	 * @uses Response::setContent
 	 */
 	public function __construct(string $content = null) {
 		if (!is_null($content)) {
@@ -157,8 +157,8 @@ class Response {
 	 * @param int    $statusCode
 	 *
 	 * @return Response
-	 * @uses \Environet\Sys\General\Response::addHeader()
-	 * @uses \Environet\Sys\General\Response::setStatusCode()
+	 * @uses Response::addHeader
+	 * @uses Response::setStatusCode
 	 */
 	public function redirect(string $to, int $statusCode = 302) {
 		$this->addHeader('Location: ' . $to);

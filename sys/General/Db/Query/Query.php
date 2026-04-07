@@ -18,23 +18,24 @@ use PDOStatement;
  */
 class Query {
 
-	const OPERATOR_AND = 'AND';
-	const OPERATOR_OR  = 'OR';
 
-	const DIR_ASC  = 'ASC';
-	const DIR_DESC = 'DESC';
+	public const OPERATOR_AND = 'AND';
+	public const OPERATOR_OR  = 'OR';
 
-	const JOIN_INNER = 'INNER';
-	const JOIN_OUTER = 'OUTER';
-	const JOIN_LEFT  = 'LEFT';
-	const JOIN_RIGHT = 'RIGHT';
+	public const DIR_ASC = 'ASC';
+	public const DIR_DESC = 'DESC';
 
-	const FETCH_FIRST  = 0b00000001;
-	const FETCH_COUNT  = 0b00000010;
-	const FETCH_COLUMN = 0b00000100;
-	const KEY_BY_ID    = 0b00001000;
-	const RETURN_ID    = 0b00010000;
-	const RETURN_BOOL  = 0b00100000;
+	public const JOIN_INNER = 'INNER';
+	public const JOIN_OUTER = 'OUTER';
+	public const JOIN_LEFT  = 'LEFT';
+	public const JOIN_RIGHT = 'RIGHT';
+
+	public const FETCH_FIRST = 0b00000001;
+	public const FETCH_COUNT = 0b00000010;
+	public const FETCH_COLUMN = 0b00000100;
+	public const KEY_BY_ID    = 0b00001000;
+	public const RETURN_ID = 0b00010000;
+	public const RETURN_BOOL = 0b00100000;
 
 	/**
 	 * The connection class
@@ -140,7 +141,7 @@ class Query {
 	 * @param array $parameters
 	 *
 	 * @return self
-	 * @uses \Environet\Sys\General\Db\Query\Query::addParameter()
+	 * @uses Query::addParameter
 	 */
 	public function addParameters(array $parameters = []): self {
 		foreach ($parameters as $key => $value) {
@@ -179,9 +180,9 @@ class Query {
 	 *
 	 * @return array|int
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Query::validateQuery()
-	 * @uses \Environet\Sys\General\Db\Query\Query::buildQuery()
-	 * @uses \Environet\Sys\General\Db\Connection::runQuery()
+	 * @uses Query::validateQuery
+	 * @uses Query::buildQuery
+	 * @uses Connection::runQuery
 	 */
 	public function run($flags = null) {
 		$statement = $this->createStatement();

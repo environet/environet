@@ -74,7 +74,7 @@
                 <div class="mb-3">
                     <label for="interval_years" class="form-label">Years</label>
                     <input type="number" name="interval_years" id="interval_years" class="form-control <?=isFieldInvalidClass('interval_years', get_defined_vars());?>"
-						   value="<?=(!empty($_POST) && $_POST['interval_years']) ? $_POST['interval_years'] : (isset($record['interval']) ? (new DateInterval($record['interval']))->y : '') ?>" />
+						   value="<?=(!empty($_POST) && $_POST['interval_years']) ? $_POST['interval_years'] : (isset($record['interval']) ? new DateInterval($record['interval'])->y : '') ?>" />
 	                <div class="invalid-feedback">
 		                <?=getFieldInvalidMessage('interval_years', get_defined_vars());?>
 	                </div>
@@ -83,7 +83,7 @@
                 <div class="mb-3">
                     <label for="interval_months" class="form-label">Months</label>
                     <input type="number" name="interval_months" id="interval_months" class="form-control <?=isFieldInvalidClass('interval_months', get_defined_vars());?>"
-                           value="<?=(!empty($_POST) && $_POST['interval_months']) ? $_POST['interval_months'] : (isset($record['interval']) ? (new DateInterval($record['interval']))->m : '') ?>" />
+                           value="<?=(!empty($_POST) && $_POST['interval_months']) ? $_POST['interval_months'] : (isset($record['interval']) ? new DateInterval($record['interval'])->m : '') ?>" />
 	                <div class="invalid-feedback">
 		                <?=getFieldInvalidMessage('interval_months', get_defined_vars());?>
 	                </div>
@@ -92,7 +92,7 @@
                 <div class="mb-3">
                     <label for="interval_days" class="form-label">Days</label>
                     <input type="number" name="interval_days" id="interval_days" class="form-control <?=isFieldInvalidClass('interval_days', get_defined_vars());?>"
-						   value="<?=(!empty($_POST) && $_POST['interval_days']) ? $_POST['interval_days'] : (isset($record['interval']) ? (new DateInterval($record['interval']))->d : '') ?>" />
+						   value="<?=(!empty($_POST) && $_POST['interval_days']) ? $_POST['interval_days'] : (isset($record['interval']) ? new DateInterval($record['interval'])->d : '') ?>" />
 	                <div class="invalid-feedback">
 		                <?=getFieldInvalidMessage('interval_days', get_defined_vars());?>
 	                </div>

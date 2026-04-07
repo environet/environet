@@ -43,10 +43,10 @@ class GroupQueries extends BaseQueries {
 	 *
 	 * @return array
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
-	 * @uses \Environet\Sys\General\Db\Query\Update::run()
-	 * @uses \Environet\Sys\General\EventLogger::log()
-	 * @uses \Environet\Sys\General\Db\GroupQueries::savePermissions()
+	 * @uses Insert::run
+	 * @uses Update::run
+	 * @uses EventLogger::log
+	 * @uses GroupQueries::savePermissions
 	 */
 	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
 		$dataToRun = [
@@ -60,7 +60,7 @@ class GroupQueries extends BaseQueries {
 			]));
 
 			// update group
-			(new Update())
+			new Update()
 				->table('groups')
 				->where('id = :groupId')
 				->updateData($dataToRun)
@@ -70,7 +70,7 @@ class GroupQueries extends BaseQueries {
 			self::savePermissions($data['permissions'] ?? [], $id);
 		} else {
 			// insert new record
-			$id = (new Insert())
+			$id = new Insert()
 				->table('groups')
 				->addSingleData($dataToRun)
 				->run();
@@ -94,7 +94,7 @@ class GroupQueries extends BaseQueries {
 	 * @param $idRight
 	 *
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\BaseQueries::saveConnections()
+	 * @uses BaseQueries::saveConnections
 	 */
 	public static function savePermissions($values, $idRight) {
 		parent::saveConnections($values, "group_permissions", "permissionsid", "groupsid", $idRight, true);
@@ -108,14 +108,14 @@ class GroupQueries extends BaseQueries {
 		$record = parent::getById($id, $primaryKey);
 
 		if (!is_null($record)) {
-			$record['permissions'] = (new Select())
+			$record['permissions'] = new Select()
 				->select('permissionsid')
 				->from('group_permissions')
 				->where('groupsid = :groupId')
 				->addParameter(':groupId', $id)
 				->run(Query::FETCH_COLUMN);
 
-			$record['users'] = (new Select())
+			$record['users'] = new Select()
 				->select('users.*')
 				->from('users')
 				->join('users_groups', 'users_groups.usersid = users.id')
@@ -123,7 +123,7 @@ class GroupQueries extends BaseQueries {
 				->addParameter(':groupId', $id)
 				->run();
 
-			$record['operators'] = (new Select())
+			$record['operators'] = new Select()
 				->select('operator.*')
 				->from('operator')
 				->join('operator_groups', 'operator_groups.operatorid = operator.id')

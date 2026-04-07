@@ -128,7 +128,7 @@ class MonitoringPointQueries {
 	 * @param DateTime $value
 	 *
 	 * @return MonitoringPointQueries
-	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::filterBy()
+	 * @uses MonitoringPointQueries::filterBy
 	 */
 	public function setStartTime(DateTime $value) {
 		$this->filterBy('start_time', 'where', ["{type}_result.time >= timestamp '{$value->format('Y-m-d H:i:s.u')}'"]);
@@ -143,7 +143,7 @@ class MonitoringPointQueries {
 	 * @param DateTime $value
 	 *
 	 * @return MonitoringPointQueries
-	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::filterBy()
+	 * @uses MonitoringPointQueries::filterBy
 	 */
 	public function setEndTime(DateTime $value) {
 		$this->filterBy('end_time', 'where', ["{type}_result.time <= timestamp '{$value->format('Y-m-d H:i:s.u')}'"]);
@@ -159,7 +159,7 @@ class MonitoringPointQueries {
 	 *
 	 * @return MonitoringPointQueries
 	 * @throws Exception
-	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::filterBy()
+	 * @uses MonitoringPointQueries::filterBy
 	 */
 	public function setCountries($countries = []) {
 		if (!is_array($countries)) {
@@ -231,7 +231,7 @@ class MonitoringPointQueries {
 	 * @param array $ids
 	 *
 	 * @return MonitoringPointQueries
-	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::filterBy()
+	 * @uses MonitoringPointQueries::filterBy
 	 */
 	public function setObservedPropertiesById($ids = []): MonitoringPointQueries {
 		if (!is_array($ids)) {
@@ -252,7 +252,7 @@ class MonitoringPointQueries {
 	 * @param array $symbols
 	 *
 	 * @return MonitoringPointQueries
-	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::filterBy()
+	 * @uses MonitoringPointQueries::filterBy
 	 */
 	public function setObservedPropertiesBySymbol($symbols = []): MonitoringPointQueries {
 		if (!is_array($symbols)) {
@@ -380,7 +380,7 @@ class MonitoringPointQueries {
 	protected function buildQuery(Select $select, bool $isSubset = false, ?object $subsetConfig = null): Select {
 		// Sub-select for getting latest value by created at.
 		// There can be multiple values per 'time', for outputs we use the latest.
-		$subSelect = (new Select())
+		$subSelect = new Select()
 			->from("{$this->type}_result as result_sub")
 			->select("result_sub.value")
 			->where("result_sub.time = {$this->type}_result.time")
@@ -471,8 +471,8 @@ class MonitoringPointQueries {
 	 *
 	 * @return Select
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::applyFilters()
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses MonitoringPointQueries::applyFilters
+	 * @uses Select::run
 	 */
 	public function getSelect(): Select {
 		if ($this->type === null) {

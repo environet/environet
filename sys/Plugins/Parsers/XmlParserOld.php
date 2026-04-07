@@ -27,7 +27,7 @@ use SimpleXMLElement;
 class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 
 
-	const API_TIME_FORMAT_STRING = 'Y-m-d\TH:i:sP';
+	public const API_TIME_FORMAT_STRING = 'Y-m-d\TH:i:sP';
 
 	/**
 	 * @var string Separator to group thousands in values. May be ""
@@ -522,7 +522,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 		foreach ($flatList as $key => &$entry) {
 			try {
 				$this->assembleDate($entry);
-			} catch (\Exception $e) {
+			} catch (Exception $e) {
 				unset($flatList[$key]);
 			}
 		}
@@ -584,55 +584,53 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 							unset($flatList[$key]); // Delete whole entry as observed property was not found
 						}
 					}
-				} else {
-					if (isset($resource->meta["ObservedPropertySymbols"]) && count($resource->meta["ObservedPropertySymbols"]) === 1) {
-						// Only one observed property by call: Add observed property symbol from API-Call
-						$elem = [
-							"Type"   => "ObservedPropertySymbol",
-							"Value"  => $resource->meta["ObservedPropertySymbols"][0],
-							"Format" => null,
-							"Unit"   => null,
-						];
-						// delete all occurrences of ObservedPropertyValue with wrong symbol
-						foreach ($entry as $ekey => &$e) {
-							if ($e["Type"] == "ObservedPropertyValue" && $e["Format"] != $elem["Value"]) {
-								unset($entry[$ekey]);
-							}
+				} elseif (isset($resource->meta["ObservedPropertySymbols"]) && count($resource->meta["ObservedPropertySymbols"]) === 1) {
+					// Only one observed property by call: Add observed property symbol from API-Call
+					$elem = [
+						"Type"   => "ObservedPropertySymbol",
+						"Value"  => $resource->meta["ObservedPropertySymbols"][0],
+						"Format" => null,
+						"Unit"   => null,
+					];
+					// delete all occurrences of ObservedPropertyValue with wrong symbol
+					foreach ($entry as $ekey => &$e) {
+						if ($e["Type"] == "ObservedPropertyValue" && $e["Format"] != $elem["Value"]) {
+							unset($entry[$ekey]);
 						}
-						$entry = array_values($entry);
-						$entry[] = $elem;
-					} else {
-						// add observed property symbol from ObservedPropertyValue
-						$count = 0;
-						foreach ($entry as $e) {
-							if ($e["Type"] == "ObservedPropertyValue") {
-								// copy entry to new entries, because multiple occurrences of "ObservedPropertyValue" may be
-								// present in $entry for different observed properties
-								$newEntry = $entry;
-								$prop = $e["Format"];
-								$elem = [
-									"Type"   => "ObservedPropertySymbol",
-									"Value"  => $prop,
-									"Format" => null,
-									"Unit"   => null,
-								];
-								$newEntry[] = $elem;
-								// delete all occurrences of ObservedPropertyValue with wrong symbol
-								foreach ($newEntry as $newenkey => &$newenval) {  // FFF
-									if ($newenval["Type"] == "ObservedPropertyValue" && $newenval["Format"] != $prop) {
-										unset($newEntry[$newenkey]);
-									}
-								}
-								$newEntry = array_values($newEntry);
-								$newEntries[] = $newEntry;
-								++$count;
-							}
-						}
-						if ($count == 0) {
-							throw new Exception("No value for any observed property in entry.");
-						}
-						unset($flatList[$key]);
 					}
+					$entry = array_values($entry);
+					$entry[] = $elem;
+				} else {
+					// add observed property symbol from ObservedPropertyValue
+					$count = 0;
+					foreach ($entry as $e) {
+						if ($e["Type"] == "ObservedPropertyValue") {
+							// copy entry to new entries, because multiple occurrences of "ObservedPropertyValue" may be
+							// present in $entry for different observed properties
+							$newEntry = $entry;
+							$prop = $e["Format"];
+							$elem = [
+								"Type"   => "ObservedPropertySymbol",
+								"Value"  => $prop,
+								"Format" => null,
+								"Unit"   => null,
+							];
+							$newEntry[] = $elem;
+							// delete all occurrences of ObservedPropertyValue with wrong symbol
+							foreach ($newEntry as $newenkey => &$newenval) {  // FFF
+								if ($newenval["Type"] == "ObservedPropertyValue" && $newenval["Format"] != $prop) {
+									unset($newEntry[$newenkey]);
+								}
+							}
+							$newEntry = array_values($newEntry);
+							$newEntries[] = $newEntry;
+							++$count;
+						}
+					}
+					if ($count == 0) {
+						throw new Exception("No value for any observed property in entry.");
+					}
+					unset($flatList[$key]);
 				}
 			}
 			$flatList = array_values($flatList);
@@ -690,7 +688,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * @inheritDoc
 	 * @throws Exception
-	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::serializePropertyConfiguration()
+	 * @uses CsvParser::serializePropertyConfiguration
 	 */
 	public static function create(Console $console, PluginBuilder $builder): ParserInterface {
 		$console->writeLine('');
@@ -723,7 +721,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 
 	/**
 	 * @inheritDoc
-	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::serializePropertyConfiguration()
+	 * @uses CsvParser::serializePropertyConfiguration
 	 */
 	public function serializeConfiguration(): string {
 		$config = 'separatorThousands = "' . $this->separatorThousands . "\"\n";

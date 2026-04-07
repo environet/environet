@@ -5,6 +5,7 @@ namespace Environet\Sys\Commands\DataNode;
 
 use Environet\Sys\Commands\BaseCommand;
 use Environet\Sys\Commands\Console;
+use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use stdClass;
@@ -285,7 +286,7 @@ class MigrateConfig extends BaseCommand {
 	 * @return array
 	 */
 	private function getConfigurations(?string $selectedConfigFile = null): array {
-		$iterator = new RecursiveIteratorIterator(new \RecursiveDirectoryIterator(CONFIGURATION_PATH), RecursiveIteratorIterator::LEAVES_ONLY);
+		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(CONFIGURATION_PATH), RecursiveIteratorIterator::LEAVES_ONLY);
 		$configurations = [];
 		/** @var SplFileInfo $file */
 		foreach ($iterator as $file) {

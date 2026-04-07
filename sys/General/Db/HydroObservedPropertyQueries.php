@@ -74,7 +74,7 @@ class HydroObservedPropertyQueries extends BaseQueries {
 	 * @throws QueryException
 	 */
 	public static function getSymbolsByPoint(int $pointId): array {
-		return (new Select())
+		return new Select()
 			->from('hydro_observed_property')
 			->join('hydropoint_observed_property', 'hydropoint_observed_property.observed_propertyid = hydro_observed_property.id')
 			->select('hydro_observed_property.symbol')
@@ -88,12 +88,12 @@ class HydroObservedPropertyQueries extends BaseQueries {
 	 * Get list of properties, but only real-time type
 	 *
 	 * @return array|null
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses Select::run
 	 * @uses \exception_logger()
 	 */
 	public static function getRealTimeOptionList(): ?array {
 		try {
-			$records = (new Select())
+			$records = new Select()
 				->from(static::$tableName)
 				->select([static::$tableName . '.id', static::$tableName . '.symbol'])
 				->where(static::$tableName.'.type = :type')

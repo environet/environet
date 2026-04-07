@@ -30,7 +30,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 
 	use WithConversionsConfigTrait;
 
-	const API_TIME_FORMAT_STRING = 'Y-m-d\TH:i:sP';
+	public const API_TIME_FORMAT_STRING = 'Y-m-d\TH:i:sP';
 
 	/**
 	 * @var mixed Delimiter character
@@ -129,8 +129,8 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * @inheritDoc
 	 * @throws CreateInputXmlException
-	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::mPointDataArrayFromCSV()
-	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::meteringPointInputXmlsFromArray()
+	 * @uses CsvParser::mPointDataArrayFromCSV
+	 * @uses CsvParser::meteringPointInputXmlsFromArray
 	 */
 	public function parse(Resource $resource): array {
 		$propertiesOriginal = $this->propertySymbolsToColumns;
@@ -169,7 +169,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	 *
 	 * @return array
 	 * @throws Exception
-	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::parseResultLine()
+	 * @uses CsvParser::parseResultLine
 	 */
 	private function mPointDataArrayFromCSV(Resource $resource): array {
 		$csv = $resource->getContents();
@@ -296,7 +296,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		$payloads = [];
 
 		foreach ($mPointsArray as $mPointId => $properties) {
-			$payloads[] = (new CreateInputXml())->generateXml(new InputXmlData($mPointId, $this->inputXmlDataFromArray($properties)));
+			$payloads[] = new CreateInputXml()->generateXml(new InputXmlData($mPointId, $this->inputXmlDataFromArray($properties)));
 		}
 
 		return $payloads;
@@ -424,7 +424,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 
 	/**
 	 * @inheritDoc
-	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::serializePropertyConfiguration()
+	 * @uses CsvParser::serializePropertyConfiguration
 	 */
 	public static function create(Console $console, PluginBuilder $builder): ParserInterface {
 		$console->writeLine('');
@@ -525,7 +525,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		$console->writeLine('');
 		$choice = $console->askOption("Enter a number for your choice:");
 
-		return $alternatives[(int) $choice - 1];
+		return $alternatives[$choice - 1];
 	}
 
 
@@ -565,7 +565,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 
 	/**
 	 * @inheritDoc
-	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::serializePropertyConfiguration()
+	 * @uses CsvParser::serializePropertyConfiguration
 	 */
 	public function serializeConfiguration(): string {
 		$config = 'csvDelimiter = "' . $this->csvDelimiter . "\"\n";

@@ -4,6 +4,7 @@ namespace Environet\Sys\Plugins;
 
 use Environet\Sys\Commands\Console;
 use Environet\Sys\General\Enums\MessageCodes;
+use Exception;
 use SimpleXMLElement;
 
 /**
@@ -38,7 +39,7 @@ class Plugin {
 		$console->write('');    // to prefix data to following message
 		try {
 			$resources = $this->transport->get($console, $configFile);
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$console->writeLine($e->getMessage(), null, null, true, true);
 			$resources = [];
 		}
@@ -102,7 +103,7 @@ class Plugin {
 									$requestHasWarnings = $requestHasWarnings || $type === 'warning';
 									$warningCodes[$code] ++;
 								}
-							} catch (\Exception $e) {
+							} catch (Exception $e) {
 								$console->writeLine('Failed to parse response XML', null, null, true);
 							}
 
@@ -113,7 +114,7 @@ class Plugin {
 								//If the request was successful, increment the successful counter
 								$successful ++;
 							}
-						} catch (\Exception $e) {
+						} catch (Exception $e) {
 							$filename = $payloadStorage . '/' . date('YmdHis') . '_' . $xmlMPointId . '.xml';
 							file_put_contents($filename, $xmlPayload->asXML());
 
@@ -142,7 +143,7 @@ class Plugin {
 							}
 						}
 					}
-				} catch (\Exception $e) {
+				} catch (Exception $e) {
 					$console->writeLine(
 						sprintf(
 							"Parsing of %s (first 100 characters: \"%s\") failed, response: %s",

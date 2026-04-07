@@ -36,7 +36,7 @@ class Connection {
 	 * Creates the database connection as well.
 	 *
 	 * @throws InvalidConfigurationException
-	 * @uses \Environet\Sys\General\Db\Connection::connect()
+	 * @uses Connection::connect
 	 */
 	public function __construct() {
 		// Create connection
@@ -47,7 +47,7 @@ class Connection {
 	/**
 	 * Establishes PgSQL connection to the database, or report an error
 	 * @throws InvalidConfigurationException
-	 * @uses \Environet\Sys\Config::getSqlDsn()
+	 * @uses Config::getSqlDsn
 	 * @uses PDO
 	 */
 	public function connect() {
@@ -97,7 +97,7 @@ class Connection {
 	 *
 	 * @return PDOStatement
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Connection::parsePDOType()
+	 * @uses Connection::parsePDOType
 	 */
 	public function runQuery(string $queryString, array $parameters): PDOStatement {
 		//Prepare the statement
@@ -106,7 +106,7 @@ class Connection {
 		//Bind parameters
 		foreach ($parameters as $variableName => &$value) {
 			//Prepend the : to the variable name, of not set yet
-			if (substr($variableName, 0, 1) !== ':') {
+			if (!str_starts_with($variableName, ':')) {
 				$variableName = ':' . $variableName;
 			}
 
@@ -119,14 +119,10 @@ class Connection {
 			return $statement;
 		}
 
-		switch ($statement->errorCode()) {
-			case 23505:
-				$class = UniqueConstraintQueryException::class;
-				break;
-			default:
-				$class = QueryException::class;
-				break;
-		}
+		$class = match ($statement->errorCode()) {
+			'23505' => UniqueConstraintQueryException::class,
+			default => QueryException::class,
+		};
 
 		//Error during query, throw an exception
 		throw new $class('SQL query error with code ' . $statement->errorCode() . ': ' . ($statement->errorInfo()[2] ?? null));
@@ -141,16 +137,12 @@ class Connection {
 	 * @return int
 	 */
 	protected function parsePDOType($value) {
-		switch (true) {
-			case is_bool($value):
-				return PDO::PARAM_BOOL;
-			case is_int($value):
-				return PDO::PARAM_INT;
-			case is_null($value):
-				return PDO::PARAM_NULL;
-			default:
-				return PDO::PARAM_STR;
-		}
+		return match (true) {
+			is_bool($value) => PDO::PARAM_BOOL,
+			is_int($value) => PDO::PARAM_INT,
+			is_null($value) => PDO::PARAM_NULL,
+			default => PDO::PARAM_STR,
+		};
 	}
 
 

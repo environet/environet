@@ -21,7 +21,7 @@ class XmlOutputFormat extends AbstractOutputFormat {
 		$propertyData = $this->getPropertyData($select, $queryMeta, ['observed_property.symbol']);
 		$propertySymbols = array_column($propertyData, 'symbol');
 
-		$response = new Response((new CreateOutputXml())->generateXml($select, $queryMeta, $headers));
+		$response = new Response(new CreateOutputXml()->generateXml($select, $queryMeta, $headers));
 		$this->addResponseHeaders($response, $headers);
 
 		$filename = $this->generateFilename($propertySymbols, $queryMeta);

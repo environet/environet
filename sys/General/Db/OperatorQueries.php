@@ -43,14 +43,14 @@ class OperatorQueries extends BaseQueries {
 	 *
 	 * @return array|null
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses Select::run
 	 */
 	public static function getDirectUsers(int $operatorId, array $fieldsOnly = null) {
-		$select = (new Select())->from('users');
+		$select = new Select()->from('users');
 
 		if ($fieldsOnly) {
 			$fieldsOnly = array_map(function ($field) {
-				return strpos($field, 'users.') !== 0 ? "users.$field" : $field;
+				return !str_starts_with($field, 'users.') ? "users.$field" : $field;
 			}, $fieldsOnly);
 			$select->select($fieldsOnly);
 		} else {
@@ -75,8 +75,8 @@ class OperatorQueries extends BaseQueries {
 	 *
 	 * @return array Array of merged users
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\OperatorQueries::getDirectUsers()
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses OperatorQueries::getDirectUsers
+	 * @uses Select::run
 	 */
 	public static function getMergedUsersOfOperator(int $operatorId, array $groupIds = []) {
 
@@ -84,7 +84,7 @@ class OperatorQueries extends BaseQueries {
 
 		if ($groupIds) {
 			//Get inherited group users with ids as array keys
-			$groupUsers = (new Select())
+			$groupUsers = new Select()
 				->from('users')
 				->select(['users.*', '\'group\' as connection_type'])
 				->join('users_groups', 'users_groups.usersid = users.id', Query::JOIN_LEFT)
@@ -116,7 +116,7 @@ class OperatorQueries extends BaseQueries {
 	 * @throws QueryException
 	 */
 	public static function getOperatorGroups(int $operatorId): array {
-		return (new Select())
+		return new Select()
 			->from('groups')
 			->join('operator_groups', 'operator_groups.groupsid = groups.id', Query::JOIN_LEFT)
 			->where('operator_groups.operatorid = :operatorId')
@@ -132,7 +132,7 @@ class OperatorQueries extends BaseQueries {
 	 * @param $idRight
 	 *
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\BaseQueries::saveConnections()
+	 * @uses BaseQueries::saveConnections
 	 */
 	public static function saveUsers($values, $idRight) {
 		parent::saveConnections($values, 'operator_users', 'usersid', 'operatorid', $idRight, true);
@@ -146,7 +146,7 @@ class OperatorQueries extends BaseQueries {
 	 * @param $idRight
 	 *
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\BaseQueries::saveConnections()
+	 * @uses BaseQueries::saveConnections
 	 */
 	public static function saveGroups($values, $idRight) {
 		parent::saveConnections($values, 'operator_groups', 'groupsid', 'operatorid', $idRight, true);
@@ -161,11 +161,11 @@ class OperatorQueries extends BaseQueries {
 	 * @param string $primaryKey The primary key of the specified table.
 	 *
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
-	 * @uses \Environet\Sys\General\Db\Query\Update::run()
-	 * @uses \Environet\Sys\General\EventLogger::log()
-	 * @uses \Environet\Sys\General\Db\OperatorQueries::saveGroups()
-	 * @uses \Environet\Sys\General\Db\OperatorQueries::saveUsers()
+	 * @uses Insert::run
+	 * @uses Update::run
+	 * @uses EventLogger::log
+	 * @uses OperatorQueries::saveGroups
+	 * @uses OperatorQueries::saveUsers
 	 */
 	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
 		$operatorData = [
@@ -180,7 +180,7 @@ class OperatorQueries extends BaseQueries {
 		$changes = [];
 		if ($id) {
 			// Update existing record and save operator data
-			(new Update())
+			new Update()
 				->table('operator')
 				->updateData($operatorData)
 				->where('operator.id = :operatorId')
@@ -196,7 +196,7 @@ class OperatorQueries extends BaseQueries {
 			self::saveGroups($data['form_groups'], $id);
 		} else {
 			// Save operator data
-			$id = (new Insert())->table('operator')->addSingleData($operatorData)->run();
+			$id = new Insert()->table('operator')->addSingleData($operatorData)->run();
 
 			EventLogger::log(EventLogger::EVENT_TYPE_OPERATOR_ADD, array_merge($operatorData, [
 				'id' => $id
@@ -214,8 +214,8 @@ class OperatorQueries extends BaseQueries {
 	/**
 	 * @inheritDoc
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\OperatorQueries::getOperatorGroups()
-	 * @uses \Environet\Sys\General\Db\OperatorQueries::getMergedUsersOfOperator()
+	 * @uses OperatorQueries::getOperatorGroups
+	 * @uses OperatorQueries::getMergedUsersOfOperator
 	 */
 	public static function getById($id, string $primaryKey = 'id'): ?array {
 		$record = parent::getById($id, $primaryKey);
@@ -225,13 +225,13 @@ class OperatorQueries extends BaseQueries {
 		// Get direct, and inherited users
 		$record['merged_users'] = self::getMergedUsersOfOperator($id, array_column($record['merged_groups'], 'id'));
 
-		$record['form_users'] = (new Select())
+		$record['form_users'] = new Select()
 			->select('usersid')
 			->from('operator_users')
 			->where('operatorid = :operatorId')
 			->addParameter(':operatorId', $id)
 			->run(Query::FETCH_COLUMN);
-		$record['form_groups'] = (new Select())
+		$record['form_groups'] = new Select()
 			->select('groupsid')->from('operator_groups')
 			->where('operatorid = :operatorId')
 			->addParameter(':operatorId', $id)

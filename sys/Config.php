@@ -62,9 +62,9 @@ class Config {
 	 * It reads the ini files, check the configuration validity, and set some global constants.
 	 *
 	 * @throws InvalidConfigurationException
-	 * @uses \Environet\Sys\Config::init()
-	 * @uses \Environet\Sys\Config::checkValidity()
-	 * @uses \Environet\Sys\Config::setConstants()
+	 * @uses Config::init
+	 * @uses Config::checkValidity
+	 * @uses Config::setConstants
 	 */
 	public function __construct() {
 		$this->init();
@@ -76,7 +76,7 @@ class Config {
 
 	/**
 	 * Init configuration array from defaults and local configs.
-	 * @uses \Environet\Sys\Config::isLocalConfigCreated()
+	 * @uses Config::isLocalConfigCreated
 	 */
 	public function init(): void {
 		$this->config = parse_ini_file(self::$defaultsIniPath, true, INI_SCANNER_TYPED);
@@ -89,7 +89,7 @@ class Config {
 
 	/**
 	 * Set some frequently used options and global constants.
-	 * @uses \Environet\Sys\Config::getDevMode()
+	 * @uses Config::getDevMode
 	 */
 	public function setConstants(): void {
 		defined('EN_DEV_MODE') || define("EN_DEV_MODE", $this->getDevMode());
@@ -110,9 +110,9 @@ class Config {
 	 * Check if configuration is valid, and throw an exception if not.
 	 *
 	 * @throws InvalidConfigurationException
-	 * @uses \Environet\Sys\Config::isLocalConfigCreated()
-	 * @uses \Environet\Sys\Config::getTimezone()
-	 * @uses \Environet\Sys\Config::getOpMode()
+	 * @uses Config::isLocalConfigCreated
+	 * @uses Config::getTimezone
+	 * @uses Config::getOpMode
 	 */
 	public function checkValidity() {
 		if (!$this->isLocalConfigCreated()) {
@@ -139,7 +139,7 @@ class Config {
 	 *
 	 * @return mixed
 	 * @uses \camelCaseToSnake()
-	 * @uses \Environet\Sys\Config::processValue()
+	 * @uses Config::processValue
 	 */
 	public function __call($name, $arguments) {
 		if (preg_match('/^get(\w+)/', $name, $match)) {
@@ -224,16 +224,12 @@ class Config {
 	public function getUploadMaxSizeInBytes(): int {
 		$maxSize = $this->getUploadMaxSize();
 		if (preg_match('/^(\d+)([kMG])$/', $maxSize, $match)) {
-			switch ($match[2]) {
-				case 'k':
-					return $match[1] * 1024;
-				case 'M':
-					return $match[1] * 1024 * 1024;
-				case 'G':
-					return $match[1] * 1024 * 1024 * 1024;
-				default:
-					return $match[1];
-			}
+			return match ($match[2]) {
+				'k' => $match[1] * 1024,
+				'M' => $match[1] * 1024 * 1024,
+				'G' => $match[1] * 1024 * 1024 * 1024,
+				default => $match[1],
+			};
 		}
 
 		return $maxSize;

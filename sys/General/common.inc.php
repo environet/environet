@@ -81,7 +81,7 @@ function checkDbInputValues($values) {
 		$values = [$values];
 	}
 	foreach ($values as $value) {
-		if ($value !== '?' && substr($value, 0, 1) !== ':') {
+		if ($value !== '?' && !str_starts_with($value, ':')) {
 			throw new QueryException('All values must be defined as PDO variables (:var of ?)');
 		}
 	}
@@ -137,7 +137,7 @@ function camelCaseToSnake(string $string, $separator = '_') {
  * @return Response
  */
 function httpErrorPage($code = 500) {
-	$response = (new Response())->setStatusCode($code);
+	$response = new Response()->setStatusCode($code);
 	if (EN_DEV_MODE) {
 		$response->setContent($code);
 	}
@@ -155,7 +155,7 @@ function httpErrorPage($code = 500) {
  * @return Response
  */
 function httpRedirect(string $url, $code = 302) {
-	return (new Response())->redirect($url, $code);
+	return new Response()->redirect($url, $code);
 }
 
 
@@ -454,7 +454,7 @@ function createAtomDateTime(string $timeString) {
  */
 function dateToISO(string $string): string {
 	try {
-		return (new DateTime($string, new DateTimeZone('UTC')))->format('c');
+		return new DateTime($string, new DateTimeZone('UTC'))->format('c');
 	} catch (Exception $e) {
 		return $string;
 	}

@@ -31,8 +31,8 @@ class InputXmlPropertyData {
 	 * @param string $propertySymbol
 	 * @param array  $values
 	 *
-	 * @uses \Environet\Sys\Xml\Model\InputXmlPropertyData::setPropertySymbol()
-	 * @uses \Environet\Sys\Xml\Model\InputXmlPropertyData::setValues()
+	 * @uses InputXmlPropertyData::setPropertySymbol
+	 * @uses InputXmlPropertyData::setValues
 	 */
 	public function __construct(string $propertySymbol = null, array $values = null) {
 		if (!is_null($propertySymbol)) {

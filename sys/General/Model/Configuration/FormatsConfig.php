@@ -57,13 +57,8 @@ class FormatsConfig {
 	 * @return MonitoringPointParameter|null
 	 */
 	public function getMonitoringPointParameter(): ?MonitoringPointParameter {
-		foreach ($this->parameters as $parameter) {
-			if ($parameter instanceof MonitoringPointParameter) {
-				return $parameter;
-			}
-		}
+		return array_find($this->parameters, fn($parameter) => $parameter instanceof MonitoringPointParameter);
 
-		return null;
 	}
 
 
@@ -72,13 +67,8 @@ class FormatsConfig {
 	 * @return ObservedPropertySymbolParameter|null
 	 */
 	public function getPropertySymbolParameter(): ?ObservedPropertySymbolParameter {
-		foreach ($this->parameters as $parameter) {
-			if ($parameter instanceof ObservedPropertySymbolParameter) {
-				return $parameter;
-			}
-		}
+		return array_find($this->parameters, fn($parameter) => $parameter instanceof ObservedPropertySymbolParameter);
 
-		return null;
 	}
 
 

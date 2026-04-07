@@ -77,7 +77,7 @@ class JsonApiHandler extends ApiHandler {
 	 * @return Response
 	 */
 	private function jsonResponse($contents, $statusCode): Response {
-		return (new Response($contents))
+		return new Response($contents)
 			->setStatusCode($statusCode)
 			->setHeaders(['Content-type: application/json']);
 	}

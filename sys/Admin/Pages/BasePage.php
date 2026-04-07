@@ -17,12 +17,13 @@ use Environet\Sys\General\View\Renderer;
  */
 class BasePage {
 
-	const MESSAGE_ERROR   = 'error';
-	const MESSAGE_WARNING = 'warning';
-	const MESSAGE_INFO    = 'info';
-	const MESSAGE_SUCCESS = 'success';
 
-	const PAGE_SIZE = 10;
+	public const MESSAGE_ERROR = 'error';
+	public const MESSAGE_WARNING = 'warning';
+	public const MESSAGE_INFO    = 'info';
+	public const MESSAGE_SUCCESS = 'success';
+
+	public const PAGE_SIZE = 10;
 
 	/**
 	 * The request instance which represents the current request
@@ -55,7 +56,7 @@ class BasePage {
 	 *
 	 * @param Request $request
 	 *
-	 * @uses \Environet\Sys\Admin\Pages\BasePage::readMessagesFromSession()
+	 * @uses BasePage::readMessagesFromSession
 	 */
 	public function __construct(Request $request) {
 		$this->request = $request;
@@ -73,9 +74,9 @@ class BasePage {
 	 *
 	 * @return Response
 	 * @throws RenderException
-	 * @uses \Environet\Sys\General\Request::getIdentity()
+	 * @uses Request::getIdentity
 	 * @uses \Environet\Sys\General\Identity::getData()
-	 * @uses \Environet\Sys\Admin\Pages\BasePage::generateCsrf()
+	 * @uses BasePage::generateCsrf
 	 */
 	public function render(string $template, array $vars = []): Response {
 		$vars['messages'] = $this->messages;
@@ -83,7 +84,7 @@ class BasePage {
 		$vars['identity'] = !$this->request->getIdentity() ?: $this->request->getIdentity()->getData();
 		$vars['csrf'] = $this->generateCsrf();
 
-		return (new Renderer($template, $vars))();
+		return new Renderer($template, $vars)();
 	}
 
 
@@ -93,7 +94,7 @@ class BasePage {
 	 * @param string $uri
 	 *
 	 * @return Response
-	 * @uses \Environet\Sys\Admin\Pages\BasePage::messagesToSession()
+	 * @uses BasePage::messagesToSession
 	 * @uses \httpRedirect()
 	 */
 	protected function redirect(string $uri): Response {
@@ -109,8 +110,8 @@ class BasePage {
 	 * @param string $defaultUri
 	 *
 	 * @return Response
-	 * @uses \Environet\Sys\General\Request::getReferer()
-	 * @uses \Environet\Sys\Admin\Pages\BasePage::redirect()
+	 * @uses Request::getReferer
+	 * @uses BasePage::redirect
 	 */
 	protected function redirectBack(string $defaultUri) {
 		$redirectUrl = $this->request->getReferer();

@@ -3,6 +3,8 @@
 
 namespace Environet\Sys\General\Exceptions;
 
+use Exception;
+
 /**
  * Class PermissionException
  *
@@ -11,6 +13,6 @@ namespace Environet\Sys\General\Exceptions;
  * @package Environet\Sys\General\Exceptions
  * @author  SRG Group <dev@srg.hu>
  */
-class PermissionException extends \Exception {
+class PermissionException extends Exception {
 
 }

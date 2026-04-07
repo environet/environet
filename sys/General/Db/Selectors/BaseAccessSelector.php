@@ -63,7 +63,7 @@ abstract class BaseAccessSelector extends Selector {
 	 *
 	 * @return bool
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Identity::hasPermissions()
+	 * @uses Identity::hasPermissions
 	 */
 	protected function isOperatorAdmin(): bool {
 		return $this->operatorIdentity && $this->operatorIdentity->hasPermissions([Identity::ADMIN_PERMISSION]);

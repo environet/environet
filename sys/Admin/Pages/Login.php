@@ -39,11 +39,11 @@ class Login extends BasePage {
 	 * @throws RenderException
 	 * @throws HttpBadRequestException
 	 * @throws QueryException
-	 * @uses \Environet\Sys\Admin\Pages\Login::checkCsrf()
-	 * @uses \Environet\Sys\Admin\Pages\Login::handleLogin()
-	 * @uses \Environet\Sys\Admin\Pages\Login::logLoginDetails()
-	 * @uses \Environet\Sys\Admin\Pages\Login::messagesToSession()
-	 * @uses \Environet\Sys\Admin\Pages\Login::render()
+	 * @uses Login::checkCsrf
+	 * @uses Login::handleLogin
+	 * @uses Login::logLoginDetails
+	 * @uses Login::messagesToSession
+	 * @uses Login::render
 	 * @uses \httpRedirect()
 	 */
 	public function handle(): ?Response {
@@ -59,7 +59,7 @@ class Login extends BasePage {
 			if (($userId = $this->handleLogin())) {
 				try {
 					//Update the loggedin_at date of user
-					(new Update())
+					new Update()
 						->table('users')
 						->where('id = :userId')
 						->addSet('loggedin_at', ':loggedInAt')
@@ -110,7 +110,7 @@ class Login extends BasePage {
 		}
 
 		try {
-			$user = (new Select())
+			$user = new Select()
 				->from('users')
 				->where('username = :username')
 				->where('deleted_at IS NULL')
@@ -152,7 +152,7 @@ class Login extends BasePage {
 	 * @param string $status
 	 *
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\EventLogger::log()
+	 * @uses EventLogger::log
 	 */
 	protected function logLoginDetails(string $status) {
 		EventLogger::log($status, [

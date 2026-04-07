@@ -90,7 +90,7 @@ class Response {
 	 * @param string $status
 	 *
 	 * @return $this
-	 * @uses \Environet\Sys\General\HttpClient\Response::setStatusCode()
+	 * @uses Response::setStatusCode
 	 */
 	public function setRawStatus(string $status) {
 		if (preg_match('/[2-5]\d{2}/', $status, $match)) {

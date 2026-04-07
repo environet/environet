@@ -22,7 +22,7 @@ class Delete extends Query {
 	 * Build a delete operation query with where conditions
 	 *
 	 * @return mixed|string
-	 * @uses \Environet\Sys\General\Db\Query\Traits\WhereTrait::buildWhereClause()
+	 * @uses WhereTrait::buildWhereClause
 	 */
 	public function buildQuery() {
 		// Build DELETE FROM table

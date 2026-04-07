@@ -78,18 +78,18 @@ class OperatorCrud extends CrudPage {
 			$searchString = $this->request->getQueryParam('search');
 
 
-			$directUserCountQuery = (new Select())->select('COUNT(*)')->from('operator_users')
+			$directUserCountQuery = new Select()->select('COUNT(*)')->from('operator_users')
 												  ->where('operator_users.operatorid = operator.id')->buildQuery();
-			$groupUserCountQuery = (new Select())->select('COUNT(*)')->from('operator_groups')
+			$groupUserCountQuery = new Select()->select('COUNT(*)')->from('operator_groups')
 												 ->join('users_groups', 'users_groups.groupsid = operator_groups.groupsid')
 												 ->where('operator_groups.operatorid = operator.id')->buildQuery();
-			$groupCountQuery = (new Select())->select('COUNT(*)')->from('operator_groups')
+			$groupCountQuery = new Select()->select('COUNT(*)')->from('operator_groups')
 											 ->where('operator_groups.operatorid = operator.id')->buildQuery();
 
 
 
 			//Base query with joins and conditions
-			$query = (new Select())
+			$query = new Select()
 				->select('operator.*')
 				->select('(' . $directUserCountQuery . ') + (' . $groupUserCountQuery . ') as user_count')
 				->select('(' . $groupCountQuery . ') as group_count')

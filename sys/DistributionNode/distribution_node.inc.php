@@ -30,16 +30,16 @@ switch (true) {
 	case $request->isAdmin():
 		require_once SRC_PATH.'/sys/viewhelpers.inc.php';
 		//If request is a valid admin request, call the enty point of the administration area
-		echo (new AdminHandler($request))->handleRequest();
+		echo new AdminHandler($request)->handleRequest();
 		break;
 	case $request->isUpload():
-		echo (new UploadHandler($request))->handleRequest();
+		echo new UploadHandler($request)->handleRequest();
 		break;
 	case $request->isDownload():
-		echo (new DownloadHandler($request))->handleRequest();
+		echo new DownloadHandler($request)->handleRequest();
 		break;
 	case $request->isJsonApi():
-		echo (new JsonApiHandler($request))->handleRequest();
+		echo new JsonApiHandler($request)->handleRequest();
 		break;
 }
 

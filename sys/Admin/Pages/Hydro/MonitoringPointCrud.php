@@ -313,7 +313,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	protected function getWarningLevelsByPoints(): array {
 		if (is_null($this->warningLevelsByPoints)) {
 			$this->warningLevelsByPoints = [];
-			$wls = (new Select())
+			$wls = new Select()
 				->from('warning_level_hydropoint wlh')
 				->join('warning_levels wl', 'wl.id = wlh.warning_levelid')
 				->join('warning_level_groups wlg', 'wlg.id = wl.warning_level_groupid')
@@ -353,7 +353,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	 * @throws QueryException
 	 */
 	protected function getExistingWarningLevelData($mpointId) {
-		$existingData = (new Select())
+		$existingData = new Select()
 			->select('*')
 			->from('warning_level_hydropoint')
 			->where('mpointid = :mpointId')
@@ -389,7 +389,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 			$warningLevelId = explode('_', $key)[1];
 			if (!array_key_exists($key, $existingDataByKey)) {
 				//Threshold not saved yet, insert into databas
-				(new Insert())->table('warning_level_hydropoint')->addSingleData([
+				new Insert()->table('warning_level_hydropoint')->addSingleData([
 					'observed_propertyid' => $observedPropertyId,
 					'warning_levelid'     => $warningLevelId,
 					'mpointid'            => $mpointId,
@@ -397,7 +397,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 				])->run(Query::RETURN_BOOL);
 			} elseif ($value !== $existingDataByKey[$key]['value']) {
 				//Existing, and value updated, save it
-				(new Update())
+				new Update()
 					->table('warning_level_hydropoint')
 					->updateData(['value' => $value])
 					->where('warning_level_hydropoint.observed_propertyid = :observedPropertyId')

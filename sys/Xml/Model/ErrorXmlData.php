@@ -29,8 +29,8 @@ class ErrorXmlData {
 	 * @param int|null    $code
 	 * @param string|null $message
 	 *
-	 * @uses \Environet\Sys\Xml\Model\ErrorXmlData::setCode()
-	 * @uses \Environet\Sys\Xml\Model\ErrorXmlData::setMessage()
+	 * @uses ErrorXmlData::setCode
+	 * @uses ErrorXmlData::setMessage
 	 */
 	public function __construct(int $code = null, string $message = null) {
 		if (!is_null($code)) {

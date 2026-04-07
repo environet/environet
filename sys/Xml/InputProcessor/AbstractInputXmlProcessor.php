@@ -262,9 +262,9 @@ abstract class AbstractInputXmlProcessor {
 	 * @throws ApiException
 	 * @uses AbstractInputXmlProcessor::createResultInsert
 	 * @uses Insert::run
-	 * @uses \DateTime
-	 * @uses \DateTimeInterface
-	 * @uses \DateTimeZone
+	 * @uses DateTime
+	 * @uses DateTimeInterface
+	 * @uses DateTimeZone
 	 */
 	protected function insertResults(array $timeSeriesPoints, int $timeSeriesId, string $propertySymbol, DateTime $now, array $duplicateTimes = []) {
 		try {

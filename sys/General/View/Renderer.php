@@ -43,9 +43,9 @@ class Renderer {
 	 * @param array|null  $vars
 	 *
 	 * @throws RenderException
-	 * @uses \Environet\Sys\General\View\Renderer::setTemplate()
-	 * @uses \Environet\Sys\General\View\Renderer::setVars()
-	 * @uses \Environet\Sys\General\View\Renderer::addVar()
+	 * @uses Renderer::setTemplate
+	 * @uses Renderer::setVars
+	 * @uses Renderer::addVar
 	 */
 	public function __construct(string $template = null, array $vars = null) {
 		if (!is_null($template)) {
@@ -192,7 +192,7 @@ class Renderer {
 	 *
 	 * @return Response
 	 * @throws RenderException
-	 * @uses \Environet\Sys\General\View\Renderer::render()
+	 * @uses Renderer::render
 	 */
 	public function __invoke(): Response {
 		return $this->render();

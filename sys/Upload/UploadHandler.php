@@ -49,11 +49,11 @@ class UploadHandler extends ApiHandler {
 	 * If an error occurs, an ErrorResponse XML will be generated ({@see CreateErrorXml}).
 	 *
 	 * @return Response|mixed
-	 * @uses \Environet\Sys\General\HttpClient\ApiHandler::getIdentity()
-	 * @uses \Environet\Sys\Upload\UploadHandler::authorizeRequest()
-	 * @uses \Environet\Sys\Upload\UploadHandler::getAuthHeaderParts()
-	 * @uses \Environet\Sys\Upload\UploadHandler::storeInputData()
-	 * @uses \Environet\Sys\Upload\UploadHandler::createInputProcessor()
+	 * @uses ApiHandler::getIdentity
+	 * @uses UploadHandler::authorizeRequest
+	 * @uses UploadHandler::getAuthHeaderParts
+	 * @uses UploadHandler::storeInputData
+	 * @uses UploadHandler::createInputProcessor
 	 */
 	public function handleRequest() {
 		try {
@@ -74,7 +74,7 @@ class UploadHandler extends ApiHandler {
 
 			try {
 				// Validate the XML against XSD schema
-				(new SchemaValidator($parsedXml, SRC_PATH . '/public/schemas/environet.xsd'))->validate();
+				new SchemaValidator($parsedXml, SRC_PATH . '/public/schemas/environet.xsd')->validate();
 			} catch (SchemaInvalidException $e) {
 				// XML is invalid
 				throw UploadException::schemaErrors($e->getErrorMessages(), $this->identity->getData());
@@ -90,14 +90,14 @@ class UploadHandler extends ApiHandler {
 
 			//Define a common 'now' date, which will be used in the upload process everywhere
 			$nowDate = new DateTime('now', (new DateTimeZone('UTC')));
-			$options = (new UploadOptions())->initFromXml($parsedXml);
+			$options = new UploadOptions()->initFromXml($parsedXml);
 
 			try {
 				// Input is valid syntactically and semantically valid, process it
 				$processor = $this->createInputProcessor($parsedXml, $options);
 				$processor->process($this->getIdentity(), $nowDate, $options);
 
-				return (new Response($processor->getStatistics()->toXml()->asXML()))
+				return new Response($processor->getStatistics()->toXml()->asXML())
 					->setStatusCode(200)
 					->setHeaders(['Content-type: application/xml']);
 			} catch (UploadException $e) {
@@ -105,7 +105,7 @@ class UploadHandler extends ApiHandler {
 					//If the upload option is set to ignore undefined points, and the monitoring point is not found, return the statistics with a warning message
 					$processor->getStatistics()->addMessage('warning', null, MessageCodes::UPLOAD_WARNING_POINT_NOT_FOUND);
 
-					return (new Response($processor->getStatistics()->toXml()->asXML()))
+					return new Response($processor->getStatistics()->toXml()->asXML())
 						->setStatusCode(200)
 						->setHeaders(['Content-type: application/xml']);
 				}
@@ -117,13 +117,13 @@ class UploadHandler extends ApiHandler {
 		} catch (UploadException $e) {
 			exception_logger($e);
 
-			return (new Response((new CreateErrorXml())->generateXml($e->getErrorXmlData())->asXML()))
+			return new Response(new CreateErrorXml()->generateXml($e->getErrorXmlData())->asXML())
 				->setStatusCode(400)
 				->setHeaders(['Content-type: application/xml']);
 		} catch (Throwable $e) {
 			exception_logger($e);
 
-			return (new Response((new CreateErrorXml())->generateXml([new ErrorXmlData(500, $e->getMessage())])->asXML()))
+			return new Response(new CreateErrorXml()->generateXml([new ErrorXmlData(500, $e->getMessage())])->asXML())
 				->setStatusCode(500)
 				->setHeaders(['Content-type: application/xml']);
 		}

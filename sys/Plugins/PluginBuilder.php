@@ -62,7 +62,7 @@ class PluginBuilder {
 	 * @param Console $console
 	 *
 	 * @return Plugin
-	 * @uses \Environet\Sys\Plugins\PluginLayer::createConfiguration()
+	 * @uses PluginLayer::createConfiguration
 	 */
 	public function createConfiguration(Console $console): Plugin {
 		$this->plugin = new Plugin();
@@ -83,7 +83,7 @@ class PluginBuilder {
 	 * @param $config
 	 *
 	 * @return Plugin
-	 * @uses \Environet\Sys\Plugins\PluginLayer::getName()
+	 * @uses PluginLayer::getName
 	 */
 	public function loadFromConfiguration($config): Plugin {
 		$this->plugin = new Plugin();
@@ -104,8 +104,8 @@ class PluginBuilder {
 	 * - The serialized configuration object of the layer
 	 *
 	 * @return string
-	 * @uses \Environet\Sys\Plugins\BuilderLayerInterface::getName()
-	 * @uses \Environet\Sys\Plugins\BuilderLayerInterface::serializeConfiguration()
+	 * @uses BuilderLayerInterface::getName
+	 * @uses BuilderLayerInterface::serializeConfiguration
 	 */
 	public function serializeConfiguration(): string {
 		$result = '';
@@ -114,7 +114,7 @@ class PluginBuilder {
 			$result .= sprintf(
 				"[%s]\nclassName = %s\n%s\n",
 				$layer->getName(),
-				get_class($this->plugin->{$layer->getName()}),
+				$this->plugin->{$layer->getName()}::class,
 				$this->plugin->{$layer->getName()}->serializeConfiguration()
 			);
 		}

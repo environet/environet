@@ -44,7 +44,7 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 	public static function getById($id, string $primaryKey = 'id'): ?array {
 		$record = parent::getById($id, $primaryKey);
 
-		$groupConnections = (new Select())
+		$groupConnections = new Select()
 			->select(['group_id', 'interval'])
 			->from('group_measurement_access_rules')
 			->where('measurement_access_rule_id = :id')
@@ -93,14 +93,14 @@ class MeasurementAccessRuleQueries extends BaseQueries {
 				'id' => $id
 			]));
 
-			(new Update())
+			new Update()
 				->table(static::$tableName)
 				->updateData($dataToSave)
 				->where(static::$tableName . ".$primaryKey = :id")
 				->addParameter(':id', $id)
 				->run(Query::RETURN_BOOL);
 		} else {
-			$id = (new Insert())
+			$id = new Insert()
 				->table(static::$tableName)
 				->addSingleData($dataToSave)
 				->run();

@@ -87,7 +87,7 @@ class DownloadHandler extends ApiHandler {
 
 			// Has start time restriction
 			if ($rule['interval']) {
-				$limit = (new DateTime('now', new DateTimeZone('UTC')))->sub($rule['interval']);
+				$limit = new DateTime('now', new DateTimeZone('UTC'))->sub($rule['interval']);
 
 				// Has requested start time
 				if (isset($params['start'])) {
@@ -105,7 +105,7 @@ class DownloadHandler extends ApiHandler {
 				}
 			} else {
 				// No time restriction, create subset with earliest possible
-				$subset['start'] = $params['start'] ?? (new DateTime())->setTimestamp(0);
+				$subset['start'] = $params['start'] ?? new DateTime()->setTimestamp(0);
 			}
 
 			$subsets[] = $subset;
@@ -129,7 +129,7 @@ class DownloadHandler extends ApiHandler {
 	 * @throws QueryException
 	 */
 	protected function processAccessRules(array $params, bool &$intervalLimited): array {
-		$rules = (new Select())
+		$rules = new Select()
 			->select(['mar.id, mar.operator_id, monitoringpoint_selector as points, observed_property_selector as props, gmar.interval'])
 			->from('measurement_access_rules as mar')
 			->join('group_measurement_access_rules as gmar', 'mar.id = gmar.measurement_access_rule_id')
@@ -201,9 +201,9 @@ class DownloadHandler extends ApiHandler {
 	 * 3. Queries the results and generates the output XML containing them.
 	 *
 	 * @return Response|mixed
-	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::getBuilder()
-	 * @uses \Environet\Sys\General\Db\MonitoringPointQueries::getResults()
-	 * @uses \Environet\Sys\Xml\CreateOutputXml::generateXml()
+	 * @uses MonitoringPointQueries::getBuilder
+	 * @uses MonitoringPointQueries::getResults
+	 * @uses CreateOutputXml::generateXml
 	 */
 	public function handleRequest() {
 		try {
@@ -284,7 +284,7 @@ class DownloadHandler extends ApiHandler {
 			} elseif (!isset($params['end']) && isset($params['start'])) {
 				$params['end'] = (clone $params['start'])->modify('+24 hours');
 			} elseif (!isset($params['start']) && !isset($params['end'])) {
-				$params['start'] = (new DateTime())->modify('-24 hours');
+				$params['start'] = new DateTime()->modify('-24 hours');
 				$params['end'] = new DateTime();
 			}
 			$startTime = $params['start']->format('Y-m-d\TH:i:s');
@@ -335,7 +335,7 @@ class DownloadHandler extends ApiHandler {
 
 			exception_logger($e);
 
-			$response = (new Response((new CreateErrorXml())->generateXml($e->getErrorXmlData())->asXML()))
+			$response = new Response(new CreateErrorXml()->generateXml($e->getErrorXmlData())->asXML())
 				->setHeaders(['Content-type: application/xml'])
 				->setStatusCode(400);
 
@@ -348,7 +348,7 @@ class DownloadHandler extends ApiHandler {
 
 			exception_logger($e);
 
-			$response = (new Response((new CreateErrorXml())->generateXml([new ErrorXmlData(500, $e->getMessage())])->asXML()))
+			$response = new Response(new CreateErrorXml()->generateXml([new ErrorXmlData(500, $e->getMessage())])->asXML())
 				->setHeaders(['Content-type: application/xml'])
 				->setStatusCode(500);
 
@@ -369,7 +369,7 @@ class DownloadHandler extends ApiHandler {
 	 */
 	protected function saveDownloadLog(Response $response, ?int $errorCode = null) {
 		if ($this->downloadLog) {
-			$this->downloadLog['user_id'] = $this->identity ? $this->identity->getId() : null;
+			$this->downloadLog['user_id'] = $this->identity?->getId();
 			$this->downloadLog['response_status'] = $response->getStatusCode();
 			$this->downloadLog['error_code'] = $errorCode;
 			$this->downloadLog['response_size'] = $response->getSize();

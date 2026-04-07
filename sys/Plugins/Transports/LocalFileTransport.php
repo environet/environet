@@ -24,9 +24,9 @@ class LocalFileTransport extends AbstractTransport {
 
 
 	private static function getDataDirDisplay(): string {
-		if (substr(getenv('LOCAL_DATA_DIR'), 0, 1) == '/') {
+		if (str_starts_with(getenv('LOCAL_DATA_DIR'), '/')) {
 			return getenv('LOCAL_DATA_DIR');
-		} elseif (substr(getenv('LOCAL_DATA_DIR'), 0, 3) == '../') {
+		} elseif (str_starts_with(getenv('LOCAL_DATA_DIR'), '../')) {
 			return '[Environet docker directory]/' . preg_replace('/^\.\.\//', '', getenv('LOCAL_DATA_DIR'));
 		} else {
 			return '[Environet docker directory]/docker/' . getenv('LOCAL_DATA_DIR');

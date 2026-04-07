@@ -30,18 +30,11 @@ class SchemaInvalidException extends Exception {
 	public function __construct(array $libXmlErrors) {
 		foreach ($libXmlErrors as $error) {
 			// Message prefix based on error level
-			switch ($error->level) {
-				case LIBXML_ERR_WARNING:
-					$messagePrefix = 'Warning';
-					break;
-				case LIBXML_ERR_FATAL:
-					$messagePrefix = 'Fatal error';
-					break;
-				case LIBXML_ERR_ERROR:
-				default:
-					$messagePrefix = 'Error';
-					break;
-			}
+			$messagePrefix = match ($error->level) {
+				LIBXML_ERR_WARNING => 'Warning',
+				LIBXML_ERR_FATAL => 'Fatal error',
+				default => 'Error',
+			};
 
 			// Build message and append to errorMessages
 			$message = trim($error->message);

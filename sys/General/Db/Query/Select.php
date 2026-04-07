@@ -17,7 +17,9 @@ use Environet\Sys\General\Exceptions\QueryException;
  */
 class Select extends Query {
 
-	use WhereTrait, JoinTrait;
+
+	use JoinTrait;
+	use WhereTrait;
 
 	/**
 	 * Array of select column definitions. Each item should be a string
@@ -204,9 +206,9 @@ class Select extends Query {
 	 * Build a select operation query with conditions
 	 *
 	 * @return mixed|string
-	 * @uses \Environet\Sys\General\Db\Query\Select::buildJoinClause()
-	 * @uses \Environet\Sys\General\Db\Query\Select::buildWhereClause()
-	 * @uses \Environet\Sys\General\Db\Query\Select::buildHavingClause()
+	 * @uses Select::buildJoinClause
+	 * @uses Select::buildWhereClause
+	 * @uses Select::buildHavingClause
 	 */
 	public function buildQuery() {
 		// Build SELECT columns FROM table
@@ -274,8 +276,8 @@ class Select extends Query {
 	 * @param int|null $maxPage     Reference for storing page count
 	 * @param bool     $countMax
 	 *
-	 * @uses \Environet\Sys\General\Db\Query\Select::limit()
-	 * @uses \Environet\Sys\General\Db\Query\Select::offset()
+	 * @uses Select::limit
+	 * @uses Select::offset
 	 */
 	public function paginate($pageSize, &$currentPage = null, &$totalCount = null, &$maxPage = null, bool $countMax = true) {
 		// Default limit and offset
@@ -316,7 +318,7 @@ class Select extends Query {
 	 * @param string|null $orderBy
 	 * @param string|null $orderDir
 	 *
-	 * @uses \Environet\Sys\General\Db\Query\Select::orderBy()
+	 * @uses Select::orderBy
 	 */
 	public function sort(string $orderBy = null, string $orderDir = null) {
 		if (!is_null($orderBy) && !is_null($orderDir)) {

@@ -59,7 +59,7 @@ class Insert extends Query {
 	 *
 	 * @return Insert
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Insert::addValueRow()
+	 * @uses Insert::addValueRow
 	 */
 	public function setValueRows(array $valueRows): self {
 		$this->values = [];
@@ -100,9 +100,9 @@ class Insert extends Query {
 	 *
 	 * @return $this
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Insert::setParameters()
-	 * @uses \Environet\Sys\General\Db\Query\Insert::columns()
-	 * @uses \Environet\Sys\General\Db\Query\Insert::addValueRow()
+	 * @uses Insert::setParameters
+	 * @uses Insert::columns
+	 * @uses Insert::addValueRow
 	 */
 	public function addSingleData(array $data): self {
 		// Process data, convert it to PDO-compatible parameters and parameter names
@@ -148,10 +148,8 @@ class Insert extends Query {
 		if ($columnsCount === 0 || $valuesCount === 0) {
 			return false;
 		}
-		foreach ($this->values as $valueRow) {
-			if (count($valueRow) !== $columnsCount) {
-				return false;
-			}
+		if (array_any($this->values, fn($valueRow) => count($valueRow) !== $columnsCount)) {
+			return false;
 		}
 
 		return parent::validateQuery();
@@ -195,7 +193,7 @@ class Insert extends Query {
 	 *
 	 * @return int|null
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Query::run()
+	 * @uses Query::run
 	 */
 	public function run($flags = null) {
 		// Extend

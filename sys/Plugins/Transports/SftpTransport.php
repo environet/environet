@@ -2,6 +2,7 @@
 
 namespace Environet\Sys\Plugins\Transports;
 
+use DateTime;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\PluginBuilder;
 use Environet\Sys\Plugins\Resource;
@@ -246,18 +247,18 @@ class SftpTransport extends AbstractTransport {
 		$conn = ssh2_connect($this->host, $port);
 		if ($this->authMode == 'keypair') {
 			//Connect to SFTP with username and private key
-			$privateKeyPath = SRC_PATH . "/conf/plugins/credentials/{$this->privateKeyPath}";
-			$publicKeyPath = SRC_PATH . "/conf/plugins/credentials/{$this->publicKeyPath}";
+			$privateKeyPath = SRC_PATH . "/conf/plugins/credentials/$this->privateKeyPath";
+			$publicKeyPath = SRC_PATH . "/conf/plugins/credentials/$this->publicKeyPath";
 			chmod($privateKeyPath, 0600);
 
 			$privateKeyContents = file_get_contents($privateKeyPath);
-			if (strpos($privateKeyContents, 'BEGIN OPENSSH PRIVATE KEY') !== false) {
+			if (str_contains($privateKeyContents, 'BEGIN OPENSSH PRIVATE KEY')) {
 				$privateKeyPathRsa = $privateKeyPath . '.rsa';
 				if (!file_exists($privateKeyPathRsa)) {
 					copy($privateKeyPath, $privateKeyPathRsa);
 					chmod($privateKeyPathRsa, 0600);
 					//Convert private key to RSA format
-					exec("ssh-keygen -p -N '' -m pem -f {$privateKeyPathRsa}");
+					exec("ssh-keygen -p -N '' -m pem -f $privateKeyPathRsa");
 				}
 				$privateKeyPath = $privateKeyPathRsa;
 			}
@@ -320,9 +321,9 @@ class SftpTransport extends AbstractTransport {
 			$newFiles = [];
 			foreach ($files as $file) {
 				if (!empty($file['modify'])) {
-					$dateFile = new \DateTime();
+					$dateFile = new DateTime();
 					$dateFile->setTimestamp($file['modify']);
-					$dateNow = new \DateTime();
+					$dateNow = new DateTime();
 					$interval = date_diff($dateFile, $dateNow);
 					$days = $interval->format('%a');
 					if ($days <= $this->lastNDaysOnly) {

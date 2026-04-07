@@ -80,7 +80,7 @@ class UserCrud extends CrudPage {
 
 		try {
 			//Base query with joins and conditions
-			$query = (new Select())
+			$query = new Select()
 				->select(['users.*'])
 				->select('STRING_AGG(DISTINCT groups.name, \', \') as group_names')
 				->from('users')
@@ -169,14 +169,14 @@ class UserCrud extends CrudPage {
 				$this->addFieldMessage('email', 'The user\'s e-mail address is required and should be valid e-mail address', self::MESSAGE_ERROR);
 				$valid = false;
 			} else {
-				$userEmailInDb = (new Select())
+				$userEmailInDb = new Select()
 					->select('COUNT(*)')
 					->from('users')
 					->where('email = :email')
 					->addParameter(':email', $data['email'])
 					->run(Query::FETCH_COUNT);
 
-				$user = (new Select())
+				$user = new Select()
 					->select(['id', 'email'])
 					->from('users')
 					->where('id = :id')
@@ -193,7 +193,7 @@ class UserCrud extends CrudPage {
 				$this->addFieldMessage('email', 'The user\'s e-mail address is required and should be valid e-mail address', self::MESSAGE_ERROR);
 				$valid = false;
 			} else {
-				$userWithEmail = (new Select())
+				$userWithEmail = new Select()
 					->select('COUNT(*)')
 					->from('users')
 					->where('email = :email')
@@ -210,7 +210,7 @@ class UserCrud extends CrudPage {
 				$this->addFieldMessage('username', 'The user\'s username is required', self::MESSAGE_ERROR);
 				$valid = false;
 			} else {
-				$userWithUsername = (new Select())
+				$userWithUsername = new Select()
 					->select('COUNT(*)')
 					->from('users')
 					->where('username = :username')

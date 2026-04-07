@@ -26,7 +26,7 @@ class CreateInputXml {
 	 *
 	 * @return SimpleXMLElement
 	 * @throws CreateInputXmlException
-	 * @uses \Environet\Sys\Xml\CreateInputXml::validateValues()
+	 * @uses CreateInputXml::validateValues
 	 */
 	public function generateXml(InputXmlData $inputXmlData, array &$warnings = []): SimpleXMLElement {
 		if (!($inputXmlData->getPointId())) {
@@ -88,7 +88,7 @@ class CreateInputXml {
 	 *
 	 * @return bool
 	 * @throws CreateInputXmlException
-	 * @uses \DateTime
+	 * @uses DateTime
 	 */
 	protected function validateValues(array $values, int $propertyKey): bool {
 		foreach ($values as $key => $value) {

@@ -109,11 +109,11 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 *
 	 * @return bool|void
 	 * @throws QueryException
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	protected function modifyListQuery(Select $query) {
 		if (!$this->readOwnPermissionName) {
-			throw new \Exception('Read own permission not set');
+			throw new Exception('Read own permission not set');
 		}
 
 		$allowedOperatorIds = $this->getAllowedOperatorIds();
@@ -162,7 +162,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 */
 	private function userIsOperatorOfMonitoringPoint(int $id): bool {
 		$operatorIds = $this->getAllowedOperatorIds() ?: [];
-		$query = (new Select())
+		$query = new Select()
 			->select($this->queriesClass::$tableName . '.id')
 			->from($this->queriesClass::$tableName)
 			->whereIn('operatorid', $operatorIds, 'operatorId');
@@ -205,7 +205,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 * @param string $value
 	 *
 	 * @return array
-	 * @uses \Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCSVMapInterface::getObservedPropertyQueriesClass()
+	 * @uses MonitoringPointCSVMapInterface::getObservedPropertyQueriesClass
 	 */
 	protected function parseObservedPropertyIdsFromString(string $value): array {
 		$symbols = array_filter(explode(' ', $value));
@@ -232,9 +232,9 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 *
 	 * @return array
 	 * @throws Exception
-	 * @uses \Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCSVMapInterface::getObservedPropertiesCsvColumn()
-	 * @uses \Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud::parseObservedPropertyIdsFromString()
-	 * @uses \Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCSVMapInterface::getCsvColumnMappings()
+	 * @uses MonitoringPointCSVMapInterface::getObservedPropertiesCsvColumn
+	 * @uses MonitoringPointCrud::parseObservedPropertyIdsFromString
+	 * @uses MonitoringPointCSVMapInterface::getCsvColumnMappings
 	 */
 	protected function dataFromCsvLine(array $line): array {
 		if (count($line) !== count($this->headingLine)) {
@@ -290,9 +290,9 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 * @return string
 	 * @throws QueryException
 	 * @throws RenderException
-	 * @uses \Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud::dataFromCsvLine()
-	 * @uses \Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCSVMapInterface::getGlobalIdName()
-	 * @uses \Environet\Sys\Admin\Pages\CrudPage::addMessage()
+	 * @uses MonitoringPointCrud::dataFromCsvLine
+	 * @uses MonitoringPointCSVMapInterface::getGlobalIdName
+	 * @uses CrudPage::addMessage
 	 * @uses \Environet\Sys\Admin\Pages\BasePage::redirect()
 	 */
 	public function csvUpload(): string {
@@ -332,7 +332,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 					} else {
 						$added[] = $csvId;
 					}
-				} catch (\Exception $e) {
+				} catch (Exception $e) {
 					$errorLines[] = $csvId;
 				}
 			}
@@ -353,7 +353,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 		$pageTitle = 'CSV upload '.$this->getEntityName(true);
 
 		//Find some enums for upload
-		$query = (new Select())
+		$query = new Select()
 			->select($this->queriesClass::$tableName . '.operatorid')
 			->from($this->queriesClass::$tableName);
 		$this->modifyListQuery($query);
@@ -393,7 +393,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 */
 	public function csvDownload() {
 		//Base query with joins and conditions
-		$query = (new Select())
+		$query = new Select()
 			->select($this->queriesClass::$tableName . '.*')
 			->from($this->queriesClass::$tableName);
 
@@ -442,7 +442,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 	 * @throws QueryException
 	 */
 	protected function getListFilters(): ?array {
-		$countries = array_filter((new Select())
+		$countries = array_filter(new Select()
 			->select('DISTINCT(country)')
 			->from($this->queriesClass::$tableName)
 			->orderBy('country', 'ASC')

@@ -2,6 +2,7 @@
 
 namespace Environet\Sys\Plugins\Transports;
 
+use DateTime;
 use Environet\Sys\Commands\Console;
 use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\PluginBuilder;
@@ -252,9 +253,9 @@ class FtpTransport extends AbstractTransport {
 			$newFiles = [];
 			foreach ($files as $file) {
 				if (!empty($file['modify'])) {
-					$dateFile = new \DateTime();
+					$dateFile = new DateTime();
 					$dateFile->setTimestamp($file['modify']);
-					$dateNow = new \DateTime();
+					$dateNow = new DateTime();
 					$interval = date_diff($dateFile, $dateNow);
 					$days = $interval->format('%a');
 					if ($days <= $this->lastNDaysOnly) {

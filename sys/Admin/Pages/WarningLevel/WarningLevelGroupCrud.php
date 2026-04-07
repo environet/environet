@@ -107,7 +107,7 @@ class WarningLevelGroupCrud extends CrudPage {
 		}
 
 		//we have to check the requested group's relations
-		$warningLevelCount = (new Select())
+		$warningLevelCount = new Select()
 			->select('COUNT(*)')
 			->from('warning_levels')
 			->where('warning_level_groupid = :groupId')
@@ -118,7 +118,7 @@ class WarningLevelGroupCrud extends CrudPage {
 		if ($warningLevelCount > 0) {
 			$this->addMessage('The requested group isn\'t deletable because it has active relation with threshold levels!');
 		} else {
-			(new Delete())->table('warning_level_groups')->where('id = :groupId')->addParameter(':groupId', $groupId)->run();
+			new Delete()->table('warning_level_groups')->where('id = :groupId')->addParameter(':groupId', $groupId)->run();
 
 			$this->addMessage('The requested group has been deleted!');
 			// log group deleting event

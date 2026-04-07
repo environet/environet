@@ -34,31 +34,13 @@ abstract class AbstractFormatParameter {
 	 */
 	public static function fromConfig(array $config): AbstractFormatParameter {
 		$type = $config['Parameter'] ?? null;
-		switch ($type) {
-			case 'MonitoringPoint':
-				$parameter = new MonitoringPointParameter;
-				break;
-			case 'ObservedPropertyValue':
-				$parameter = new ObservedPropertyValueParameter;
-				break;
-			case 'ObservedPropertySymbol':
-				$parameter = new ObservedPropertySymbolParameter;
-				break;
-			case 'DateTime':
-			case 'Date':
-			case 'Time':
-			case 'Year':
-			case 'Month':
-			case 'Day':
-			case 'Hour':
-			case 'Minute':
-			case 'Second':
-				//Create date parameter for all date related types, date type will be stored in the parameter
-				$parameter = new DateParameter;
-				break;
-			default:
-				throw new Exception('Invalid parameter type: ' . $type);
-		}
+		$parameter = match ($type) {
+			'MonitoringPoint' => new MonitoringPointParameter(),
+			'ObservedPropertyValue' => new ObservedPropertyValueParameter(),
+			'ObservedPropertySymbol' => new ObservedPropertySymbolParameter(),
+			'DateTime', 'Date', 'Time', 'Year', 'Month', 'Day', 'Hour', 'Minute', 'Second' => new DateParameter(),
+			default => throw new Exception('Invalid parameter type: ' . $type),
+		};
 		$parameter->setOptions($config);
 
 		return $parameter;

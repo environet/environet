@@ -73,8 +73,8 @@ class PluginLayer {
 	 * @param PluginBuilder $builder
 	 *
 	 * @return mixed
-	 * @uses \Environet\Sys\Plugins\PluginLayer::chooseAlternative()
-	 * @uses \Environet\Sys\Plugins\BuilderLayerInterface::create()
+	 * @uses PluginLayer::chooseAlternative
+	 * @uses BuilderLayerInterface::create
 	 */
 	public function createConfiguration(Console $console, PluginBuilder $builder) {
 		$class = $this->chooseAlternative($console);
@@ -100,7 +100,7 @@ class PluginLayer {
 			$console->writeLine('');
 			$choice = $console->askOption("Enter a number corresponding to the $this->name implementation of your choice:");
 
-			return ($this->alternatives[(int) $choice - 1]);
+			return ($this->alternatives[$choice - 1]);
 		}
 
 		return $this->alternatives[0];

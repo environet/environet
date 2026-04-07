@@ -44,21 +44,21 @@ class UploadTest extends BasePage {
 	 * @throws QueryException
 	 * @throws RenderException
 	 * @throws PKIException
-	 * @uses \Environet\Sys\Admin\Pages\UploadTest::render()
-	 * @uses \Environet\Sys\Admin\Pages\UploadTest::sendData()
+	 * @uses UploadTest::render
+	 * @uses UploadTest::sendData
 	 */
 	public function handle(): ?Response {
 
 		// Create monitoring point options
-		$mpoints = (new Select())->from('hydropoint')->run();
+		$mpoints = new Select()->from('hydropoint')->run();
 		$mpoints = array_combine(array_column($mpoints, 'eucd_wgst'), array_column($mpoints, 'eucd_wgst'));
 
 		// Create observed property options
-		$properties = (new Select())->from('hydro_observed_property')->run();
+		$properties = new Select()->from('hydro_observed_property')->run();
 		$properties = array_combine(array_column($properties, 'symbol'), array_column($properties, 'description'));
 
 		// Create observed property options
-		$users = (new Select())->from('users')->run();
+		$users = new Select()->from('users')->run();
 		$users = array_combine(array_column($users, 'username'), array_column($users, 'username'));
 
 		$response = $error = null;
@@ -96,8 +96,8 @@ class UploadTest extends BasePage {
 	 * @throws HttpClientException
 	 * @throws PKIException
 	 * @see  CreateInputXml
-	 * @uses \Environet\Sys\Admin\Pages\UploadTest::generateSignatureHeader()
-	 * @uses \Environet\Sys\General\HttpClient\HttpClient::sendRequest()
+	 * @uses UploadTest::generateSignatureHeader
+	 * @uses HttpClient::sendRequest
 	 */
 	protected function sendData(): HttpClientResponse {
 		$mpointId = $_POST['mpoint'] ?? null;
@@ -148,8 +148,8 @@ class UploadTest extends BasePage {
 	 * @throws InvalidArgumentException
 	 * @throws PKIException
 	 * @throws Exception
-	 * @uses \Environet\Sys\General\PKI::generateSignature()
-	 * @uses \Environet\Sys\General\PKI::authHeaderWithSignature()
+	 * @uses PKI::generateSignature
+	 * @uses PKI::authHeaderWithSignature
 	 */
 	protected function generateSignatureHeader($xml, $username): string {
 		$privateKeyFile = SRC_PATH . '/data/test_private_keys/' . $username . '.key';

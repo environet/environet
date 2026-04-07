@@ -3,6 +3,8 @@
 
 namespace Environet\Sys\Commands;
 
+use DateTime;
+use DateTimeZone;
 use Environet\Sys\Config;
 
 /**
@@ -16,15 +18,15 @@ use Environet\Sys\Config;
 class Console {
 
 
-	const COLOR_BLACK    = '0;30';
-	const COLOR_RED      = '0;31';
-	const COLOR_GREEN    = '0;32';
-	const COLOR_YELLOW   = '0;33';
-	const COLOR_WHITE    = '0;37';
-	const BGCOLOR_BLACK  = '40';
-	const BGCOLOR_RED    = '41';
-	const BGCOLOR_GREEN  = '42';
-	const BGCOLOR_YELLOW = '43';
+	public const COLOR_BLACK = '0;30';
+	public const COLOR_RED   = '0;31';
+	public const COLOR_GREEN = '0;32';
+	public const COLOR_YELLOW = '0;33';
+	public const COLOR_WHITE  = '0;37';
+	public const BGCOLOR_BLACK = '40';
+	public const BGCOLOR_RED   = '41';
+	public const BGCOLOR_GREEN = '42';
+	public const BGCOLOR_YELLOW = '43';
 
 	/**
 	 * @var false|resource PHP standard input
@@ -33,7 +35,7 @@ class Console {
 
 	private static $instance;
 
-	private \DateTimeZone $timezone;
+	private DateTimeZone $timezone;
 
 	private string $timeFormat;
 
@@ -47,7 +49,7 @@ class Console {
 	public function __construct() {
 		self::$instance = $this;
 		$this->stdin = fopen('php://stdin', 'r');
-		$this->timezone = new \DateTimeZone(Config::getInstance()->getTimezone() ?? 'UTC');
+		$this->timezone = new DateTimeZone(Config::getInstance()->getTimezone() ?? 'UTC');
 		$this->timeFormat = DATE_ATOM;
 	}
 
@@ -80,7 +82,7 @@ class Console {
 	) {
 		if ($datePrefix ?? $this->datePrefix) {
 			// Add date prefix
-			$dt = new \DateTime();
+			$dt = new DateTime();
 			$dt->setTimezone($this->timezone);
 			$datePrefix = $dt->format($this->timeFormat) . ' ';
 		}

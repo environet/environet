@@ -26,8 +26,8 @@ class HttpTransport extends AbstractTransport {
 
 	use WithConversionsConfigTrait;
 
-	const TYPE_MANUAL = 1;
-	const TYPE_JSON   = 2;
+	public const TYPE_MANUAL = 1;
+	public const TYPE_JSON   = 2;
 
 	/**
 	 * @var array
@@ -177,12 +177,12 @@ class HttpTransport extends AbstractTransport {
 			$hasMatches = preg_match_all($this->indexRegexPattern, $indexPageContents, $matches);
 			if ($hasMatches && !empty($matches['relativePath'])) {
 				$urls = array_map(function ($match) {
-					return (new Resource())->setUrl(rtrim($this->url, '/') . '/' . ltrim($match, '/'));
+					return new Resource()->setUrl(rtrim($this->url, '/') . '/' . ltrim($match, '/'));
 				}, $matches['relativePath']);
 			}
 		} else {
 			//User url as file
-			$resources = [(new Resource())->setUrl($this->url)];
+			$resources = [new Resource()->setUrl($this->url)];
 		}
 
 		foreach ($resources as $resource) {
@@ -192,7 +192,7 @@ class HttpTransport extends AbstractTransport {
 			} else {
 				//Url is a simple manual url
 				$resource->setName(basename($resource->getUrl())); //Filename
-				$response = (new HttpClient())->sendRequest(new Request($resource->getUrl()), [
+				$response = new HttpClient()->sendRequest(new Request($resource->getUrl()), [
 					'follow_redirects' => true,
 					'max_redirects'    => 5
 				]);
@@ -255,7 +255,7 @@ class HttpTransport extends AbstractTransport {
 		//Make resource
 		$resource->setName(basename($zipUrl));
 
-		$zip = new ZipArchive;
+		$zip = new ZipArchive();
 		$zip->open($temp);
 		//Iterate over files in zip, and find the matching one.
 		for ($i = 0; $i < $zip->numFiles; ++$i) {

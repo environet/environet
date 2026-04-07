@@ -27,7 +27,7 @@
                     <td><?=$user['name'] ?? null;?></td>
                     <td><?=$user['username'] ?? null;?></td>
                     <td><?=$user['email'] ?? null;?></td>
-                    <td><?=($user['loggedin_at'] ? (new DateTime($user['loggedin_at']))->format('Y-m-d H:i:s') : '');?></td>
+                    <td><?=($user['loggedin_at'] ? new DateTime($user['loggedin_at'])->format('Y-m-d H:i:s') : '');?></td>
                     <td><?=$user['group_names'] ?? null;?></td>
                     <td class="actions">
                         <a href="/admin/users/show?id=<?=$user['id'];?>"><i class="fas fa-eye text-muted"></i></a>

@@ -74,7 +74,7 @@ class GenerateKeys extends BaseCommand {
 		}
 
 		try {
-			[$publicKey, $privateKey] = (new PKI())->generateKeyPair();
+			[$publicKey, $privateKey] = new PKI()->generateKeyPair();
 		} catch (Exception $e) {
 			$this->console->writeLine($e->getMessage(), Console::COLOR_RED);
 			exit(1);

@@ -31,8 +31,8 @@ class InputXmlData {
 	 * @param string     $pointId
 	 * @param array|null $properties
 	 *
-	 * @uses \Environet\Sys\Xml\Model\InputXmlData::setPointId()
-	 * @uses \Environet\Sys\Xml\Model\InputXmlData::addProperty()
+	 * @uses InputXmlData::setPointId
+	 * @uses InputXmlData::addProperty
 	 */
 	public function __construct(string $pointId = null, array $properties = null) {
 		if (!is_null($pointId)) {

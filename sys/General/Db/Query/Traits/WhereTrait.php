@@ -91,14 +91,14 @@ trait WhereTrait {
 	 * @param string $operator    The root operator of the added condition
 	 *
 	 * @return WhereTrait|Select|Update|Delete
-	 * @uses \Environet\Sys\General\Db\Query\Traits\WhereTrait::where()
-	 * @uses \Environet\Sys\General\Db\Query\Query::addParameter()
+	 * @uses WhereTrait::where
+	 * @uses Query::addParameter
 	 */
 	public function whereIn(string $field, array $array, string $paramPrefix, $operator = Query::OPERATOR_AND): self {
 		$inParams = [];
 		foreach ($array as $key => $item) {
 			//Create parameter name (e.g :id0)
-			$param = ":{$paramPrefix}{$key}";
+			$param = ":$paramPrefix$key";
 
 			//Add the parameter to the array which will be imploded for IN condition
 			$inParams[] = $param;
@@ -164,7 +164,7 @@ trait WhereTrait {
 	 * @param array $queryString
 	 *
 	 * @return void
-	 * @uses \Environet\Sys\General\Db\Query\Traits\WhereTrait::buildConditions()
+	 * @uses WhereTrait::buildConditions
 	 */
 	protected function buildWhereClause(array &$queryString) {
 		if (count($this->wheres) > 0) {
@@ -179,7 +179,7 @@ trait WhereTrait {
 	 * @param array $queryString
 	 *
 	 * @return void
-	 * @uses \Environet\Sys\General\Db\Query\Traits\WhereTrait::buildConditions()
+	 * @uses WhereTrait::buildConditions
 	 */
 	protected function buildHavingClause(array &$queryString) {
 		if (count($this->havings) > 0) {
@@ -197,7 +197,7 @@ trait WhereTrait {
 	 *
 	 * @return WhereTrait|Select|Update|Delete
 	 * @uses \makeAccentInsensitiveRegex()
-	 * @uses \Environet\Sys\General\Db\Query\Traits\WhereTrait::where()
+	 * @uses WhereTrait::where
 	 */
 	public function search(array $needle, array $searchableFields, array $searchableFieldSubSelects = []) {
 		$index = 0;

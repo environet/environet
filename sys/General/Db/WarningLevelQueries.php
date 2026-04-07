@@ -66,12 +66,12 @@ class WarningLevelQueries extends BaseQueries {
 	 * @param int $operatorId
 	 *
 	 * @return array|null
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses Select::run
 	 * @uses \exception_logger()
 	 */
 	public static function getOptionListForOperator(int $operatorId): ?array {
 		try {
-			$records = (new Select())
+			$records = new Select()
 				->from(static::$tableName)
 				->select(["CONCAT(warning_levels.short_description, ' (',  warning_level_groups.name, ')') as name", "warning_levels.id as id"])
 				->orderBy('warning_level_groups.id', 'ASC')

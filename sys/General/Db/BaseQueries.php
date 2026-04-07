@@ -52,14 +52,14 @@ class BaseQueries {
 	 * @param array  $connectionValues Column name => value map of additional values to save to the connection table
 	 *
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Delete::run()
-	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
+	 * @uses Delete::run
+	 * @uses Insert::run
 	 */
 	public static function saveConnections($values, string $connectionTable, string $colLeft, string $colRight, int $idRight, bool $truncate = false, array $connectionValues = null) {
 		$ids = array_unique(array_filter($values ?? []));
 		if ($truncate) {
 			// Delete all connections
-			(new Delete())->table($connectionTable)->where($colRight . ' = :' . $colRight)->addParameter(':' . $colRight, $idRight)->run();
+			new Delete()->table($connectionTable)->where($colRight . ' = :' . $colRight)->addParameter(':' . $colRight, $idRight)->run();
 		}
 
 		if (empty($ids)) {
@@ -72,7 +72,7 @@ class BaseQueries {
 		}
 
 		// Create insert query for new connections
-		$insert = (new Insert())->table($connectionTable)->columns($columns);
+		$insert = new Insert()->table($connectionTable)->columns($columns);
 
 		$insert->addParameter(':rightId', $idRight);
 
@@ -109,11 +109,11 @@ class BaseQueries {
 	 * @param string $primaryKey The primary key of the specified table.
 	 *
 	 * @return array|null
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses Select::run
 	 */
 	public static function getById($id, string $primaryKey = 'id'): ?array {
 		try {
-			return (new Select())
+			return new Select()
 				->select(static::$tableName . '.*')
 				->from(static::$tableName)
 				->where(static::$tableName . '.' . $primaryKey . ' = :id')
@@ -135,7 +135,7 @@ class BaseQueries {
 	 */
 	public static function getByColumn(string $column, $value): ?array {
 		try {
-			return (new Select())
+			return new Select()
 				->select(static::$tableName . '.*')
 				->from(static::$tableName)
 				->where(static::$tableName . '.' . $column . ' = :value')
@@ -152,11 +152,11 @@ class BaseQueries {
 	 * @param mixed  $exceptValue
 	 * @param string $exceptField
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public static function checkUnique($values = [], $exceptValue = null, $exceptField = 'id') {
 		try {
-			$query = (new Select())
+			$query = new Select()
 				->select('COUNT(*)')
 				->from(static::$tableName);
 
@@ -190,12 +190,12 @@ class BaseQueries {
 	 * @throws MissingEventTypeException
 	 * @throws QueryException
 	 * @throws InvalidConfigurationException
-	 * @uses \Environet\Sys\General\Db\BaseQueries::prepareData()
-	 * @uses \Environet\Sys\General\Db\BaseQueries::getUpdateEventType()
-	 * @uses \Environet\Sys\General\Db\BaseQueries::getInsertEventType()
-	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
-	 * @uses \Environet\Sys\General\Db\Query\Update::run()
-	 * @uses \Environet\Sys\General\EventLogger::log()
+	 * @uses BaseQueries::prepareData
+	 * @uses BaseQueries::getUpdateEventType
+	 * @uses BaseQueries::getInsertEventType
+	 * @uses Insert::run
+	 * @uses Update::run
+	 * @uses EventLogger::log
 	 * @see  Connection
 	 */
 	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
@@ -215,14 +215,14 @@ class BaseQueries {
 			if ($record) {
 				$changes = self::calculateChanges($record, $dataToSave);
 			}
-			(new Update())
+			new Update()
 				->table(static::$tableName)
 				->updateData($dataToSave)
 				->where(static::$tableName . '.' . $primaryKey . ' = :id')
 				->addParameter(':id', $id)
 				->run(Query::RETURN_BOOL);
 		} else {
-			$id = (new Insert())
+			$id = new Insert()
 				->table(static::$tableName)
 				->addSingleData($dataToSave)
 				->run(Query::RETURN_BOOL);
@@ -248,8 +248,8 @@ class BaseQueries {
 	 *
 	 * @throws MissingEventTypeException
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\BaseQueries::getDeleteEventType()
-	 * @uses \Environet\Sys\General\Db\Query\Delete::run()
+	 * @uses BaseQueries::getDeleteEventType
+	 * @uses Delete::run
 	 */
 	public static function delete(int $id, bool $soft = false, string $primaryKey = 'id') {
 		if (static::isEventsEnabled()) {
@@ -257,7 +257,7 @@ class BaseQueries {
 		}
 
 		if ($soft) {
-			(new Update())
+			new Update()
 				->table(static::$tableName)
 				->where(static::$tableName . '.' . $primaryKey . ' = :id')
 				->addSet('deleted_at', ':deletedAt')
@@ -267,7 +267,7 @@ class BaseQueries {
 				])
 				->run();
 		} else {
-			(new Delete())->table(static::$tableName)->where($primaryKey . ' = :id')->addParameter(':id', $id)->run();
+			new Delete()->table(static::$tableName)->where($primaryKey . ' = :id')->addParameter(':id', $id)->run();
 		}
 	}
 
@@ -279,12 +279,12 @@ class BaseQueries {
 	 * @param string $primaryKey The primary key of the specified table.
 	 *
 	 * @return array|null
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses Select::run
 	 * @uses \exception_logger()
 	 */
 	public static function getOptionList(string $labelField = 'name', string $primaryKey = 'id'): ?array {
 		try {
-			$records = (new Select())
+			$records = new Select()
 				->from(static::$tableName)
 				->select([static::$tableName . '.' . $primaryKey, static::$tableName . '.' . $labelField])
 				->orderBy(static::$tableName . '.' . $primaryKey, 'ASC')
@@ -326,9 +326,9 @@ class BaseQueries {
 			}
 
 			if (is_float($newData[$key]) || is_float($originalData[$key])) {
-				$changed = floatval($newData[$key]) !== floatval($originalData[$key]);
+				$changed = $newData[$key] !== $originalData[$key];
 			} elseif (is_int($newData[$key]) || is_int($originalData[$key])) {
-				$changed = intval($newData[$key]) !== intval($originalData[$key]);
+				$changed = $newData[$key] !== $originalData[$key];
 			} elseif (strtotime($newData[$key]) !== false || strtotime($originalData[$key]) !== false) {
 				$changed = strtotime($newData[$key]) !== strtotime($originalData[$key]);
 			} else {

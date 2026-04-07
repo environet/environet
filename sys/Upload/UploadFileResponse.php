@@ -15,6 +15,7 @@ use SimpleXMLElement;
  */
 class UploadFileResponse {
 
+
 	protected Statistics $statistics;
 
 	protected array $errorMessages = [];
@@ -36,7 +37,7 @@ class UploadFileResponse {
 
 	/**
 	 * @param Response $response
-	 * @param Request  $request
+	 * @param Request $request
 	 *
 	 * @return UploadFileResponse
 	 * @throws Exception
@@ -46,22 +47,19 @@ class UploadFileResponse {
 			//Log in event logger
 			$this->statistics = Statistics::fromXml(new SimpleXMLElement($response->getBody()));
 			$this->statistics->setUserId($request->getIdentity() ? (int) $request->getIdentity()->getId() : null);
+		} elseif (($xml = simplexml_load_string($response->getBody())) !== false &&
+			($messages = $xml->xpath('/environet:ErrorResponse/environet:Error/environet:ErrorMessage'))
+		) {
+			//Valid XML error, parse error messages from error XML
+			$this->errorMessages = array_map(function (SimpleXMLElement $element) {
+				return (string) $element;
+			}, $messages);
+			$this->errorMessages = array_filter($this->errorMessages, function ($message) {
+				return !str_contains($message, 'REMOTE_ADDR') && !str_contains($message, 'Username');
+			});
 		} else {
-			//Some error returned from upload API
-			if (($xml = simplexml_load_string($response->getBody())) !== false &&
-				($messages = $xml->xpath('/environet:ErrorResponse/environet:Error/environet:ErrorMessage'))
-			) {
-				//Valid XML error, parse error messages from error XML
-				$this->errorMessages = array_map(function (SimpleXMLElement $element) {
-					return (string) $element;
-				}, $messages);
-				$this->errorMessages = array_filter($this->errorMessages, function ($message) {
-					return strpos($message, 'REMOTE_ADDR') === false && strpos($message, 'Username') === false;
-				});
-			} else {
-				//Not a valid XML error, unknown
-				$this->errorMessages = ['Unknown error while sending data to upload api endpoint'];
-			}
+			//Not a valid XML error, unknown
+			$this->errorMessages = ['Unknown error while sending data to upload api endpoint'];
 		}
 
 		return $this;

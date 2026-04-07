@@ -42,7 +42,7 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 			SET result_time = (SELECT MAX(r.created_at) FROM {$type}_result r WHERE r.time_seriesid = :tsid)
 			WHERE ts.id = :tsid
 		";
-		(new Query())->table("{$type}_time_series")->setRawQuery($sql)->addParameter(':tsid', $timeSeriesId)->run();
+		new Query()->table("{$type}_time_series")->setRawQuery($sql)->addParameter(':tsid', $timeSeriesId)->run();
 	}
 
 
@@ -75,10 +75,10 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 		//Replace, and run
 		$sqlMin = str_replace('{{order}}', 'ASC', $sql);
 		$sqlMin = str_replace('{{minMax}}', 'min', $sqlMin);
-		(new Query())->table($pointPropertyTable)->setRawQuery($sqlMin)->addParameter(':tsid', $timeSeriesId)->run();
+		new Query()->table($pointPropertyTable)->setRawQuery($sqlMin)->addParameter(':tsid', $timeSeriesId)->run();
 		$sqlMax = str_replace('{{order}}', 'DESC', $sql);
 		$sqlMax = str_replace('{{minMax}}', 'max', $sqlMax);
-		(new Query())->table($pointPropertyTable)->setRawQuery($sqlMax)->addParameter(':tsid', $timeSeriesId)->run();
+		new Query()->table($pointPropertyTable)->setRawQuery($sqlMax)->addParameter(':tsid', $timeSeriesId)->run();
 	}
 
 
@@ -99,13 +99,13 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 			UPDATE $tsTable
 			SET phenomenon_time_begin = (SELECT MIN(time) FROM {$type}_result WHERE time_seriesid = :tsid)
 			WHERE $tsTable.id = :tsid";
-		(new Query())->table($tsTable)->setRawQuery($sqlBegin)->addParameter(':tsid', $timeSeriesId)->run();
+		new Query()->table($tsTable)->setRawQuery($sqlBegin)->addParameter(':tsid', $timeSeriesId)->run();
 
 		$sqlEnd = "
 			UPDATE $tsTable
 			SET phenomenon_time_end = (SELECT MAX(time) FROM {$type}_result WHERE time_seriesid = :tsid)
 			WHERE $tsTable.id = :tsid";
-		(new Query())->table($tsTable)->setRawQuery($sqlEnd)->addParameter(':tsid', $timeSeriesId)->run();
+		new Query()->table($tsTable)->setRawQuery($sqlEnd)->addParameter(':tsid', $timeSeriesId)->run();
 	}
 
 
@@ -122,7 +122,7 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 		$type = static::getType();
 		$pointPropertyTable = "{$type}point_observed_property";
 
-		(new Update())
+		new Update()
 			->table($pointPropertyTable)
 			->where($pointPropertyTable . '.observed_propertyid = :opid')
 			->where($pointPropertyTable . '.mpointid = :mpid')
@@ -146,7 +146,7 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 	 */
 	public static function getByNcdAndOperator($ncdField, $ncdId, $operatorId) {
 		try {
-			return (new Select())
+			return new Select()
 				->select(static::$tableName . '.*')
 				->from(static::$tableName)
 				->where(static::$tableName . '.' . $ncdField . ' = :ncdId')
@@ -206,7 +206,7 @@ abstract class AbstractMonitoringPointQueries extends BaseQueries {
 	 */
 	public static function saveLastUpdated(?int $userId, int $recordId, array $changes = []) {
 		if (!empty($changes)) {
-			(new Update())
+			new Update()
 				->table(static::$tableName)
 				->updateData([
 					'last_updated_at' => date('Y-m-d H:i:s'),

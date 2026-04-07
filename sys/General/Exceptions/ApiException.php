@@ -9,6 +9,7 @@
 namespace Environet\Sys\General\Exceptions;
 
 use Environet\Sys\Xml\Model\ErrorXmlData;
+use Exception;
 
 /**
  * Class ApiException
@@ -18,7 +19,7 @@ use Environet\Sys\Xml\Model\ErrorXmlData;
  * @package Environet\Sys\General\Exceptions
  * @author  SRG Group <dev@srg.hu>
  */
-class ApiException extends \Exception {
+class ApiException extends Exception {
 
 	/**
 	 * @var array

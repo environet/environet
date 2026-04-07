@@ -44,8 +44,8 @@ class HttpClient {
 	 * @return Response
 	 * @throws HttpClientException
 	 * @uses \curl_exec()
-	 * @uses \Environet\Sys\General\HttpClient\HttpClient::prepare()
-	 * @uses \Environet\Sys\General\HttpClient\HttpClient::parseError()
+	 * @uses HttpClient::prepare
+	 * @uses HttpClient::parseError
 	 */
 	public function sendRequest(Request $request, array $options = []): Response {
 		// Merge options with default values
@@ -95,8 +95,8 @@ class HttpClient {
 	 * @return Response
 	 * @uses \curl_setopt()
 	 * @uses \curl_setopt_array()
-	 * @uses \Environet\Sys\General\HttpClient\HttpClient::processOptions()
-	 * @uses \Environet\Sys\General\HttpClient\HttpClient::setOptionsFromRequest()
+	 * @uses HttpClient::processOptions
+	 * @uses HttpClient::setOptionsFromRequest
 	 */
 	protected function prepare($curl, Request $request, array $options): Response {
 		// Set some default cURL options
@@ -122,7 +122,7 @@ class HttpClient {
 		curl_setopt($curl, CURLOPT_HEADERFUNCTION, function ($ch, $data) use ($response) {
 			$str = trim($data);
 			if ('' !== $str) {
-				if (0 === strpos(strtolower($str), 'http/')) {
+				if (str_starts_with(strtolower($str), 'http/')) {
 					//Set status -> status code
 					$response->setRawStatus($str);
 				} else {
@@ -177,7 +177,7 @@ class HttpClient {
 			case 'DELETE':
 			case 'PATCH':
 			case 'OPTIONS':
-				$options[CURLOPT_POSTFIELDS] = (string) $request->getBody();
+				$options[CURLOPT_POSTFIELDS] = $request->getBody();
 		}
 
 		// Set options array

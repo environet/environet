@@ -55,7 +55,7 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 	 * @throws QueryException
 	 */
 	public static function all(array $operatorIds = null, bool $activeOnly = false, $withWarningLevels = false) {
-		$query = (new Select())
+		$query = new Select()
 			->select(static::$tableName . '.*')
 			->from(static::$tableName);
 
@@ -71,7 +71,7 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 		$points = $query->run();
 
 		foreach ($points as $i => $point) {
-			$points[$i]['observed_properties'] = (new Select())
+			$points[$i]['observed_properties'] = new Select()
 				->from('hydro_observed_property hop')
 				->select('hop.symbol')
 				->join('hydropoint_observed_property hpop', 'hpop.observed_propertyid = hop.id', Query::JOIN_LEFT)
@@ -80,7 +80,7 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 				->run(Query::FETCH_COLUMN);
 
 			if ($withWarningLevels) {
-				$points[$i]['warning_levels'] = (new Select())
+				$points[$i]['warning_levels'] = new Select()
 					->from('warning_level_hydropoint wlh')
 					->join('warning_levels wl', 'wl.id = wlh.warning_levelid')
 					->join('warning_level_groups wlg', 'wlg.id = wl.warning_level_groupid')
@@ -114,11 +114,11 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 	/**
 	 * @inheritDoc
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\HydroStationClassificationQueries::getById()
-	 * @uses \Environet\Sys\General\Db\OperatorQueries::getById()
-	 * @uses \Environet\Sys\General\Db\RiverbankQueries::getById()
-	 * @uses \Environet\Sys\General\Db\RiverQueries::getById()
-	 * @uses \Environet\Sys\General\Db\Query\Select::run()
+	 * @uses HydroStationClassificationQueries::getById
+	 * @uses OperatorQueries::getById
+	 * @uses RiverbankQueries::getById
+	 * @uses RiverQueries::getById
+	 * @uses Select::run
 	 */
 	public static function getById($id, string $primaryKey = 'id'): ?array {
 		$monitoringPoint = parent::getById($id);
@@ -132,13 +132,13 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 				'eucd_riv'
 			);
 			$monitoringPoint['river_basin'] = RiverBasinQueries::getById($monitoringPoint['river_basin_id']);
-			$monitoringPoint['observedProperties'] = (new Select())
+			$monitoringPoint['observedProperties'] = new Select()
 				->select('observed_propertyid')
 				->from('hydropoint_observed_property')
 				->where('mpointid = :mpointId')
 				->addParameter(':mpointId', $id)
 				->run(Query::FETCH_COLUMN);
-			$monitoringPoint['showObservedProperty'] = (new Select())
+			$monitoringPoint['showObservedProperty'] = new Select()
 				->from('hydro_observed_property hop')
 				->select(['hop.id', 'hop.symbol'])
 				->join('hydropoint_observed_property hpop', 'hpop.observed_propertyid = hop.id', Query::JOIN_LEFT)
@@ -230,10 +230,10 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 	 *
 	 * @return array|array[]
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Insert::run()
-	 * @uses \Environet\Sys\General\Db\Query\Update::run()
-	 * @uses \Environet\Sys\General\EventLogger::log()
-	 * @uses \Environet\Sys\General\Db\BaseQueries::saveConnections()
+	 * @uses Insert::run
+	 * @uses Update::run
+	 * @uses EventLogger::log
+	 * @uses BaseQueries::saveConnections
 	 */
 	public static function save(array $data, $id = null, string $primaryKey = 'id', array $record = null) {
 		$dataToSave = static::prepareData($data);
@@ -247,14 +247,14 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 			if ($record) {
 				$changes = self::calculateChanges($record, $dataToSave);
 			}
-			(new Update())
+			new Update()
 				->table(static::$tableName)
 				->updateData($dataToSave)
 				->where(static::$tableName . ".$primaryKey = :id")
 				->addParameter(':id', $id)
 				->run(Query::RETURN_BOOL);
 		} else {
-			$id = (new Insert())
+			$id = new Insert()
 				->table(static::$tableName)
 				->addSingleData($dataToSave)
 				->run();
@@ -290,14 +290,14 @@ class HydroMonitoringPointQueries extends AbstractMonitoringPointQueries {
 	public static function delete(int $id, bool $soft = false, string $primaryKey = 'id') {
 		EventLogger::log(static::getDeleteEventType(), ['id' => $id]);
 
-		$timeSeries = array_column((new Select())->select('id')->from('hydro_time_series')->where('mpointid = :id')->addParameter(':id', $id)->run(), 'id');
+		$timeSeries = array_column(new Select()->select('id')->from('hydro_time_series')->where('mpointid = :id')->addParameter(':id', $id)->run(), 'id');
 		if (!empty($timeSeries)) {
-			(new Delete())->table('hydro_result')->whereIn('time_seriesid', $timeSeries, 'hydroSeriesIds')->run();
-			(new Delete())->table('hydro_time_series')->whereIn('id', $timeSeries, 'hydroSeriesIds')->run();
+			new Delete()->table('hydro_result')->whereIn('time_seriesid', $timeSeries, 'hydroSeriesIds')->run();
+			new Delete()->table('hydro_time_series')->whereIn('id', $timeSeries, 'hydroSeriesIds')->run();
 		}
 
-		(new Delete())->table('hydropoint_observed_property')->where('mpointid = :id')->addParameter(':id', $id)->run();
-		(new Delete())->table(static::$tableName)->where($primaryKey . ' = :id')->addParameter(':id', $id)->run();
+		new Delete()->table('hydropoint_observed_property')->where('mpointid = :id')->addParameter(':id', $id)->run();
+		new Delete()->table(static::$tableName)->where($primaryKey . ' = :id')->addParameter(':id', $id)->run();
 	}
 
 

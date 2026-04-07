@@ -2,6 +2,8 @@
 
 namespace Environet\Sys\General\Exceptions;
 
+use Exception;
+
 /**
  * Class InvalidConfigurationException
  *
@@ -10,6 +12,6 @@ namespace Environet\Sys\General\Exceptions;
  * @package Environet\Sys\General\Exceptions
  * @author  SRG Group <dev@srg.hu>
  */
-class InvalidConfigurationException extends \Exception {
+class InvalidConfigurationException extends Exception {
 
 }

@@ -27,7 +27,7 @@ class PluginRun extends BaseCommand {
 	 * @param array $options
 	 *
 	 * @return int
-	 * @uses \Environet\Sys\Plugins\PluginBuilder::loadFromConfiguration()
+	 * @uses PluginBuilder::loadFromConfiguration
 	 */
 	public function run($arguments, $options): int {
 		$configFile = $arguments[3] ?? null;

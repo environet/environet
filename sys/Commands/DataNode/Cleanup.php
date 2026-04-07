@@ -37,8 +37,8 @@ class Cleanup extends BaseCommand {
 	 * @param array $options
 	 *
 	 * @return int
-	 * @uses \Environet\Sys\Plugins\PluginBuilder::createConfiguration()
-	 * @uses \Environet\Sys\Plugins\PluginBuilder::serializeConfiguration()
+	 * @uses PluginBuilder::createConfiguration
+	 * @uses PluginBuilder::serializeConfiguration
 	 */
 	public function run($arguments, $options): int {
 		$this->console->writeLine('Start cleanup...');

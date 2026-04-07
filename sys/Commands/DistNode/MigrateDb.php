@@ -974,7 +974,7 @@ class MigrateDb extends DbCommand {
 
 				//Create table
 				$this->connection->runQuery(
-					"CREATE TABLE public.{$obsoleteTable} (
+					"CREATE TABLE public.$obsoleteTable (
 					id int8 DEFAULT nextval('public.{$obsoleteTable}_id_seq'::regclass) NOT NULL,
 					time_seriesid int8 NOT NULL,
 					\"time\" timestamp NOT NULL,
@@ -982,7 +982,7 @@ class MigrateDb extends DbCommand {
 				    created_at timestamp NOT NULL,
 				    obsolete_at timestamp NOT NULL,
 				    is_forecast boolean DEFAULT false NOT NULL,
-				    CONSTRAINT {$obsoleteTable}_time_seriesid_fkey FOREIGN KEY (time_seriesid) REFERENCES public.{$timeSeriesTable}(id),
+				    CONSTRAINT {$obsoleteTable}_time_seriesid_fkey FOREIGN KEY (time_seriesid) REFERENCES public.$timeSeriesTable(id),
 				    PRIMARY KEY (id)
 				);",
 					[]
@@ -990,37 +990,37 @@ class MigrateDb extends DbCommand {
 
 				//Move data from result to result_obsolete
 				$this->connection->runQuery("
-					INSERT INTO public.{$obsoleteTable} (time_seriesid, \"time\", value, created_at, obsolete_at, is_forecast)
+					INSERT INTO public.$obsoleteTable (time_seriesid, \"time\", value, created_at, obsolete_at, is_forecast)
 					SELECT time_seriesid, \"time\", value, created_at, now()::timestamp(0), is_forecast
 					FROM public.{$resultTable}
 					WHERE is_obsolete = true;
 				", []);
 
 				//Dop is_obsolete column from result table
-				$this->connection->runQuery("DELETE FROM public.{$resultTable} WHERE is_obsolete = true;", []);
+				$this->connection->runQuery("DELETE FROM public.$resultTable WHERE is_obsolete = true;", []);
 			}
 
 			//Create indexes on obsolete table
 			if (!$this->checkIndex($obsoleteTable, "{$type}_obsolete_unique_time_value")) {
 				$return = 0;
 				$this->connection->runQuery(
-					"CREATE UNIQUE INDEX IF NOT EXISTS {$type}_obsolete_unique_time_value ON public.{$obsoleteTable} USING btree (time_seriesid, \"time\", value, is_forecast);",
+					"CREATE UNIQUE INDEX IF NOT EXISTS {$type}_obsolete_unique_time_value ON public.$obsoleteTable USING btree (time_seriesid, \"time\", value, is_forecast);",
 					[]
 				);
 			}
 			if (!$this->checkIndex($obsoleteTable, "{$obsoleteTable}_time_seriesid")) {
 				$return = 0;
-				$this->connection->runQuery("CREATE INDEX {$obsoleteTable}_time_seriesid ON public.{$obsoleteTable} USING btree (time_seriesid);", []);
+				$this->connection->runQuery("CREATE INDEX {$obsoleteTable}_time_seriesid ON public.$obsoleteTable USING btree (time_seriesid);", []);
 			}
 			if (!$this->checkIndex($obsoleteTable, "{$obsoleteTable}_time")) {
 				$return = 0;
-				$this->connection->runQuery("CREATE INDEX {$obsoleteTable}_time ON public.{$obsoleteTable} USING btree (\"time\");", []);
+				$this->connection->runQuery("CREATE INDEX {$obsoleteTable}_time ON public.$obsoleteTable USING btree (\"time\");", []);
 			}
 
 			//Drop is_obsolete column from result table
 			if ($this->checkColumn($resultTable, 'is_obsolete')) {
 				$return = 0;
-				$this->connection->runQuery("ALTER TABLE public.{$resultTable} DROP COLUMN is_obsolete;", []);
+				$this->connection->runQuery("ALTER TABLE public.$resultTable DROP COLUMN is_obsolete;", []);
 			}
 
 			//Create function which moves obsolete data to obsolete table
@@ -1040,7 +1040,7 @@ class MigrateDb extends DbCommand {
 						END IF;
 
 						-- Move existing non-obsolete data to the obsolete table
-						INSERT INTO {$obsoleteTable} (id, time_seriesid, time, value, created_at, obsolete_at, is_forecast)
+						INSERT INTO $obsoleteTable (id, time_seriesid, time, value, created_at, obsolete_at, is_forecast)
 						SELECT id, time_seriesid, time, value, created_at, now()::timestamp(0), is_forecast
 						FROM {$resultTable}
 						WHERE time_seriesid = NEW.time_seriesid
@@ -1062,10 +1062,10 @@ class MigrateDb extends DbCommand {
 			}
 
 			//Create trigger which moves obsolete data to obsolete table
-			if (!$this->checkTrigger("before_insert_{$resultTable}")) {
+			if (!$this->checkTrigger("before_insert_$resultTable")) {
 				$return = 0;
 				$this->connection->runQuery("
-					CREATE TRIGGER \"before_insert_{$resultTable}\"
+					CREATE TRIGGER \"before_insert_$resultTable\"
 					BEFORE INSERT ON {$resultTable}
 					FOR EACH ROW
 					EXECUTE FUNCTION move_{$type}_obsolete_results();
@@ -1236,7 +1236,7 @@ class MigrateDb extends DbCommand {
 			SELECT COUNT(*) FROM pg_trigger
 			JOIN pg_class ON pg_trigger.tgrelid = pg_class.oid
 			JOIN pg_namespace ON pg_class.relnamespace = pg_namespace.oid
-			WHERE tgname = '{$triggerName}';
+			WHERE tgname = '$triggerName';
 		", [])->fetchColumn();
 
 		return ((int) $count) > 0;
@@ -1256,7 +1256,7 @@ class MigrateDb extends DbCommand {
 			SELECT COUNT(*)
 			FROM pg_proc p
 			JOIN pg_namespace n ON p.pronamespace = n.oid
-			WHERE proname = '{$functionName}';
+			WHERE proname = '$functionName';
 		", [])->fetchColumn();
 
 		return ((int) $count) > 0;

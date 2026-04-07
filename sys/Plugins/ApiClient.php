@@ -109,8 +109,8 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 * @return Response
 	 * @throws HttpClientException
 	 * @throws Exception
-	 * @uses \Environet\Sys\Plugins\ApiClient::requestFromPayload()
-	 * @uses \Environet\Sys\General\HttpClient\HttpClient::sendRequest()
+	 * @uses ApiClient::requestFromPayload
+	 * @uses HttpClient::sendRequest
 	 */
 	public function upload(SimpleXMLElement $payload): Response {
 		if ($this->ignoreUndefinedPoints) {
@@ -140,8 +140,8 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 *
 	 * @return Request
 	 * @throws Exception
-	 * @uses \Environet\Sys\General\HttpClient\Request
-	 * @uses \Environet\Sys\Plugins\ApiClient::generateSignatureHeader()
+	 * @uses Request
+	 * @uses ApiClient::generateSignatureHeader
 	 */
 	private function requestFromPayload(SimpleXMLElement $payload): Request {
 		$request = new Request(rtrim($this->apiAddress, '/') . '/upload');
@@ -164,13 +164,13 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 *
 	 * @return string
 	 * @throws Exception
-	 * @uses \Environet\Sys\General\PKI::generateSignature()
-	 * @uses \Environet\Sys\General\PKI::authHeaderWithSignature()
+	 * @uses PKI::generateSignature
+	 * @uses PKI::authHeaderWithSignature
 	 */
 	private function generateSignatureHeader(SimpleXMLElement $xml, string $username): string {
-		$fullPath = SRC_PATH . "/conf/plugins/credentials/{$this->privateKeyPath}";
+		$fullPath = SRC_PATH . "/conf/plugins/credentials/$this->privateKeyPath";
 		if (!file_exists($fullPath)) {
-			throw new Exception("Private key at {$this->privateKeyPath} doesn't exist");
+			throw new Exception("Private key at $this->privateKeyPath doesn't exist");
 		}
 		$pkiLib = new PKI();
 		$signature = $pkiLib->generateSignature(md5($xml->asXML()), file_get_contents(SRC_PATH . '/conf/plugins/credentials/' . $this->privateKeyPath));
@@ -222,13 +222,13 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 *
 	 * @return string
 	 * @throws Exception
-	 * @uses \Environet\Sys\General\PKI::generateSignature()
-	 * @uses \Environet\Sys\General\PKI::authHeaderWithSignature()
+	 * @uses PKI::generateSignature
+	 * @uses PKI::authHeaderWithSignature
 	 */
 	private function generateSignatureHeaderFromToken(string $token, string $username): string {
-		$fullPath = SRC_PATH . "/conf/plugins/credentials/{$this->privateKeyPath}";
+		$fullPath = SRC_PATH . "/conf/plugins/credentials/$this->privateKeyPath";
 		if (!file_exists($fullPath)) {
-			throw new Exception("Private key at {$this->privateKeyPath} doesn't exist");
+			throw new Exception("Private key at $this->privateKeyPath doesn't exist");
 		}
 		$pkiLib = new PKI();
 		$signature = $pkiLib->generateSignature(md5($token), file_get_contents(SRC_PATH . '/conf/plugins/credentials/' . $this->privateKeyPath));

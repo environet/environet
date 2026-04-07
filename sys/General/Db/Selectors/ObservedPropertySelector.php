@@ -58,13 +58,13 @@ class ObservedPropertySelector extends BaseAccessSelector {
 			if (empty($this->values)) {
 				$symbols = [];
 			} elseif ($this->type === MPOINT_TYPE_HYDRO) {
-				$symbols = (new Select())
+				$symbols = new Select()
 					->select('id, symbol')
 					->from('hydro_observed_property')
 					->whereIn('id', $this->values, 'values')
 					->run();
 			} else {
-				$symbols = (new Select())
+				$symbols = new Select()
 					->select('id, symbol')
 					->from('meteo_observed_property')
 					->whereIn('id', $this->values, 'values')
@@ -86,18 +86,18 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	 * @return ObservedPropertySelector
 	 * @throws QueryException
 	 * @throws Exception
-	 * @uses \Environet\Sys\General\Db\Query\Select
+	 * @uses Select
 	 */
 	public static function createWithMonitoringPoints($type, array $points): ObservedPropertySelector {
 		if ($type === MPOINT_TYPE_HYDRO) {
-			$ids = (new Select())
+			$ids = new Select()
 				->select('string_agg(hydro_observed_property.id::text, \',\')')
 				->from('hydro_observed_property')
 				->join('hydropoint_observed_property', 'hydropoint_observed_property.observed_propertyid = hydro_observed_property.id')
 				->whereIn('hydropoint_observed_property.mpointid', $points, 'point')
 				->run(Query::FETCH_FIRST);
 		} elseif ($type === MPOINT_TYPE_METEO) {
-			$ids = (new Select())
+			$ids = new Select()
 				->select('string_agg(meteo_observed_property.id::text, \',\')')
 				->from('meteo_observed_property')
 				->join('meteopoint_observed_property', 'meteopoint_observed_property.observed_propertyid = meteo_observed_property.id')
@@ -114,24 +114,24 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	/**
 	 * @return string
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Select
+	 * @uses Select
 	 */
 	protected function getHydroPropertiesByOperator(): string {
 		$properties = null;
 		if ($this->isOperatorAdmin()) {
-			$properties = (new Select())
+			$properties = new Select()
 				->select('string_agg(hydro_observed_property.id::text, \',\') as properties')
 				->from('hydro_observed_property')
 				->run(Query::FETCH_FIRST);
 		} elseif (!empty($this->points)) {
 			//Find all properties, but only for the points that are related to the found monitoring points
-			$properties = (new Select())
+			$properties = new Select()
 				->select('string_agg(hydro_observed_property.id::text, \',\') as properties')
 				->from('hydro_observed_property')
 				->join('hydropoint_observed_property', 'hydropoint_observed_property.observed_propertyid = hydro_observed_property.id')
 				->join('hydropoint', 'hydropoint.id = hydropoint_observed_property.mpointid')
 				->whereIn('hydropoint_observed_property.mpointid', $this->points, 'point')
-				->where("hydropoint.operatorid = {$this->operatorId}")
+				->where("hydropoint.operatorid = $this->operatorId")
 				->run(Query::FETCH_FIRST);
 		}
 
@@ -142,24 +142,24 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	/**
 	 * @return string
 	 * @throws QueryException
-	 * @uses \Environet\Sys\General\Db\Query\Select
+	 * @uses Select
 	 */
 	protected function getMeteoPropertiesByOperator(): string {
 		$properties = null;
 		if ($this->isOperatorAdmin()) {
-			$properties = (new Select())
+			$properties = new Select()
 				->select('string_agg(meteo_observed_property.id::text, \',\') as properties')
 				->from('meteo_observed_property')
 				->run(Query::FETCH_FIRST);
 		} elseif (!empty($this->points)) {
 			//Find all properties, but only for the points that are related to the found monitoring points
-			$properties = (new Select())
+			$properties = new Select()
 				->select('string_agg(meteo_observed_property.id::text, \',\') as properties')
 				->from('meteo_observed_property')
 				->join('meteopoint_observed_property', 'meteopoint_observed_property.observed_propertyid = meteo_observed_property.id')
 				->join('meteopoint', 'meteopoint.id = meteopoint_observed_property.mpointid')
 				->whereIn('meteopoint_observed_property.mpointid', $this->points, 'point')
-				->where("meteopoint.operatorid = {$this->operatorId}")
+				->where("meteopoint.operatorid = $this->operatorId")
 				->run(Query::FETCH_FIRST);
 		}
 
@@ -180,13 +180,13 @@ class ObservedPropertySelector extends BaseAccessSelector {
 	 */
 	public static function checkAgainstSymbols($type, array $symbols, array $availableValues): array {
 		if ($type === MPOINT_TYPE_HYDRO) {
-			$requestedProps = (new Select())
+			$requestedProps = new Select()
 				->select('hydro_observed_property.id, hydro_observed_property.symbol')
 				->from('hydro_observed_property')
 				->whereIn('symbol', $symbols, 'symbolParam')
 				->run();
 		} else {
-			$requestedProps = (new Select())
+			$requestedProps = new Select()
 				->select('meteo_observed_property.id, meteo_observed_property.symbol')
 				->from('meteo_observed_property')
 				->whereIn('symbol', $symbols, 'symbolParam')
