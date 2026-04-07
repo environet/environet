@@ -1,13 +1,8 @@
 <?php
-/*!
- * \file dnode.inc.php
+/**
+ * file dnode.inc.php
  *
- * \author Levente Peres - VIZITERV Environ Kft.
- * \date
- *
- * Distribution node operation mode - high level functionalities
- *
- * @package Environet
+ * @package Environet\Sys
  */
 
 /* Run the init procedure
@@ -22,8 +17,8 @@
  */
 
 use Environet\Sys\Admin\AdminHandler;
-use Environet\Sys\Download\DownloadHandler;
 use Environet\Sys\Api\JsonApiHandler;
+use Environet\Sys\Download\DownloadHandler;
 use Environet\Sys\Upload\UploadHandler;
 
 switch (true) {

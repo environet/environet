@@ -2,7 +2,7 @@
 /**
  * File error.inc.php
  *
- * @author Levente Peres - VIZITERV Environ Kft.
+ * @author  Levente Peres - VIZITERV Environ Kft.
  *
  * Error and debug information handler
  * structure and procedures
@@ -11,9 +11,6 @@
  */
 
 use Environet\Sys\Config;
-
-//! This stores the debug messages collected globally for later use.
-global $debug_dumpster;
 
 if (EN_DEV_MODE) {
 	//! PHP Debug level - turn this off (0) for production use
@@ -33,8 +30,6 @@ if (EN_DEV_MODE) {
  * @param string $string Stores the actual debug messsage by the programmer
  */
 function en_debug($string = "") {
-	global $debug_dumpster;
-
 	//! Store the temporary debug message line with trace
 	$traceline = "";
 
@@ -44,17 +39,16 @@ function en_debug($string = "") {
 		$caller = $trace[1] ?? null;
 
 		if ($caller) {
-			$traceline .= date("Y-m-d H:i:s")." - Called by {$caller['function']}";
+			$traceline .= date("Y-m-d H:i:s") . " - Called by {$caller['function']}";
 			if (isset($caller['class'])) {
 				$traceline .= " in {$caller['class']}";
 			}
 		}
-		$traceline .= " ---> ".$string;
+		$traceline .= " ---> " . $string;
 
-		//! Writing out the debug log entry and appending it to the debug dumpster
-		$debug_dumpster .= $traceline."\n";
+		//! Writing out the debug log entry
 		if (Config::getInstance()->getErrorFileDebugEnable()) {
-			file_put_contents(Config::getInstance()->getErrorDebugPath(), $traceline.PHP_EOL, FILE_APPEND);
+			file_put_contents(Config::getInstance()->getErrorDebugPath(), $traceline . PHP_EOL, FILE_APPEND);
 		}
 	}
 }
@@ -75,16 +69,6 @@ function exception_logger(Throwable $exception) {
 
 
 /**
- * This will draw a crude HTML section with the contents of the $debug_dumpster.
- */
-function draw_debug_window() {
-	global $debug_dumpster;
-	if (Config::getInstance()->getErrorDebugEnable()) {
-		echo "<div id='debug'><p><hr><p>".nl2br($debug_dumpster)."</p><hr></p></div>";
-	}
-}
-
-/**
  * Global exception handler
  *
  * @param Throwable $exception
@@ -102,5 +86,6 @@ function exception_handler(Throwable $exception) {
 		throw $exception;
 	}
 }
+
 //Register the exception handler
 set_exception_handler('exception_handler');
