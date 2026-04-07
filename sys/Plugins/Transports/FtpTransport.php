@@ -179,7 +179,7 @@ class FtpTransport extends AbstractTransport {
 	 */
 	public function __construct(array $config) {
 		$this->host = $config['host'];
-		$this->port = isset($config['port']) && !empty($config['port']) ? (int) $config['port'] : null;
+		$this->port = !empty($config['port']) ? (int) $config['port'] : null;
 		$this->secure = $config['secure'];
 		$this->username = $config['username'];
 		$this->password = $config['password'];

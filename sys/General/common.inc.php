@@ -170,7 +170,7 @@ function httpRedirect(string $url, $code = 302) {
  * @return bool
  */
 function validate(array $array, string $field, string $pattern = null, bool $required = false): bool {
-	$isEmpty = !isset($array[$field]) || empty($array[$field]);
+	$isEmpty = empty($array[$field]);
 	if ($required && $isEmpty) {
 		//Empty value not allowed
 		return false;
@@ -205,7 +205,7 @@ function formFieldValue(string $field, array $data = null, ?string $customPostFi
 		return $_POST[$postField] ?? null;
 	} elseif (isset($data[$field])) {
 		//No post data, but has an array with pre-populated values
-		return $data[$field] ?? null;
+		return $data[$field] ?: null;
 	}
 
 	//Empty

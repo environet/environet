@@ -101,9 +101,6 @@ class UserQueries extends BaseQueries {
 				->updateData($userUpdateData)
 				->addParameter(':userId', $id)
 				->run();
-
-			self::savePermissions($data['form_permissions'], $id);
-			self::saveGroups($data['form_groups'], $id);
 		} else {
 			// Add new user
 			$id = new Insert()
@@ -131,10 +128,9 @@ class UserQueries extends BaseQueries {
 				'email'    => $data['email'],
 				'id'       => $id
 			]);
-
-			self::savePermissions($data['form_permissions'], $id);
-			self::saveGroups($data['form_groups'], $id);
 		}
+		self::savePermissions($data['form_permissions'], $id);
+		self::saveGroups($data['form_groups'], $id);
 
 		return [$id, []];
 	}

@@ -1,5 +1,5 @@
 <form method="get" class="d-flex flex-wrap align-items-end filterForm">
-	<?php if (isset($listFilters) && !is_null($listFilters)) { ?>
+	<?php if (isset($listFilters) && is_array($listFilters)) { ?>
 		<?php foreach ($listFilters as $name => $listFilter) { ?>
 			<div class="listFilter me-3 mb-2">
 				<?php if (!empty($listFilter['type']) && $listFilter['type'] === 'date') {?>

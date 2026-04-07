@@ -38,7 +38,7 @@
 		</div>
 		<?php if ($editMode): ?>
 		<div class="mb-3">
-			<label for="userPasswordConfirm" class="form-label"><?=$editMode ? 'New password confirm' : 'Password confirm';?></label>
+			<label for="userPasswordConfirm" class="form-label"><?='New password confirm';?></label>
 			<input type="password" name="password_confirm" id="userPasswordConfirm" class="form-control <?=isFieldInvalidClass('password_confirm', get_defined_vars());?>"  />
 			<div class="invalid-feedback">
 				<?=getFieldInvalidMessage('password_confirm', get_defined_vars());?>

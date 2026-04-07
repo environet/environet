@@ -295,7 +295,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 	 * @throws Exception
 	 */
 	private function getAndStripOneCommonElement(array &$formats): ?string {
-		if (empty($formats) || !isset($formats[0]['TagHierarchy']) || empty($formats[0]['TagHierarchy'])) {
+		if (empty($formats) || empty($formats[0]['TagHierarchy'])) {
 			//Formats is empty, return empty string
 			return null;
 		}

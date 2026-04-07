@@ -66,8 +66,6 @@ class GroupQueries extends BaseQueries {
 				->updateData($dataToRun)
 				->addParameter(':groupId', $id)
 				->run();
-
-			self::savePermissions($data['permissions'] ?? [], $id);
 		} else {
 			// insert new record
 			$id = new Insert()
@@ -78,10 +76,9 @@ class GroupQueries extends BaseQueries {
 			EventLogger::log(EventLogger::EVENT_TYPE_GROUP_ADD, array_merge($dataToRun, [
 				'id' => $id
 			]));
-
-			// add permission relation to group
-			self::savePermissions($data['permissions'] ?? [], $id);
 		}
+		// add permission relation to group
+		self::savePermissions($data['permissions'] ?? [], $id);
 
 		return [$id, $changes];
 	}

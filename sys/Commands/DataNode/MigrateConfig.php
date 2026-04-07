@@ -93,9 +93,7 @@ class MigrateConfig extends BaseCommand {
 			$this->console->writeLine("Migrating urlPattern in config: " . $config['ini'], Console::COLOR_YELLOW);
 			$urlPattern = $config['conversionsContent']['generalInformation']['URLPattern'];
 			unset($config['conversionsContent']['generalInformation']['URLPattern']);
-			if (empty($config['conversionsContent']['generalInformation'])) {
-				$config['conversionsContent']['generalInformation'] = new stdClass();
-			}
+			$config['conversionsContent']['generalInformation'] = new stdClass();
 			$config['iniContent']['transport']['url'] = $urlPattern;
 
 			$this->writeJsonConfig($config['conversionsContent'], $config['conversions']);

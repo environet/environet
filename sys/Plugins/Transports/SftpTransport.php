@@ -211,7 +211,7 @@ class SftpTransport extends AbstractTransport {
 	 */
 	public function __construct(array $config) {
 		$this->host = $config['host'];
-		$this->port = isset($config['port']) && !empty($config['port']) ? (int) $config['port'] : null;
+		$this->port = !empty($config['port']) ? (int) $config['port'] : null;
 		$this->authMode = $config['authMode'];
 		$this->username = $config['username'];
 		$this->password = $config['password'];
@@ -289,7 +289,6 @@ class SftpTransport extends AbstractTransport {
 		$files = [];
 		$dirPath = "ssh2.sftp://" . $sftpId . $path;
 		if ($dirHandler = opendir($dirPath)) {
-			$files = [];
 			while (($file = readdir($dirHandler)) !== false) {
 				if ($this->filenamePattern && !fnmatch($this->filenamePattern, $file)) {
 					continue;

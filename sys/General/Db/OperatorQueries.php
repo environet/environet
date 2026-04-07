@@ -190,10 +190,6 @@ class OperatorQueries extends BaseQueries {
 			EventLogger::log(EventLogger::EVENT_TYPE_OPERATOR_UPDATE, array_merge($operatorData, [
 				'id' => $id
 			]));
-
-			// Connect user and groups with operator
-			self::saveUsers($data['form_users'], $id);
-			self::saveGroups($data['form_groups'], $id);
 		} else {
 			// Save operator data
 			$id = new Insert()->table('operator')->addSingleData($operatorData)->run();
@@ -201,11 +197,11 @@ class OperatorQueries extends BaseQueries {
 			EventLogger::log(EventLogger::EVENT_TYPE_OPERATOR_ADD, array_merge($operatorData, [
 				'id' => $id
 			]));
-
-			// Connect user and groups with operator
-			self::saveUsers($data['form_users'], $id);
-			self::saveGroups($data['form_groups'], $id);
 		}
+		// Connect user and groups with operator
+
+		self::saveUsers($data['form_users'], $id);
+		self::saveGroups($data['form_groups'], $id);
 
 		return [$id, $changes];
 	}

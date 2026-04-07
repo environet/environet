@@ -78,20 +78,16 @@ class MonitoringPointSelector extends BaseAccessSelector {
 	protected function getHydroPointsByOperator(): string {
 		if ($this->isOperatorAdmin()) {
 			$select = new Select()->select('string_agg(hydropoint.id::text, \',\') as points')->from('hydropoint');
-			if ($this->countries) {
-				$select->whereIn('hydropoint.country', $this->countries, 'countries');
-			}
-			$points = $select->run(Query::FETCH_FIRST);
 		} else {
 			$select = new Select()
 				->select('string_agg(hydropoint.id::text, \',\') as points')
 				->from('hydropoint')
 				->where("hydropoint.operatorid = $this->operatorId");
-			if ($this->countries) {
-				$select->whereIn('hydropoint.country', $this->countries, 'countries');
-			}
-			$points = $select->run(Query::FETCH_FIRST);
 		}
+		if ($this->countries) {
+			$select->whereIn('hydropoint.country', $this->countries, 'countries');
+		}
+		$points = $select->run(Query::FETCH_FIRST);
 
 		return $points ? $points['points'] ?? '' : '';
 	}
@@ -105,20 +101,16 @@ class MonitoringPointSelector extends BaseAccessSelector {
 	protected function getMeteoPointsByOperator(): string {
 		if ($this->isOperatorAdmin()) {
 			$select = new Select()->select('string_agg(meteopoint.id::text, \',\') as points')->from('meteopoint');
-			if ($this->countries) {
-				$select->whereIn('meteopoint.country', $this->countries, 'countries');
-			}
-			$points = $select->run(Query::FETCH_FIRST);
 		} else {
 			$select = new Select()
 				->select('string_agg(meteopoint.id::text, \',\') as points')
 				->from('meteopoint')
 				->where("meteopoint.operatorid = $this->operatorId");
-			if ($this->countries) {
-				$select->whereIn('meteopoint.country', $this->countries, 'countries');
-			}
-			$points = $select->run(Query::FETCH_FIRST);
 		}
+		if ($this->countries) {
+			$select->whereIn('meteopoint.country', $this->countries, 'countries');
+		}
+		$points = $select->run(Query::FETCH_FIRST);
 
 		return $points ? $points['points'] ?? '' : '';
 	}
@@ -144,7 +136,6 @@ class MonitoringPointSelector extends BaseAccessSelector {
 			if ($countries) {
 				$select->whereIn('hydropoint.country', $countries, 'countries');
 			}
-			$requestedPoints = $select->run();
 		} else {
 			$select = new Select()
 				->select('meteopoint.id, meteopoint.eucd_pst as eucd')
@@ -155,8 +146,8 @@ class MonitoringPointSelector extends BaseAccessSelector {
 			if ($countries) {
 				$select->whereIn('meteopoint.country', $countries, 'countries');
 			}
-			$requestedPoints = $select->run();
 		}
+		$requestedPoints = $select->run();
 
 		if (!empty($eucdValues) && count($eucdValues) !== count($requestedPoints)) {
 			$invalid = array_diff($eucdValues, array_column($requestedPoints, 'eucd'));

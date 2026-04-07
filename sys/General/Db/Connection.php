@@ -55,10 +55,6 @@ class Connection {
 		try {
 			// Create a PostgreSQL database connection
 			$this->pdo = new PDO($dsn);
-
-			if (!$this->pdo) {
-				throw new InvalidConfigurationException('Could not connect to database');
-			}
 		} catch (PDOException $e) {
 			// Report error message
 			en_debug("SQL operation failed - " . $e->getMessage());

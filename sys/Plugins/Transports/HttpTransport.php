@@ -113,7 +113,7 @@ class HttpTransport extends AbstractTransport {
 				//Get regex pattern finding files
 				$indexRegexPattern = $console->ask("Please enter the regex patter for the relative path of files, with '/' as delimiter, and with named match with name 'relativePath'. Example: /<a href=\"(?P<relativePath>[^\"]+\.csv)\"/i");
 			}
-		} elseif ($type == self::TYPE_JSON) {
+		} else {
 			//Conversion JSON
 			$conversionsFilename = $console->ask('Filename of conversion specifications:');
 			$username = $console->askWithDefault('Username to access Web-API, if needed:', '');
