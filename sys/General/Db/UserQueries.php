@@ -357,6 +357,10 @@ class UserQueries extends BaseQueries {
 	public static function getById($id, string $primaryKey = 'id'): ?array {
 		$record = parent::getById($id, $primaryKey);
 
+		if ($record === null) {
+			return null;
+		}
+
 		// Find groups of the user
 		$record['show_groups'] = UserQueries::getUserGroups($record['id']);
 
