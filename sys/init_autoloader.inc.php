@@ -2,7 +2,9 @@
 
 
 //Load file of autoloader class
-require_once SRC_PATH . '/sys/autoloader.php';
+use Environet\Sys\Loader;
+
+require_once SRC_PATH . '/sys/Loader.php';
 
 //Get or create the instance of the autoloader
 $autoloader = Loader::getInstance();

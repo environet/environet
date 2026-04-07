@@ -23,9 +23,6 @@ switch ($opMode) {
 	case EN_OP_MODE_DATA:
 		require_once SRC_PATH.'/sys/DataNode/data_node.inc.php';
 		break;
-	case EN_OP_MODE_CLIENT:
-		//Not implemeneted
-		break;
 }
 
 en_debug("CORE TASK NODE LOADED");

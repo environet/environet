@@ -1,5 +1,7 @@
 <?php
 
+namespace Environet\Sys;
+
 /**
  * Class Loader
  *

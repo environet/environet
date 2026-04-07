@@ -122,7 +122,7 @@ class Config {
 		if (!in_array($this->getTimezone(), timezone_identifiers_list())) {
 			throw new InvalidConfigurationException('Timezone is invalid');
 		}
-		if (!in_array($this->getOpMode(), [EN_OP_MODE_DATA, EN_OP_MODE_DIST, EN_OP_MODE_CLIENT], true)) {
+		if (!in_array($this->getOpMode(), [EN_OP_MODE_DATA, EN_OP_MODE_DIST], true)) {
 			throw new InvalidConfigurationException('Operation mode is invalid');
 		}
 	}
