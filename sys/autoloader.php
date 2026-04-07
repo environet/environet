@@ -68,9 +68,6 @@ class Loader {
 	 * Registers this autoloader with SPL.
 	 *
 	 * @param bool $prepend True to prepend to the autoload stack.
-	 *
-	 * @return null
-	 *
 	 */
 	public function register($prepend = false) {
 		spl_autoload_register(
@@ -83,8 +80,6 @@ class Loader {
 
 	/**
 	 * Unregisters this autoloader from SPL.
-	 *
-	 * @return null
 	 */
 	public function unregister() {
 		spl_autoload_unregister([$this, 'loadClass']);
@@ -102,8 +97,6 @@ class Loader {
 	 * @param bool         $prepend   If true, prepend the base directories to the
 	 *                                prefix instead of appending them; this causes them to be searched
 	 *                                first rather than last.
-	 *
-	 * @return null
 	 */
 	public function addPrefix($prefix, $base_dirs, $prepend = false) {
 		// normalize the namespace prefix
@@ -135,8 +128,6 @@ class Loader {
 	 *
 	 * @param array $prefixes An associative array of namespace prefixes and
 	 *                        their base directories.
-	 *
-	 * @return null
 	 */
 	public function setPrefixes(array $prefixes) {
 		$this->prefixes = [];
@@ -162,8 +153,6 @@ class Loader {
 	 * @param string $class The explicit class name.
 	 *
 	 * @param string $file  The file path to that class.
-	 *
-	 * @return null
 	 */
 	public function setClassFile($class, $file) {
 		$this->classFiles[$class] = $file;
@@ -176,8 +165,6 @@ class Loader {
 	 *
 	 * @param array $classFiles An array of class-to-file mappings where the
 	 *                          key is the class name and the value is the file path.
-	 *
-	 * @return null
 	 */
 	public function setClassFiles(array $classFiles) {
 		$this->classFiles = $classFiles;
@@ -189,8 +176,6 @@ class Loader {
 	 *
 	 * @param array $class_files An array of class-to-file mappings where the
 	 *                           key is the class name and the value is the file path.
-	 *
-	 * @return null
 	 */
 	public function addClassFiles(array $class_files) {
 		$this->classFiles = array_merge($this->classFiles, $class_files);

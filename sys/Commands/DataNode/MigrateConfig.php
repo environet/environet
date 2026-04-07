@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpSameParameterValueInspection */
 
 
 namespace Environet\Sys\Commands\DataNode;
@@ -40,7 +40,7 @@ class MigrateConfig extends BaseCommand {
 			'changeMonitoringPointConversions',
 			'simplifyFormats'
 		];
-		ini_set('memory_limit', - 1);
+		ini_set('memory_limit', -1);
 
 		//Run each migration, and log results
 		$mainExitCode = 0;
@@ -48,7 +48,7 @@ class MigrateConfig extends BaseCommand {
 			$output = [];
 			$exitCode = $this->{$migration}($output, $selectedConfigFile);
 
-			if ($exitCode === - 1) {
+			if ($exitCode === -1) {
 				//Already migrated
 				$this->console->writeLine("$migration: Already migrated", Console::COLOR_YELLOW);
 			} elseif ($exitCode > 0) {
@@ -72,13 +72,13 @@ class MigrateConfig extends BaseCommand {
 	/**
 	 * Remove urlPattern from config, and move it to ini config
 	 *
-	 * @param array       $output
+	 * @param array $output
 	 * @param string|null $selectedConfigFile
 	 *
 	 * @return int
 	 */
 	private function removeUrlPattern(array &$output, ?string $selectedConfigFile = null): int {
-		$return = - 1;
+		$return = -1;
 
 		$configs = $this->getConfigurations($selectedConfigFile);
 
@@ -110,13 +110,13 @@ class MigrateConfig extends BaseCommand {
 	/**
 	 * Remove generalInformation from config
 	 *
-	 * @param array       $output
+	 * @param array $output
 	 * @param string|null $selectedConfigFile
 	 *
 	 * @return int
 	 */
 	private function removeGeneralInformation(array &$output, ?string $selectedConfigFile = null): int {
-		$return = - 1;
+		$return = -1;
 
 		$configs = $this->getConfigurations($selectedConfigFile);
 
@@ -139,13 +139,13 @@ class MigrateConfig extends BaseCommand {
 	/**
 	 * Move monitoringPointType from conversions to ini
 	 *
-	 * @param array       $output
+	 * @param array $output
 	 * @param string|null $selectedConfigFile
 	 *
 	 * @return int
 	 */
 	private function moveMonitoringPointType(array &$output, ?string $selectedConfigFile = null): int {
-		$return = - 1;
+		$return = -1;
 
 		$configs = $this->getConfigurations($selectedConfigFile);
 
@@ -174,13 +174,13 @@ class MigrateConfig extends BaseCommand {
 	/**
 	 * Move monitoringPointType from conversions to ini
 	 *
-	 * @param array       $output
+	 * @param array $output
 	 * @param string|null $selectedConfigFile
 	 *
 	 * @return int
 	 */
 	private function changeMonitoringPointConversions(array &$output, ?string $selectedConfigFile = null): int {
-		$return = - 1;
+		$return = -1;
 
 		$configs = $this->getConfigurations($selectedConfigFile);
 
@@ -213,13 +213,13 @@ class MigrateConfig extends BaseCommand {
 	/**
 	 * Move monitoringPointType from conversions to ini
 	 *
-	 * @param array       $output
+	 * @param array $output
 	 * @param string|null $selectedConfigFile
 	 *
 	 * @return int
 	 */
 	private function simplifyFormats(array &$output, ?string $selectedConfigFile = null): int {
-		$return = - 1;
+		$return = -1;
 
 		$configs = $this->getConfigurations($selectedConfigFile);
 
@@ -334,7 +334,7 @@ class MigrateConfig extends BaseCommand {
 
 
 	/**
-	 * @param array  $iniContent
+	 * @param array $iniContent
 	 * @param string $targetFile
 	 *
 	 * @return void
@@ -361,7 +361,7 @@ class MigrateConfig extends BaseCommand {
 
 
 	/**
-	 * @param array  $jsonContent
+	 * @param array $jsonContent
 	 * @param string $targetFile
 	 *
 	 * @return void
@@ -389,7 +389,7 @@ class MigrateConfig extends BaseCommand {
 			$i = 1;
 			while (file_exists($bakFile)) {
 				$bakFile = $targetFile . '.bak.' . $i;
-				$i ++;
+				$i++;
 			}
 			copy($targetFile, $bakFile);
 		}

@@ -19,6 +19,7 @@ use Environet\Sys\General\SysIdentity;
  */
 abstract class ApiHandler extends BaseHandler {
 
+
 	/**
 	 * @var null|array The parsed authorization header
 	 */
@@ -217,6 +218,7 @@ abstract class ApiHandler extends BaseHandler {
 	 * @throws ApiException
 	 * @noinspection PhpComposerExtensionStubsInspection
 	 * @phpcs        :disable
+	 * @noinspection PhpUsageOfSilenceOperatorInspection
 	 */
 	protected function validateSignature() {
 		$token = $this->request->getQueryParam('token', false);

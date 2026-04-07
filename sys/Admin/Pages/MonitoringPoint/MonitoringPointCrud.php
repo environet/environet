@@ -127,12 +127,12 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 		}
 
 		if ($this->request->getQueryParam('is_active') !== null) {
-			$value = $this->request->getQueryParam('is_active') === '_0' ? false : true;
+			$value = !($this->request->getQueryParam('is_active') === '_0');
 			$query->where('is_active = :isActive')->addParameter('isActive', $value);
 		}
 
         if ($this->request->getQueryParam('is_out_of_order') !== null) {
-            $value = $this->request->getQueryParam('is_out_of_order') === '_0' ? false : true;
+            $value = !($this->request->getQueryParam('is_out_of_order') === '_0');
             $query->where('is_out_of_order = :isOutOfOrder')->addParameter('isOutOfOrder', $value);
         }
 

@@ -2,6 +2,8 @@
 
 namespace Environet\Sys\General;
 
+use BadMethodCallException;
+
 /**
  * Class Request
  *
@@ -17,6 +19,7 @@ namespace Environet\Sys\General;
  * @author  SRG Group <dev@srg.hu>
  */
 class Request {
+
 
 	/** Session key of admin auth */
 	const AUTH_SESSION_KEY = 'adminauth';
@@ -137,7 +140,7 @@ class Request {
 	 * Get value of a query string param
 	 *
 	 * @param string $paramName
-	 * @param null   $default
+	 * @param null $default
 	 *
 	 * @return mixed|null
 	 */
@@ -247,16 +250,16 @@ class Request {
 	/**
 	 * Magic method for HTTP method checks (isPost, isGet, etc)
 	 *
-	 * @param string $name      Name of the method
-	 * @param mixed  $arguments Arguments
-	 *
-	 * @return bool
+	 * @param string $name     Name of the method
+	 * @param mixed $arguments Arguments
 	 * @uses \Environet\Sys\General\Request::getMethod()
 	 */
 	public function __call($name, $arguments) {
 		if (preg_match('/^is([a-zA-Z]+)$/', $name, $match)) {
 			return $this->getMethod() === strtoupper($match[1]);
 		}
+
+		throw new BadMethodCallException("Method $name does not exist");
 	}
 
 

@@ -157,7 +157,7 @@ class FtpTransport extends AbstractTransport {
 	 */
 	public function serializeConfiguration(): string {
 		return 'host = "' . $this->host . '"' . "\n"
-			. 'port = ' . ($this->port ? (int) $this->port : '') . '' . "\n"
+			. 'port = ' . ($this->port ? (int) $this->port : '') . "\n"
 			. 'secure = "' . $this->secure . '"' . "\n"
 			. 'username = "' . $this->username . '"' . "\n"
 			. 'password = "' . $this->password . '"' . "\n"
@@ -196,6 +196,7 @@ class FtpTransport extends AbstractTransport {
 	 * @inheritDoc
 	 * @throws Exception
 	 * @see Resource
+	 * @noinspection PhpUsageOfSilenceOperatorInspection
 	 */
 	public function get(Console $console, string $configFile): array {
 		$configuration = preg_replace('/^(.*)\.[^\.]+$/i', '$1', $configFile);
@@ -210,7 +211,7 @@ class FtpTransport extends AbstractTransport {
 		//Connect to FTP with username and password
 		$port = $this->port ?: 21;
 		$conn = $this->secure ? @ftp_ssl_connect($this->host, $port) : @ftp_connect($this->host, $port);
-		if ($conn == false) {
+		if (!$conn) {
 			throw new Exception("Connection to ftp server " . $this->host . " failed");
 		}
 
@@ -257,7 +258,7 @@ class FtpTransport extends AbstractTransport {
 					$interval = date_diff($dateFile, $dateNow);
 					$days = $interval->format('%a');
 					if ($days <= $this->lastNDaysOnly) {
-						array_push($newFiles, $file);
+						$newFiles[] = $file;
 					}
 				}
 			}

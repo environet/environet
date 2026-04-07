@@ -49,7 +49,7 @@ class GenerateSignature extends BaseCommand {
 			if ($inputContent) {
 				$keyLocation = $keyDefaultLocation;
 			} else {
-				$keyLocation = $this->console->askWithDefault('Enter the path of private key (relative to ' . SRC_PATH . '):', $keyDefaultLocation, 200);
+				$keyLocation = $this->console->askWithDefault('Enter the path of private key (relative to ' . SRC_PATH . '):', $keyDefaultLocation);
 			}
 			if (!file_exists(SRC_PATH . '/' . ltrim($keyLocation, '/'))) {
 				$this->console->writeLine("File $keyLocation does not exist");

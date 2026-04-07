@@ -270,6 +270,7 @@ abstract class AbstractInputXmlProcessor {
 		try {
 			$timeSeriesPointsBatches = array_chunk($timeSeriesPoints, 3000, true);
 
+			/** @noinspection PhpArrayUsedOnlyForWriteInspection */
 			$lastValue = [];
 
 			$minTime = $maxTime = null;

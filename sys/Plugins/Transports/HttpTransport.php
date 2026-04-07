@@ -140,7 +140,7 @@ class HttpTransport extends AbstractTransport {
 	 */
 	public function serializeConfiguration(): string {
 		return 'url = "' . $this->url . '"' . "\n"
-			. 'isIndex = ' . $this->isIndex . '' . "\n"
+			. 'isIndex = ' . $this->isIndex . "\n"
 			. 'indexRegexPattern = "' . addcslashes($this->indexRegexPattern, '"') . '"' . "\n"
 			. 'monitoringPointType = "' . $this->monitoringPointType . '"' . "\n";
 	}
@@ -314,10 +314,10 @@ class HttpTransport extends AbstractTransport {
 				//Add items with some extra informations
 				$item['NCD'] = $item["ncd_$postfix"];
 				$item['EUCD'] = $item["eucd_$postfix"];
-				array_push($monitoringPoints, $item);
+				$monitoringPoints[] = $item;
 
 				//Collection all ncds, and properties
-				array_push($allNCDs, $item["NCD"]);
+				$allNCDs[] = $item["NCD"];
 				$allObservedProperties = array_merge($allObservedProperties, $item["observed_properties"] ?? []);
 			}
 		}

@@ -296,7 +296,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 		$payloads = [];
 
 		foreach ($mPointsArray as $mPointId => $properties) {
-			array_push($payloads, (new CreateInputXml())->generateXml(new InputXmlData($mPointId, $this->inputXmlDataFromArray($properties))));
+			$payloads[] = (new CreateInputXml())->generateXml(new InputXmlData($mPointId, $this->inputXmlDataFromArray($properties)));
 		}
 
 		return $payloads;
@@ -568,8 +568,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::serializePropertyConfiguration()
 	 */
 	public function serializeConfiguration(): string {
-		$config = '';
-		$config .= 'csvDelimiter = "' . $this->csvDelimiter . "\"\n";
+		$config = 'csvDelimiter = "' . $this->csvDelimiter . "\"\n";
 		$config .= 'nHeaderSkip = ' . $this->nHeaderSkip . "\n";
 		$config .= 'mPointIdCol = ' . $this->mPointIdCol . "\n";
 		$config .= 'timeCol = ' . $this->timeCol . "\n";

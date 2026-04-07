@@ -39,7 +39,7 @@ foreach ($listplugins as $pluginClass) {
 	$plugin = new $pluginClass();
 	$res = $plugin->doUpload();
 
-	en_debug("Uploader ".$pluginClass." exited with result ", $res);
+	en_debug("Uploader ".$pluginClass." exited with result ");
 	unset($plugin);
 }
 

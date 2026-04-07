@@ -111,6 +111,8 @@ abstract class CrudPage extends BasePage {
 			case self::PAGE_EDIT:
 				return "Edit {$this->getEntityName()}: $recordTitle";
 		}
+
+		return '';
 	}
 
 

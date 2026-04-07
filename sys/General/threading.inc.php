@@ -39,7 +39,7 @@ class EN_AsyncExecute extends Thread {
             $this->data = call_user_func($this->funcname, $this->arguments);
         }
         else {
-            en_debug("Thread #%lu was not given an array of arguments\n", $this->getThreadId());
+            en_debug("Thread #%lu was not given an array of arguments\n");
         }
 
     }

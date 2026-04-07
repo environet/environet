@@ -126,7 +126,7 @@ class ApiException extends \Exception {
 		$vars = array_values(array_filter(array_map(function ($serverKey) {
 			return !empty($_SERVER[$serverKey]) ? $serverKey . ': ' . $_SERVER[$serverKey] : null;
 		}, $this->loggedServerKeys)));
-		array_push($this->errorMessages, implode(', ', $vars));
+		$this->errorMessages[] = implode(', ', $vars);
 	}
 
 

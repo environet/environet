@@ -73,7 +73,7 @@ class Install extends BaseCommand {
 		}
 
 
-		$storeInputXmls = $this->console->askYesNo("Do you want to store input XML data in a local directory?", true);
+		$storeInputXmls = $this->console->askYesNo("Do you want to store input XML data in a local directory?");
 		$configArray['environet']['store_input_xmls'] = $storeInputXmls;
 
 

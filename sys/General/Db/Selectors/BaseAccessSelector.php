@@ -54,7 +54,7 @@ abstract class BaseAccessSelector extends Selector {
 		$this->operatorId = $operatorId;
 		$this->countries = $countries;
 
-		parent::__construct($values, self::SELECTOR_TYPE_INT);
+		parent::__construct($values);
 	}
 
 

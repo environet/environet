@@ -3,6 +3,7 @@
 namespace Environet\Sys\Xml;
 
 use DateTime;
+use DateTimeInterface;
 use Environet\Sys\Xml\Exceptions\CreateInputXmlException;
 use Environet\Sys\Xml\Model\InputXmlData;
 use SimpleXMLElement;
@@ -95,7 +96,7 @@ class CreateInputXml {
 				// Invalid sub-array
 				throw new CreateInputXmlException("Property #" . ($propertyKey + 1) . ", Value #" . ($key + 1) . ": 'time' and 'value' keys are required");
 			}
-			if (DateTime::createFromFormat(DateTime::ISO8601, $value['time']) === false) {
+			if (DateTime::createFromFormat(DateTimeInterface::ATOM, $value['time']) === false) {
 				// Invalid data format
 				throw new CreateInputXmlException("Property #" . ($propertyKey + 1) . ", Value #" . ($key + 1) . ": Time format is invalid");
 			}

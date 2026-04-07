@@ -77,8 +77,7 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 * @return string
 	 */
 	public function serializeConfiguration(): string {
-		$result = '';
-		$result .= "apiAddress = $this->apiAddress\n";
+		$result = "apiAddress = $this->apiAddress\n";
 		$result .= "apiUsername = $this->apiUsername\n";
 		$result .= "privateKeyPath = $this->privateKeyPath\n";
 		$result .= "ignoreUndefinedPoints = " . ($this->ignoreUndefinedPoints ? 1 : 0) . "\n";

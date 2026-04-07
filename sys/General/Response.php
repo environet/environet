@@ -142,7 +142,7 @@ class Response {
 	 */
 	public function __toString() {
 		foreach ($this->headers as $header) {
-			header($header, true);
+			header($header);
 		}
 		http_response_code($this->statusCode);
 

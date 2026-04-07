@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpSameParameterValueInspection */
 
 namespace Environet\Sys\Plugins\Parsers;
 
@@ -25,6 +25,7 @@ use SimpleXMLElement;
  * @author  SRG Group <dev@srg.hu>, STASA <info@stasa.de>
  */
 class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
+
 
 	const API_TIME_FORMAT_STRING = 'Y-m-d\TH:i:sP';
 
@@ -71,7 +72,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 		$this->separatorThousands = $config['separatorThousands'];
 		$this->separatorDecimals = $config['separatorDecimals'];
 		$this->formatsFilename = $config['formatsFilename'];
-		$this->skipEmptyValueTag = isset($config['skipEmptyValueTag']) ? (bool) $config['skipEmptyValueTag'] : false;
+		$this->skipEmptyValueTag = isset($config['skipEmptyValueTag']) && $config['skipEmptyValueTag'];
 		$this->skipValue = $config['skipValue'];
 
 		parent::__construct($config);
@@ -81,10 +82,10 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Recursive function to parse a xml tree to acquire values for given parameters from xml tree
 	 *
-	 * @param SimpleXMLElement $xml              xml element to parse
-	 * @param array            $formats          format of information to be gathered from xml, including tag hierarchies for different parameters
-	 * @param array            $resolved         table of information found. 1st index is the entry if there are multiple, 2nd index is information, call with "[]"
-	 * @param int              $hierarchyCounter level of hierarchy, call with "0"
+	 * @param SimpleXMLElement $xml xml element to parse
+	 * @param array $formats        format of information to be gathered from xml, including tag hierarchies for different parameters
+	 * @param array $resolved       table of information found. 1st index is the entry if there are multiple, 2nd index is information, call with "[]"
+	 * @param int $hierarchyCounter level of hierarchy, call with "0"
 	 *
 	 * @return array list of information gathered from xml
 	 * @throws Exception
@@ -103,7 +104,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 		// get groups of common hierarchy
 		$commonElements = [];
 		while (($common = $this->getAndStripOneCommonElement($formats))) {
-			array_push($commonElements, $common);
+			$commonElements[] = $common;
 		}
 		$xpathCommonElements = implode('/', $commonElements);
 
@@ -139,8 +140,8 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 						$item["Value"] = $subXml[0][$format["Attribute"]]->__toString();
 						$item["Format"] = $format["Value"] ?? null;
 						$item["Unit"] = $format["Unit"] ?? null;
-						array_push($groupResolved, $item);
-						++ $nResolved;
+						$groupResolved[] = $item;
+						++$nResolved;
 					}
 				}
 				if ($subXml == null) {
@@ -169,10 +170,10 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 
 					$item["Format"] = $format["Value"] ?? null;
 					$item["Unit"] = $format["Unit"] ?? null;
-					array_push($groupResolved, $item);
-					++ $nResolved;
+					$groupResolved[] = $item;
+					++$nResolved;
 				} else {
-					array_push($formatsNew, $format);
+					$formatsNew[] = $format;
 				}
 			}
 
@@ -182,7 +183,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 			} else {
 				// Finish condition 3: Success
 				// all information available. Return flat list entry from resolved
-				array_push($flatList, $groupResolved);
+				$flatList[] = $groupResolved;
 			}
 		}// group
 
@@ -194,9 +195,9 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 	 * Get internal symbol for observed property from external symbol. Conversion between symbols is given by
 	 * variable conversion information.
 	 *
-	 * @param array  $observedPropertyConversions
-	 * @param string $variableName                name of variable definition for observed property. E.g. "OBS"
-	 * @param string $symbol                      external symbol for observed property
+	 * @param array $observedPropertyConversions
+	 * @param string $variableName name of variable definition for observed property. E.g. "OBS"
+	 * @param string $symbol       external symbol for observed property
 	 *
 	 * @return string internal symbol for observed property
 	 */
@@ -214,7 +215,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Get item from list, for which parameter name has a certain value. List item is an associative array in which parameter names are keys.
 	 *
-	 * @param array  $list           list of items.
+	 * @param array $list            list of items.
 	 * @param string $parameterName  name of parameter
 	 * @param string $parameterValue value of parameter
 	 *
@@ -236,7 +237,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 	/**
 	 * Deletes item from list for specified parameter and value. List item is an associative array in which parameter names are keys.
 	 *
-	 * @param array  $list           list to delete items from
+	 * @param array $list            list to delete items from
 	 * @param string $parameterName  name of parameter
 	 * @param string $parameterValue value for parameter
 	 */
@@ -259,7 +260,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 	 * precipitation P: mm
 	 * air temperature ta: °C
 	 *
-	 * @param float  $value  measured value to convert
+	 * @param float $value   measured value to convert
 	 * @param string $symbol internal symbol for observed property
 	 * @param string $unit   unit in which $value is given
 	 */
@@ -305,7 +306,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 
 		$difference = false;
 		$formatsCount = count($formats);
-		for ($i = 1; $i < $formatsCount; ++ $i) {
+		for ($i = 1; $i < $formatsCount; ++$i) {
 			if (empty($formats[$i]['TagHierarchy'][0]) ||
 				empty($formats[$i - 1]['TagHierarchy'][0]) ||
 				$formats[$i]['TagHierarchy'][0] != $formats[$i - 1]['TagHierarchy'][0]
@@ -317,7 +318,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 			return null;
 		}
 		$result = $formats[0]["TagHierarchy"][0];
-		for ($i = 0; $i < $formatsCount; ++ $i) {
+		for ($i = 0; $i < $formatsCount; ++$i) {
 			array_shift($formats[$i]["TagHierarchy"]);
 		}
 
@@ -375,7 +376,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 			if (!$date) {
 				throw new Exception("Invalid date or time format (monitoring point national code: $NCD): Date format is \"" .
 					$Date["Format"] . "\" value is \"" . $Date["Value"] . "\", Time format is \"" . $Time["Format"] .
-				"\", value is \"" . $Time["Value"] . "\". Entry dropped.");
+					"\", value is \"" . $Time["Value"] . "\". Entry dropped.");
 			}
 			$date->setTimezone(new DateTimeZone('UTC'));
 			$result["Value"] = $date->format(self::API_TIME_FORMAT_STRING);
@@ -385,7 +386,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 			$date = DateTime::createFromFormat($DateTime["Format"], $DateTime["Value"], $this->getTimeZone());
 			if (!$date) {
 				throw new Exception("Invalid datetime format (monitoring point national code: $NCD): Format is \"" . $DateTime["Format"] .
-				"\", value is \"" . $DateTime["Value"] . "\". Entry dropped.");
+					"\", value is \"" . $DateTime["Value"] . "\". Entry dropped.");
 			}
 			$date->setTimezone(new DateTimeZone('UTC'));
 			$result["Value"] = $date->format(self::API_TIME_FORMAT_STRING);
@@ -393,7 +394,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 		} else {
 			throw new Exception("Incomplete date");
 		}
-		array_push($entry, $result);
+		$entry[] = $result;
 	}
 
 
@@ -433,7 +434,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 							"Format" => null,
 							"Unit"   => null,
 						];
-						array_push($entry, $elem);
+						$entry[] = $elem;
 						$unit = $item["Unit"];
 					} else {
 						$unit = $itemUnit["Value"];
@@ -482,7 +483,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 			$properties = array_map(function ($key, $value) {
 				return new InputXmlPropertyData($key, $value);
 			}, array_keys($properties), $properties);
-			array_push($payloads, $creator->generateXml(new InputXmlData($mPointId, $properties)));
+			$payloads[] = $creator->generateXml(new InputXmlData($mPointId, $properties));
 		}
 
 		return $payloads;
@@ -566,7 +567,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 						"Format" => null,
 						"Unit"   => null,
 					];
-					array_push($entry, $elem);
+					$entry[] = $elem;
 				}
 
 				$obs = $this->getParameter($entry, "Type", "ObservedPropertySymbol");
@@ -578,7 +579,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 						if (($symbol = $this->getInternalObservedPropertySymbol($resource->meta["observedPropertyConversions"], $variableName, $symbolNameInFile))) {
 							$this->delete($entry, "Type", "ObservedPropertySymbol");
 							$obs["Value"] = $symbol;
-							array_push($entry, $obs);
+							$entry[] = $obs;
 						} else {
 							unset($flatList[$key]); // Delete whole entry as observed property was not found
 						}
@@ -599,11 +600,11 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 							}
 						}
 						$entry = array_values($entry);
-						array_push($entry, $elem);
+						$entry[] = $elem;
 					} else {
 						// add observed property symbol from ObservedPropertyValue
 						$count = 0;
-						foreach ($entry as &$e) {
+						foreach ($entry as $e) {
 							if ($e["Type"] == "ObservedPropertyValue") {
 								// copy entry to new entries, because multiple occurrences of "ObservedPropertyValue" may be
 								// present in $entry for different observed properties
@@ -615,7 +616,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 									"Format" => null,
 									"Unit"   => null,
 								];
-								array_push($newEntry, $elem);
+								$newEntry[] = $elem;
 								// delete all occurrences of ObservedPropertyValue with wrong symbol
 								foreach ($newEntry as $newenkey => &$newenval) {  // FFF
 									if ($newenval["Type"] == "ObservedPropertyValue" && $newenval["Format"] != $prop) {
@@ -623,8 +624,8 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 									}
 								}
 								$newEntry = array_values($newEntry);
-								array_push($newEntries, $newEntry);
-								++ $count;
+								$newEntries[] = $newEntry;
+								++$count;
 							}
 						}
 						if ($count == 0) {
@@ -725,8 +726,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::serializePropertyConfiguration()
 	 */
 	public function serializeConfiguration(): string {
-		$config = '';
-		$config .= 'separatorThousands = "' . $this->separatorThousands . "\"\n";
+		$config = 'separatorThousands = "' . $this->separatorThousands . "\"\n";
 		$config .= 'separatorDecimals = "' . $this->separatorDecimals . "\"\n";
 		$config .= 'formatsFilename = "' . $this->formatsFilename . "\"\n";
 		$config .= 'skipEmptyValueTag = ' . $this->skipEmptyValueTag ? 1 : 0 . "\n";

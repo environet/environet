@@ -87,10 +87,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 		try {
 			// Send the data with a http client, and store the response body in a variable
 			return $this->preProcessData();
-		} catch (HttpClientException|CreateInputXmlException $e) {
-			// Store error response of the request in $error var
-			$this->addMessage($e->getMessage(), self::MESSAGE_ERROR);
-		} catch (Exception $e) {
+		} catch (HttpClientException|CreateInputXmlException|Exception $e) {
 			// Store error response of the request in $error var
 			$this->addMessage($e->getMessage(), self::MESSAGE_ERROR);
 		}
@@ -380,6 +377,8 @@ abstract class AbstractUploadDataPage extends BasePage {
 		if (($meteo = $meteoSelect->run(Query::FETCH_FIRST))) {
 			return $meteo;
 		}
+
+		return null;
 	}
 
 

@@ -118,7 +118,7 @@ class GroupQueries extends BaseQueries {
 			$record['users'] = (new Select())
 				->select('users.*')
 				->from('users')
-				->join('users_groups', 'users_groups.usersid = users.id', Query::JOIN_INNER)
+				->join('users_groups', 'users_groups.usersid = users.id')
 				->where('groupsid = :groupId')
 				->addParameter(':groupId', $id)
 				->run();
@@ -126,7 +126,7 @@ class GroupQueries extends BaseQueries {
 			$record['operators'] = (new Select())
 				->select('operator.*')
 				->from('operator')
-				->join('operator_groups', 'operator_groups.operatorid = operator.id', Query::JOIN_INNER)
+				->join('operator_groups', 'operator_groups.operatorid = operator.id')
 				->where('groupsid = :groupId')
 				->addParameter(':groupId', $id)
 				->run();

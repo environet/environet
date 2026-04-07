@@ -79,7 +79,7 @@ class RiverBasinCrud extends CrudPage {
 			return httpErrorPage(404);
 		}
 
-		$record = $this->queriesClass::getById($id, 'id');
+		$record = $this->queriesClass::getById($id);
 		if (is_null($record)) {
 			// if the requested record doesn't exist, return 404
 			return httpErrorPage(404);
@@ -105,7 +105,7 @@ class RiverBasinCrud extends CrudPage {
 			// if id doesn't exist, return 404
 			return httpErrorPage(404);
 		}
-		$record = $this->queriesClass::getById($id, 'id');
+		$record = $this->queriesClass::getById($id);
 		if (is_null($record)) {
 			// if record doesn't exist, return 404
 			return httpErrorPage(404);
@@ -155,7 +155,7 @@ class RiverBasinCrud extends CrudPage {
 
 		//Data is valid, save it, add success message, and redirect to index page
 		try {
-			$this->queriesClass::save($postData, $id, 'id');
+			$this->queriesClass::save($postData, $id);
 			$this->addMessage(is_null($id) ? $this->successAddMessage : $this->successEditMessage, self::MESSAGE_SUCCESS);
 
 			return $this->redirect($this->listPagePath);
@@ -191,7 +191,7 @@ class RiverBasinCrud extends CrudPage {
 			$valid = false;
 		}
 
-		if (!RiverBasinQueries::checkUnique(['name' => $data['name']], $editedRecord ? $editedRecord['id'] : null, 'id')) {
+		if (!RiverBasinQueries::checkUnique(['name' => $data['name']], $editedRecord ? $editedRecord['id'] : null)) {
 			$this->addFieldMessage('name', 'Name must be unique', self::MESSAGE_ERROR);
 			$valid = false;
 		}

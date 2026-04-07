@@ -28,7 +28,7 @@ class PKIException extends Exception {
 			$messages[] = $msg;
 		}
 
-		return new static(sprintf('Can\'t create signature: ' . implode(' | ', $messages)));
+		return new static(sprintf('Can\'t create signature: %s', implode(' | ', $messages)));
 	}
 
 

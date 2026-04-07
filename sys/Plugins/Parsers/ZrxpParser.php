@@ -411,8 +411,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::serializePropertyConfiguration()
 	 */
 	public function serializeConfiguration(): string {
-		$config = '';
-		$config .= 'zrxpVersion = ' . $this->zrxpVersion . "\n";
+		$config = 'zrxpVersion = ' . $this->zrxpVersion . "\n";
 		$config .= 'cutMpointLeadingZeros = ' . ($this->cutMpointLeadingZeros ? 1 : 0) . "\n";
 
 		foreach ($this->propertyMap as $dbProp => $propertyConfig) {

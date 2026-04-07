@@ -107,7 +107,7 @@ class MeasurementAccessRuleCrud extends CrudPage {
 			$query->sort('operator.name', $this->request->getQueryParam('order_dir', 'ASC'));
 		}
 
-		$query->join('operator', 'operator.id = measurement_access_rules.operator_id', Query::JOIN_INNER);
+		$query->join('operator', 'operator.id = measurement_access_rules.operator_id');
 		$query->select('operator.name as operator_name');
 
 		$query->select("(SELECT string_agg(group_id::character varying, ',') FROM group_measurement_access_rules g WHERE g.measurement_access_rule_id = measurement_access_rules.id) as group_id");

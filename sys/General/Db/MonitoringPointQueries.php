@@ -486,7 +486,7 @@ class MonitoringPointQueries {
 			$main = array_shift($this->subsets);
 			$this->select = $main->select;
 			$this->filters = array_merge($main->filters, $globalFilters);
-			foreach ($this->subsets as $key => &$subset) {
+			foreach ($this->subsets as $key => $subset) {
 				$subset->select = $this->buildQuery($subset->select, true, $subset);
 				foreach ($globalFilters as $filterKey => $globalFilter) {
 					$this->addFilter($globalFilter, $filterKey, $key);

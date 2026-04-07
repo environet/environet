@@ -187,7 +187,7 @@ class SftpTransport extends AbstractTransport {
 	 */
 	public function serializeConfiguration(): string {
 		return 'host = "' . $this->host . '"' . "\n"
-			. 'port = ' . ($this->port ? (int) $this->port : '') . '' . "\n"
+			. 'port = ' . ($this->port ? (int) $this->port : '') . "\n"
 			. 'authMode = "' . $this->authMode . '"' . "\n"
 			. 'username = "' . $this->username . '"' . "\n"
 			. 'password = "' . $this->password . '"' . "\n"
@@ -326,7 +326,7 @@ class SftpTransport extends AbstractTransport {
 					$interval = date_diff($dateFile, $dateNow);
 					$days = $interval->format('%a');
 					if ($days <= $this->lastNDaysOnly) {
-						array_push($newFiles, $file);
+						$newFiles[] = $file;
 					}
 				}
 			}

@@ -3,6 +3,7 @@
 
 namespace Environet\Sys;
 
+use BadMethodCallException;
 use Environet\Sys\General\Exceptions\InvalidConfigurationException;
 
 /**
@@ -33,6 +34,7 @@ use Environet\Sys\General\Exceptions\InvalidConfigurationException;
  * @author  SRG Group <dev@srg.hu>
  */
 class Config {
+
 
 	/**
 	 * @var Config|null The instance for singleton behavior
@@ -160,6 +162,8 @@ class Config {
 				return $this->processValue($this->config[$group][$configName] ?? null, $configName);
 			}
 		}
+
+		throw new BadMethodCallException("Method $name does not exist");
 	}
 
 
@@ -175,13 +179,13 @@ class Config {
 	/**
 	 * Process config value
 	 *
-	 * @param mixed  $value
+	 * @param mixed $value
 	 * @param string $configName
 	 *
 	 * @return string
 	 */
 	protected function processValue($value, $configName) {
-		if (is_string($value) && preg_match('/_path$/', $configName)) {
+		if (is_string($value) && str_ends_with($configName, '_path')) {
 			//Options endign with _path will be prefixed with the SRC path to make an absolute path.
 			return SRC_PATH . '/' . ltrim($value, '/');
 		}
@@ -231,6 +235,7 @@ class Config {
 					return $match[1];
 			}
 		}
+
 		return $maxSize;
 	}
 

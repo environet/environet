@@ -37,6 +37,7 @@ use Throwable;
  */
 class UploadHandler extends ApiHandler {
 
+
 	/** @inheritDoc */
 	protected const HANDLER_PERMISSION = 'api.upload';
 
@@ -144,6 +145,7 @@ class UploadHandler extends ApiHandler {
 
 		// If the signature is not valid, and the request is called from the php container, check the signature with the sys public key
 		if (!$signatureValid && gethostbyname('dist_php') === $_SERVER['REMOTE_ADDR']) {
+			/** @noinspection PhpUsageOfSilenceOperatorInspection */
 			$signatureValid = @openssl_verify($hash, $signature, file_get_contents(SysIdentity::getSysPublicKeyFile()), OPENSSL_ALGO_SHA256);
 		}
 
@@ -157,8 +159,8 @@ class UploadHandler extends ApiHandler {
 	/**
 	 * Create input processor based on the mpoint type. Type is detected with finding it in the type's database table
 	 *
-	 * @param SimpleXMLElement $xml     Parsed XML
-	 * @param UploadOptions    $options
+	 * @param SimpleXMLElement $xml Parsed XML
+	 * @param UploadOptions $options
 	 *
 	 * @return AbstractInputXmlProcessor
 	 * @throws ApiException

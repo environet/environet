@@ -41,7 +41,7 @@ class PluginCreate extends BaseCommand {
 			$filename = $this->console->ask("Configuration name:");
 
 			if (file_exists(rtrim(CONFIGURATION_PATH, '/')  . '/' . $filename)) {
-				if (!$this->console->askYesNo("The configuration [$filename] already exists, do you want to overwrite it?", true)) {
+				if (!$this->console->askYesNo("The configuration [$filename] already exists, do you want to overwrite it?")) {
 					continue;
 				}
 			}

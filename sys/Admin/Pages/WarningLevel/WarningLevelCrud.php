@@ -96,8 +96,8 @@ class WarningLevelCrud extends CrudPage {
 			$query->whereIn('operatorid', array_column($operators, 'id'), 'operatorId');
 		}
 
-		$query->join('operator', 'operator.id = warning_levels.operatorid', Query::JOIN_INNER);
-		$query->join('warning_level_groups', 'warning_level_groups.id = warning_levels.warning_level_groupid', Query::JOIN_INNER);
+		$query->join('operator', 'operator.id = warning_levels.operatorid');
+		$query->join('warning_level_groups', 'warning_level_groups.id = warning_levels.warning_level_groupid');
 		$query->select('operator.name as operator_name');
 		$query->select('warning_level_groups.name as warning_level_group_name');
 	}
@@ -166,7 +166,7 @@ class WarningLevelCrud extends CrudPage {
 			$this->addFieldMessage('warning_level_groupid', 'Group is required', self::MESSAGE_ERROR);
 			$valid = false;
 		}
-		if (!validate($data, 'color', '/[0-9A-F]/i', false)) {
+		if (!validate($data, 'color', '/[0-9A-F]/i')) {
 			$this->addFieldMessage('color', 'Color value must be a valid RGB color definition in hexadecimal format (e.g. 55ABF1', self::MESSAGE_ERROR);
 			$valid = false;
 		}

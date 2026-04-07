@@ -71,7 +71,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 		$this->separatorThousands = $config['separatorThousands'];
 		$this->separatorDecimals = $config['separatorDecimals'];
-		$this->skipEmptyValueTag = isset($config['skipEmptyValueTag']) ? (bool) $config['skipEmptyValueTag'] : false;
+		$this->skipEmptyValueTag = isset($config['skipEmptyValueTag']) && $config['skipEmptyValueTag'];
 		$this->skipValue = $config['skipValue'];
 
 		parent::__construct($config);
@@ -550,8 +550,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 * @uses \Environet\Sys\Plugins\Parsers\CsvParser::serializePropertyConfiguration()
 	 */
 	public function serializeConfiguration(): string {
-		$config = '';
-		$config .= 'separatorThousands = "' . $this->separatorThousands . "\"\n";
+		$config = 'separatorThousands = "' . $this->separatorThousands . "\"\n";
 		$config .= 'separatorDecimals = "' . $this->separatorDecimals . "\"\n";
 		$config .= 'formatsFilename = "' . $this->formatsFilename . "\"\n";
 		$config .= 'skipEmptyValueTag = ' . $this->skipEmptyValueTag ? 1 : 0 . "\n";

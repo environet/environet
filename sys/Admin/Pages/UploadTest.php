@@ -32,21 +32,6 @@ use InvalidArgumentException;
  */
 class UploadTest extends BasePage {
 
-	/**
-	 * @var array Array of monitoring point options
-	 */
-	private $mpoints;
-
-	/**
-	 * @var array Array of observed property options
-	 */
-	private $properties;
-
-	/**
-	 * @var array Array of user options
-	 */
-	private $users;
-
 
 	/**
 	 * Handle the upload test request.
@@ -65,16 +50,16 @@ class UploadTest extends BasePage {
 	public function handle(): ?Response {
 
 		// Create monitoring point options
-		$this->mpoints = (new Select())->from('hydropoint')->run();
-		$this->mpoints = array_combine(array_column($this->mpoints, 'eucd_wgst'), array_column($this->mpoints, 'eucd_wgst'));
+		$mpoints = (new Select())->from('hydropoint')->run();
+		$mpoints = array_combine(array_column($mpoints, 'eucd_wgst'), array_column($mpoints, 'eucd_wgst'));
 
 		// Create observed property options
-		$this->properties = (new Select())->from('hydro_observed_property')->run();
-		$this->properties = array_combine(array_column($this->properties, 'symbol'), array_column($this->properties, 'description'));
+		$properties = (new Select())->from('hydro_observed_property')->run();
+		$properties = array_combine(array_column($properties, 'symbol'), array_column($properties, 'description'));
 
 		// Create observed property options
-		$this->users = (new Select())->from('users')->run();
-		$this->users = array_combine(array_column($this->users, 'username'), array_column($this->users, 'username'));
+		$users = (new Select())->from('users')->run();
+		$users = array_combine(array_column($users, 'username'), array_column($users, 'username'));
 
 		$response = $error = null;
 		if ($this->request->isPost()) {
@@ -86,7 +71,7 @@ class UploadTest extends BasePage {
 			try {
 				// Send the data with a http client, and store the response body in a variable
 				$response = $this->sendData();
-			} catch (HttpClientException | CreateInputXmlException $e) {
+			} catch (HttpClientException|CreateInputXmlException $e) {
 				// Store error response of the request in $error var
 				$error = $e->getMessage();
 			}
@@ -94,9 +79,9 @@ class UploadTest extends BasePage {
 
 		// Render the form
 		return $this->render('/upload_test.phtml', [
-			'mpoints'    => $this->mpoints,
-			'properties' => $this->properties,
-			'users'      => $this->users,
+			'mpoints'    => $mpoints,
+			'properties' => $properties,
+			'users'      => $users,
 			'response'   => $response,
 			'error'      => $error
 		]);
@@ -110,7 +95,7 @@ class UploadTest extends BasePage {
 	 * @throws CreateInputXmlException
 	 * @throws HttpClientException
 	 * @throws PKIException
-	 * @see CreateInputXml
+	 * @see  CreateInputXml
 	 * @uses \Environet\Sys\Admin\Pages\UploadTest::generateSignatureHeader()
 	 * @uses \Environet\Sys\General\HttpClient\HttpClient::sendRequest()
 	 */

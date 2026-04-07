@@ -97,8 +97,7 @@ class JsonParser extends AbstractParser implements BuilderLayerInterface {
 	 * @inheritDoc
 	 */
 	public function serializeConfiguration(): string {
-		$result = '';
-		$result .= "monitoringPointId = $this->monitoringPointId\n";
+		$result = "monitoringPointId = $this->monitoringPointId\n";
 		$result .= "propertySymbol = $this->propertySymbol\n";
 		$result .= 'timeZone = ' . $this->timeZone . "\n";
 		$result .= 'onlyTimes = ' . $this->onlyTimes . "\n";

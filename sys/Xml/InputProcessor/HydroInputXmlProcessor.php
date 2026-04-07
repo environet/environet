@@ -70,8 +70,7 @@ class HydroInputXmlProcessor extends AbstractInputXmlProcessor {
 				->select('property.id')
 				->join(
 					'hydropoint_observed_property as point_property',
-					'point_property.observed_propertyid = property.id',
-					Query::JOIN_INNER
+					'point_property.observed_propertyid = property.id'
 				)
 				->where('property.symbol = :propertySymbol')
 				->where('point_property.mpointid = :pointId')
