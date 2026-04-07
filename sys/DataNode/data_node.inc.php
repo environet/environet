@@ -22,8 +22,6 @@
 
 use Environet\Sys\DataNode\Interfaces\UploaderInterface;
 
-require_once 'sys/userland/userland.inc.php';
-
 //! We take the list of plugins we need to run and execute them in order.
 $listplugins = EN_MOD_UPLOADERS;
 
