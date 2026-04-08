@@ -115,6 +115,23 @@ class Query {
 
 
 	/**
+	 * Filter bound parameters to only those that are used in the query string.
+	 *
+	 * @return $this
+	 */
+	public function filterUsedParameters(): self {
+		$sql = $this->buildQuery();
+		$this->parameters = array_filter(
+			$this->parameters,
+			fn(string $parameterName) => str_contains($sql, $parameterName),
+			ARRAY_FILTER_USE_KEY
+		);
+
+		return $this;
+	}
+
+
+	/**
 	 * Add a single parameter binding by key and value
 	 *
 	 * @param string $key  The name of the parameter

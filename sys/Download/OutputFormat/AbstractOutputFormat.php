@@ -94,6 +94,7 @@ abstract class AbstractOutputFormat {
 		$select->clearGroupBy()->groupBy('mpoint_id'); //Group by mpoint id to avoid duplicates
 		$select->clearOrderBy()->orderBy($queryMeta['type'] === 'hydro' ? 'eucd_wgst' : 'eucd_pst'); //Order by eucd code
 		$select->clearSelects()->select("{$type}point.id as mpoint_id"); //Select only the mpoint ids
+		$select->filterUsedParameters();
 		$results = $select->run();
 
 		$ids = array_values(array_unique(array_column($results, 'mpoint_id'))); //Find unique mpoint ids
@@ -149,6 +150,8 @@ abstract class AbstractOutputFormat {
 		$select->clearSelects()
 			->select("{$type}_observed_property.symbol as property_symbol")
 			->select("{$type}_observed_property.id as property_id");
+
+		$select->filterUsedParameters();
 		$results = $select->run();
 
 		$ids = array_values(array_unique(array_column($results, 'property_id'))); //Find unique property ids
