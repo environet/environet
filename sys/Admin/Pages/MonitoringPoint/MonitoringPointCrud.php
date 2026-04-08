@@ -385,7 +385,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 		//Generate CSV
 		$csv = fopen('php://temp', 'r+');
 		$csvColumns = $this->getCsvColumns();
-		fputcsv($csv, array_keys($csvColumns));
+		fputcsv($csv, array_keys($csvColumns), ',', '"', '\\');
 		foreach ($records as $record) {
 			$line = [];
 			foreach ($csvColumns as $field => $titleOrConfig) {
@@ -402,7 +402,7 @@ abstract class MonitoringPointCrud extends CrudPage implements MonitoringPointCS
 				}
 			}
 
-			fputcsv($csv, $line);
+			fputcsv($csv, $line, ',', '"', '\\');
 		}
 		rewind($csv);
 

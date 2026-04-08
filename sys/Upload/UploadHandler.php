@@ -137,7 +137,7 @@ class UploadHandler extends ApiHandler {
 	protected function validateSignature() {
 		// Get the XML content, and verify the signature with user's public key
 		$content = file_get_contents('php://input');
-		$hash = md5($content);
+		$hash = md5((string) $content);
 		$signature = base64_decode($this->getAuthHeaderParts()['signature'] ?? '');
 		$publicKey = $this->identity->getPublicKey();
 		$signatureValid = openssl_verify($hash, $signature, $publicKey, OPENSSL_ALGO_SHA256);
@@ -178,10 +178,10 @@ class UploadHandler extends ApiHandler {
 		//Collect all observed properties from the database
 		$properties = [];
 		foreach (HydroObservedPropertyQueries::getOptionList('symbol') as $symbol) {
-			$properties[strtolower($symbol)] = 'hydro';
+			$properties[strtolower((string) $symbol)] = 'hydro';
 		}
 		foreach (MeteoObservedPropertyQueries::getOptionList('symbol') as $symbol) {
-			$properties[strtolower($symbol)] = 'meteo';
+			$properties[strtolower((string) $symbol)] = 'meteo';
 		}
 
 		//Detect type based on the input properties

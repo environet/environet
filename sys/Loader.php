@@ -104,7 +104,7 @@ class Loader {
 	 */
 	public function addPrefix($prefix, $base_dirs, $prepend = false) {
 		// normalize the namespace prefix
-		$prefix = trim($prefix, '\\') . '\\';
+		$prefix = trim((string) $prefix, '\\') . '\\';
 
 		// initialize the namespace prefix array if needed
 		if (!isset($this->prefixes[$prefix])) {
@@ -114,7 +114,7 @@ class Loader {
 		// normalize each base dir with a trailing separator
 		$base_dirs = (array) $base_dirs;
 		foreach ($base_dirs as $key => $base_dir) {
-			$base_dirs[$key] = rtrim($base_dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+			$base_dirs[$key] = rtrim((string) $base_dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 		}
 
 		// prepend or append?
@@ -319,7 +319,7 @@ class Loader {
 			// replace namespace separators with directory separators
 			// in the relative class name, append with .php
 			$file = $base_dir
-					. str_replace('\\', DIRECTORY_SEPARATOR, $relative_class)
+					. str_replace('\\', DIRECTORY_SEPARATOR, (string) $relative_class)
 					. '.php';
 
 			// if the mapped file exists, require it

@@ -114,7 +114,7 @@ class UploadTest extends BasePage {
 				'time'  => trim($rowExploded[0]),
 				'value' => (float) trim($rowExploded[1]),
 			];
-		}, explode("\n", $_POST['values'] ?? null))));
+		}, explode("\n", (string) ($_POST['values'] ?? null)))));
 
 		// Create XML
 		$creator = new CreateInputXml();
@@ -155,7 +155,7 @@ class UploadTest extends BasePage {
 		}
 
 		$pkiLib = new PKI();
-		$signature = $pkiLib->generateSignature(md5($xml), file_get_contents($privateKeyFile));
+		$signature = $pkiLib->generateSignature(md5((string) $xml), file_get_contents($privateKeyFile));
 
 		return $pkiLib->authHeaderWithSignature($signature, $username);
 	}

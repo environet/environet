@@ -164,7 +164,7 @@ class MonitoringPointQueries {
 		if (!empty($countries)) {
 			$invalid = [];
 			foreach ($countries as $country) {
-				if (strlen($country) !== 2) {
+				if (strlen((string) $country) !== 2) {
 					$invalid[] = $param;
 				}
 			}

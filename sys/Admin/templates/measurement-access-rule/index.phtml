@@ -24,8 +24,8 @@
 			?>
 					<tr>
 						<td><?=$record['operator_name'] ?? null;?></td>
-                        <td><?=isset($record['monitoringpoint_selector']) ? (trim($record['monitoringpoint_selector']) === '*' ? 'All' : $record['monitoringpoint_selector']) : null;?></td>
-                        <td><?=isset($record['observed_property_selector']) ? (trim($record['observed_property_selector']) === '*' ? 'All' : $record['observed_property_selector']) : null;?></td>
+                        <td><?=isset($record['monitoringpoint_selector']) ? (trim((string) $record['monitoringpoint_selector']) === '*' ? 'All' : $record['monitoringpoint_selector']) : null;?></td>
+                        <td><?=isset($record['observed_property_selector']) ? (trim((string) $record['observed_property_selector']) === '*' ? 'All' : $record['observed_property_selector']) : null;?></td>
                         <td><?=$record['groups'] ?? null;?></td>
                         <td><?=$record['interval'] ?? null;?></td>
 						<td class="actions">

@@ -184,7 +184,7 @@ class Config {
 	protected function processValue($value, $configName) {
 		if (is_string($value) && str_ends_with($configName, '_path')) {
 			//Options endign with _path will be prefixed with the SRC path to make an absolute path.
-			return SRC_PATH . '/' . ltrim($value, '/');
+			return SRC_PATH . '/' . ltrim((string) $value, '/');
 		}
 
 		return $value;

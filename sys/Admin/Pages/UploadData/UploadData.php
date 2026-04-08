@@ -37,7 +37,7 @@ class UploadData extends AbstractUploadDataPage {
 		$maxFiles = ini_get('max_file_uploads');
 		$maxSize = Config::getInstance()->getUploadMaxSize();
 		$timezoneOptions = array_filter(array_unique(array_map(function ($option) {
-			return trim($option);
+			return trim((string) $option);
 		}, explode(',', Config::getInstance()->getUploadAvailableTimezones()))));
 		$selectedTimezoneOption = null;
 

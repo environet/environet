@@ -45,7 +45,7 @@ abstract class ApiHandler extends BaseHandler {
 			}
 
 			foreach ($params as &$param) {
-				$param = htmlspecialchars($param);
+				$param = htmlspecialchars((string) $param);
 			}
 
 			return $params;

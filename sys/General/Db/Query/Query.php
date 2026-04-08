@@ -22,7 +22,7 @@ class Query {
 	public const OPERATOR_AND = 'AND';
 	public const OPERATOR_OR  = 'OR';
 
-	public const DIR_ASC = 'ASC';
+	public const DIR_ASC  = 'ASC';
 	public const DIR_DESC = 'DESC';
 
 	public const JOIN_INNER = 'INNER';
@@ -30,12 +30,12 @@ class Query {
 	public const JOIN_LEFT  = 'LEFT';
 	public const JOIN_RIGHT = 'RIGHT';
 
-	public const FETCH_FIRST = 0b00000001;
-	public const FETCH_COUNT = 0b00000010;
+	public const FETCH_FIRST  = 0b00000001;
+	public const FETCH_COUNT  = 0b00000010;
 	public const FETCH_COLUMN = 0b00000100;
 	public const KEY_BY_ID    = 0b00001000;
-	public const RETURN_ID = 0b00010000;
-	public const RETURN_BOOL = 0b00100000;
+	public const RETURN_ID    = 0b00010000;
+	public const RETURN_BOOL  = 0b00100000;
 
 	/**
 	 * The connection class
@@ -117,8 +117,8 @@ class Query {
 	/**
 	 * Add a single parameter binding by key and value
 	 *
-	 * @param string $key   The name of the parameter
-	 * @param mixed  $value The value of the parameter
+	 * @param string $key  The name of the parameter
+	 * @param mixed $value The value of the parameter
 	 *
 	 */
 	public function addParameter($key, $value): self {

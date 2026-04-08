@@ -489,9 +489,9 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 			'timeInFilenameFormat' => $timeInFilenameFormat,
 			'properties'           => $properties,
 			'propertyLevel'        => $propertyLevel,
-			'conversionsFilename'  => $conversionsFilename,
-			'propertySymbolColumn' => $propertySymbolColumn,
-			'propertyValueColumn'  => $propertyValueColumn
+			'conversionsFilename'  => $conversionsFilename ?? null,
+			'propertySymbolColumn' => $propertySymbolColumn ?? null,
+			'propertyValueColumn'  => $propertyValueColumn ?? null,
 		];
 
 		return new self($config);

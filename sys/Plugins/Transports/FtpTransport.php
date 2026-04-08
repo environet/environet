@@ -182,7 +182,7 @@ class FtpTransport extends AbstractTransport {
 		$this->secure = $config['secure'];
 		$this->username = $config['username'];
 		$this->password = $config['password'];
-		$this->path = rtrim($config['path'], '/');
+		$this->path = rtrim((string) $config['path'], '/');
 		$this->filenamePattern = $config['filenamePattern'];
 		$this->newestFileOnly = $config['newestFileOnly'];
 		$this->lastNDaysOnly = $config['lastNDaysOnly'];

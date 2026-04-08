@@ -132,7 +132,7 @@ class XlsxOutputFormat extends AbstractTableOutputFormat {
 	protected function finalizeWrite(Response $response) {
 		//Write the file to a string, and send it as a response
 		$content = $this->writer->writeToString();
-		$size = strlen($content);
+		$size = strlen((string) $content);
 
 		$response->setContent($content);
 		$response->addHeader('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')

@@ -214,8 +214,8 @@ function includeTemplatePart($templatePath, $vars = []) {
  */
 function isRoute($path, $matchExtra): bool {
 	global $request;
-	$requestPath = explode('/', trim($request->getPath(), '/'));
-	$path = explode('/', trim($path, '/'));
+	$requestPath = explode('/', trim((string) $request->getPath(), '/'));
+	$path = explode('/', trim((string) $path, '/'));
 	if (count($requestPath) > count($path) + $matchExtra) {
 		return false;
 	}

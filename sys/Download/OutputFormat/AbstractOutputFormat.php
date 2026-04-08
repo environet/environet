@@ -177,7 +177,7 @@ abstract class AbstractOutputFormat {
 		// Generate export filename
 		$filenameParts = [];
 		if (is_string($this->globalConfig->getExportTitle()) && !empty($this->globalConfig->getExportTitle())) {
-			$filenameParts[] = str_replace(' ', '_', preg_replace('/\W+/iu', '_', $this->globalConfig->getExportTitle())); //Use export title if given
+			$filenameParts[] = str_replace(' ', '_', (string) preg_replace('/\W+/iu', '_', $this->globalConfig->getExportTitle())); //Use export title if given
 		}
 
 		if ($propertySymbols) {
@@ -188,7 +188,7 @@ abstract class AbstractOutputFormat {
 			$filenameParts[] = implode('-', array_unique($countries)); //Countries if given in the query
 		}
 		if (!empty(($points = $queryMeta['params']['points']))) {
-			$points = array_map(static fn($p) => str_replace(['_HYDRO', '_METEO'], '', $p), $points);
+			$points = array_map(static fn($p) => str_replace(['_HYDRO', '_METEO'], '', (string) $p), $points);
 			sort($points);
 			$filenameParts[] = implode('-', array_unique([reset($points), end($points)])); //First and last point code if given in the query
 		}

@@ -98,7 +98,7 @@ function checkDbInputValues($values) {
  */
 function snakeToCamelCase($string, $capitalizeFirstCharacter = false, $separator = '_') {
 
-	$str = str_replace(' ', '', ucwords(str_replace($separator, ' ', $string)));
+	$str = str_replace(' ', '', ucwords(str_replace((string) $separator, ' ', (string) $string)));
 
 	if (!$capitalizeFirstCharacter) {
 		$str = lcfirst($str);
@@ -116,7 +116,7 @@ function snakeToCamelCase($string, $capitalizeFirstCharacter = false, $separator
  *
  * @return string
  */
-function camelCaseToSnake(string $string, $separator = '_') {
+function camelCaseToSnake(string $string, string $separator = '_') {
 	preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $string, $matches);
 	$ret = $matches[0];
 	foreach ($ret as &$match) {
@@ -245,7 +245,7 @@ function arrayMapRecursive(array $data, callable $function) {
  * @return string
  */
 function makeAccentInsensitiveRegex(string $string) {
-	$stringArray = preg_split('//u', $string, null, PREG_SPLIT_NO_EMPTY);
+	$stringArray = preg_split('//u', $string, -1, PREG_SPLIT_NO_EMPTY);
 	$map = [
 		['a', 'à', 'å', 'á', 'â', 'ä', 'ã', 'å', 'ą'],
 		['e', 'è', 'é', 'ê', 'ë', 'ę'],

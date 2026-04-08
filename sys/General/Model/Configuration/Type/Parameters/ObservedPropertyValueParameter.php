@@ -21,20 +21,20 @@ class ObservedPropertyValueParameter extends AbstractFormatParameter {
 		parent::setOptions($config);
 
 		// Set symbol from Symbol, or the old Value field
-		if (!empty(trim($config['Symbol']))) {
-			$this->symbol = trim($config['Symbol']);
-		} elseif (!empty(trim($config['Value']))) {
-			$this->symbol = trim($config['Value']);
+		if (!empty(trim((string) $config['Symbol']))) {
+			$this->symbol = trim((string) $config['Symbol']);
+		} elseif (!empty(trim((string) $config['Value']))) {
+			$this->symbol = trim((string) $config['Value']);
 		}
 
-		if (!empty(trim($config['ValueConversion']))) {
-			$this->valueConversion = trim($config['ValueConversion']);
+		if (!empty(trim((string) $config['ValueConversion']))) {
+			$this->valueConversion = trim((string) $config['ValueConversion']);
 		}
 
 		// Set optional from Optional, or the old optional field
-		if (!empty(trim($config['Optional']))) {
+		if (!empty(trim((string) $config['Optional']))) {
 			$this->optional = $config['Optional'] === true;
-		} elseif (!empty(trim($config['optional']))) {
+		} elseif (!empty(trim((string) $config['optional']))) {
 			$this->optional = $config['optional'] === true;
 		}
 

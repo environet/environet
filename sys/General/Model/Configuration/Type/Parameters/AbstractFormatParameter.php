@@ -51,8 +51,8 @@ abstract class AbstractFormatParameter {
 	 * @return $this
 	 */
 	public function setOptions(array $config): AbstractFormatParameter {
-		if (isset($config['Attribute']) && !empty(trim($config['Attribute']))) {
-			$this->attribute = trim($config['Attribute']);
+		if (isset($config['Attribute']) && !empty(trim((string) $config['Attribute']))) {
+			$this->attribute = trim((string) $config['Attribute']);
 		}
 
 		//Set TagHierarchy

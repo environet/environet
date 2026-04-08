@@ -122,7 +122,7 @@ class Response {
 	 * Get size of response
 	 */
 	public function getSize(): int {
-		return mb_strlen($this->getContent(), '8bit');
+		return mb_strlen((string) $this->getContent(), '8bit');
 	}
 
 

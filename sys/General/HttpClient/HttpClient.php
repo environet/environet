@@ -117,7 +117,7 @@ class HttpClient {
 
 		// Callback which handles headers (status code, and other headers)
 		curl_setopt($curl, CURLOPT_HEADERFUNCTION, function ($ch, $data) use ($response) {
-			$str = trim($data);
+			$str = trim((string) $data);
 			if ('' !== $str) {
 				if (str_starts_with(strtolower($str), 'http/')) {
 					//Set status -> status code
@@ -128,14 +128,14 @@ class HttpClient {
 				}
 			}
 
-			return strlen($data);
+			return strlen((string) $data);
 		});
 
 		// Callback which writes body to response object
 		curl_setopt($curl, CURLOPT_WRITEFUNCTION, function ($ch, $data) use ($response) {
 			$response->appendBody($data);
 
-			return strlen($data);
+			return strlen((string) $data);
 		});
 
 		// Apply additional options. It can override any previously added cURL options

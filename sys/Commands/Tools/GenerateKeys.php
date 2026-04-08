@@ -41,7 +41,7 @@ class GenerateKeys extends BaseCommand {
 		$keyLocation = $this->console->askWithDefault('Enter the destination of files (relative to ' . $keyRealLocation . '):', self::$keyDefaultLocation);
 		$prefix = $this->console->ask('Enter the prefix for filenames (prefix_private.pem & prefix_public.pem). Prefix is optional');
 
-		$keyLocation = SRC_PATH . '/' . ltrim($keyLocation, '/');
+		$keyLocation = SRC_PATH . '/' . ltrim((string) $keyLocation, '/');
 		if (!is_dir($keyLocation)) {
 			mkdir($keyLocation, 0755, true);
 		}

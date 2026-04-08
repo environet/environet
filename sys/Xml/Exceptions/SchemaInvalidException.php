@@ -37,8 +37,8 @@ class SchemaInvalidException extends Exception {
 			};
 
 			// Build message and append to errorMessages
-			$message = trim($error->message);
-			$line = trim($error->line);
+			$message = trim((string) $error->message);
+			$line = trim((string) $error->line);
 			$this->errorMessages[] = "$messagePrefix $error->code: $message on line $line";
 		}
 

@@ -50,12 +50,12 @@ class GenerateSignature extends BaseCommand {
 			} else {
 				$keyLocation = $this->console->askWithDefault('Enter the path of private key (relative to ' . SRC_PATH . '):', $keyDefaultLocation);
 			}
-			if (!file_exists(SRC_PATH . '/' . ltrim($keyLocation, '/'))) {
+			if (!file_exists(SRC_PATH . '/' . ltrim((string) $keyLocation, '/'))) {
 				$this->console->writeLine("File $keyLocation does not exist");
 				continue;
 			}
 			// Prepend src path to private key
-			$keyLocation = SRC_PATH . '/' . ltrim($keyLocation, '/');
+			$keyLocation = SRC_PATH . '/' . ltrim((string) $keyLocation, '/');
 			break;
 		}
 
@@ -90,7 +90,7 @@ class GenerateSignature extends BaseCommand {
 
 		// Get content from file or from input
 		if ($inputContent || $this->console->askYesNo('Do you want to generate signature from md5 hash?', false)) {
-			$content = md5($content);
+			$content = md5((string) $content);
 		}
 
 		// Generate and write signature

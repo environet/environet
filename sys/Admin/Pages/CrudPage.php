@@ -411,7 +411,7 @@ abstract class CrudPage extends BasePage {
 	protected function getListPageLinkWithState(): string {
 		$path = $this->listPagePath;
 		if (($listPageState = $this->getListPageState())) {
-			$separator = str_contains($path, '?') ? '&' : '?';
+			$separator = str_contains((string) $path, '?') ? '&' : '?';
 			$listPageState = array_filter(array_map(function ($item) {
 				return urlencode($item);
 			}, $listPageState));

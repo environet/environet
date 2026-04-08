@@ -104,7 +104,7 @@ class HttpTransport extends AbstractTransport {
 			$url = $console->ask("Enter the url of data to be imported e.g.: https://example.com/data.txt");
 
 			$isIndex = $console->askWithDefault('Is the url is the list (index) of multiple files? [y/N]', 'n');
-			$isIndex = trim(strtolower($isIndex)) === 'y';
+			$isIndex = trim(strtolower((string) $isIndex)) === 'y';
 
 			$indexRegexPattern = '';
 			if ($isIndex) {
@@ -139,7 +139,7 @@ class HttpTransport extends AbstractTransport {
 	public function serializeConfiguration(): string {
 		return 'url = "' . $this->url . '"' . "\n"
 			. 'isIndex = ' . $this->isIndex . "\n"
-			. 'indexRegexPattern = "' . addcslashes($this->indexRegexPattern, '"') . '"' . "\n"
+			. 'indexRegexPattern = "' . addcslashes((string) $this->indexRegexPattern, '"') . '"' . "\n"
 			. 'monitoringPointType = "' . $this->monitoringPointType . '"' . "\n";
 	}
 
@@ -175,7 +175,7 @@ class HttpTransport extends AbstractTransport {
 			$hasMatches = preg_match_all($this->indexRegexPattern, $indexPageContents, $matches);
 			if ($hasMatches && !empty($matches['relativePath'])) {
 				$urls = array_map(function ($match) {
-					return new Resource()->setUrl(rtrim($this->url, '/') . '/' . ltrim($match, '/'));
+					return new Resource()->setUrl(rtrim((string) $this->url, '/') . '/' . ltrim((string) $match, '/'));
 				}, $matches['relativePath']);
 			}
 		} else {
@@ -195,7 +195,7 @@ class HttpTransport extends AbstractTransport {
 					'max_redirects'    => 5
 				]);
 				$resource->setContents($response->getBody());
-				$console->writeLine('File downloaded from url: ' . $resource->getUrl() . ' (' . strlen($resource->getContents()) . ' bytes)');
+				$console->writeLine('File downloaded from url: ' . $resource->getUrl() . ' (' . strlen((string) $resource->getContents()) . ' bytes)');
 
 				// Check if redirects occurred
 				if ($response->hasRedirects()) {
@@ -344,7 +344,7 @@ class HttpTransport extends AbstractTransport {
 				// do variable substitution
 				$url = $baseUrl;
 				foreach ($variables as $key => $value) {
-					$url = str_replace('[' . $key . ']', $value, $url);
+					$url = str_replace('[' . $key . ']', $value, (string) $url);
 				}
 
 				// remove part after pipe symbol

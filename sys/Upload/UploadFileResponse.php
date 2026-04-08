@@ -46,7 +46,7 @@ class UploadFileResponse {
 				return (string) $element;
 			}, $messages);
 			$this->errorMessages = array_filter($this->errorMessages, function ($message) {
-				return !str_contains($message, 'REMOTE_ADDR') && !str_contains($message, 'Username');
+				return !str_contains((string) $message, 'REMOTE_ADDR') && !str_contains($message, 'Username');
 			});
 		} else {
 			//Not a valid XML error, unknown

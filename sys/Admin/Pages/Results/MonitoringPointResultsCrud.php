@@ -100,7 +100,7 @@ abstract class MonitoringPointResultsCrud extends CrudPage {
 		}
 
 		$precisions = array_map(function ($result) {
-			return strlen(substr(rtrim(strrchr($result['value'] ?? 0, "."), '0'), 1));
+			return strlen(substr(rtrim(strrchr((string) ($result['value'] ?? 0), "."), '0'), 1));
 		}, $results);
 		$precision = max(2, $precisions ? max($precisions) : 0);
 

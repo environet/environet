@@ -223,8 +223,8 @@ class MeasurementAccessRuleCrud extends CrudPage {
 	 * @throws QueryException
 	 */
 	public function operatorPoints() {
-		$search = trim($this->request->getQueryParam('search'));
-		$operator = trim($this->request->getQueryParam('operator'));
+		$search = trim((string) $this->request->getQueryParam('search'));
+		$operator = trim((string) $this->request->getQueryParam('operator'));
 		$hydroQuery = new Select()->select(['name', 'id'])->from(HydroMonitoringPointQueries::$tableName);
 		$meteoQuery = new Select()->select(['name', 'id'])->from(MeteoMonitoringPointQueries::$tableName);
 		if ($operator) {
@@ -253,7 +253,7 @@ class MeasurementAccessRuleCrud extends CrudPage {
 
 		// Sort points by name
 		usort($results, function ($a, $b) {
-			return strcasecmp($a['name'], $b['name']);
+			return strcasecmp((string) $a['name'], (string) $b['name']);
 		});
 
 		return new Response(json_encode($results));
@@ -268,7 +268,7 @@ class MeasurementAccessRuleCrud extends CrudPage {
 	 */
 	public function operatorProperties() {
 		$type = $_GET['type'] ?: false;
-		$operator = trim($this->request->getQueryParam('operator'));
+		$operator = trim((string) $this->request->getQueryParam('operator'));
 
 		$results = [];
 
@@ -306,7 +306,7 @@ class MeasurementAccessRuleCrud extends CrudPage {
 
 		// Sort properties by symbol
 		usort($results, function ($a, $b) {
-			return strcasecmp($a['name'], $b['name']);
+			return strcasecmp((string) $a['name'], (string) $b['name']);
 		});
 
 		return new Response(json_encode($results));

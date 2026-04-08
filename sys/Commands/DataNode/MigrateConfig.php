@@ -145,7 +145,7 @@ class MigrateConfig extends BaseCommand {
 			$this->console->writeLine("Migrating monitoringPointType in config: " . $config['ini'], Console::COLOR_YELLOW);
 			$monitoringPointType = $config['conversionsContent']['monitoringPointType'];
 			unset($config['conversionsContent']['monitoringPointType']);
-			if (!empty(trim($monitoringPointType))) {
+			if (!empty(trim((string) $monitoringPointType))) {
 				$config['iniContent']['transport']['monitoringPointType'] = $monitoringPointType;
 				$config['iniContent']['parser']['monitoringPointType'] = $monitoringPointType;
 			}
@@ -288,7 +288,7 @@ class MigrateConfig extends BaseCommand {
 			}
 			$configuration['iniContent'] = $iniConfig;
 
-			$conversionsFilename = trim($iniConfig['transport']['conversionsFilename'] ?? '');
+			$conversionsFilename = trim((string) $iniConfig['transport']['conversionsFilename'] ?? '');
 			if (!empty($conversionsFilename) &&
 				file_exists(($conversionFile = CONFIGURATION_PATH . '/' . $conversionsFilename))
 			) {
@@ -296,7 +296,7 @@ class MigrateConfig extends BaseCommand {
 				$configuration['conversionsContent'] = json_decode(file_get_contents($conversionFile), true);
 			}
 
-			$formatsFilename = trim($iniConfig['parser']['formatsFilename'] ?? '');
+			$formatsFilename = trim((string) $iniConfig['parser']['formatsFilename'] ?? '');
 			if (!empty($formatsFilename) &&
 				file_exists(($formatsFile = CONFIGURATION_PATH . '/' . $formatsFilename))
 			) {

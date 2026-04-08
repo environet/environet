@@ -19,10 +19,10 @@ class ObservedPropertySymbolParameter extends AbstractFormatParameter {
 		parent::setOptions($config);
 
 		// Set variable from Variable, or the old Value field
-		if (!empty(trim($config['Variable']))) {
-			$this->variable = trim($config['Variable']);
-		} elseif (!empty(trim($config['Value']))) {
-			$this->variable = trim($config['Value']);
+		if (!empty(trim((string) $config['Variable']))) {
+			$this->variable = trim((string) $config['Variable']);
+		} elseif (!empty(trim((string) $config['Value']))) {
+			$this->variable = trim((string) $config['Value']);
 		}
 
 		return $this;

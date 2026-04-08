@@ -251,10 +251,10 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 				return false;
 			}
 			if ($this->separatorThousands != '') {
-				$valueItem->setValue(str_replace($this->separatorThousands, '', $valueItem->getValue()));
+				$valueItem->setValue(str_replace($this->separatorThousands, '', (string) $valueItem->getValue()));
 			}
 			if ($this->separatorDecimals != '.' && $this->separatorDecimals != '') {
-				$valueItem->setValue(str_replace($this->separatorDecimals, '.', $valueItem->getValue()));
+				$valueItem->setValue(str_replace($this->separatorDecimals, '.', (string) $valueItem->getValue()));
 			}
 			if ($valueItem->getParameter()->getValueConversion()) {
 				//Convert value if valueConversion parameter is set in format configuration
@@ -290,7 +290,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 				//Atomic date components are stored in $dateParams
 				$dateParams[$type] = $value;
 			}
-			if (str_contains($type, 'Date')) { //In case of Date or DateTime
+			if (str_contains((string) $type, 'Date')) { //In case of Date or DateTime
 				//In case of Date or DateTime, the date components are stored in $dateParams
 				$date = DateTime::createFromFormat($format, $value);
 				if (!$date) {
@@ -300,7 +300,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 				$dateParams['Month'] = preg_match('/[mMnF]/', $format) ? $date->format('m') : '01';
 				$dateParams['Day'] = preg_match('/[dD]/', $format) ? $date->format('d') : '01';
 			}
-			if (str_contains($type, 'Time')) { //In case of Time or DateTime
+			if (str_contains((string) $type, 'Time')) { //In case of Time or DateTime
 				//In case of Time or DateTime, the time components are stored in $dateParams
 				$time = DateTime::createFromFormat($format, $value);
 				if (!$time) {
@@ -338,9 +338,9 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 */
 	public function parse(Resource $resource): array {
 		$this->flatList = [];
-		Console::getInstance()->writeLineDp(sprintf('Received %s characters', strlen($resource->getContents())));
+		Console::getInstance()->writeLineDp(sprintf('Received %s characters', strlen((string) $resource->getContents())));
 
-		$resource->setContents(str_replace('xlink:href', 'href', $resource->getContents())); // Workaround for WaterML 2.0
+		$resource->setContents(str_replace('xlink:href', 'href', (string) $resource->getContents())); // Workaround for WaterML 2.0
 
 		libxml_use_internal_errors(true); // this turns off spitting parsing errors on screen
 		$xml = new SimpleXMLElement($resource->getContents());
@@ -521,7 +521,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		$formatsFilename = $console->ask('Filename for xml format definitions');
 
 		$skipEmptyValueTag = $console->askWithDefault('Should parser ignore empty values in XML?', 'n');
-		$skipEmptyValueTag = trim(strtolower($skipEmptyValueTag)) === 'y';
+		$skipEmptyValueTag = trim(strtolower((string) $skipEmptyValueTag)) === 'y';
 
 		$console->writeLine('Skip values with exact values: (if the value of a property matches the entered value, the row will be ignored)', Console::COLOR_YELLOW);
 		$skipValue = $console->ask('Skip value:');

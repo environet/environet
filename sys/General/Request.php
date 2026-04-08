@@ -64,15 +64,15 @@ class Request {
 	 * Request constructor.
 	 */
 	public function __construct() {
-		$requestUri = $_SERVER['REQUEST_URI'] ?? null;
+		$requestUri = (string) ($_SERVER['REQUEST_URI'] ?? '');
 
 		// Parse url
 		$this->path = parse_url($requestUri, PHP_URL_PATH);
 		$this->query = parse_url($requestUri, PHP_URL_QUERY);
 
 		// Create path parts
-		$this->pathParts = explode('/', trim($this->path, '/'));
-		parse_str($this->query, $this->parsedQuery);
+		$this->pathParts = explode('/', trim((string) $this->path, '/'));
+		parse_str((string) $this->query, $this->parsedQuery);
 	}
 
 

@@ -87,7 +87,7 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 	public static function createOnlyTimesConfig(Console $console) {
 		$console->writeLine('Do you want to filter import times with a cron config?', Console::COLOR_YELLOW);
 		$filterTimes = $console->askWithDefault('[y/n]', 'n');
-		$filterTimes = trim(strtolower($filterTimes)) === 'y';
+		$filterTimes = trim(strtolower((string) $filterTimes)) === 'y';
 
 
 		$onlyTimes = null;
@@ -111,7 +111,7 @@ abstract class AbstractParser implements ParserInterface, BuilderLayerInterface 
 	public static function createTimeInFilenameConfig(Console $console): ?string {
 		$console->writeLine('Is the time of measurement presented in filename?', Console::COLOR_YELLOW);
 		$timeInFilename = $console->askWithDefault('[y/n]', 'n');
-		$timeInFilename = trim(strtolower($timeInFilename)) === 'y';
+		$timeInFilename = trim(strtolower((string) $timeInFilename)) === 'y';
 
 		$timeInFilenameFormat = null;
 		if ($timeInFilename) {

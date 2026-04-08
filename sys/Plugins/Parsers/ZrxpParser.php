@@ -195,7 +195,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		}
 
 		//Check ZRXP version, abort section if invalid
-		$version = (int) substr($metaData['ZRXPVERSION'], 0, 1);
+		$version = (int) substr((string) $metaData['ZRXPVERSION'], 0, 1);
 		if ($version !== $this->zrxpVersion) {
 			Console::getInstance()->writeLineDp(sprintf('Version %s is not supported under section %d', $version, $sectionNum), null, null, true);
 
@@ -230,9 +230,9 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		}
 		$propertyNameZrxp = null;
 		if (isset($metaData['CNR'])) {
-			$propertyNameZrxp = strtoupper($metaData['CNR']);
+			$propertyNameZrxp = strtoupper((string) $metaData['CNR']);
 		} elseif (isset($metaData['CNAME'])) {
-			$propertyNameZrxp = strtoupper($metaData['CNAME']);
+			$propertyNameZrxp = strtoupper((string) $metaData['CNAME']);
 		}
 
 		if (is_null($propertyNameZrxp)) {
@@ -253,7 +253,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 		//Iterate over value lines, and parse the values and times
 		$propertyValues = [];
 		foreach ($values as $valueRow) {
-			$valueRow = explode(' ', preg_replace('/\s+/', ' ', trim($valueRow)));
+			$valueRow = explode(' ', preg_replace('/\s+/', ' ', trim((string) $valueRow)));
 			if (count($valueRow) !== $layoutColCount) {
 				//Value row must be built from the same amount of items which is defined in layout
 				continue;
@@ -401,8 +401,8 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 
 		foreach ($this->propertyMap as $dbProp => $propertyConfig) {
 			//Replace ; to ____ in values
-			$dbProp = str_replace(';', '____', $dbProp);
-			$propertyConfig = array_map(fn($configItem) => str_replace(';', '____', $configItem), $propertyConfig);
+			$dbProp = str_replace(';', '____', (string) $dbProp);
+			$propertyConfig = array_map(fn($configItem) => str_replace(';', '____', (string) $configItem), $propertyConfig);
 
 			$config .= 'properties[] = "' . $dbProp . ';' . implode(';', $propertyConfig) . "\"\n";
 		}
@@ -435,15 +435,15 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	protected function findProperty(string $propertyNameZrxp, array $metadata): ?string {
 		$propertyNameZrxp = strtoupper($propertyNameZrxp);
 		foreach ($this->propertyMap as $dbProp => $propertyConfig) {
-			if (strtoupper($propertyConfig['property']) !== $propertyNameZrxp) {
+			if (strtoupper((string) $propertyConfig['property']) !== $propertyNameZrxp) {
 				//Property name not matching, skip
 				continue;
 			}
-			$mdKey = $propertyConfig['additionalMetadataKey'] ? strtoupper($propertyConfig['additionalMetadataKey']) : null;
-			$mdValue = $propertyConfig['additionalMetadataValue'] ? strtoupper($propertyConfig['additionalMetadataValue']) : null;
+			$mdKey = $propertyConfig['additionalMetadataKey'] ? strtoupper((string) $propertyConfig['additionalMetadataKey']) : null;
+			$mdValue = $propertyConfig['additionalMetadataValue'] ? strtoupper((string) $propertyConfig['additionalMetadataValue']) : null;
 			if (!empty($mdKey) && //Has additional metadata config
 				!empty($mdValue) && //Additional metadata value not empty
-				(empty($metadata[$mdKey]) || !str_contains(strtoupper($metadata[$mdKey]), $mdValue)) //Metadata value of file empty, or not matching with the pattern
+				(empty($metadata[$mdKey]) || !str_contains(strtoupper((string) $metadata[$mdKey]), $mdValue)) //Metadata value of file empty, or not matching with the pattern
 			) {
 				//Metadata not matched
 				continue;

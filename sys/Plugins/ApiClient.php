@@ -136,7 +136,7 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	 * @uses ApiClient::generateSignatureHeader
 	 */
 	private function requestFromPayload(SimpleXMLElement $payload): Request {
-		$request = new Request(rtrim($this->apiAddress, '/') . '/upload');
+		$request = new Request(rtrim((string) $this->apiAddress, '/') . '/upload');
 		$request->setMethod('POST')->setBody($payload->asXML());
 
 		$request->addHeader('Accept', 'application/json');
@@ -162,7 +162,7 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 			throw new Exception("Private key at $this->privateKeyPath doesn't exist");
 		}
 		$pkiLib = new PKI();
-		$signature = $pkiLib->generateSignature(md5($xml->asXML()), file_get_contents(SRC_PATH . '/conf/plugins/credentials/' . $this->privateKeyPath));
+		$signature = $pkiLib->generateSignature(md5((string) $xml->asXML()), file_get_contents(SRC_PATH . '/conf/plugins/credentials/' . $this->privateKeyPath));
 
 		return $pkiLib->authHeaderWithSignature($signature, $username);
 	}
@@ -181,7 +181,7 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 		$request = new Request(
 			sprintf(
 				"%s/api/monitoring-points?token=%s",
-				rtrim($this->apiAddress, '/'),
+				rtrim((string) $this->apiAddress, '/'),
 				md5($token)
 			)
 		);

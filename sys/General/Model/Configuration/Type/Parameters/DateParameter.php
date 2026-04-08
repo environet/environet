@@ -19,15 +19,15 @@ class DateParameter extends AbstractFormatParameter {
 		parent::setOptions($config);
 
 		// Set format from Format, or the old Value field
-		if (!empty(trim($config['Format']))) {
-			$this->format = trim($config['Format']);
-		} elseif (!empty(trim($config['Value']))) {
-			$this->format = trim($config['Value']);
+		if (!empty(trim((string) $config['Format']))) {
+			$this->format = trim((string) $config['Format']);
+		} elseif (!empty(trim((string) $config['Value']))) {
+			$this->format = trim((string) $config['Value']);
 		}
 
 		// Set date type from Parameter
-		if (!empty(trim($config['Parameter']))) {
-			$this->dateType = trim($config['Parameter']);
+		if (!empty(trim((string) $config['Parameter']))) {
+			$this->dateType = trim((string) $config['Parameter']);
 		}
 
 		return $this;

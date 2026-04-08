@@ -163,7 +163,7 @@ abstract class AbstractTableOutputFormat extends AbstractOutputFormat {
 			//Write the properties sheet if the option is enabled
 			$this->writeHeader('Properties', $this->config['properties_headers']);
 			foreach ($propertyData as $property) {
-				$property['type'] = strtr($property['type'], $this->config['label_map']['property_type']);
+				$property['type'] = strtr((string) $property['type'], $this->config['label_map']['property_type']);
 				$this->writeRow('Properties', $property, $this->config['properties_headers']);
 			}
 		}

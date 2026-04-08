@@ -531,7 +531,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 	 * @throws Exception
 	 */
 	public function parse(Resource $resource): array {
-		Console::getInstance()->writeLineDp("Received " . strlen($resource->contents) . " characters");
+		Console::getInstance()->writeLineDp("Received " . strlen((string) $resource->contents) . " characters");
 
 		$resource->contents = str_replace("xlink:href", "href", $resource->contents); // Workaround for WaterML 2.0
 
@@ -696,7 +696,7 @@ class XmlParserOld extends AbstractParser implements BuilderLayerInterface {
 		$formatsFilename = $console->ask('Filename for xml format definitions');
 
 		$skipEmptyValueTag = $console->askWithDefault('Should parser ignore empty values in XML?', 'n');
-		$skipEmptyValueTag = trim(strtolower($skipEmptyValueTag)) === 'y';
+		$skipEmptyValueTag = trim(strtolower((string) $skipEmptyValueTag)) === 'y';
 
 		$console->writeLine('Skip values with exact values: (if the value of a property matches the entered value, the row will be ignored)', Console::COLOR_YELLOW);
 		$skipValue = $console->ask('Skip value:');

@@ -216,7 +216,7 @@ class SftpTransport extends AbstractTransport {
 		$this->password = $config['password'];
 		$this->privateKeyPath = $config['privateKeyPath'];
 		$this->publicKeyPath = $config['publicKeyPath'];
-		$this->path = rtrim($config['path'], '/');
+		$this->path = rtrim((string) $config['path'], '/');
 		$this->filenamePattern = $config['filenamePattern'];
 		$this->newestFileOnly = $config['newestFileOnly'];
 		$this->lastNDaysOnly = $config['lastNDaysOnly'];
@@ -251,7 +251,7 @@ class SftpTransport extends AbstractTransport {
 			chmod($privateKeyPath, 0600);
 
 			$privateKeyContents = file_get_contents($privateKeyPath);
-			if (str_contains($privateKeyContents, 'BEGIN OPENSSH PRIVATE KEY')) {
+			if (str_contains((string) $privateKeyContents, 'BEGIN OPENSSH PRIVATE KEY')) {
 				$privateKeyPathRsa = $privateKeyPath . '.rsa';
 				if (!file_exists($privateKeyPathRsa)) {
 					copy($privateKeyPath, $privateKeyPathRsa);

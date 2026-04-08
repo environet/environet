@@ -47,8 +47,8 @@ class OutputXmlObservationMember {
 		$startTimeSeries = $this->propertyData['phenomenon_time_begin'] ?? null;
 		$endTimeSeries = $this->propertyData['phenomenon_time_end'] ?? null;
 
-		$startTime = $startTimeRequest && strtotime($startTimeRequest) > strtotime($startTimeSeries) ? $startTimeRequest : $startTimeSeries;
-		$endTime = $endTimeRequest && strtotime($endTimeRequest) < strtotime($endTimeSeries) ? $endTimeRequest : $endTimeSeries;
+		$startTime = $startTimeRequest && strtotime((string) $startTimeRequest) > strtotime((string) $startTimeSeries) ? $startTimeRequest : $startTimeSeries;
+		$endTime = $endTimeRequest && strtotime((string) $endTimeRequest) < strtotime((string) $endTimeSeries) ? $endTimeRequest : $endTimeSeries;
 
 		$timePeriod->appendChild($doc->createElement('gml:beginPosition', $startTime ? dateToISO($startTime) : ''));
 		$timePeriod->appendChild($doc->createElement('gml:endPosition', $endTime ? dateToISO($endTime) : ''));

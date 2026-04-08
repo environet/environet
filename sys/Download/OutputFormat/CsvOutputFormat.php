@@ -93,7 +93,7 @@ class CsvOutputFormat extends AbstractTableOutputFormat {
 		foreach ($columnsConfig as $columnConfig) {
 			$data[] = $columnConfig['label'] ?? '';
 		}
-		fputcsv($this->getSheetFile($sheetName), $data);
+		fputcsv($this->getSheetFile($sheetName), $data, ',', '"', '\\');
 	}
 
 
@@ -113,7 +113,7 @@ class CsvOutputFormat extends AbstractTableOutputFormat {
 				$data[] = $this->mapToType($rowData[$key], $columnConfig['type']);
 			}
 		}
-		fputcsv($this->getSheetFile($sheetName), $data);
+		fputcsv($this->getSheetFile($sheetName), $data, ',', '"', '\\');
 	}
 
 
@@ -140,7 +140,7 @@ class CsvOutputFormat extends AbstractTableOutputFormat {
 
 		//Write the file to a string, and send it as a response
 		$content = file_get_contents($zipFilePath);
-		$size = strlen($content);
+		$size = strlen((string) $content);
 
 		$response->setContent($content);
 		$response->addHeader('Content-Type: application/zip')

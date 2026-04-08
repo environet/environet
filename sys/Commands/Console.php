@@ -137,7 +137,7 @@ class Console {
 		$this->writeLine($string);
 		$this->write("> ");
 
-		$value = trim(fgets($this->stdin));
+		$value = trim((string) fgets($this->stdin));
 		$this->writeLineBreak();
 
 		return $value;
@@ -155,7 +155,7 @@ class Console {
 		$this->writeLine($string);
 		$this->write("> ");
 
-		$value = trim(fgets($this->stdin));
+		$value = trim((string) fgets($this->stdin));
 		if ($value === '') {
 			//Return default if empty answer was given
 			$value = $defaultValue;
@@ -176,7 +176,7 @@ class Console {
 		$this->write("> ");
 
 		system('stty -echo');
-		$value = trim(fgets($this->stdin));
+		$value = trim((string) fgets($this->stdin));
 		system('stty echo');
 
 		$this->writeLineBreak();
@@ -242,7 +242,7 @@ class Console {
 			return $default;
 		}
 
-		return (strtolower($answer) == 'y');
+		return (strtolower((string) $answer) == 'y');
 	}
 
 

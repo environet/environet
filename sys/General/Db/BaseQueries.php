@@ -318,8 +318,8 @@ class BaseQueries {
 				$changed = $newData[$key] !== $originalData[$key];
 			} elseif (is_int($newData[$key]) || is_int($originalData[$key])) {
 				$changed = $newData[$key] !== $originalData[$key];
-			} elseif (strtotime($newData[$key]) !== false || strtotime($originalData[$key]) !== false) {
-				$changed = strtotime($newData[$key]) !== strtotime($originalData[$key]);
+			} elseif (strtotime((string) $newData[$key]) !== false || strtotime((string) $originalData[$key]) !== false) {
+				$changed = strtotime((string) $newData[$key]) !== strtotime((string) $originalData[$key]);
 			} else {
 				$changed = $newData[$key] !== $originalData[$key];
 			}

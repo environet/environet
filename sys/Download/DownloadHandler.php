@@ -237,7 +237,7 @@ class DownloadHandler extends ApiHandler {
 				// Missing type
 				throw new DownloadException(302);
 			}
-			$type = htmlspecialchars($type);
+			$type = htmlspecialchars((string) $type);
 			if (!in_array($type, [MonitoringPointQueries::TYPE_HYDRO, MonitoringPointQueries::TYPE_METEO])) {
 				// Invalid type
 				throw new DownloadException(303);
@@ -254,7 +254,7 @@ class DownloadHandler extends ApiHandler {
 			$startTime = $this->request->getQueryParam('start', false);
 			if ($startTime) {
 				try {
-					$params['start'] = createValidDate(htmlspecialchars($startTime));
+					$params['start'] = createValidDate(htmlspecialchars((string) $startTime));
 				} catch (Throwable $e) {
 					throw new DownloadException(304);
 				}
@@ -263,7 +263,7 @@ class DownloadHandler extends ApiHandler {
 			$endTime = $this->request->getQueryParam('end', false);
 			if ($endTime) {
 				try {
-					$params['end'] = createValidDate(htmlspecialchars($endTime));
+					$params['end'] = createValidDate(htmlspecialchars((string) $endTime));
 				} catch (Throwable $e) {
 					throw new DownloadException(305);
 				}
@@ -355,11 +355,11 @@ class DownloadHandler extends ApiHandler {
 	 *
 	 * @return void
 	 */
-	protected function saveDownloadLog(Response $response, ?int $errorCode = null) {
+	protected function saveDownloadLog(Response $response, int|string|null $errorCode = null) {
 		if ($this->downloadLog) {
 			$this->downloadLog['user_id'] = $this->identity?->getId();
 			$this->downloadLog['response_status'] = $response->getStatusCode();
-			$this->downloadLog['error_code'] = $errorCode;
+			$this->downloadLog['error_code'] = (int) $errorCode;
 			$this->downloadLog['response_size'] = $response->getSize();
 			$this->downloadLog['execution_time'] = round((microtime(true) - REQUEST_START_TIME) * 1000);
 

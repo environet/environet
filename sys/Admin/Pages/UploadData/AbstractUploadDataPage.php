@@ -397,7 +397,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 		}
 
 		//Generate signature from xml content and return auth header signature
-		$signature = $pkiLib->generateSignature(md5($xml), file_get_contents($privateKeyFile));
+		$signature = $pkiLib->generateSignature(md5((string) $xml), file_get_contents($privateKeyFile));
 
 		return $pkiLib->authHeaderWithSignature($signature, $username);
 	}
@@ -418,10 +418,10 @@ abstract class AbstractUploadDataPage extends BasePage {
 		$rowIndex = 0;
 		$inputTimezone = new DateTimeZone($selectedTimezoneOption);
 		$toTimezone = new DateTimeZone('UTC');
-		while (($row = fgetcsv($fileHandle, 10000)) !== false) {
+		while (($row = fgetcsv($fileHandle, 10000, ',', '"', '\\')) !== false) {
 			$rowIndex ++;
 			if (is_array($row)) {
-				$row = array_map(fn($value) => is_string($value) ? trim($value) : $value, $row);
+				$row = array_map(fn($value) => is_string($value) ? trim((string) $value) : $value, $row);
 			}
 			if ($rowIndex === 1 && !empty($row[1])) {
 				//Get mpoint id from first row
@@ -435,7 +435,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 			if ($rowIndex > 2) {
 				//Data rows with dates and values for each property
 				foreach ($properties as $propertyKey => $property) {
-					$dateString = isset($row[0]) ? trim($row[0]) : null;
+					$dateString = isset($row[0]) ? trim((string) $row[0]) : null;
 					if (empty($dateString)) {
 						continue;
 					}
@@ -486,7 +486,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 		// Create a request
 		$apiHost = Config::getInstance()->getDatanodeDistHost();
 		$apiHost = preg_match('/^https?:\/\//', $apiHost) ? $apiHost : 'https://' . $apiHost;
-		$request = new Request(rtrim($apiHost, '/') . $path);
+		$request = new Request(rtrim((string) $apiHost, '/') . $path);
 		$request->setBody(file_get_contents($bodyFile));
 		$request->setMethod('POST');
 

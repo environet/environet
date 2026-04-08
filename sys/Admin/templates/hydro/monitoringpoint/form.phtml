@@ -125,12 +125,12 @@
 
         <div class="mb-3">
             <label for="start_time" class="form-label">Start time</label>
-            <input type="date" name="start_time" id="start_time" class="form-control" value="<?=isset($record['start_time']) ? date('Y-m-d', strtotime($record['start_time'])) : ''?>" />
+            <input type="date" name="start_time" id="start_time" class="form-control" value="<?=isset($record['start_time']) ? date('Y-m-d', strtotime((string) $record['start_time'])) : ''?>" />
         </div>
 
         <div class="mb-3">
             <label for="end_time" class="form-label">End time</label>
-            <input type="date" name="end_time" id="end_time" class="form-control" value="<?=isset($record['end_time']) ? date('Y-m-d', strtotime($record['end_time'])) : ''?>" />
+            <input type="date" name="end_time" id="end_time" class="form-control" value="<?=isset($record['end_time']) ? date('Y-m-d', strtotime((string) $record['end_time'])) : ''?>" />
         </div>
 
         <fieldset class="mb-3">
