@@ -3,8 +3,6 @@
 
 namespace Environet\Sys\General\Exceptions;
 
-use Exception;
-
 /**
  * Class UniqueConstraintQueryException
  *

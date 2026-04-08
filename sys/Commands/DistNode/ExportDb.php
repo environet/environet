@@ -4,7 +4,6 @@
 namespace Environet\Sys\Commands\DistNode;
 
 use Environet\Sys\Commands\Console;
-use Environet\Sys\Commands\Exceptions\CommandException;
 use Environet\Sys\Config;
 
 /**

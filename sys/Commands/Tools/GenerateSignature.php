@@ -70,6 +70,7 @@ class GenerateSignature extends BaseCommand {
 		}
 
 
+		$content = '';
 		switch ($mode) {
 			case 1:
 				// Get from input

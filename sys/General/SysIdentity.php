@@ -14,7 +14,7 @@ namespace Environet\Sys\General;
 class SysIdentity extends Identity {
 
 
-	public const SYS_KEY_DIR = SRC_PATH . '/data/sys_keys';
+	public const string SYS_KEY_DIR = SRC_PATH . '/data/sys_keys';
 
 
 	/**

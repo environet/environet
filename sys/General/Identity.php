@@ -18,7 +18,7 @@ use Environet\Sys\General\Db\UserQueries;
 class Identity {
 
 
-	public const ADMIN_PERMISSION = 'admin.all';
+	public const string ADMIN_PERMISSION = 'admin.all';
 
 	/**
 	 * @var int Id of the identity

@@ -20,9 +20,9 @@ use TypeError;
 abstract class Selector {
 
 
-	public const SELECTOR_TYPE_INT = 'int';
-	public const SELECTOR_TYPE_FLOAT = 'float';
-	public const SELECTOR_TYPE_STRING = 'string';
+	public const string SELECTOR_TYPE_INT   = 'int';
+	public const string SELECTOR_TYPE_FLOAT = 'float';
+	public const string SELECTOR_TYPE_STRING = 'string';
 
 	/**
 	 * @var array Selector values (eg.: ids)

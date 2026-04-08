@@ -2,9 +2,6 @@
 
 namespace Environet\Sys\General\Db;
 
-use Environet\Sys\General\Db\Query\Select;
-use Environet\Sys\General\Exceptions\QueryException;
-
 /**
  * Class PermissionQueries
  *

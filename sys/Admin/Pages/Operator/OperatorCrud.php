@@ -68,6 +68,7 @@ class OperatorCrud extends CrudPage {
 	 * @throws RenderException
 	 */
 	public function list(): Response {
+		$totalCount = $currentPage = $maxPage = 0;
 		try {
 			$searchString = $this->request->getQueryParam('search');
 

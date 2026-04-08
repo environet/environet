@@ -3,7 +3,6 @@
 namespace Environet\Sys\Admin\Pages\Results;
 
 use Environet\Sys\Admin\Pages\CrudPage;
-use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\General\Exceptions\RenderException;
@@ -44,6 +43,8 @@ abstract class MonitoringPointResultsCrud extends CrudPage {
 	 * @throws RenderException
 	 */
 	public function list(): Response {
+		$totalCount = $currentPage = $maxPage = 0;
+		$searchString = '';
 		try {
 			//Base query with joins and conditions
 			$query = $this->getBaseQuery();

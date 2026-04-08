@@ -3,7 +3,6 @@
 
 namespace Environet\Sys\General\HttpClient;
 
-use Environet\Sys\General\Exceptions\PermissionException;
 use Environet\Sys\General\Identity;
 use Environet\Sys\General\Request;
 

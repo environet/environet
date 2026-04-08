@@ -18,15 +18,15 @@ use Environet\Sys\Config;
 class Console {
 
 
-	public const COLOR_BLACK = '0;30';
-	public const COLOR_RED   = '0;31';
-	public const COLOR_GREEN = '0;32';
-	public const COLOR_YELLOW = '0;33';
-	public const COLOR_WHITE  = '0;37';
-	public const BGCOLOR_BLACK = '40';
-	public const BGCOLOR_RED   = '41';
-	public const BGCOLOR_GREEN = '42';
-	public const BGCOLOR_YELLOW = '43';
+	public const string COLOR_BLACK = '0;30';
+	public const string COLOR_RED   = '0;31';
+	public const string COLOR_GREEN = '0;32';
+	public const string COLOR_YELLOW = '0;33';
+	public const string COLOR_WHITE  = '0;37';
+	public const string BGCOLOR_BLACK = '40';
+	public const string BGCOLOR_RED   = '41';
+	public const string BGCOLOR_GREEN = '42';
+	public const string BGCOLOR_YELLOW = '43';
 
 	/**
 	 * @var false|resource PHP standard input

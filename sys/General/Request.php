@@ -22,12 +22,12 @@ class Request {
 
 
 	/** Session key of admin auth */
-	public const AUTH_SESSION_KEY = 'adminauth';
+	public const string AUTH_SESSION_KEY = 'adminauth';
 
-	public const PREFIX_ADMIN = 'admin';
-	public const PREFIX_UPLOAD = 'upload';
-	public const PREFIX_DOWNLOAD = 'download';
-	public const PREFIX_JSONAPI  = 'api';
+	public const string PREFIX_ADMIN  = 'admin';
+	public const string PREFIX_UPLOAD = 'upload';
+	public const string PREFIX_DOWNLOAD = 'download';
+	public const string PREFIX_JSONAPI  = 'api';
 
 	/**
 	 * Request URI path

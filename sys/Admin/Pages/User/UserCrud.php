@@ -71,6 +71,7 @@ class UserCrud extends CrudPage {
 	public function list(): Response {
 
 		$searchString = $this->request->getQueryParam('search');
+		$totalCount = $currentPage = $maxPage = 0;
 
 		try {
 			//Base query with joins and conditions

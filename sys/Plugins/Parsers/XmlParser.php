@@ -33,7 +33,7 @@ use SimpleXMLElement;
 class XmlParser extends AbstractParser implements BuilderLayerInterface {
 
 
-	public const API_TIME_FORMAT_STRING = 'Y-m-d\TH:i:sP';
+	public const string API_TIME_FORMAT_STRING = 'Y-m-d\TH:i:sP';
 
 	/**
 	 * @var string Separator to group thousands in values. May be ""

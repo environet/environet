@@ -100,7 +100,7 @@ class ObservedPropertySelector extends BaseAccessSelector {
 			throw new Exception('Invalid monitoring point type!');
 		}
 
-		return new ObservedPropertySelector($ids, $type);
+		return new ObservedPropertySelector($ids, $type, 0, $points);
 	}
 
 

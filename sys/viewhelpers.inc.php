@@ -1,7 +1,5 @@
 <?php
 
-use Environet\Sys\General\Request;
-
 /**
  * Render an array of paginator numbers. Not all numbers will be added from 1 to max page.
  * Some items will be skipped, and replaced with '...'

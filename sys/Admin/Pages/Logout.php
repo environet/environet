@@ -48,6 +48,8 @@ class Logout extends BasePage {
 				$this->addMessage('Error during logout. Please try again');
 			}
 		}
+
+		return null;
 	}
 
 

@@ -4,13 +4,11 @@ namespace Environet\Sys\Plugins\Transports;
 
 use DateTime;
 use Environet\Sys\Commands\Console;
-use Environet\Sys\Plugins\BuilderLayerInterface;
 use Environet\Sys\Plugins\PluginBuilder;
 use Environet\Sys\Plugins\Resource;
 use Environet\Sys\Plugins\TransportInterface;
 use Environet\Sys\Plugins\WithConversionsConfigTrait;
 use Exception;
-use Throwable;
 
 /**
  * Class FtpTransport

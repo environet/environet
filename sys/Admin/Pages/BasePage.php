@@ -18,12 +18,12 @@ use Environet\Sys\General\View\Renderer;
 class BasePage {
 
 
-	public const MESSAGE_ERROR = 'error';
-	public const MESSAGE_WARNING = 'warning';
-	public const MESSAGE_INFO    = 'info';
-	public const MESSAGE_SUCCESS = 'success';
+	public const string MESSAGE_ERROR   = 'error';
+	public const string MESSAGE_WARNING = 'warning';
+	public const string MESSAGE_INFO    = 'info';
+	public const string MESSAGE_SUCCESS = 'success';
 
-	public const PAGE_SIZE = 10;
+	public const int PAGE_SIZE = 10;
 
 	/**
 	 * The request instance which represents the current request

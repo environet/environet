@@ -26,8 +26,8 @@ class HttpTransport extends AbstractTransport {
 
 	use WithConversionsConfigTrait;
 
-	public const TYPE_MANUAL = 1;
-	public const TYPE_JSON   = 2;
+	public const int TYPE_MANUAL = 1;
+	public const int TYPE_JSON   = 2;
 
 	/**
 	 * @var array

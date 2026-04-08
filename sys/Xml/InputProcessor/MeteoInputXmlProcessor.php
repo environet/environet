@@ -3,7 +3,6 @@
 namespace Environet\Sys\Xml\InputProcessor;
 
 use DateTime;
-use DateTimeZone;
 use Environet\Sys\General\Db\MeteoMonitoringPointQueries;
 use Environet\Sys\General\Db\Query\Insert;
 use Environet\Sys\General\Db\Query\Query;

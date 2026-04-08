@@ -11,7 +11,6 @@ use Environet\Sys\General\Db\MeasurementAccessRuleQueries;
 use Environet\Sys\General\Db\MeteoMonitoringPointQueries;
 use Environet\Sys\General\Db\MeteoObservedPropertyQueries;
 use Environet\Sys\General\Db\OperatorQueries;
-use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Db\UserQueries;
 use Environet\Sys\General\Exceptions\QueryException;
@@ -352,10 +351,10 @@ class MeasurementAccessRuleCrud extends CrudPage {
 			if (!empty($record['interval'])) {
 				try {
 					$dateInterval = new DateInterval($record['interval']);
+					$record['interval'] = trim(preg_replace('/\D0 \S+/', '', $dateInterval->format('%y years, %m months, %d days')), ',');
 				} catch (Exception $e) {
 					$record['interval'] = '';
 				}
-				$record['interval'] = trim(preg_replace('/\D0 \S+/', '', $dateInterval->format('%y years, %m months, %d days')), ',');
 			}
 		}
 	}

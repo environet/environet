@@ -38,7 +38,7 @@ class UploadHandler extends ApiHandler {
 
 
 	/** @inheritDoc */
-	protected const HANDLER_PERMISSION = 'api.upload';
+	protected const string HANDLER_PERMISSION = 'api.upload';
 
 
 	/**

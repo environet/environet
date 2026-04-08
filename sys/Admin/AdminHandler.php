@@ -54,7 +54,7 @@ use Exception;
 class AdminHandler extends BaseHandler {
 
 	/** @inheritDoc */
-	public const HANDLER_PERMISSION = 'admin.login';
+	public const string HANDLER_PERMISSION = 'admin.login';
 
 	/**
 	 * @var string Base path for templates

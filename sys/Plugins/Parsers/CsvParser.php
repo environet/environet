@@ -30,7 +30,7 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 
 	use WithConversionsConfigTrait;
 
-	public const API_TIME_FORMAT_STRING = 'Y-m-d\TH:i:sP';
+	public const string API_TIME_FORMAT_STRING = 'Y-m-d\TH:i:sP';
 
 	/**
 	 * @var mixed Delimiter character
@@ -301,7 +301,6 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 
 	/**
 	 * Create XML data from the observation properties input array.
-	 *
 	 *
 	 * @return array
 	 * @see InputXmlPropertyData

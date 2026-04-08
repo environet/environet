@@ -486,7 +486,7 @@ abstract class AbstractUploadDataPage extends BasePage {
 		// Create a request
 		$apiHost = Config::getInstance()->getDatanodeDistHost();
 		$apiHost = preg_match('/^https?:\/\//', $apiHost) ? $apiHost : 'https://' . $apiHost;
-		$request = new Request(rtrim((string) $apiHost, '/') . $path);
+		$request = new Request(rtrim($apiHost, '/') . $path);
 		$request->setBody(file_get_contents($bodyFile));
 		$request->setMethod('POST');
 

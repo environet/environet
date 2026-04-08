@@ -19,11 +19,11 @@ use stdClass;
  */
 class MonitoringPointQueries {
 
-	public const TYPE_HYDRO = 'hydro';
-	public const TYPE_METEO = 'meteo';
+	public const string TYPE_HYDRO = 'hydro';
+	public const string TYPE_METEO = 'meteo';
 
-	public const EUCD_POSTFIX_HYDRO = 'wgst';
-	public const EUCD_POSTFIX_METEO = 'pst';
+	public const string EUCD_POSTFIX_HYDRO = 'wgst';
+	public const string EUCD_POSTFIX_METEO = 'pst';
 
 	/**
 	 * Query builder instance
@@ -165,7 +165,7 @@ class MonitoringPointQueries {
 			$invalid = [];
 			foreach ($countries as $country) {
 				if (strlen((string) $country) !== 2) {
-					$invalid[] = $param;
+					$invalid[] = $country;
 				}
 			}
 

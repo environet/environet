@@ -25,10 +25,10 @@ use Exception;
 abstract class CrudPage extends BasePage {
 
 
-	public const PAGE_LIST = 'list';
-	public const PAGE_ADD  = 'add';
-	public const PAGE_EDIT = 'edit';
-	public const PAGE_SHOW = 'show';
+	public const string PAGE_LIST = 'list';
+	public const string PAGE_ADD  = 'add';
+	public const string PAGE_EDIT = 'edit';
+	public const string PAGE_SHOW = 'show';
 
 	/**
 	 * Relative path to the index template file.
@@ -116,6 +116,7 @@ abstract class CrudPage extends BasePage {
 	 * @throws RenderException
 	 */
 	protected function renderListPage(): Response {
+		$totalCount = $currentPage = $maxPage = 0;
 		try {
 			// get search param from query string
 			$searchString = $this->request->getQueryParam('search');
@@ -411,7 +412,7 @@ abstract class CrudPage extends BasePage {
 	protected function getListPageLinkWithState(): string {
 		$path = $this->listPagePath;
 		if (($listPageState = $this->getListPageState())) {
-			$separator = str_contains((string) $path, '?') ? '&' : '?';
+			$separator = str_contains($path, '?') ? '&' : '?';
 			$listPageState = array_filter(array_map(function ($item) {
 				return urlencode($item);
 			}, $listPageState));

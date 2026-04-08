@@ -19,23 +19,23 @@ use PDOStatement;
 class Query {
 
 
-	public const OPERATOR_AND = 'AND';
-	public const OPERATOR_OR  = 'OR';
+	public const string OPERATOR_AND = 'AND';
+	public const string OPERATOR_OR  = 'OR';
 
-	public const DIR_ASC  = 'ASC';
-	public const DIR_DESC = 'DESC';
+	public const string DIR_ASC  = 'ASC';
+	public const string DIR_DESC = 'DESC';
 
-	public const JOIN_INNER = 'INNER';
-	public const JOIN_OUTER = 'OUTER';
-	public const JOIN_LEFT  = 'LEFT';
-	public const JOIN_RIGHT = 'RIGHT';
+	public const string JOIN_INNER = 'INNER';
+	public const string JOIN_OUTER = 'OUTER';
+	public const string JOIN_LEFT  = 'LEFT';
+	public const string JOIN_RIGHT = 'RIGHT';
 
-	public const FETCH_FIRST  = 0b00000001;
-	public const FETCH_COUNT  = 0b00000010;
-	public const FETCH_COLUMN = 0b00000100;
-	public const KEY_BY_ID    = 0b00001000;
-	public const RETURN_ID    = 0b00010000;
-	public const RETURN_BOOL  = 0b00100000;
+	public const int FETCH_FIRST = 0b00000001;
+	public const int FETCH_COUNT = 0b00000010;
+	public const int FETCH_COLUMN = 0b00000100;
+	public const int KEY_BY_ID    = 0b00001000;
+	public const int RETURN_ID = 0b00010000;
+	public const int RETURN_BOOL = 0b00100000;
 
 	/**
 	 * The connection class

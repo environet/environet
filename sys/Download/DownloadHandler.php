@@ -43,7 +43,7 @@ class DownloadHandler extends ApiHandler {
 	/**
 	 * @inheritDoc
 	 */
-	protected const HANDLER_PERMISSION = 'api.download';
+	protected const string HANDLER_PERMISSION = 'api.download';
 
 	protected array $downloadLog;
 

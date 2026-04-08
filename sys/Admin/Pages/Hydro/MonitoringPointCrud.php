@@ -197,7 +197,9 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 
 				return $this->redirect($this->getListPageLinkWithState());
 			} catch (Throwable $e) {
-				$connection->runQuery("ROLLBACK TRANSACTION;", []);
+				if (isset($connection)) {
+					$connection->runQuery("ROLLBACK TRANSACTION;", []);
+				}
 				$this->addMessage('Can\'t save form data', self::MESSAGE_ERROR);
 
 				return $this->render('/hydro/monitoringpoint/form-warning-levels.phtml', $context);

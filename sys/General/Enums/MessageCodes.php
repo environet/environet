@@ -10,7 +10,7 @@ namespace Environet\Sys\General\Enums;
 class MessageCodes {
 
 
-	public const UPLOAD_WARNING_POINT_NOT_FOUND = 1;
+	public const int UPLOAD_WARNING_POINT_NOT_FOUND = 1;
 
 
 	/**
