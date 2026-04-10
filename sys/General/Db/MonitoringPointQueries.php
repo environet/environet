@@ -4,9 +4,11 @@
 namespace Environet\Sys\General\Db;
 
 use DateTime;
+use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\QueryException;
 use Exception;
+use RuntimeException;
 use stdClass;
 
 /**
@@ -18,6 +20,7 @@ use stdClass;
  * @author  SRG Group <dev@srg.hu>
  */
 class MonitoringPointQueries {
+
 
 	public const string TYPE_HYDRO = 'hydro';
 	public const string TYPE_METEO = 'meteo';
@@ -292,7 +295,7 @@ class MonitoringPointQueries {
 	/**
 	 * Add a pre-made filter to the main select or one of the subset selects
 	 *
-	 * @param null     $subsetKey
+	 * @param null $subsetKey
 	 */
 	protected function addFilter(stdClass $filter, string $key, $subsetKey = null) {
 		if ($subsetKey === null) {
@@ -378,6 +381,9 @@ class MonitoringPointQueries {
 			"{$this->type}point.name as mpoint_name",
 			"{$this->type}point.location as mpoint_location",
 			"{$this->type}point.utc_offset as mpoint_utc_offset",
+			"{$this->type}point.country as mpoint_country",
+			"{$this->type}point.start_time as mpoint_start_time",
+			"'{$this->type}' as mpoint_type",
 			"{$this->type}_observed_property.symbol as property_symbol",
 			"{$this->type}_observed_property.description as property_description",
 			"{$this->type}_observed_property.unit as property_unit",
@@ -400,6 +406,9 @@ class MonitoringPointQueries {
 			"{$this->type}point.name",
 			"{$this->type}point.location",
 			"{$this->type}point.utc_offset",
+			"{$this->type}point.country",
+			"{$this->type}point.start_time",
+			"mpoint_type",
 			"{$this->type}_observed_property.symbol",
 			"{$this->type}_observed_property.description",
 			"{$this->type}_observed_property.unit",
@@ -408,11 +417,30 @@ class MonitoringPointQueries {
 			"{$this->type}_time_series.result_time"
 		];
 
+		$select
+			->from("{$this->type}_result")
+			->join("{$this->type}_time_series", "{$this->type}_time_series.id = {$this->type}_result.time_seriesid")
+			->join("{$this->type}point", "{$this->type}point.id = {$this->type}_time_series.mpointid")
+			->join("{$this->type}_observed_property", "{$this->type}_observed_property.id = {$this->type}_time_series.observed_propertyid");
+
 		$mPointOrderField = 'mpoint_id';
 		if ($this->type === self::TYPE_HYDRO) {
+			$select->join("riverbank", "{$this->type}point.bankid = riverbank.id", Query::JOIN_LEFT);
 			$selectFields = array_merge($selectFields, [
 				"{$this->type}point.eucd_wgst",
 				"{$this->type}point.ncd_wgst",
+				"{$this->type}point.eucd_riv as mpoint_eucd_riv",
+				"{$this->type}point.river_kilometer as mpoint_river_kilometer",
+				"{$this->type}point.catchment_area as mpoint_catchment_area",
+				"{$this->type}point.gauge_zero as mpoint_gauge_zero",
+				"riverbank.value as mpoint_riverbank",
+			]);
+			$groupBys = array_merge($groupBys, [
+				"{$this->type}point.eucd_riv",
+				"{$this->type}point.river_kilometer",
+				"{$this->type}point.catchment_area",
+				"{$this->type}point.gauge_zero",
+				"mpoint_riverbank",
 			]);
 			$mPointOrderField = "eucd_wgst";
 		} elseif ($this->type === self::TYPE_METEO) {
@@ -423,12 +451,7 @@ class MonitoringPointQueries {
 			$mPointOrderField = "eucd_pst";
 		}
 
-		$select
-			->from("{$this->type}_result")
-			->join("{$this->type}_time_series", "{$this->type}_time_series.id = {$this->type}_result.time_seriesid")
-			->join("{$this->type}point", "{$this->type}point.id = {$this->type}_time_series.mpointid")
-			->join("{$this->type}_observed_property", "{$this->type}_observed_property.id = {$this->type}_time_series.observed_propertyid")
-			->where("{$this->type}_result.is_forecast = 'FALSE'")
+		$select->where("{$this->type}_result.is_forecast = 'FALSE'")
 			->select($selectFields);
 
 		if (!$isSubset) {
@@ -478,6 +501,21 @@ class MonitoringPointQueries {
 		$this->applyFilters();
 
 		return $this->select;
+	}
+
+
+	/**
+	 * Get label of mpoint type
+	 */
+	public static function getMpointTypeLabel(string $type): string {
+		if (!in_array($type, [self::TYPE_HYDRO, self::TYPE_METEO])) {
+			throw new RuntimeException("Invalid monitoring point type: $type");
+		}
+
+		return match ($type) {
+			self::TYPE_HYDRO => 'Hydrological',
+			self::TYPE_METEO => 'Meteorological',
+		};
 	}
 
 

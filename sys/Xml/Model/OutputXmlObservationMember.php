@@ -3,6 +3,7 @@
 namespace Environet\Sys\Xml\Model;
 
 use DOMDocument;
+use Environet\Sys\General\Db\MonitoringPointQueries;
 use Exception;
 
 /**
@@ -72,17 +73,64 @@ class OutputXmlObservationMember {
 
 		$observation->appendChild($doc->createElement('om:featureOfInterest'))
 			->appendChild($monitoringPoint = $doc->createElement('wml2:MonitoringPoint'));
-		$monitoringPoint->appendChild($doc->createElement('gml:description', $this->propertyData['mpoint_location'] ?? ''));
+		$monitoringPoint->appendChild($doc->createElement('gml:description', $this->propertyData['mpoint_name'] ?? ''));
 
 		$identifier = $doc->createElement('gml:identifier', $this->propertyData['eucd_wgst'] ?? $this->propertyData['eucd_pst'] ?? '');
-		$identifier->setAttribute('codeSpace', 'https://www.icpdr.org/DanubeHIS/monitoringPoint');
+		$identifier->setAttribute('codeSpace', 'http://www.danubehis.org/def/identifiers/EUCD');
 		$monitoringPoint->appendChild($identifier);
 
 		$monitoringPoint->appendChild($doc->createElement('gml:name', $this->propertyData['mpoint_name'] ?? ''));
 
-		$sampledFeature = $doc->createElement('sa:sampledFeature');
-		$sampledFeature->setAttribute('xlink:title', $this->propertyData['mpoint_name'] ?? '');
-		$monitoringPoint->appendChild($sampledFeature);
+		$type = $doc->createElement('sa:type');
+		$type->setAttribute('xlink:href', 'http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint');
+		$monitoringPoint->appendChild($type);
+
+		if (!empty($this->propertyData['mpoint_location'])) {
+			$sampledFeatureLocation = $doc->createElement('sa:sampledFeature');
+			$locationSlug = slug($this->propertyData['mpoint_location']);
+			$sampledFeatureLocation->setAttribute('xlink:title', $this->propertyData['mpoint_location']);
+			$sampledFeatureLocation->setAttribute('xlink:href', 'http://www.danubehis.org/def/locations/' . $locationSlug);
+			$monitoringPoint->appendChild($sampledFeatureLocation);
+		}
+
+		if (!empty($this->propertyData['mpoint_eucd_riv'])) {
+			$sampledFeatureRiver = $doc->createElement('sa:sampledFeature');
+			$riverSlug = slug($this->propertyData['mpoint_eucd_riv']);
+			$sampledFeatureRiver->setAttribute('xlink:title', $this->propertyData['mpoint_eucd_riv']);
+			$sampledFeatureRiver->setAttribute('xlink:href', 'http://www.danubehis.org/def/rivers/' . $riverSlug);
+			$monitoringPoint->appendChild($sampledFeatureRiver);
+		}
+
+		$parametersConfig = [
+			'eucd' => [['hydro', 'meteo'], 'EUCD', 'xsd:string', fn () => $this->propertyData['eucd_wgst'] ?? $this->propertyData['eucd_pst'] ?? ''],
+			'ncd' => [['hydro', 'meteo'], 'NCD', 'xsd:string', fn () => $this->propertyData['ncd_wgst'] ?? $this->propertyData['ncd_pst'] ?? ''],
+			'bank' => [['hydro'], 'Bank', 'xsd:string', fn () => $this->propertyData['mpoint_riverbank'] ?? ''],
+			'eucd_riv' => [['hydro'], 'EUCD River', 'xsd:string', fn () => $this->propertyData['mpoint_eucd_riv'] ?? ''],
+			'country' => [['hydro', 'meteo'], 'Country', 'xsd:string', fn () => $this->propertyData['mpoint_country'] ?? ''],
+			'river_km' => [['hydro'], 'River kilometers', 'xsd:float', fn () => $this->propertyData['mpoint_river_kilometer'] ?? ''],
+			'catchment_area' => [['hydro'], 'Catchment area', 'xsd:float', fn () => $this->propertyData['mpoint_catchment_area'] ?? ''],
+			'gauge_zero' => [['hydro'], 'Gauge zero', 'xsd:float', fn () => $this->propertyData['mpoint_gauge_zero'] ?? ''],
+			'start_time' => [['hydro', 'meteo'], 'Start time', 'xsd:dateTime', fn () => dateToISO($this->propertyData['mpoint_start_time'] ?? '')],
+		];
+
+		foreach ($parametersConfig as $parameter => $config) {
+			[$forTypes, $label, $type, $valueFn] = $config;
+			if (!in_array($type, $forTypes)) {
+				continue;
+			}
+			$parameterElement = $doc->createElement('sa:parameter');
+			$parameterNamedValueElement = $doc->createElement('om:NamedValue');
+			$nameElement = $doc->createElement('om:name');
+			$nameElement->setAttribute('xlink:href', 'http://www.danubehis.org/def/parameters/' . $parameter);
+			$nameElement->setAttribute('xlink:title', $label);
+			$valueElement = $doc->createElement('om:value', $valueFn());
+			$valueElement->setAttribute('xsi:type', $type);
+			$parameterNamedValueElement->appendChild($nameElement);
+			$parameterNamedValueElement->appendChild($valueElement);
+			$parameterElement->appendChild($parameterNamedValueElement);
+			$monitoringPoint->appendChild($parameterElement);
+		}
+
 
 		$pos = $doc->createElement('gml:pos', "{$this->propertyData['lat']} {$this->propertyData['long']}");
 		$pos->setAttribute('srsName', 'urn:ogc:def:crs:EPSG::4326');
@@ -90,6 +138,11 @@ class OutputXmlObservationMember {
 			->appendChild($doc->createElement('sams:shape'))
 			->appendChild($doc->createElement('gml:Point'))
 			->appendChild($pos);
+
+		$mpointType = $doc->createElement('wml2:monitoringType');
+		$mpointType->setAttribute('xlink:href', 'http://www.danubehis.org/def/monitoring-type/' . $this->propertyData['mpoint_type']);
+		$mpointType->setAttribute('xlink:title', MonitoringPointQueries::getMpointTypeLabel($this->propertyData['mpoint_type'] ?? ''));
+		$monitoringPoint->appendChild($mpointType);
 
 		$monitoringPoint
 			->appendChild($doc->createElement('wml2:timeZone'))
