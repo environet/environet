@@ -212,17 +212,40 @@ abstract class AbstractTableOutputFormat extends AbstractOutputFormat {
 		//But in tables properties are in columns. Because of this we need to keep track of the current row, and write it when we encounter a new time or station.
 		//With this approach, we will have to loop through the results only once, and write rows and columns as we go.
 
-		//Reorder the select query to order result_time first, then property_symbol, then station code.
-		$select->clearOrderBy()->orderBy('result_time')->orderBy('property_symbol')->orderBy($stationCodeField);
+		//Reorder the select query to order results appropriately
+		//If grouping by station, order by station first to keep all data for one station together
+		//Otherwise, order by time first for chronological output
+		$select->clearOrderBy();
+		if ($groupByStation) {
+			$select->orderBy($stationCodeField)->orderBy('result_time')->orderBy('property_symbol');
+		} else {
+			$select->orderBy('result_time')->orderBy($stationCodeField)->orderBy('property_symbol');
+		}
 		$stmt = $select->createStatement();
 
 		//Build a default row array with null values for all properties
 		$defaultRowArray = array_fill_keys(['station_code', 'time', ...array_map(static fn($p) => $p['symbol'], $propertyData)], null);
 		$rowData = $defaultRowArray;
-		while ($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			//Reset the row data to default values
-			$rowData = $defaultRowArray;
 
+		// Track previous values to detect changes
+		$prevSheet = null;
+
+		// Helper closure to write a row and handle sheet overflow
+		$writeCurrentRow = function (array &$sheet, array $rowData) use ($dataHeadersConfig) {
+			$this->writeRow($sheet['name'], $rowData, $dataHeadersConfig);
+
+			$sheet['rowCount']++;
+			if ($sheet['rowCount'] >= $this->config['max_rows']) {
+				//If we have reached the maximum number of rows for a sheet, create a new sheet with an incremented name
+				$currentNumber = preg_match('/_(\d+)$/', $sheet['name'], $m) ? (int) $m[1] : 1;
+				$sheet['name'] = $sheet['baseName'] . '_' . ($currentNumber + 1);
+
+				$this->writeHeader($sheet['name'], $dataHeadersConfig);
+				$sheet['rowCount'] = 1; //Reset row count for new sheet (calculate from 1 because of header row)
+			}
+		};
+
+		while ($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			if ($groupByStation) {
 				//If data is grouped by station, get the correct sheet for the current station
 				$sheet = &$sheets[$result[$stationCodeField]];
@@ -231,33 +254,38 @@ abstract class AbstractTableOutputFormat extends AbstractOutputFormat {
 				$sheet = &$sheets[$defaultDataSheetName];
 			}
 
+			//Check if time or station has changed, if so, write the previous row first
+			//We use $prevSheet to check, because when station changes, $sheet is already pointing to the new sheet
+			if (
+				$prevSheet !== null
+				&& isset($prevSheet['timePointer'])
+				&& isset($prevSheet['stationCodePointer'])
+				&& ($result['result_time'] !== $prevSheet['timePointer'] || $result[$stationCodeField] !== $prevSheet['stationCodePointer'])
+			) {
+				//If we have a row, and the time or station code has changed, write the previous row to the sheet.
+				$writeCurrentRow($prevSheet, $rowData);
+
+				//Reset the row data to default values
+				$rowData = $defaultRowArray;
+			}
+
 			//Update the row data with the current result
 			$rowData['time'] = $result['result_time'];
 			$rowData['station_code'] = $result[$stationCodeField];
 			$rowData[$result['property_symbol']] = $result['result_value'];
 
-			if (
-				isset($sheet)
-				&& isset($rowData)
-				&& ($result['result_time'] !== $sheet['timePointer'] || $result[$stationCodeField] !== $sheet['stationCodePointer'])
-			) {
-				//If we have a row, and the time or station code has changed, write the current row (for the previous time/station) to the sheet.
-				$this->writeRow($sheet['name'], $rowData, $dataHeadersConfig);
-
-				$sheet['rowCount']++;
-				if ($sheet['rowCount'] >= $this->config['max_rows']) {
-					//If we have reached the maximum number of rows for a sheet, create a new sheet with an incremented name
-					$currentNumber = preg_match('/_(\d+)$/', $sheet['name'], $m) ? (int) $m[1] : 1;
-					$sheet['name'] = $sheet['baseName'] . '_' . ($currentNumber + 1);
-
-					$this->writeHeader($sheet['name'], $dataHeadersConfig);
-					$sheet['rowCount'] = 1; //Reset row count for new sheet (calculate from 1 because of header row)
-				}
-			}
-
 			//Update the time and station code pointers for the current sheet
 			$sheet['timePointer'] = $result['result_time'];
 			$sheet['stationCodePointer'] = $result[$stationCodeField];
+
+			//Remember current sheet for next iteration
+			$prevSheet = &$sheet;
+		}
+
+		// Write the last row after the loop ends
+		// The $prevSheet variable points to the last processed sheet
+		if (isset($rowData) && isset($rowData['time']) && isset($prevSheet)) {
+			$writeCurrentRow($prevSheet, $rowData);
 		}
 
 		$filename = $this->generateFilename($propertySymbols, $queryMeta);
