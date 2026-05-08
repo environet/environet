@@ -1,3 +1,5 @@
+# Migration Guide for 2.0
+
 ## Distribution Node Upgrade Guide
 
 ### PostgreSQL 12 to 18 Upgrade Guide

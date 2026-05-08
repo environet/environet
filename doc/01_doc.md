@@ -4,6 +4,7 @@ This document is the documentation of the Environet system.
 
 * [System requirements](10_system_requirements.md)
 * [Setup](11_setup.md)
+    * [Migration Guide for 2.0](12_migration_guide_v2.0.md)
 * [Distribution node](20_distribution_node.md)
     * [Overview](20_distribution_node.md)
     * [Setup](21_setup.md)
