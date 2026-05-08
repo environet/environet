@@ -2,8 +2,7 @@
 
 ## Database engine
 
-* Required database engine is [PostgreSQL](https://www.postgresql.org/)
-* Version compatibility: 12+
+* Database engine used is PostgreSQL version 18 [PostgreSQL](https://www.postgresql.org/)
 
 ## Schema diagram
 
