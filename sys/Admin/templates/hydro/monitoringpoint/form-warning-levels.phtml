@@ -8,8 +8,10 @@
 			<thead>
 			<tr>
 				<th>Threshold Levels</th>
-				<?php foreach ($observedProperties as $observedPropertyName) { ?>
-					<th><?=$observedPropertyName;?></th>
+				<?php foreach ($observedProperties as $observedPropertyId => $observedPropertyName) { ?>
+					<th>
+						<?=$observedPropertyName . (isset($observedPropertyUnits[$observedPropertyId]) ? ' (' . $observedPropertyUnits[$observedPropertyId] . ')' : '');?>
+					</th>
 				<?php } ?>
 			</tr>
 			</thead>

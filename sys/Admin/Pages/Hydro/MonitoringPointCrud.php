@@ -178,6 +178,7 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 		], $this->formContext(), [
 			'warningLevels'      => WarningLevelQueries::getOptionListForOperator($record['operatorid']),
 			'observedProperties' => HydroObservedPropertyQueries::getRealTimeOptionList(),
+			'observedPropertyUnits' => HydroObservedPropertyQueries::getOptionList('unit')
 		]);
 
 		if ($this->request->isPost()) {
