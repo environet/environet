@@ -2,10 +2,12 @@
 
 namespace Environet\Sys\Admin\Pages\Hydro;
 
+use Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud as MonitoringPointCrudBase;
 use Environet\Sys\General\Db\Connection;
 use Environet\Sys\General\Db\HydroMonitoringPointQueries;
 use Environet\Sys\General\Db\HydroObservedPropertyQueries;
 use Environet\Sys\General\Db\HydroStationClassificationQueries;
+use Environet\Sys\General\Db\Query\Delete;
 use Environet\Sys\General\Db\Query\Insert;
 use Environet\Sys\General\Db\Query\Query;
 use Environet\Sys\General\Db\Query\Select;
@@ -13,8 +15,8 @@ use Environet\Sys\General\Db\Query\Update;
 use Environet\Sys\General\Db\RiverbankQueries;
 use Environet\Sys\General\Db\RiverBasinQueries;
 use Environet\Sys\General\Db\RiverQueries;
-use Environet\Sys\Admin\Pages\MonitoringPoint\MonitoringPointCrud as MonitoringPointCrudBase;
 use Environet\Sys\General\Db\WarningLevelQueries;
+use Environet\Sys\General\EventLogger;
 use Environet\Sys\General\Exceptions\HttpBadRequestException;
 use Environet\Sys\General\Exceptions\HttpNotFoundException;
 use Environet\Sys\General\Exceptions\PermissionException;
@@ -32,6 +34,7 @@ use Throwable;
  * @author  SRG Group <dev@srg.hu>
  */
 class MonitoringPointCrud extends MonitoringPointCrudBase {
+
 
 	/**
 	 * @inheritdoc
@@ -358,37 +361,74 @@ class MonitoringPointCrud extends MonitoringPointCrudBase {
 	protected function saveWarningLevels(int $mpointId, array $data, ?array $existingDataByKey = null) {
 		$existingDataByKey = $existingDataByKey ?: $this->getExistingWarningLevelData($mpointId);
 
+		$eventPrefix = 'hydropoint_warning_level_';
 		foreach ($data as $key => $value) {
-			if ($value === '' || $key === '__csrf') {
+			if ($key === '__csrf') {
 				continue;
 			}
-			//Convert to float, and split key
-			$value = floatval($value);
+
 			$observedPropertyId = explode('_', $key)[0];
 			$warningLevelId = explode('_', $key)[1];
-			if (!array_key_exists($key, $existingDataByKey)) {
-				//Threshold not saved yet, insert into databas
-				new Insert()->table('warning_level_hydropoint')->addSingleData([
-					'observed_propertyid' => $observedPropertyId,
-					'warning_levelid'     => $warningLevelId,
-					'mpointid'            => $mpointId,
-					'value'               => $value
-				])->run(Query::RETURN_BOOL);
-			} elseif ($value !== $existingDataByKey[$key]['value']) {
-				//Existing, and value updated, save it
-				new Update()
+
+			$dataToSave = [
+				'observed_propertyid' => $observedPropertyId,
+				'warning_levelid'     => $warningLevelId,
+				'mpointid'            => $mpointId,
+			];
+
+			if ($value === '' && array_key_exists($key, $existingDataByKey)) {
+				//Existing, but value deleted, remove from database
+				new Delete()
 					->table('warning_level_hydropoint')
-					->updateData(['value' => $value])
 					->where('warning_level_hydropoint.observed_propertyid = :observedPropertyId')
 					->where('warning_level_hydropoint.warning_levelid = :warningLevelId')
 					->where('warning_level_hydropoint.mpointid = :mpointId')
 					->addParameters([
-						'mpointId'           => $mpointId,
-						'warningLevelId'     => $warningLevelId,
-						'observedPropertyId' => $observedPropertyId,
+						'mpointId'           => $dataToSave['mpointid'],
+						'warningLevelId'     => $dataToSave['warning_levelid'],
+						'observedPropertyId' => $dataToSave['observed_propertyid'],
 					])
 					->run(Query::RETURN_BOOL);
+
+				if ($this->queriesClass::isEventsEnabled()) {
+					EventLogger::log($eventPrefix . 'delete', $dataToSave);
+				}
+				continue;
+			} elseif ($value === '') {
+				continue;
 			}
+
+			//Convert value to float
+			$value = floatval($value);
+			$dataToSave['value'] = $value;
+
+			if (!array_key_exists($key, $existingDataByKey)) {
+				//Threshold not saved yet, insert into database
+				new Insert()->table('warning_level_hydropoint')->addSingleData($dataToSave)->run(Query::RETURN_BOOL);
+
+				if ($this->queriesClass::isEventsEnabled()) {
+					EventLogger::log($eventPrefix . 'add', $dataToSave);
+				}
+			} elseif ($value !== $existingDataByKey[$key]['value']) {
+				//Existing, and value updated, save it
+				new Update()
+					->table('warning_level_hydropoint')
+					->updateData(['value' => $dataToSave['value']])
+					->where('warning_level_hydropoint.observed_propertyid = :observedPropertyId')
+					->where('warning_level_hydropoint.warning_levelid = :warningLevelId')
+					->where('warning_level_hydropoint.mpointid = :mpointId')
+					->addParameters([
+						'mpointId'           => $dataToSave['mpointid'],
+						'warningLevelId'     => $dataToSave['warning_levelid'],
+						'observedPropertyId' => $dataToSave['observed_propertyid'],
+					])
+					->run(Query::RETURN_BOOL);
+
+				if ($this->queriesClass::isEventsEnabled()) {
+					EventLogger::log($eventPrefix . 'update', $dataToSave);
+				}
+			}
+
 		}
 	}
 
