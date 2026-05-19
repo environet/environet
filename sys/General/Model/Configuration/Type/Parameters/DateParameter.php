@@ -26,7 +26,7 @@ class DateParameter extends AbstractFormatParameter {
 		}
 
 		// Set date type from Parameter
-		if (!empty(trim((string) $config['Parameter']))) {
+		if (!empty(trim((string) ($config['Parameter'] ?? null)))) {
 			$this->dateType = trim((string) $config['Parameter']);
 		}
 

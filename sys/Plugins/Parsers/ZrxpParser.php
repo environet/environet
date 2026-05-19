@@ -86,7 +86,7 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 	 */
 	public function __construct(array $config) {
 		$this->zrxpVersion = $config['zrxpVersion'];
-		$this->cutMpointLeadingZeros = $config['cutMpointLeadingZeros'] == 1;
+		$this->cutMpointLeadingZeros = isset($config['cutMpointLeadingZeros']) && $config['cutMpointLeadingZeros'] == 1;
 
 		//Create a map of properties, keys are the symbol in db, values are the symbols on zrxp files
 		if (!empty($config['properties'])) {
@@ -438,8 +438,8 @@ class ZrxpParser extends AbstractParser implements BuilderLayerInterface {
 				//Property name not matching, skip
 				continue;
 			}
-			$mdKey = $propertyConfig['additionalMetadataKey'] ? strtoupper((string) $propertyConfig['additionalMetadataKey']) : null;
-			$mdValue = $propertyConfig['additionalMetadataValue'] ? strtoupper((string) $propertyConfig['additionalMetadataValue']) : null;
+			$mdKey = !empty($propertyConfig['additionalMetadataKey']) ? strtoupper((string) $propertyConfig['additionalMetadataKey']) : null;
+			$mdValue = !empty($propertyConfig['additionalMetadataValue']) ? strtoupper((string) $propertyConfig['additionalMetadataValue']) : null;
 			if (!empty($mdKey) && //Has additional metadata config
 				!empty($mdValue) && //Additional metadata value not empty
 				(empty($metadata[$mdKey]) || !str_contains(strtoupper((string) $metadata[$mdKey]), $mdValue)) //Metadata value of file empty, or not matching with the pattern

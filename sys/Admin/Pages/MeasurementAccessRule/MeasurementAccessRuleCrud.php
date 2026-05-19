@@ -131,8 +131,8 @@ class MeasurementAccessRuleCrud extends CrudPage {
 	 */
 	protected function renderForm(?array $record = null): Response {
 		if ($this->request->isPost()) {
-			$_POST['monitoringpoint_selector'] = implode(',', $_POST['monitoringpoint_selector']);
-			$_POST['observed_property_selector'] = implode(',', $_POST['observed_property_selector']);
+			$_POST['monitoringpoint_selector'] = implode(',', $_POST['monitoringpoint_selector'] ?? []);
+			$_POST['observed_property_selector'] = implode(',', $_POST['observed_property_selector'] ?? []);
 		}
 
 		return parent::renderForm($record);
@@ -179,28 +179,28 @@ class MeasurementAccessRuleCrud extends CrudPage {
 			$this->addFieldMessage('operator', 'Operator is required', self::MESSAGE_ERROR);
 			$valid = false;
 		}
-		if (!(is_array($data['monitoringpoint_selector']) && !empty($data['monitoringpoint_selector']))) {
+		if (!(!empty($data['monitoringpoint_selector']) && is_array($data['monitoringpoint_selector']))) {
 			$this->addFieldMessage('monitoringpoint_selector', 'One or more monitoring point must be selected', self::MESSAGE_ERROR);
 			$valid = false;
 		}
-		if (!(is_array($data['observed_property_selector']) && !empty($data['observed_property_selector']))) {
+		if (!(!empty($data['observed_property_selector']) && is_array($data['observed_property_selector']))) {
 			$this->addFieldMessage('observed_property_selector', 'One or more observed property must be selected', self::MESSAGE_ERROR);
 			$valid = false;
 		}
-		if (!(is_array($data['groups']) && !empty($data['groups']))) {
+		if (!(!empty($data['groups']) && is_array($data['groups']))) {
 			$this->addFieldMessage('groups', 'One or more group must be selected', self::MESSAGE_ERROR);
 			$valid = false;
 		}
 
-		if (!is_numeric($data['interval_years'])) {
+		if (!empty($data['interval_years']) && !is_numeric($data['interval_years'])) {
 			$this->addFieldMessage('interval_years', 'Years must be a number', self::MESSAGE_ERROR);
 			$valid = false;
 		}
-		if (!is_numeric($data['interval_months'])) {
+		if (!empty($data['interval_months']) && !is_numeric($data['interval_months'])) {
 			$this->addFieldMessage('interval_months', 'Months must be a number', self::MESSAGE_ERROR);
 			$valid = false;
 		}
-		if (!is_numeric($data['interval_days'])) {
+		if (!empty($data['interval_days']) && !is_numeric($data['interval_days'])) {
 			$this->addFieldMessage('interval_days', 'Days must be a number', self::MESSAGE_ERROR);
 			$valid = false;
 		}

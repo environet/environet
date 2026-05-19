@@ -209,19 +209,19 @@ class SftpTransport extends AbstractTransport {
 	 *
 	 */
 	public function __construct(array $config) {
-		$this->host = $config['host'];
+		$this->host = $config['host'] ?? 'localhost';
 		$this->port = !empty($config['port']) ? (int) $config['port'] : null;
-		$this->authMode = $config['authMode'];
-		$this->username = $config['username'];
-		$this->password = $config['password'];
-		$this->privateKeyPath = $config['privateKeyPath'];
-		$this->publicKeyPath = $config['publicKeyPath'];
+		$this->authMode = $config['authMode'] ?? null;
+		$this->username = $config['username'] ?? null;
+		$this->password = $config['password'] ?? null;
+		$this->privateKeyPath = $config['privateKeyPath'] ?? null;
+		$this->publicKeyPath = $config['publicKeyPath'] ?? null;
 		$this->path = rtrim((string) $config['path'], '/');
-		$this->filenamePattern = $config['filenamePattern'];
-		$this->newestFileOnly = $config['newestFileOnly'];
-		$this->lastNDaysOnly = $config['lastNDaysOnly'];
+		$this->filenamePattern = $config['filenamePattern'] ?? null;
+		$this->newestFileOnly = $config['newestFileOnly'] ?? false;
+		$this->lastNDaysOnly = $config['lastNDaysOnly'] ?? false;
 		$this->skipProcessed = $config['skipProcessed'] ?? false;
-		$this->conversionsFilename = $config['conversionsFilename'];
+		$this->conversionsFilename = $config['conversionsFilename'] ?? null;
 		parent::__construct($config);
 	}
 

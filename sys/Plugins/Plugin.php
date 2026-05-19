@@ -99,6 +99,9 @@ class Plugin {
 
 									//Collect warnings and mark the request as having warnings
 									$requestHasWarnings = $requestHasWarnings || $type === 'warning';
+									if (!isset($warningCodes[$code])) {
+										$warningCodes[$code] = 0;
+									}
 									$warningCodes[$code] ++;
 								}
 							} catch (Exception $e) {

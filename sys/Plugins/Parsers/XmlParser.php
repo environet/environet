@@ -69,10 +69,10 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 	 */
 	public function __construct(array $config) {
 
-		$this->separatorThousands = $config['separatorThousands'];
-		$this->separatorDecimals = $config['separatorDecimals'];
+		$this->separatorThousands = $config['separatorThousands'] ?? null;
+		$this->separatorDecimals = $config['separatorDecimals'] ?? null;
 		$this->skipEmptyValueTag = isset($config['skipEmptyValueTag']) && $config['skipEmptyValueTag'];
-		$this->skipValue = $config['skipValue'];
+		$this->skipValue = $config['skipValue'] ?? null;
 
 		parent::__construct($config);
 	}
@@ -220,7 +220,7 @@ class XmlParser extends AbstractParser implements BuilderLayerInterface {
 		$i = 0;
 		$commonElements = [];
 		while (true) {
-			$elements = array_map(fn(array $hierarchy) => $hierarchy[$i], $tagHierarchies);
+			$elements = array_map(fn(array $hierarchy) => $hierarchy[$i] ?? null, $tagHierarchies);
 			$elements = array_values(array_unique(array_filter($elements, fn($element) => $element !== null)));
 			if (count($elements) === 1) {
 				$commonElements[] = $elements[0];
