@@ -19,6 +19,7 @@ use Environet\Sys\Commands\Tools\GenerateSignature;
 use Environet\Sys\Config;
 
 ini_set('memory_limit', - 1);
+ini_set('display_errors', 'stderr');
 
 define('SRC_PATH', realpath(__DIR__ . '/..'));
 
@@ -107,7 +108,7 @@ try {
 
 	$exitCode = $command->run($arguments, []);
 } catch (\Exception $exception) {
-	$console->writeLine($exception->getMessage(), Console::COLOR_RED);
+	$console->writeLine($exception->getMessage(), Console::COLOR_RED, null, true);
 	$exitCode = 1;
 }
 

@@ -15,11 +15,11 @@ use Environet\Sys\Config;
 if (EN_DEV_MODE) {
 	//! PHP Debug level - turn this off (0) for production use
 	error_reporting(E_ALL);
-	ini_set('display_errors', true);
+	ini_set('display_errors', 'stderr');
 } else {
 	//! PHP Debug level - turn this off (0) for production use
 	error_reporting(E_ERROR | E_WARNING | E_PARSE);
-	ini_set('display_errors', false);
+	ini_set('display_errors', 'stderr');
 }
 
 

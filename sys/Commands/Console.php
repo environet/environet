@@ -94,9 +94,17 @@ class Console {
 
 	/**
 	 * Write a linebreak
+	 *
+	 * @param bool $outError
+	 * @param bool $outBoth
 	 */
-	public function writeLineBreak() {
-		echo "\n";
+	public function writeLineBreak(bool $outError = false, bool $outBoth = false) {
+		if ($outError || $outBoth) {
+			fwrite(STDERR, "\n");
+		}
+		if (!$outError || $outBoth) {
+			echo "\n";
+		}
 	}
 
 
@@ -113,7 +121,7 @@ class Console {
 		?bool $datePrefix = null
 	) {
 		$this->write($string, $color, $bgColor, $outError, $outBoth, $datePrefix);
-		$this->writeLineBreak();
+		$this->writeLineBreak($outError, $outBoth);
 	}
 
 
@@ -123,7 +131,7 @@ class Console {
 	 */
 	public function writeLineDp(string $string, ?string $color = null, ?string $bgColor = null, bool $outError = false, bool $outBoth = false) {
 		$this->write($string, $color, $bgColor, $outError, $outBoth, true);
-		$this->writeLineBreak();
+		$this->writeLineBreak($outError, $outBoth);
 	}
 
 
