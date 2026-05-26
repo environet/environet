@@ -344,7 +344,7 @@ class HttpTransport extends AbstractTransport {
 				// do variable substitution
 				$url = $baseUrl;
 				foreach ($variables as $key => $value) {
-					$url = str_replace('[' . $key . ']', $value, (string) $url);
+					$url = str_replace('[' . $key . ']', (string) $value, (string) $url);
 				}
 
 				// remove part after pipe symbol
