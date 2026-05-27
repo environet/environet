@@ -6,6 +6,7 @@ This document is the documentation of the Environet system.
 
 * [System requirements](#10_system_requirements)
 * [Setup](#11_setup)
+    * [Migration Guide for 2.0](#12_migration_guide_v2.0)
 * [Distribution node](#20_distribution_node)
     * [Overview](#20_distribution_node)
     * [Setup](#21_setup)
@@ -122,6 +123,8 @@ Before pulling the source it is necessary to turn of git's `autocrlf` feature, t
 If `bash` is not installed on your computer, you should use `environet.bat` instead of `environet` for all commands. The arguments and the parameters are the same.
 
 <a name="12_migration_guide_v2.0"></a>
+
+# Migration Guide for 2.0
 
 ## Distribution Node Upgrade Guide
 
@@ -1610,12 +1613,6 @@ For files which are in XML format
 * _skipEmptyValueTag_ (optional): If 1, the empty value tags will be skipped. If 0, these empty value tag will be processed as a zero value
 * _skipValue_ (optional): A specific value which should be parsed as a non-existent value
 
-##### JsonParser
-For files which are in json format
-
-* _monitoringPointId_ (required): Id of monitoring point of the data in json file
-* _propertySymbol_ (required): Observed property symbol of the data in json file
-
 #### API client layer properties
 
 ##### ApiClient
@@ -1771,6 +1768,7 @@ This means the time1, time2, time3, ... time20 tags will be iterated and the val
 
 #### Date specifications
 A date specification has the property “Parameter” set to “Year”, “Month”, “Day”, “Hour”, “Minute”, “Second”, “Date”, “Time” or “DateTime”, depending on the exact information specified. The "Format" field defines the format of the given date. For example, a datetime format would be “Y-m-d H:i:s” and would describe “2020-01-31 23:40:41”.
+For available date formats, check this link: [https://www.php.net/manual/en/datetimeimmutable.createfromformat.php](https://www.php.net/manual/en/datetimeimmutable.createfromformat.php)
 
 | Character | Meaning | Example |
 | :---: | :--: | :---: |

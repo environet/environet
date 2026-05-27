@@ -271,12 +271,6 @@ For files which are in XML format
 * _skipEmptyValueTag_ (optional): If 1, the empty value tags will be skipped. If 0, these empty value tag will be processed as a zero value
 * _skipValue_ (optional): A specific value which should be parsed as a non-existent value
 
-##### JsonParser
-For files which are in json format
-
-* _monitoringPointId_ (required): Id of monitoring point of the data in json file
-* _propertySymbol_ (required): Observed property symbol of the data in json file
-
 #### API client layer properties
 
 ##### ApiClient

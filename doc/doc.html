@@ -1003,7 +1003,10 @@
 <p>This document is the documentation of the Environet system.</p>
 <ul>
 <li><a href="#10_system_requirements">System requirements</a></li>
-<li><a href="#11_setup">Setup</a></li>
+<li><a href="#11_setup">Setup</a>
+<ul>
+<li><a href="#12_migration_guide_v2.0">Migration Guide for 2.0</a></li>
+</ul></li>
 <li><a href="#20_distribution_node">Distribution node</a>
 <ul>
 <li><a href="#20_distribution_node">Overview</a></li>
@@ -1154,6 +1157,7 @@ You can do this with this command:
 use <code>environet.bat</code> instead of <code>environet</code> for all
 commands. The arguments and the parameters are the same.</p>
 <p><a name="12_migration_guide_v2.0"></a></p>
+<h1 id="migration-guide-for-2.0">Migration Guide for 2.0</h1>
 <h2 id="distribution-node-upgrade-guide">Distribution Node Upgrade
 Guide</h2>
 <h3 id="postgresql-12-to-18-upgrade-guide">PostgreSQL 12 to 18 Upgrade
@@ -2730,14 +2734,6 @@ value</li>
 <li><em>skipValue</em> (optional): A specific value which should be
 parsed as a non-existent value</li>
 </ul>
-<h5 id="jsonparser">JsonParser</h5>
-<p>For files which are in json format</p>
-<ul>
-<li><em>monitoringPointId</em> (required): Id of monitoring point of the
-data in json file</li>
-<li><em>propertySymbol</em> (required): Observed property symbol of the
-data in json file</li>
-</ul>
 <h4 id="api-client-layer-properties">API client layer properties</h4>
 <h5 id="apiclient">ApiClient</h5>
 <p>Data of target distribution node</p>
@@ -2920,8 +2916,9 @@ together.</p>
 “Month”, “Day”, “Hour”, “Minute”, “Second”, “Date”, “Time” or
 “DateTime”, depending on the exact information specified. The “Format”
 field defines the format of the given date. For example, a datetime
-format would be “Y-m-d H:i:s” and would describe “2020-01-31
-23:40:41”.</p>
+format would be “Y-m-d H:i:s” and would describe “2020-01-31 23:40:41”.
+For available date formats, check this link: <a
+href="https://www.php.net/manual/en/datetimeimmutable.createfromformat.php">https://www.php.net/manual/en/datetimeimmutable.createfromformat.php</a></p>
 <table>
 <thead>
 <tr class="header">
