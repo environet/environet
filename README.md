@@ -1768,7 +1768,7 @@ This means the time1, time2, time3, ... time20 tags will be iterated and the val
 
 #### Date specifications
 A date specification has the property “Parameter” set to “Year”, “Month”, “Day”, “Hour”, “Minute”, “Second”, “Date”, “Time” or “DateTime”, depending on the exact information specified. The "Format" field defines the format of the given date. For example, a datetime format would be “Y-m-d H:i:s” and would describe “2020-01-31 23:40:41”.
-For available date formats, check this link: [https://www.php.net/manual/en/datetimeimmutable.createfromformat.php](https://www.php.net/manual/en/datetimeimmutable.createfromformat.php)
+For available date formats, check this link: [https://www.php.net/manual/en/datetimeimmutable.createfromformat.php](https://www.php.net/manual/en/datetimeimmutable.createfromformat.php).
 Please note that the time zone specified in the parser layer of the basic configuration will be used for time conversions and must be the same as the timezone of the given date/time.
 
 | Character | Meaning | Example |
