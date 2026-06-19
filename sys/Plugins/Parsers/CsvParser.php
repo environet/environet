@@ -93,15 +93,15 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 	 *
 	 */
 	public function __construct(array $config) {
-		$this->csvDelimiter = $config['csvDelimiter'];
-		$this->nHeaderSkip = $config['nHeaderSkip'];
-		$this->mPointIdCol = $config['mPointIdCol'];
-		$this->timeCol = $config['timeCol'];
-		$this->skipValue = $config['skipValue'];
-		$this->timeFormat = $config['timeFormat'];
-		$this->conversionsFilename = $config['conversionsFilename'];
+		$this->csvDelimiter = $config['csvDelimiter'] ?? ',';
+		$this->nHeaderSkip = $config['nHeaderSkip'] ?? 0;
+		$this->mPointIdCol = $config['mPointIdCol'] ?? 0;
+		$this->timeCol = $config['timeCol'] ?? 0;
+		$this->skipValue = $config['skipValue'] ?? null;
+		$this->timeFormat = $config['timeFormat'] ?? null;
+		$this->conversionsFilename = $config['conversionsFilename'] ?? null;
 
-		if ($config['propertyLevel']) {
+		if ($config['propertyLevel'] ?? null) {
 			$this->propertyLevel = $config['propertyLevel'];
 		}
 
@@ -118,8 +118,8 @@ class CsvParser extends AbstractParser implements BuilderLayerInterface {
 			}
 		}, $config['properties']);
 
-		$this->propertySymbolColumn = $config['propertySymbolColumn'];
-		$this->propertyValueColumn = $config['propertyValueColumn'];
+		$this->propertySymbolColumn = $config['propertySymbolColumn'] ?? 0;
+		$this->propertyValueColumn = $config['propertyValueColumn'] ?? 0;
 
 		parent::__construct($config);
 	}
