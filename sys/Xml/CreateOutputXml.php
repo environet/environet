@@ -4,6 +4,7 @@ namespace Environet\Sys\Xml;
 
 use DOMDocument;
 use DOMException;
+use Environet\Sys\Config;
 use Environet\Sys\General\Db\Query\Select;
 use Environet\Sys\General\Exceptions\QueryException;
 use Environet\Sys\Xml\Model\OutputXmlObservationMember;
@@ -19,6 +20,9 @@ class CreateOutputXml {
 	/** @var string Path to a temporary directory for storing intermediate files. */
 	protected string $tmpDirPath;
 
+	/** @var Config Global configuration instance */
+	protected Config $config;
+
 
 	public function __construct() {
 		$tmpDirPath = SRC_PATH . '/data/tmp/output' . time() . '_' . uniqid();
@@ -26,6 +30,7 @@ class CreateOutputXml {
 			mkdir($tmpDirPath, 0755, true);
 		}
 		$this->tmpDirPath = $tmpDirPath;
+		$this->config = Config::getInstance();
 	}
 
 
@@ -91,6 +96,9 @@ class CreateOutputXml {
 		//Render metadata part and write it to the file
 		fwrite($f, $this->sanitizeXmlPart($this->renderMeta()));
 
+		//Render sourceDefinition part and write it to the file
+		fwrite($f, $this->sanitizeXmlPart($this->renderSourceDefinition()));
+
 		//Render parameters part and write it to the file
 		fwrite($f, $this->sanitizeXmlPart($this->renderParameters($queryMeta, $headers)));
 
@@ -137,6 +145,70 @@ class CreateOutputXml {
 
 
 	/**
+	 * Render the sourceDefinition part of the XML with license information.
+	 *
+	 * @throws DOMException
+	 */
+	protected function renderSourceDefinition(): string {
+		$doc = new DOMDocument('1.0', 'UTF-8');
+		$doc->appendChild($sourceDefinition = $doc->createElement('wml2:sourceDefinition'));
+
+		$sourceDefinition->appendChild($mdDataIdentification = $doc->createElement('gmd:MD_DataIdentification'));
+
+		// Citation
+		$mdDataIdentification->appendChild($citation = $doc->createElement('gmd:citation'));
+		$citation->appendChild($ciCitation = $doc->createElement('gmd:CI_Citation'));
+
+		// Title
+		if (!empty($this->config->getExportTitle())) {
+			$ciCitation->appendChild($title = $doc->createElement('gmd:title'));
+			$exportTitle = $this->config->getExportTitle();
+			$title->appendChild($doc->createElement('gco:CharacterString', $exportTitle));
+		}
+
+		// Date
+		$ciCitation->appendChild($date = $doc->createElement('gmd:date'));
+		$date->appendChild($ciDate = $doc->createElement('gmd:CI_Date'));
+		$ciDate->appendChild($dateElem = $doc->createElement('gmd:date'));
+		$dateElem->appendChild($doc->createElement('gco:Date', dateToISO('now')));
+		$ciDate->appendChild($dateType = $doc->createElement('gmd:dateType'));
+		$dateTypeCode = $doc->createElement('gmd:CI_DateTypeCode');
+		$dateTypeCode->setAttribute('codeList', 'http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#CI_DateTypeCode');
+		$dateTypeCode->setAttribute('codeListValue', 'creation');
+		$dateType->appendChild($dateTypeCode);
+
+		// Resource Constraints (License)
+		$licenseText = $this->config->getLicenseText();
+		if (!empty($licenseText)) {
+			$mdDataIdentification->appendChild($resourceConstraints = $doc->createElement('gmd:resourceConstraints'));
+			$resourceConstraints->appendChild($mdLegalConstraints = $doc->createElement('gmd:MD_LegalConstraints'));
+
+			$mdLegalConstraints->appendChild($useLimitation = $doc->createElement('gmd:useLimitation'));
+			$useLimitation->appendChild($doc->createElement('gco:CharacterString', $licenseText));
+
+			$mdLegalConstraints->appendChild($accessConstraints = $doc->createElement('gmd:accessConstraints'));
+			$restrictionCode = $doc->createElement('gmd:MD_RestrictionCode');
+			$restrictionCode->setAttribute('codeList', 'http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_RestrictionCode');
+			$restrictionCode->setAttribute('codeListValue', 'copyright');
+			$accessConstraints->appendChild($restrictionCode);
+		}
+
+		// Language
+		$mdDataIdentification->appendChild($language = $doc->createElement('gmd:language'));
+		$language->appendChild($doc->createElement('gco:CharacterString', 'en'));
+
+		// Character Set
+		$mdDataIdentification->appendChild($characterSet = $doc->createElement('gmd:characterSet'));
+		$charSetCode = $doc->createElement('gmd:MD_CharacterSetCode');
+		$charSetCode->setAttribute('codeList', 'http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_CharacterSetCode');
+		$charSetCode->setAttribute('codeListValue', 'utf8');
+		$characterSet->appendChild($charSetCode);
+
+		return $doc->saveXML();
+	}
+
+
+	/**
 	 * Render the parameters part of the XML.
 	 *
 	 * @throws DOMException
@@ -172,6 +244,8 @@ class CreateOutputXml {
 		$collection->setAttribute('xmlns:sa', "http://www.opengis.net/sampling/2.0");
 		$collection->setAttribute('xmlns:sams', "http://www.opengis.net/samplingSpatial/2.0");
 		$collection->setAttribute('xmlns:xlink', "http://www.w3.org/1999/xlink");
+		$collection->setAttribute('xmlns:gmd', "http://www.isotc211.org/2005/gmd");
+		$collection->setAttribute('xmlns:gco', "http://www.isotc211.org/2005/gco");
 		$collection->setAttribute(
 			'xsi:schemaLocation',
 			"http://www.opengis.net/waterml/2.0 " .

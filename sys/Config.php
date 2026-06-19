@@ -29,6 +29,7 @@ use Environet\Sys\General\Exceptions\InvalidConfigurationException;
  * @method string|null getExportAuthor
  * @method string getExportPropertyTypeLabelRealTime
  * @method string getExportPropertyTypeLabelProcessed
+ * @method string|null getLicenseText
  *
  * @package Environet\Sys
  * @author  SRG Group <dev@srg.hu>

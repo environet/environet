@@ -572,6 +572,25 @@ Data in header value:
 Zm9v YmFy;dGVzdA== MTIzNA==
 ```
 
+## License Information
+
+All download responses include license information if the `license_text` configuration is set in the system configuration (`conf.local.ini`):
+
+```ini
+[environet]
+license_text="Copyright (c) 2026 ICPDR. To obtain additional rights of use, visit http://www.icpdr.org/legal/."
+```
+
+**License text location by format:**
+
+* **XML format**: License text appears in the `<wml2:sourceDefinition>` section, within `<gmd:resourceConstraints>` → `<gmd:MD_LegalConstraints>` → `<gmd:useLimitation>`
+* **XLSX format**: License text appears in a separate "License" sheet (last sheet) in cell A1
+* **CSV format**: License text appears in a `LICENSE.txt` file included in the ZIP archive
+
+If `license_text` is not configured or is empty, the license information will not be included in the output.
+
+---
+
 ## Repsonses
 
 ### Success
@@ -2025,6 +2044,10 @@ Command: `./environet dist generate-merged-html`
 Description:
 During development, when markdown documentation has been changed, it's necessary to generate updated HTML documentation and merged markdown file.
 It's possible with this command.
+
+
+
+<a name="LICENSE_TEXT_CONFIG"></a>
 
 
 

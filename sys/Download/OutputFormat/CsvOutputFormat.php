@@ -16,7 +16,7 @@ class CsvOutputFormat extends AbstractTableOutputFormat {
 
 	protected array $config = [
 		// Data types for columns
-		'station_columns'         => [
+		'station_columns'    => [
 			'hydro' => [
 				'station_code'   => ['type' => 'string'],
 				'country'        => ['type' => 'string'],
@@ -45,11 +45,11 @@ class CsvOutputFormat extends AbstractTableOutputFormat {
 				'operator'      => ['type' => 'string'],
 			],
 		],
-		'data_headers'            => [
+		'data_headers'       => [
 			'station_code' => ['type' => 'string'],
 			'time'         => ['type' => 'date;Y-m-d H:i'],
 		],
-		'properties_headers'      => [
+		'properties_headers' => [
 			'symbol'      => ['type' => 'string'],
 			'type'        => ['type' => 'string'],
 			'unit'        => ['type' => 'string'],
@@ -136,6 +136,15 @@ class CsvOutputFormat extends AbstractTableOutputFormat {
 			$filePath = $this->tmpDirPath . '/' . $filename;
 			$zipArchive->addFile($filePath, $filename);
 		}
+
+		// Add LICENSE.txt file if license text is configured
+		$licenseText = $this->globalConfig->getLicenseText();
+		if (!empty($licenseText)) {
+			$licenseFilePath = $this->tmpDirPath . '/LICENSE.txt';
+			file_put_contents($licenseFilePath, $licenseText);
+			$zipArchive->addFile($licenseFilePath, 'LICENSE.txt');
+		}
+
 		$zipArchive->close();
 
 		//Write the file to a string, and send it as a response
