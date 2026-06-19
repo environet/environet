@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 SCRIPT_DIR="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
-INPUT_XMLS_DIR="$(dirname "$SCRIPT_DIR")/data/input_xmls"
+INPUT_XMLS_DIR="$(dirname "$SCRIPT_DIR")/data/distribution_node_payloads"
 
 cd "$INPUT_XMLS_DIR" || exit
 

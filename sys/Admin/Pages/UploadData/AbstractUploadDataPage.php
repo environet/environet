@@ -469,10 +469,16 @@ abstract class AbstractUploadDataPage extends BasePage {
 	 * Make an upload, or statistic request
 	 *
 	 *
+	 * @param string $path API path (e.g., '/upload' or '/upload/statistics')
+	 * @param string $bodyFile Path to the XML body file
+	 * @return Response
 	 * @throws HttpClientException
 	 * @throws PKIException
 	 */
 	protected function makeRequest(string $path, string $bodyFile): Response {
+		// Generate unique request ID for end-to-end tracking
+		$requestId = generateRequestId();
+
 		$username = SYS_USERNAME;
 		if (($identity = $this->request->getIdentity()) && //Has a logged in user
 			(!empty(UserQueries::getOperatorsOfUser($identity->getId()))) && //Logged in user has operators
@@ -492,6 +498,8 @@ abstract class AbstractUploadDataPage extends BasePage {
 
 		// Add generated auth header with signature
 		$request->addHeader('Authorization', $this->generateSignatureHeader($request->getBody(), $username));
+		// Add request ID for end-to-end tracking
+		$request->addHeader('X-Request-ID', $requestId);
 
 		// Send request
 		$client = new HttpClient();
@@ -509,9 +517,12 @@ abstract class AbstractUploadDataPage extends BasePage {
 		//Remove extension
 		$originalNameBase = preg_replace('/^(.*)\.[^\.]+$/', '$1', $originalName);
 
+		// Generate timestamp with microseconds
+		$timestamp = generateMicrosecondTimestamp('Ymd-Hisu');
+
 		//Generate filename
 		$storedFile = implode('_', [
-			date('Ymd-His'),
+			$timestamp,
 			($this->request->getIdentity()->getId() ?? 0),
 			preg_replace('/[^a-zA-Z0-9-]/', '', $originalNameBase)
 		]);

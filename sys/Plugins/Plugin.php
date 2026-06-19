@@ -82,11 +82,14 @@ class Plugin {
 							unset($allNCDs[$key]);
 						}
 
-						$console->write('Uploading monitoring point data for station NCD ' . $xmlMPointId . ": ");
+						// Generate unique request ID for end-to-end tracking
+						$requestId = generateRequestId();
+
+						$console->write('Uploading monitoring point data for station NCD ' . $xmlMPointId . " [RequestID: $requestId]: ");
 						//$console->write($xmlPayload->asXML(), Console::COLOR_YELLOW);
 						try {
 							$requestHasWarnings = false;
-							$response = $this->apiClient->upload($xmlPayload);
+							$response = $this->apiClient->upload($xmlPayload, $requestId);
 							$console->writeLine('success');
 
 							try {
@@ -116,11 +119,12 @@ class Plugin {
 								$successful ++;
 							}
 						} catch (Exception $e) {
-							$filename = $payloadStorage . '/' . date('YmdHis') . '_' . $xmlMPointId . '.xml';
+							// Save failed XML with request ID for debugging
+							$filename = $payloadStorage . '/' . $requestId . '.xml';
 							file_put_contents($filename, $xmlPayload->asXML());
 
 							$console->writeLine('failed');
-							$console->writeLine(sprintf("Upload for station NCD %s failed, response: ", $xmlMPointId), null, null, true);
+							$console->writeLine(sprintf("Upload for station NCD %s failed [RequestID: %s], response: ", $xmlMPointId, $requestId), null, null, true);
 							$console->writeLine($e->getMessage(), null, null, true);
 							$console->writeLine('Payload stored: ' . ltrim(str_replace(SRC_PATH, '', $filename), '/'), null, null, true);
 							$console->writeLine('---', null, null, true);

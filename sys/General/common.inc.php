@@ -1169,3 +1169,40 @@ $slugCharMap = [
 	'₹' => 'INR',
 	'₰' => 'PF',
 ];
+
+
+/**
+ * Create a DateTime object with microsecond precision in UTC timezone.
+ *
+ * @return DateTime DateTime object with microsecond precision in UTC
+ */
+function createMicrosecondDateTime(): DateTime {
+	$dateTime = DateTime::createFromFormat('U.u', sprintf('%.6f', microtime(true)));
+	$dateTime->setTimezone(new DateTimeZone('UTC'));
+	return $dateTime;
+}
+
+
+/**
+ * Generate a unique request ID based on current microsecond timestamp.
+ *
+ * Format: YYYYMMDDHHmmssμμμμμμ (e.g., 20260619143025123456)
+ *
+ * @return string Request ID with format YYYYMMDDHHmmssμμμμμμ
+ */
+function generateRequestId(): string {
+	return createMicrosecondDateTime()->format('YmdHisu');
+}
+
+
+/**
+ * Generate a timestamp string with microsecond precision in a custom format.
+ *
+ * @param string $format DateTime format string (default: 'YmdHisu')
+ *                       Use 'u' for microseconds in the format
+ * @return string Formatted timestamp string
+ */
+function generateMicrosecondTimestamp(string $format = 'YmdHisu'): string {
+	return createMicrosecondDateTime()->format($format);
+}
+

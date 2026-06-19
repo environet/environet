@@ -100,13 +100,20 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	/**
 	 * Upload an XML file to the distribution node.
 	 *
-	 *
+	 * @param SimpleXMLElement $payload The XML payload to upload
+	 * @param string|null $requestId Optional request ID. If not provided, a new one will be generated
+	 * @return Response
 	 * @throws HttpClientException
 	 * @throws Exception
 	 * @uses ApiClient::requestFromPayload
 	 * @uses HttpClient::sendRequest
 	 */
-	public function upload(SimpleXMLElement $payload): Response {
+	public function upload(SimpleXMLElement $payload, ?string $requestId = null): Response {
+		// Generate request ID if not provided for end-to-end tracking
+		if (!$requestId) {
+			$requestId = generateRequestId();
+		}
+
 		if ($this->ignoreUndefinedPoints) {
 			// Add ignore undefined points option to the payload
 			$optionsElement = $payload->xpath('/environet:UploadData/environet:UploadOptions')[0] ?? null;
@@ -116,7 +123,7 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 			}
 		}
 
-		$request = $this->requestFromPayload($payload);
+		$request = $this->requestFromPayload($payload, $requestId);
 		$client = new HttpClient();
 		$response = $client->sendRequest($request);
 		if ($response->getStatusCode() !== 200) {
@@ -130,18 +137,22 @@ class ApiClient implements ApiClientInterface, BuilderLayerInterface {
 	/**
 	 * Create a request with an XML payload.
 	 *
-	 *
+	 * @param SimpleXMLElement $payload The XML payload
+	 * @param string $requestId The unique request ID for tracking
+	 * @return Request
 	 * @throws Exception
 	 * @uses Request
 	 * @uses ApiClient::generateSignatureHeader
 	 */
-	private function requestFromPayload(SimpleXMLElement $payload): Request {
+	private function requestFromPayload(SimpleXMLElement $payload, string $requestId): Request {
 		$request = new Request(rtrim((string) $this->apiAddress, '/') . '/upload');
 		$request->setMethod('POST')->setBody($payload->asXML());
 
 		$request->addHeader('Accept', 'application/json');
 		// Add generated auth header with signature
 		$request->addHeader('Authorization', $this->generateSignatureHeader($payload, $this->apiUsername));
+		// Add request ID for end-to-end tracking
+		$request->addHeader('X-Request-ID', $requestId);
 
 		return $request;
 	}

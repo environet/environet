@@ -20,9 +20,11 @@ interface ApiClientInterface {
 	/**
 	 * Upload an XML file to the distribution node.
 	 *
-	 *
+	 * @param SimpleXMLElement $payload The XML payload to upload
+	 * @param string|null $requestId Optional request ID for tracking. If not provided, implementation should generate one
+	 * @return Response
 	 */
-	public function upload(SimpleXMLElement $payload): Response;
+	public function upload(SimpleXMLElement $payload, ?string $requestId = null): Response;
 
 
 }

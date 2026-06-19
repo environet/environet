@@ -278,4 +278,17 @@ class Request {
 	}
 
 
+	/**
+	 * Get a HTTP header value by name.
+	 *
+	 * @param string $name Header name (e.g., "X-Request-ID", "Content-Type")
+	 * @return string|null Header value if present, null otherwise
+	 */
+	public function getHeader(string $name): ?string {
+		$serverKey = 'HTTP_' . strtoupper(str_replace('-', '_', $name));
+
+		return $_SERVER[$serverKey] ?? null;
+	}
+
+
 }

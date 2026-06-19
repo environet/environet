@@ -57,11 +57,17 @@ function en_debug($string = "") {
 /**
  * Log an exception to file
  *
+ * @param Throwable $exception The exception to log
+ * @param string|null $requestId Optional request ID for tracking (format: YYYYMMDDHHmmssμμμμμμ)
  */
-function exception_logger(Throwable $exception) {
+function exception_logger(Throwable $exception, ?string $requestId = null) {
+	$timestamp = $requestId ? DateTime::createFromFormat('YmdHisu', $requestId) : null;
+	$dateStr = $timestamp ? $timestamp->format('Y-m-d H:i:s.u') : generateMicrosecondTimestamp('Y-m-d H:i:s.u');
+	$requestIdStr = $requestId ? " [RequestID: $requestId]" : "";
+
 	file_put_contents(
 		Config::getInstance()->getErrorExceptionPath(),
-		sprintf("[%s]: %s\n%s\n\n", date('c'), $exception->getMessage(), $exception->getTraceAsString()),
+		sprintf("[%s]%s: %s\n%s\n\n", $dateStr, $requestIdStr, $exception->getMessage(), $exception->getTraceAsString()),
 		FILE_APPEND
 	);
 }

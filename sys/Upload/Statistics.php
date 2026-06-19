@@ -38,6 +38,8 @@ class Statistics {
 
 	protected ?DateTime $date = null;
 
+	protected ?string $requestId = null;
+
 	protected array $duplicatePointTimes = [];
 
 	/**
@@ -437,6 +439,18 @@ class Statistics {
 	}
 
 
+	public function getRequestId(): ?string {
+		return $this->requestId;
+	}
+
+
+	public function setRequestId(?string $requestId): Statistics {
+		$this->requestId = $requestId;
+
+		return $this;
+	}
+
+
 	/**
 	 * Get messages, or messages of a specific type
 	 * @return array|array[]
@@ -490,6 +504,9 @@ class Statistics {
 		$xml->addChild('InputPropertiesCount', $this->getInputPropertiesCount());
 		$xml->addChild('Date', $this->getDate()->format('c'));
 		$xml->addChild('MonitoringPointId', $this->getMonitoringPointId());
+		if ($this->getRequestId()) {
+			$xml->addChild('RequestId', $this->getRequestId());
+		}
 
 		foreach ($this->getProperties() as $property) {
 			$xmlProperty = $xml->addChild('PropertyStatistics');
@@ -538,6 +555,7 @@ class Statistics {
 		$statistics->setInputPropertiesCount((int) ($xml->xpath('/environet:UploadStatistics/environet:InputPropertiesCount')[0] ?? null));
 		$statistics->setDate(createValidDate((string) $xml->xpath('/environet:UploadStatistics/environet:Date')[0] ?? null));
 		$statistics->setMonitoringPointId((string) $xml->xpath('/environet:UploadStatistics/environet:MonitoringPointId')[0] ?? null);
+		$statistics->setRequestId((string) $xml->xpath('/environet:UploadStatistics/environet:RequestId')[0] ?? null);
 
 		foreach ($properties as $property) {
 			$symbol = (string) $property->xpath('environet:Symbol')[0] ?? null;
@@ -573,6 +591,7 @@ class Statistics {
 	public function getLogData(): array {
 		$data = [];
 
+		$data['request_id'] = $this->getRequestId();
 		$data['input_properties_count'] = $this->getInputPropertiesCount();
 		$data['monitoring_point_id'] = $this->getMonitoringPointId();
 		$data['user_id'] = $this->getUserId();

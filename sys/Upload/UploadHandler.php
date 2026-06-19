@@ -55,17 +55,27 @@ class UploadHandler extends ApiHandler {
 	 * @uses UploadHandler::createInputProcessor
 	 */
 	public function handleRequest() {
+		//Define a common 'now' date with microseconds, which will be used in the upload process everywhere
+		$nowDate = createMicrosecondDateTime();
+
+		// Get request ID from header (sent by client), or generate a new one for backward compatibility
+		$requestId = $this->request->getHeader('X-Request-ID');
+		if (!$requestId) {
+			// No request ID provided by client, generate one for backward compatibility
+			$requestId = generateRequestId();
+		}
+
 		try {
 			$this->authorizeRequest();
 
 			$content = file_get_contents('php://input');
-			$this->storeInputData($content);
+			$this->storeInputData($content, $requestId);
 
 			try {
 				// Parse the XML with simpleXML
 				$parsedXml = new SimpleXMLElement($content);
 			} catch (Exception $exception) {
-				exception_logger($exception);
+				exception_logger($exception, $requestId);
 
 				// Syntax error
 				throw new UploadException(302, [], $this->identity->getData());
@@ -78,7 +88,7 @@ class UploadHandler extends ApiHandler {
 				// XML is invalid
 				throw UploadException::schemaErrors($e->getErrorMessages(), $this->identity->getData());
 			} catch (Exception $e) {
-				exception_logger($e);
+				exception_logger($e, $requestId);
 
 				// Other error during validation
 				throw UploadException::serverError();
@@ -86,15 +96,15 @@ class UploadHandler extends ApiHandler {
 
 			$isStatisticsRequest = ($this->request->getPathParts()[1] ?? null) === 'statistics';
 			define('UPLOAD_DRY_RUN', $isStatisticsRequest);
-
-			//Define a common 'now' date, which will be used in the upload process everywhere
-			$nowDate = new DateTime('now', (new DateTimeZone('UTC')));
 			$options = new UploadOptions()->initFromXml($parsedXml);
 
 			try {
 				// Input is valid syntactically and semantically valid, process it
 				$processor = $this->createInputProcessor($parsedXml, $options);
 				$processor->process($this->getIdentity(), $nowDate, $options);
+
+				// Set request ID in statistics for tracking
+				$processor->getStatistics()->setRequestId($requestId);
 
 				return new Response($processor->getStatistics()->toXml()->asXML())
 					->setStatusCode(200)
@@ -103,6 +113,7 @@ class UploadHandler extends ApiHandler {
 				if ($e->getCode() === 402 && $options->isIgnoreUndefinedPoints() && isset($processor)) {
 					//If the upload option is set to ignore undefined points, and the monitoring point is not found, return the statistics with a warning message
 					$processor->getStatistics()->addMessage('warning', null, MessageCodes::UPLOAD_WARNING_POINT_NOT_FOUND);
+					$processor->getStatistics()->setRequestId($requestId);
 
 					return new Response($processor->getStatistics()->toXml()->asXML())
 						->setStatusCode(200)
@@ -114,13 +125,13 @@ class UploadHandler extends ApiHandler {
 				throw new UploadException(401, [], $this->identity->getData());
 			}
 		} catch (UploadException $e) {
-			exception_logger($e);
+			exception_logger($e, $requestId);
 
 			return new Response(new CreateErrorXml()->generateXml($e->getErrorXmlData())->asXML())
 				->setStatusCode(400)
 				->setHeaders(['Content-type: application/xml']);
 		} catch (Throwable $e) {
-			exception_logger($e);
+			exception_logger($e, $requestId);
 
 			return new Response(new CreateErrorXml()->generateXml([new ErrorXmlData(500, $e->getMessage())])->asXML())
 				->setStatusCode(500)
@@ -224,15 +235,16 @@ class UploadHandler extends ApiHandler {
 	 * Store raw input XML data.
 	 *
 	 */
-	protected function storeInputData(string $content): void {
+	protected function storeInputData(string $content, string $requestId): void {
 		$config = Config::getInstance();
 		$storeInputXmls = $config->getStoreInputXmls();
 		if ($storeInputXmls) {
-			$dir = SRC_PATH . '/data/input_xmls';
+			$dir = SRC_PATH . '/data/distribution_node_payloads';
 			if (!is_dir($dir)) {
 				mkdir($dir, 0755, true);
 			}
-			file_put_contents($dir . '/' . time() . '.xml', $content);
+			// Use request ID in filename for easy tracking: YYYYMMDDHHMMSSΜΜΜΜΜΜ.xml
+			file_put_contents($dir . '/' . $requestId . '.xml', $content);
 		}
 	}
 
