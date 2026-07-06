@@ -29,7 +29,6 @@ use Environet\Sys\General\Exceptions\InvalidConfigurationException;
  * @method string|null getExportAuthor
  * @method string getExportPropertyTypeLabelRealTime
  * @method string getExportPropertyTypeLabelProcessed
- * @method string|null getLicenseText
  *
  * @package Environet\Sys
  * @author  SRG Group <dev@srg.hu>
@@ -126,6 +125,25 @@ class Config {
 		if (!in_array($this->getOpMode(), [EN_OP_MODE_DATA, EN_OP_MODE_DIST], true)) {
 			throw new InvalidConfigurationException('Operation mode is invalid');
 		}
+	}
+
+
+	/**
+	 * Get the configured license text.
+	 *
+	 * Supports the multi-line INI syntax where continuation lines are indented
+	 * with tabs/spaces. Those leading indentation characters are stripped so
+	 * they do not leak into the generated CSV/XLSX/XML output.
+	 */
+	public function getLicenseText(): string {
+		$value = $this->config['environet']['license_text'] ?? '';
+		if (!is_string($value) || $value === '') {
+			return '';
+		}
+		// Normalize line endings and strip leading whitespace (tabs/spaces) from each line after a newline.
+		$value = str_replace(["\r\n", "\r"], "\n", $value);
+		$value = preg_replace('/\n[ \t]+/', "\n", $value);
+		return trim($value);
 	}
 
 

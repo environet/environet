@@ -133,8 +133,10 @@ class XlsxOutputFormat extends AbstractTableOutputFormat {
 		// Add License sheet with license text if available
 		$licenseText = $this->globalConfig->getLicenseText();
 		if (!empty($licenseText)) {
-			$this->writer->writeSheetHeader('License', ['License Information' => 'string'], ['widths' => [100]]);
-			$this->writer->writeSheetRow('License', [$licenseText]);
+			$this->writer->writeSheetHeader('License', ['License Information' => 'string'], ['widths' => [100], 'wrap_text' => true]);
+			// Approximate row height based on number of line breaks so that wrapped text is visible.
+			$lineCount = max(1, substr_count($licenseText, "\n") + 1);
+			$this->writer->writeSheetRow('License', [$licenseText], ['wrap_text' => true, 'height' => 15 * $lineCount]);
 		}
 
 		//Write the file to a string, and send it as a response
