@@ -174,6 +174,14 @@ class DownloadHandler extends ApiHandler {
 
 		$subsets = $this->getRequestedSubsets($rules, $params);
 
+		// If access rules exist but none of them cover the requested combination of monitoring points
+		// and observed properties, treat it as an access denial. Without this, an empty subset list
+		// would cause the query builder to produce an unfiltered query against the whole result table,
+		// which hangs and produces a 502 upstream.
+		if (empty($subsets)) {
+			throw new AccessRuleException('Requested monitoring points or observed properties are not covered by any access rule assigned to this user!');
+		}
+
 		$intervalLimited = !empty(array_filter($subsets, function ($subset) {
 			return $subset['interval_limited'] ?? false;
 		}));
