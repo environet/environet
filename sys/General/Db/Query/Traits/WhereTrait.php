@@ -81,6 +81,16 @@ trait WhereTrait {
 
 
 	/**
+	 * Clear all where conditions.
+	 */
+	public function clearWheres(): self {
+		$this->wheres = [];
+
+		return $this;
+	}
+
+
+	/**
 	 * Add a where-in condition. It can be a bit complex to defined IN condition with PDO parameters.
 	 * This method create it with named parameters.
 	 *
@@ -123,6 +133,16 @@ trait WhereTrait {
 			$this->havings[$operator] = [];
 		}
 		$this->havings[$operator][] = $havingCondition;
+
+		return $this;
+	}
+
+
+	/**
+	 * Clear all having conditions.
+	 */
+	public function clearHavings(): self {
+		$this->havings = [];
 
 		return $this;
 	}

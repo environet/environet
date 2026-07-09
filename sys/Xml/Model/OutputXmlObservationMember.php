@@ -19,7 +19,7 @@ class OutputXmlObservationMember {
 	private bool $intervalLimited = false;
 
 
-	public function __construct(protected array $queryMeta) {
+	public function __construct(protected array $queryMeta, protected ?string $operatorName = null) {
 	}
 
 
@@ -73,6 +73,26 @@ class OutputXmlObservationMember {
 
 		$observation->appendChild($doc->createElement('om:featureOfInterest'))
 			->appendChild($monitoringPoint = $doc->createElement('wml2:MonitoringPoint'));
+
+		// Data provider / owner (operator) as ISO 19115 CI_ResponsibleParty
+		if (!empty($this->operatorName)) {
+			$metaDataProperty = $doc->createElement('gml:metaDataProperty');
+			$responsibleParty = $doc->createElement('gmd:CI_ResponsibleParty');
+			$organisationName = $doc->createElement('gmd:organisationName');
+			$organisationName->appendChild($doc->createElement('gco:CharacterString', $this->operatorName));
+			$responsibleParty->appendChild($organisationName);
+
+			$role = $doc->createElement('gmd:role');
+			$roleCode = $doc->createElement('gmd:CI_RoleCode', 'Owner');
+			$roleCode->setAttribute('codeList', 'http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode');
+			$roleCode->setAttribute('codeListValue', 'owner');
+			$role->appendChild($roleCode);
+			$responsibleParty->appendChild($role);
+
+			$metaDataProperty->appendChild($responsibleParty);
+			$monitoringPoint->appendChild($metaDataProperty);
+		}
+
 		$monitoringPoint->appendChild($doc->createElement('gml:description', $this->propertyData['mpoint_name'] ?? ''));
 
 		$identifier = $doc->createElement('gml:identifier', $this->propertyData['eucd_wgst'] ?? $this->propertyData['eucd_pst'] ?? '');

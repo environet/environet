@@ -21,7 +21,14 @@ class XmlOutputFormat extends AbstractOutputFormat {
 		$propertyData = $this->getPropertyData($select, $queryMeta, ['observed_property.symbol']);
 		$propertySymbols = array_column($propertyData, 'symbol');
 
-		$response = new Response(new CreateOutputXml()->generateXml($select, $queryMeta, $headers));
+		//Pre-load station data (with operator, river, sub-basin joins) so we don't have to bloat the main
+		//download query with the same joins just to expose operator name per row.
+		//The result is keyed by monitoring point id (via _keyid handled inside getStationData).
+		$stationData = $this->getStationData($select, $queryMeta, [
+			'operator.name as operator_name',
+		]);
+
+		$response = new Response(new CreateOutputXml()->generateXml($select, $queryMeta, $headers, $stationData));
 		$this->addResponseHeaders($response, $headers);
 
 		$filename = $this->generateFilename($propertySymbols, $queryMeta);

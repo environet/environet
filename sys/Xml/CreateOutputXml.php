@@ -43,7 +43,7 @@ class CreateOutputXml {
 	 * @throws DOMException
 	 * @throws QueryException
 	 */
-	public function generateXml(Select $select, array $queryMeta, array &$headers): string {
+	public function generateXml(Select $select, array $queryMeta, array &$headers, array $stationData = []): string {
 		//Create the PDO statement for fetching the values
 		$stmt = $select->createStatement();
 
@@ -53,8 +53,10 @@ class CreateOutputXml {
 			$memberKey = "{$valueRow['mpoint_id']}_{$valueRow['property_id']}";
 			$memberValuesFile = $this->tmpDirPath . "/member_{$memberKey}_values.xml";
 			if (!isset($memberValueFiles[$memberValuesFile])) {
-				//Create new observation member handler, and store it in the array with the file path as key
-				$memberValueFiles[$memberValuesFile] = new OutputXmlObservationMember($queryMeta);
+				//Create new observation member handler, and store it in the array with the file path as key.
+				//Pass operator name from the pre-loaded station data (keyed by mpoint_id).
+				$operatorName = $stationData[$valueRow['mpoint_id']]['operator_name'] ?? null;
+				$memberValueFiles[$memberValuesFile] = new OutputXmlObservationMember($queryMeta, $operatorName);
 			}
 
 			//Write the value row to the appropriate temporary file

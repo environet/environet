@@ -87,14 +87,24 @@ abstract class AbstractOutputFormat {
 	 * @throws QueryException
 	 */
 	protected function getStationData(Select $select, array $queryMeta, ?array $columns = null): array {
-		//Create a new select based on the given one, but only selecting the mpoint ids
-		$type = $queryMeta['type'];
+		//Clone the original select (which may contain UNIONs from access-rule subsets), and turn it
+		//into a wrapper query which extracts unique mpoint ids from the full result set.
+		//This preserves all filters and all subsets (unlike clearing unions on the clone).
+		$eucdField = $queryMeta['type'] === 'hydro' ? 'eucd_wgst' : 'eucd_pst';
+
 		$select = clone $select;
-		$select->clearUnions(); //Clear unions to avoid conflicts
-		$select->clearGroupBy()->groupBy('mpoint_id'); //Group by mpoint id to avoid duplicates
-		$select->clearOrderBy()->orderBy($queryMeta['type'] === 'hydro' ? 'eucd_wgst' : 'eucd_pst'); //Order by eucd code
-		$select->clearSelects()->select("{$type}point.id as mpoint_id"); //Select only the mpoint ids
-		$select->filterUsedParameters();
+		$originalSql = $select->buildQuery();
+		$select->clearSelects()
+			->clearJoins()
+			->clearWheres()
+			->clearHavings()
+			->clearGroupBy()
+			->clearOrderBy()
+			->clearUnions()
+			->from('(' . $originalSql . ') as _wrap')
+			->select('_wrap.mpoint_id')
+			->groupBy('_wrap.mpoint_id')
+			->orderBy("MIN(_wrap.$eucdField)");
 		$results = $select->run();
 
 		$ids = array_values(array_unique(array_column($results, 'mpoint_id'))); //Find unique mpoint ids
@@ -134,24 +144,22 @@ abstract class AbstractOutputFormat {
 	 * @throws QueryException
 	 */
 	protected function getPropertyData(Select $select, array $queryMeta, ?array $columns = null): array {
-		$type = $queryMeta['type'];
+		//Clone the original select (which may contain UNIONs from access-rule subsets), and turn it
+		//into a wrapper query which extracts unique property ids from the full result set.
+		//This preserves all filters and all subsets (unlike clearing unions on the clone).
 		$select = clone $select;
-
-		//Clear unions to avoid conflicts
-		$select->clearUnions();
-
-		//Group by property id to avoid duplicates
-		$select->clearGroupBy()->groupBy('property_id');
-
-		//Order by property symbol
-		$select->clearOrderBy()->orderBy('property_symbol');
-
-		//Select only the property ids and symbols
+		$originalSql = $select->buildQuery();
 		$select->clearSelects()
-			->select("{$type}_observed_property.symbol as property_symbol")
-			->select("{$type}_observed_property.id as property_id");
-
-		$select->filterUsedParameters();
+			->clearJoins()
+			->clearWheres()
+			->clearHavings()
+			->clearGroupBy()
+			->clearOrderBy()
+			->clearUnions()
+			->from('(' . $originalSql . ') as _wrap')
+			->select('_wrap.property_id')
+			->groupBy('_wrap.property_id')
+			->orderBy('MIN(_wrap.property_symbol)');
 		$results = $select->run();
 
 		$ids = array_values(array_unique(array_column($results, 'property_id'))); //Find unique property ids
