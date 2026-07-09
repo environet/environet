@@ -1,0 +1,103 @@
+; =============================================================================
+; Environet – local configuration template
+; =============================================================================
+; Copy this file to the docker root as conf/conf.local.ini and adjust the
+; values for your deployment. Settings left empty here fall back to the
+; defaults defined in sys/conf.default.ini.
+; =============================================================================
+
+[environet]
+
+; Operation mode.
+;   1 = data node
+;   2 = distribution node
+op_mode=
+
+; PHP-compatible timezone identifier, e.g. Europe/Budapest, UTC
+; Full list: https://www.php.net/manual/en/timezones.php
+timezone=
+
+; Enable developer/debug mode.  Set to false in production.
+; Default: false
+dev_mode=false
+
+; Maximum size allowed for a single upload file (e.g. 2M, 10M, 1G).
+; Default: 10M
+upload_max_size=10M
+
+; Comma-separated list of timezone abbreviations offered to uploaders.
+; Default: UTC,CET,EET
+upload_available_timezones=UTC,CET,EET
+
+; Whether to keep a copy of every received input XML in the input_xmls folder.
+; Default: (not set – disabled)
+store_input_xmls=false
+
+; License / disclaimer text that is prepended to exported CSV/XLSX/XML files.
+; Supports multi-line values: continuation lines must be indented with a tab.
+; Default: (empty)
+license_text=
+
+
+[database]
+
+; PostgreSQL host name or IP address (Docker service name is typical)
+host=
+
+; PostgreSQL port
+; Default: 5432
+port=5432
+
+; Database name
+database=
+
+; Database user
+user=
+
+; Database password
+pass=
+
+
+[datanode]
+
+; Base URL of the distribution node this data node reports to.
+; Example: https://distribution.example.org
+; Default: http://dist_apache
+dist_host=http://dist_apache
+
+
+[error]
+
+; Enable in-browser error display (set to false in production).
+; Default: true
+debug_enable=true
+
+; Enable writing debug output to a log file.
+; Default: true
+file_debug_enable=true
+
+; Path to the debug log file (relative to the project root).
+; Default: /logs/php/debug.log
+debug_path=/logs/php/debug.log
+
+; Path to the exception log file (relative to the project root).
+; Default: /logs/php/exception.log
+exception_path=/logs/php/exception.log
+
+
+[export]
+
+; Title embedded in exported files (e.g. project or organisation name).
+title=
+
+; Author name embedded in exported files.
+author=
+
+; Label used for real-time / near-real-time data in exports.
+; Default: Raw near-real-time data
+property_type_label_real_time=Raw near-real-time data
+
+; Label used for validated / processed data in exports.
+; Default: Validated processed data
+property_type_label_processed=Validated processed data
+

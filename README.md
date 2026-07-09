@@ -96,6 +96,26 @@ Change to the directory you checked the code out to, and you should be ready to 
 
   If you are installing a distribution node, refer to the distribution node [setup instructions](#21_setup)
   
+## Local configuration file
+
+After cloning the repository, you need to create the local configuration file for the Environet application. The file must be placed at **`conf/conf.local.ini`** inside the root directory's conf folder.
+
+A fully-commented template with all available options is provided in this repository:  
+[`doc/conf.local.ini.dist`](conf.local.ini.dist)
+
+Copy it and fill in the required values:
+
+```bash
+cp CoreEngine/doc/conf.local.ini.dist conf/conf.local.ini
+```
+
+At a minimum you must set:
+- `[environet]` → `op_mode` (`1` = data node, `2` = distribution node)
+- `[environet]` → `timezone` (e.g. `Europe/Budapest`)
+- `[database]` → `host`, `port`, `database`, `user`, `pass`
+
+All other keys fall back to the defaults defined in `sys/conf.default.ini`.
+
 ## Getting updates and maintenance
 
 The `environet` cli script is a wrapper for some docker containers managed with docker compose. After first starting a *dist* or *data* node, these services will start automatically after a system reboot.  
@@ -2044,10 +2064,6 @@ Command: `./environet dist generate-merged-html`
 Description:
 During development, when markdown documentation has been changed, it's necessary to generate updated HTML documentation and merged markdown file.
 It's possible with this command.
-
-
-
-<a name="LICENSE_TEXT_CONFIG"></a>
 
 
 
