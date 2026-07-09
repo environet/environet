@@ -29,9 +29,13 @@ upload_max_size=10M
 ; Default: UTC,CET,EET
 upload_available_timezones=UTC,CET,EET
 
-; Whether to keep a copy of every received input XML in the input_xmls folder.
+; Whether to keep a copy of every received distribution node payload in the distribution_node_payloads folder.
 ; Default: (not set – disabled)
-store_input_xmls=false
+store_distribution_node_payloads=false
+
+; Whether to keep a copy of every failed data node upload payload in the data_node_payloads folder.
+; Default: (not set – disabled)
+store_data_node_payloads=false
 
 ; License / disclaimer text that is prepended to exported CSV/XLSX/XML files.
 ; Supports multi-line values: continuation lines must be indented with a tab.

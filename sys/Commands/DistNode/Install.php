@@ -72,8 +72,8 @@ class Install extends BaseCommand {
 		}
 
 
-		$storeInputXmls = $this->console->askYesNo("Do you want to store input XML data in a local directory?");
-		$configArray['environet']['store_input_xmls'] = $storeInputXmls;
+		$storeDistributionNodePayloads = $this->console->askYesNo("Do you want to store distribution node payloads in a local directory?", true);
+		$configArray['environet']['store_distribution_node_payloads'] = $storeDistributionNodePayloads;
 
 
 		dbConfig:

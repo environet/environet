@@ -237,8 +237,8 @@ class UploadHandler extends ApiHandler {
 	 */
 	protected function storeInputData(string $content, string $requestId): void {
 		$config = Config::getInstance();
-		$storeInputXmls = $config->getStoreInputXmls();
-		if ($storeInputXmls) {
+		$storeDistributionNodePayloads = $config->getStoreDistributionNodePayloads();
+		if ($storeDistributionNodePayloads) {
 			$dir = SRC_PATH . '/data/distribution_node_payloads';
 			if (!is_dir($dir)) {
 				mkdir($dir, 0755, true);

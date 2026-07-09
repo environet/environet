@@ -18,7 +18,8 @@ use Environet\Sys\General\Exceptions\InvalidConfigurationException;
  * @method bool getDevMode
  * @method string getDatanodeDistHost
  * @method int getOpMode
- * @method bool getStoreInputXmls
+ * @method bool getStoreDistributionNodePayloads
+ * @method bool getStoreDataNodePayloads
  * @method string getTimezone
  * @method string getDatabaseHost
  * @method string getDatabaseDatabase
@@ -174,9 +175,23 @@ class Config {
 				$group = array_shift($configNameExploded);
 			}
 			$configName = implode('_', $configNameExploded);
+
+			// Backward compatibility: map old config names to new ones
+			$configMigrations = [
+				'store_distribution_node_payloads' => 'store_input_xmls',
+			];
+
 			if ($group && $configName) {
 				// Get and process value
-				return $this->processValue($this->config[$group][$configName] ?? null, $configName);
+				$value = $this->config[$group][$configName] ?? null;
+
+				// If value is null and this is a migrated config, check for old name
+				if ($value === null && isset($configMigrations[$configName])) {
+					$oldConfigName = $configMigrations[$configName];
+					$value = $this->config[$group][$oldConfigName] ?? null;
+				}
+
+				return $this->processValue($value, $configName);
 			}
 		}
 

@@ -3,6 +3,7 @@
 namespace Environet\Sys\Plugins;
 
 use Environet\Sys\Commands\Console;
+use Environet\Sys\Config;
 use Environet\Sys\General\Enums\MessageCodes;
 use Exception;
 use SimpleXMLElement;
@@ -66,10 +67,10 @@ class Plugin {
 
 					$successfulDownloads ++;
 
-					$payloadStorage = SRC_PATH . '/data/data_node_payloads';
-					if (!is_dir($payloadStorage)) {
-						mkdir($payloadStorage, 0755, true);
-					}
+				$payloadStorage = Config::getInstance()->getStoreDataNodePayloads() ? SRC_PATH . '/data/data_node_payloads' : null;
+				if ($payloadStorage && !is_dir($payloadStorage)) {
+					mkdir($payloadStorage, 0755, true);
+				}
 
 					$resourceSuccess = true;
 					foreach ($xmls as $xmlPayload) {
@@ -118,16 +119,18 @@ class Plugin {
 								//If the request was successful, increment the successful counter
 								$successful ++;
 							}
-						} catch (Exception $e) {
-							// Save failed XML with request ID for debugging
+					} catch (Exception $e) {
+						$console->writeLine('failed');
+						$console->writeLine(sprintf("Upload for station NCD %s failed [RequestID: %s], response: ", $xmlMPointId, $requestId), null, null, true);
+						$console->writeLine($e->getMessage(), null, null, true);
+
+						if ($payloadStorage) {
 							$filename = $payloadStorage . '/' . $requestId . '.xml';
 							file_put_contents($filename, $xmlPayload->asXML());
-
-							$console->writeLine('failed');
-							$console->writeLine(sprintf("Upload for station NCD %s failed [RequestID: %s], response: ", $xmlMPointId, $requestId), null, null, true);
-							$console->writeLine($e->getMessage(), null, null, true);
 							$console->writeLine('Payload stored: ' . ltrim(str_replace(SRC_PATH, '', $filename), '/'), null, null, true);
-							$console->writeLine('---', null, null, true);
+						}
+
+						$console->writeLine('---', null, null, true);
 							$failed ++;
 							$resourceSuccess = false;
 						}
