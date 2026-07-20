@@ -49,12 +49,14 @@ A fully-commented template with all available options is provided in this reposi
 Copy it and fill in the required values:
 
 ```bash
-cp CoreEngine/doc/conf.local.ini.dist conf/conf.local.ini
+cp src/doc/conf.local.ini.dist conf/conf.local.ini
 ```
 
 At a minimum you must set:
 - `[environet]` → `op_mode` (`1` = data node, `2` = distribution node)
 - `[environet]` → `timezone` (e.g. `Europe/Budapest`)
+
+In case of a distribution node, you must set:
 - `[database]` → `host`, `port`, `database`, `user`, `pass`
 
 All other keys fall back to the defaults defined in `sys/conf.default.ini`.

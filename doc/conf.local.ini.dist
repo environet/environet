@@ -17,7 +17,7 @@ op_mode=
 ; Full list: https://www.php.net/manual/en/timezones.php
 timezone=
 
-; Enable developer/debug mode.  Set to false in production.
+; Enable developer/debug mode. Set to false in production.
 ; Default: false
 dev_mode=false
 
@@ -73,12 +73,12 @@ dist_host=http://dist_apache
 [error]
 
 ; Enable in-browser error display (set to false in production).
-; Default: true
-debug_enable=true
+; Default: false
+debug_enable=false
 
 ; Enable writing debug output to a log file.
-; Default: true
-file_debug_enable=true
+; Default: false
+file_debug_enable=false
 
 ; Path to the debug log file (relative to the project root).
 ; Default: /logs/php/debug.log
