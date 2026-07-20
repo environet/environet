@@ -5,7 +5,6 @@ namespace Environet\Sys\Commands\DataNode;
 
 use Environet\Sys\Commands\BaseCommand;
 use Environet\Sys\Commands\Console;
-use Environet\Sys\Config;
 
 /**
  * Class Install
@@ -43,7 +42,6 @@ class Install extends BaseCommand {
 			'environet' => [
 				'op_mode' => EN_OP_MODE_DATA,
 			],
-			'datanode'  => []
 		];
 
 		//Ask for timezone, and check the validity of it
@@ -56,16 +54,6 @@ class Install extends BaseCommand {
 			break;
 		}
 
-		$defautDistHost = Config::getInstance()->getDatanodeDistHost();
-		//Ask database config options
-		if ($defautDistHost) {
-			$distHost = $this->console->askWithDefault("Enter the domain of distribution node:", $defautDistHost);
-		} else {
-			$distHost = $this->console->ask("Enter the domain of distribution node:");
-		}
-
-		//Add dist-host configuration to configArray
-		$configArray['datanode']['dist_host'] = $distHost;
 
 		//Build and save local ini file
 		$iniContent = buildIni($configArray);

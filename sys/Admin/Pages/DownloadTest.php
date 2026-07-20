@@ -229,9 +229,10 @@ class DownloadTest extends BasePage {
 			$params .= '&end=' . urlencode(new DateTime($end)->format('c'));
 		}
 
-		$apiHost = Config::getInstance()->getDatanodeDistHost();
+		$apiHost = Config::getInstance()->getDistnodeInternalApiHost();
+		$apiHost = preg_match('/^https?:\/\//', $apiHost) ? $apiHost : 'http://' . $apiHost;
 
-		// Create a request
+		// Create a request (loopback to this distribution node's own API via internal host)
 		$request = new Request(
 			sprintf(
 				"%s/download?token=%s%s",

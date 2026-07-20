@@ -43,6 +43,16 @@ store_data_node_payloads=false
 license_text=
 
 
+[distnode]
+
+; Internal API host used by the distribution node admin UI to loop back into
+; the public API (e.g. the upload endpoint) from inside PHP. This must resolve
+; from the PHP container/process (typically the internal Docker service name
+; of the web server), not the public browser-facing hostname.
+; Default: http://dist_apache
+internal_api_host=http://dist_apache
+
+
 [database]
 
 ; PostgreSQL host name or IP address (Docker service name is typical)
@@ -61,13 +71,6 @@ user=
 ; Database password
 pass=
 
-
-[datanode]
-
-; Base URL of the distribution node this data node reports to.
-; Example: https://distribution.example.org
-; Default: http://dist_apache
-dist_host=http://dist_apache
 
 
 [error]

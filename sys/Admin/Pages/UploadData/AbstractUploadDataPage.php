@@ -489,9 +489,11 @@ abstract class AbstractUploadDataPage extends BasePage {
 			$username = $identity->getData()['username'];
 		}
 
-		// Create a request
-		$apiHost = Config::getInstance()->getDatanodeDistHost();
-		$apiHost = preg_match('/^https?:\/\//', $apiHost) ? $apiHost : 'https://' . $apiHost;
+		// Create a request. The admin upload runs on the distribution node itself,
+		// so we call back to this same node via its internal API host (the internal
+		// hostname/URL of the Apache service reachable from PHP inside the deployment).
+		$apiHost = Config::getInstance()->getDistnodeInternalApiHost();
+		$apiHost = preg_match('/^https?:\/\//', $apiHost) ? $apiHost : 'http://' . $apiHost;
 		$request = new Request(rtrim($apiHost, '/') . $path);
 		$request->setBody(file_get_contents($bodyFile));
 		$request->setMethod('POST');

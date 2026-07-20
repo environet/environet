@@ -121,8 +121,9 @@ class UploadTest extends BasePage {
 		$property = new InputXmlPropertyData($propertySymbol, $values);
 		$xml = $creator->generateXml(new InputXmlData($mpointId, [$property]))->asXML();
 
-		// Create a request
-		$apiHost = Config::getInstance()->getDatanodeDistHost();
+		// Create a request (loopback to this distribution node's own API via internal host)
+		$apiHost = Config::getInstance()->getDistnodeInternalApiHost();
+		$apiHost = preg_match('/^https?:\/\//', $apiHost) ? $apiHost : 'http://' . $apiHost;
 		$request = new Request(rtrim($apiHost, '/') . '/upload');
 		$request->setMethod('POST')->setBody($xml);
 

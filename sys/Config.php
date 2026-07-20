@@ -16,7 +16,7 @@ use Environet\Sys\General\Exceptions\InvalidConfigurationException;
  * @method bool getErrorDebugEnable
  * @method bool getErrorFileDebugEnable
  * @method bool getDevMode
- * @method string getDatanodeDistHost
+ * @method string getDistnodeInternalApiHost
  * @method int getOpMode
  * @method bool getStoreDistributionNodePayloads
  * @method bool getStoreDataNodePayloads
